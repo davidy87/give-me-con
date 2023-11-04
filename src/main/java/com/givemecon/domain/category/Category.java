@@ -1,12 +1,15 @@
 package com.givemecon.domain.category;
 
+import com.givemecon.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @Entity
-public class Category {
+public class Category extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,8 +21,7 @@ public class Category {
     private String icon;
 
     @Builder
-    public Category(Long id, String name, String icon) {
-        this.id = id;
+    public Category(String name, String icon) {
         this.name = name;
         this.icon = icon;
     }

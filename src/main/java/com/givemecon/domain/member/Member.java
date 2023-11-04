@@ -1,14 +1,17 @@
 package com.givemecon.domain.member;
 
+import com.givemecon.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.GenerationType.*;
 
 @Getter
+@NoArgsConstructor
 @Entity
-public class Member {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -25,8 +28,7 @@ public class Member {
     private Role role;
 
     @Builder
-    public Member(Long id, String email, String username, Role role) {
-        this.id = id;
+    public Member(String email, String username, Role role) {
         this.email = email;
         this.username = username;
         this.role = role;
