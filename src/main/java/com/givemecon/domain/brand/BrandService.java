@@ -25,7 +25,7 @@ public class BrandService {
     @Transactional(readOnly = true)
     public BrandResponse find(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
 
         return BrandResponse.builder()
                 .name(brand.getName())
@@ -35,7 +35,7 @@ public class BrandService {
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
 
         brand.update(requestDto.getName(), requestDto.getIcon());
 
@@ -47,7 +47,7 @@ public class BrandService {
 
     public Long delete(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
 
         brandRepository.delete(brand);
 
