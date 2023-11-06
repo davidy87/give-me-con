@@ -31,4 +31,9 @@ public class Voucher extends BaseTimeEntity {
         this.price = price;
         this.image = image;
     }
+
+    public void update(Long price, String image) {
+        this.price = price;
+        this.image = image;
+    }
 }
