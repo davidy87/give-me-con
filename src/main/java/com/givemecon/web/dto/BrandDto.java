@@ -29,13 +29,6 @@ public class BrandDto {
         private String name;
 
         private String icon;
-
-        public Brand toEntity() {
-            return Brand.builder()
-                    .name(name)
-                    .icon(icon)
-                    .build();
-        }
     }
 
     @Getter
