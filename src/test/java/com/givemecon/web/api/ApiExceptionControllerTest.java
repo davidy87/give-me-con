@@ -14,6 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,7 +91,7 @@ public class ApiExceptionControllerTest {
         String url = "http://localhost:" + port + "/api/members/" + 1;
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(delete(url));
 
         // then
         response
