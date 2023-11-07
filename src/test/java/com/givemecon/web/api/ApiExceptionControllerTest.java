@@ -83,4 +83,20 @@ public class ApiExceptionControllerTest {
                 .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
                 .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
     }
+
+    @Test
+    void memberExceptionTest() throws Exception {
+        // given
+        String url = "http://localhost:" + port + "/api/members/" + 1;
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.name()))
+                .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
+                .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
+    }
 }
