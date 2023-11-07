@@ -1,9 +1,11 @@
 package com.givemecon.domain.category;
 
+import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.CategoryDto.*;
 
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryResponse find(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         return CategoryResponse.builder()
                 .name(category.getName())
@@ -35,7 +37,7 @@ public class CategoryService {
 
     public CategoryResponse update(Long id, CategoryUpdateRequest requestDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         category.update(requestDto.getName(), requestDto.getIcon());
 
@@ -47,7 +49,7 @@ public class CategoryService {
 
     public Long delete(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         categoryRepository.delete(category);
 

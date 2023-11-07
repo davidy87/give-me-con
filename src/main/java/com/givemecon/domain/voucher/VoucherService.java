@@ -1,9 +1,11 @@
 package com.givemecon.domain.voucher;
 
+import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.VoucherDto.*;
 
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public VoucherResponse find(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         return VoucherResponse.builder()
                 .price(voucher.getPrice())
@@ -35,7 +37,7 @@ public class VoucherService {
 
     public VoucherResponse update(Long id, VoucherUpdateRequest requestDto) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         voucher.update(requestDto.getPrice(), requestDto.getImage());
 
@@ -47,7 +49,7 @@ public class VoucherService {
 
     public Long delete(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         voucherRepository.delete(voucher);
 

@@ -1,9 +1,11 @@
 package com.givemecon.domain.brand;
 
+import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.BrandDto.*;
 
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class BrandService {
     @Transactional(readOnly = true)
     public BrandResponse find(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         return BrandResponse.builder()
                 .name(brand.getName())
@@ -35,7 +37,7 @@ public class BrandService {
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         brand.update(requestDto.getName(), requestDto.getIcon());
 
@@ -47,7 +49,7 @@ public class BrandService {
 
     public Long delete(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(RuntimeException::new); // TODO: 예외 처리
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         brandRepository.delete(brand);
 
