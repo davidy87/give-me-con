@@ -2,12 +2,13 @@ package com.givemecon.domain.category;
 
 import com.givemecon.domain.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Category extends BaseTimeEntity {
 
