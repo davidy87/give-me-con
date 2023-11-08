@@ -2,6 +2,7 @@ package com.givemecon.domain.member;
 
 import com.givemecon.domain.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 import static jakarta.persistence.GenerationType.*;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Member extends BaseTimeEntity {
 
