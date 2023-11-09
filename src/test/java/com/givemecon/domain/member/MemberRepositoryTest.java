@@ -29,7 +29,7 @@ class MemberRepositoryTest {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
-                .role(ROLE_USER)
+                .role(USER)
                 .build();
 
         // when
@@ -40,7 +40,7 @@ class MemberRepositoryTest {
         Member found = memberList.get(0);
         assertThat(found.getEmail()).isEqualTo(email);
         assertThat(found.getUsername()).isEqualTo(username);
-        assertThat(found.getRole()).isEqualTo(ROLE_USER);
+        assertThat(found.getRole()).isEqualTo(USER);
     }
 
     @Test
@@ -50,7 +50,7 @@ class MemberRepositoryTest {
         memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(ROLE_USER)
+                .role(USER)
                 .build());
 
         // when

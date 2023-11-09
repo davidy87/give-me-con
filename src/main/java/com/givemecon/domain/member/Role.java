@@ -1,9 +1,14 @@
 package com.givemecon.domain.member;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 @Getter
+@AllArgsConstructor
 public enum Role {
 
-    ROLE_ADMIN,
-    ROLE_USER
+    ADMIN("ROLE_ADMIN"),
+    USER("ROLE_USER");
+
+    private String key;
 }
