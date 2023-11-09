@@ -5,9 +5,13 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+import static com.givemecon.config.auth.OAuth2Provider.*;
+
+@Slf4j
 @Getter
 public class OAuth2Attributes {
 
@@ -30,17 +34,35 @@ public class OAuth2Attributes {
         this.provider = provider;
     }
 
-    public static OAuth2Attributes of(String usernameAttributeName, Map<String, Object> attributes) {
-        return ofGoogle(usernameAttributeName, attributes);
+    public static OAuth2Attributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
+        registrationId = registrationId.toUpperCase();
+
+        if (registrationId.equals(NAVER.name())) {
+            return ofNaver(userNameAttributeName, attributes);
+        }
+
+        return ofGoogle(userNameAttributeName, attributes);
     }
 
-    private static OAuth2Attributes ofGoogle(String usernameAttributeName, Map<String, Object> attributes) {
+    private static OAuth2Attributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuth2Attributes.builder()
                 .attributes(attributes)
-                .nameAttributeKey(usernameAttributeName)
+                .nameAttributeKey(userNameAttributeName)
                 .username((String) attributes.get("given_name"))
                 .email((String) attributes.get("email"))
-                .provider(OAuth2Provider.GOOGLE)
+                .provider(GOOGLE)
+                .build();
+    }
+
+    private static OAuth2Attributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get(userNameAttributeName);
+
+        return OAuth2Attributes.builder()
+                .attributes(response)
+                .nameAttributeKey("id")
+                .username((String) response.get("nickname"))
+                .email((String) response.get("email"))
+                .provider(NAVER)
                 .build();
     }
 

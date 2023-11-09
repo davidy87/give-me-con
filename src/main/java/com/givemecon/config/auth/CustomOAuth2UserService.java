@@ -28,15 +28,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration()
-                .getRegistrationId()
-                .toUpperCase();
+                .getRegistrationId();
 
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails()
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
-        OAuth2Attributes attributes = OAuth2Attributes.of(userNameAttributeName, oAuth2User.getAttributes());
+        OAuth2Attributes attributes = OAuth2Attributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
         Member member = saveOrUpdate(attributes, registrationId);
 
         return new DefaultOAuth2User(
