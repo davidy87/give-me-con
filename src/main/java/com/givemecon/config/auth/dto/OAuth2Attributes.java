@@ -5,13 +5,11 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 import static com.givemecon.config.auth.OAuth2Provider.*;
 
-@Slf4j
 @Getter
 public class OAuth2Attributes {
 
@@ -56,6 +54,7 @@ public class OAuth2Attributes {
                 .build();
     }
 
+    @SuppressWarnings("unchecked")
     private static OAuth2Attributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get(userNameAttributeName);
 
@@ -68,6 +67,7 @@ public class OAuth2Attributes {
                 .build();
     }
 
+    @SuppressWarnings("unchecked")
     private static OAuth2Attributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
         Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");

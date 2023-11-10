@@ -57,7 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (member == null) {
             return false;
         } else if (!member.getRoleKey().equals(registrationId)) {
-            throw new OAuth2AuthenticationException("이미 해당 이메일로 가입된 계정이 존재합니다.");
+            throw new OAuth2AuthenticationException("이미 해당 이메일로 가입된 계정이 존재합니다."); // TODO: 예외 처리
         }
 
         return true;
