@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(roles = "USER")
+@WithMockUser(roles = "ADMIN")
 class BrandApiControllerTest {
 
     @LocalServerPort

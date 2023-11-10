@@ -32,7 +32,15 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/h2-console/**"),
                                 new AntPathRequestMatcher("/profile")
                         ).permitAll()
-                        .requestMatchers(new AntPathRequestMatcher("/api/**")).hasRole(Role.USER.name())
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/api/categories/**", "GET"),
+                                new AntPathRequestMatcher("/api/brands/**", "GET"),
+                                new AntPathRequestMatcher("/api/members/**"),
+                                new AntPathRequestMatcher("/api/vouchers/**")
+                        ).hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                        .requestMatchers(
+                                new AntPathRequestMatcher("/api/**")
+                        ).hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(login -> login

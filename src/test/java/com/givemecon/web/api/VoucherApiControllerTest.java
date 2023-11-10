@@ -21,6 +21,7 @@ import java.util.List;
 import static com.givemecon.web.dto.VoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +46,7 @@ class VoucherApiControllerTest {
     void setup() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
+                .apply(springSecurity())
                 .build();
     }
 
