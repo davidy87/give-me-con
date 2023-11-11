@@ -30,14 +30,14 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/images/**"),
                                 new AntPathRequestMatcher("/js/**"),
                                 new AntPathRequestMatcher("/h2-console/**"),
-                                new AntPathRequestMatcher("/profile")
+                                new AntPathRequestMatcher("/profile"),
+                                new AntPathRequestMatcher("/api/categories/**", "GET"),
+                                new AntPathRequestMatcher("/api/brands/**", "GET")
                         ).permitAll()
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/categories/**", "GET"),
-                                new AntPathRequestMatcher("/api/brands/**", "GET"),
                                 new AntPathRequestMatcher("/api/members/**"),
                                 new AntPathRequestMatcher("/api/vouchers/**")
-                        ).hasAnyRole(Role.ADMIN.name(), Role.USER.name())
+                        ).hasAnyRole(Role.USER.name())
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/**")
                         ).hasRole(Role.ADMIN.name())
