@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.givemecon.web.dto.CategoryDto.*;
 
 @RequiredArgsConstructor
@@ -18,6 +20,11 @@ public class CategoryApiController {
     @PostMapping
     public CategoryResponse save(@RequestBody CategorySaveRequest requestDto) {
         return categoryService.save(requestDto);
+    }
+
+    @GetMapping
+    public List<CategoryResponse> findAll() {
+        return categoryService.findAll();
     }
 
     @GetMapping("/{id}")

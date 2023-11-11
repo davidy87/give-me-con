@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.givemecon.web.dto.BrandDto.*;
 
 @RequiredArgsConstructor
@@ -21,6 +23,18 @@ public class BrandService {
                 .icon(brand.getIcon())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public List<BrandResponse> findAll() {
+        return brandRepository.findAll()
+                .stream()
+                .map(brand -> BrandResponse.builder()
+                        .name(brand.getName())
+                        .icon(brand.getIcon())
+                        .build())
+                .toList();
+    }
+
 
     @Transactional(readOnly = true)
     public BrandResponse find(Long id) {
