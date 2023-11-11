@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.givemecon.web.dto.BrandDto.*;
 
 @RequiredArgsConstructor
@@ -18,6 +20,11 @@ public class BrandApiController {
     @PostMapping
     public BrandResponse save(@RequestBody BrandSaveRequest requestDto) {
         return brandService.save(requestDto);
+    }
+
+    @GetMapping
+    public List<BrandResponse> findAll() {
+        return brandService.findAll();
     }
 
     @GetMapping("/{id}")

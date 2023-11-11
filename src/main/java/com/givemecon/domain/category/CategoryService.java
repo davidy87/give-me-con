@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.util.error.ErrorCode.*;
+import java.util.List;
+
 import static com.givemecon.web.dto.CategoryDto.*;
 
 @RequiredArgsConstructor
@@ -22,6 +24,17 @@ public class CategoryService {
                 .name(category.getName())
                 .icon(category.getIcon())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryResponse> findAll() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(category -> CategoryResponse.builder()
+                        .name(category.getName())
+                        .icon(category.getIcon())
+                        .build())
+                .toList();
     }
 
     @Transactional(readOnly = true)

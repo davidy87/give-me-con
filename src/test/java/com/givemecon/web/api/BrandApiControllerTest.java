@@ -79,6 +79,27 @@ class BrandApiControllerTest {
     }
 
     @Test
+    void findAllBrands() throws Exception {
+        // given
+        for (int i = 1; i <= 10; i++) {
+            Brand brand = Brand.builder()
+                    .name("brand" + i)
+                    .icon("brand" + i + ".png")
+                    .build();
+
+            brandRepository.save(brand);
+        }
+
+        String url = "http://localhost:8080" + port + "/api/brands";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response.andExpect(status().isOk());
+    }
+
+    @Test
     void findBrand() throws Exception {
         // given
         String name = "Starbucks";

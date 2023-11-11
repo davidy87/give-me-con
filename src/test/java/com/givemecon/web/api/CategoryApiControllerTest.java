@@ -79,6 +79,28 @@ class CategoryApiControllerTest {
     }
 
     @Test
+    void findAllCategories() throws Exception {
+        // given
+        for (int i = 1; i <= 10; i++) {
+            Category category = Category.builder()
+                    .name("category" + i)
+                    .icon("category" + i + ".png")
+                    .build();
+
+            categoryRepository.save(category);
+        }
+
+        String url = "http://localhost:" + port + "/api/categories";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void findCategory() throws Exception {
         // given
         String name = "Bubble Tea";
