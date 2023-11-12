@@ -6,6 +6,8 @@ import lombok.Getter;
 
 import java.util.List;
 
+import static com.givemecon.web.dto.BrandDto.*;
+
 public class CategoryDto {
 
     @Getter
@@ -43,6 +45,6 @@ public class CategoryDto {
 
         private String icon;
 
-        private List<BrandDto.BrandResponse> brands;
+        private List<BrandResponse> brands;
     }
 }
