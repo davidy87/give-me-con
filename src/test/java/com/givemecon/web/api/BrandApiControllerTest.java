@@ -64,14 +64,13 @@ class BrandApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
+        List<Brand> brandList = brandRepository.findAll();
+
         response
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("name").value(name))
-                .andExpect(jsonPath("icon").value(icon));
-
-        List<Brand> brandList = brandRepository.findAll();
-        assertThat(brandList.get(0).getName()).isEqualTo(name);
-        assertThat(brandList.get(0).getIcon()).isEqualTo(icon);
+                .andExpect(jsonPath("id").value(brandList.get(0).getId()))
+                .andExpect(jsonPath("name").value(brandList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(brandList.get(0).getIcon()));
     }
 
     @Test
@@ -114,6 +113,7 @@ class BrandApiControllerTest {
         // then
         response
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("name").value(name))
                 .andExpect(jsonPath("icon").value(icon));
     }
@@ -142,14 +142,13 @@ class BrandApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
+        List<Brand> brandList = brandRepository.findAll();
+
         response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value(requestDto.getName()))
-                .andExpect(jsonPath("icon").value(requestDto.getIcon()));
-
-        List<Brand> brandList = brandRepository.findAll();
-        assertThat(brandList.get(0).getName()).isEqualTo(requestDto.getName());
-        assertThat(brandList.get(0).getIcon()).isEqualTo(requestDto.getIcon());
+                .andExpect(jsonPath("id").value(brandList.get(0).getId()))
+                .andExpect(jsonPath("name").value(brandList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(brandList.get(0).getIcon()));
     }
 
     @Test

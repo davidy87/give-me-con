@@ -17,6 +17,7 @@ public class VoucherService {
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
 
         return VoucherResponse.builder()
+                .id(voucher.getId())
                 .price(voucher.getPrice())
                 .image(voucher.getImage())
                 .build();
@@ -28,6 +29,7 @@ public class VoucherService {
                 .orElseThrow(RuntimeException::new); // TODO: 예외 처리
 
         return VoucherResponse.builder()
+                .id(voucher.getId())
                 .price(voucher.getPrice())
                 .image(voucher.getImage())
                 .build();
@@ -40,6 +42,7 @@ public class VoucherService {
         voucher.update(requestDto.getPrice(), requestDto.getImage());
 
         return VoucherResponse.builder()
+                .id(voucher.getId())
                 .price(voucher.getPrice())
                 .image(voucher.getImage())
                 .build();

@@ -35,6 +35,8 @@ public class VoucherDto {
     @Builder
     public static class VoucherResponse {
 
+        private Long id;
+
         private Long price;
 
         private String image;

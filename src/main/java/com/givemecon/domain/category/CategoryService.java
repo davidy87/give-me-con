@@ -19,6 +19,7 @@ public class CategoryService {
         Category category = categoryRepository.save(requestDto.toEntity());
 
         return CategoryResponse.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .icon(category.getIcon())
                 .build();
@@ -29,6 +30,7 @@ public class CategoryService {
         return categoryRepository.findAll()
                 .stream()
                 .map(category -> CategoryResponse.builder()
+                        .id(category.getId())
                         .name(category.getName())
                         .icon(category.getIcon())
                         .build())
@@ -41,6 +43,7 @@ public class CategoryService {
                 .orElseThrow(RuntimeException::new); // TODO: 예외 처리
 
         return CategoryResponse.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .icon(category.getIcon())
                 .build();
@@ -53,6 +56,7 @@ public class CategoryService {
         category.update(requestDto.getName(), requestDto.getIcon());
 
         return CategoryResponse.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .icon(category.getIcon())
                 .build();

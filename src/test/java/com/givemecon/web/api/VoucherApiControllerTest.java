@@ -64,14 +64,13 @@ class VoucherApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
+        List<Voucher> voucherList = voucherRepository.findAll();
+
         response
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("price").value(price))
-                .andExpect(jsonPath("image").value(image));
-
-        List<Voucher> voucherList = voucherRepository.findAll();
-        assertThat(voucherList.get(0).getPrice()).isEqualTo(price);
-        assertThat(voucherList.get(0).getImage()).isEqualTo(image);
+                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
+                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("image").value(voucherList.get(0).getImage()));
     }
 
     @Test
@@ -93,6 +92,7 @@ class VoucherApiControllerTest {
         // then
         response
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("price").value(price))
                 .andExpect(jsonPath("image").value(image));
     }
@@ -120,14 +120,13 @@ class VoucherApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
+        List<Voucher> voucherList = voucherRepository.findAll();
+
         response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("price").value(requestDto.getPrice()))
-                .andExpect(jsonPath("image").value(requestDto.getImage()));
-
-        List<Voucher> voucherList = voucherRepository.findAll();
-        assertThat(voucherList.get(0).getPrice()).isEqualTo(requestDto.getPrice());
-        assertThat(voucherList.get(0).getImage()).isEqualTo(requestDto.getImage());
+                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
+                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("image").value(voucherList.get(0).getImage()));
     }
 
     @Test
