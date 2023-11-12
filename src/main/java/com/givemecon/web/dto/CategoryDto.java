@@ -4,6 +4,8 @@ import com.givemecon.domain.category.Category;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 public class CategoryDto {
 
     @Getter
@@ -35,8 +37,12 @@ public class CategoryDto {
     @Builder
     public static class CategoryResponse {
 
+        private Long id;
+
         private String name;
 
         private String icon;
+
+        private List<BrandDto.BrandResponse> brands;
     }
 }

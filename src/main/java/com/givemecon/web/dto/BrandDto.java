@@ -35,6 +35,8 @@ public class BrandDto {
     @Builder
     public static class BrandResponse {
 
+        private Long id;
+
         private String name;
 
         private String icon;

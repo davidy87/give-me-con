@@ -68,14 +68,13 @@ class CategoryApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
+        List<Category> categoryList = categoryRepository.findAll();
+
         response
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("name").value(name))
-                .andExpect(jsonPath("icon").value(icon));
-
-        List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList.get(0).getName()).isEqualTo(name);
-        assertThat(categoryList.get(0).getIcon()).isEqualTo(icon);
+                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
+                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(categoryList.get(0).getIcon()));
     }
 
     @Test
@@ -119,6 +118,7 @@ class CategoryApiControllerTest {
         // then
         response
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("name").value(name))
                 .andExpect(jsonPath("icon").value(icon));
     }
@@ -146,16 +146,14 @@ class CategoryApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
+        List<Category> categoryList = categoryRepository.findAll();
+
         response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("name").value(requestDto.getName()))
-                .andExpect(jsonPath("icon").value(requestDto.getIcon()));
-
-        List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList.get(0).getName()).isEqualTo(requestDto.getName());
-        assertThat(categoryList.get(0).getIcon()).isEqualTo(requestDto.getIcon());
+                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
+                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(categoryList.get(0).getIcon()));
     }
-
 
     @Test
     void deleteCategory() throws Exception {

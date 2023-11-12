@@ -21,6 +21,7 @@ public class BrandService {
         Brand brand = brandRepository.save(requestDto.toEntity());
 
         return BrandResponse.builder()
+                .id(brand.getId())
                 .name(brand.getName())
                 .icon(brand.getIcon())
                 .build();
@@ -31,6 +32,7 @@ public class BrandService {
         return brandRepository.findAll()
                 .stream()
                 .map(brand -> BrandResponse.builder()
+                        .id(brand.getId())
                         .name(brand.getName())
                         .icon(brand.getIcon())
                         .build())
@@ -44,6 +46,7 @@ public class BrandService {
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         return BrandResponse.builder()
+                .id(brand.getId())
                 .name(brand.getName())
                 .icon(brand.getIcon())
                 .build();
@@ -56,6 +59,7 @@ public class BrandService {
         brand.update(requestDto.getName(), requestDto.getIcon());
 
         return BrandResponse.builder()
+                .id(brand.getId())
                 .name(brand.getName())
                 .icon(brand.getIcon())
                 .build();
