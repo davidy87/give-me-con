@@ -23,7 +23,11 @@ public class BrandApiController {
     }
 
     @GetMapping
-    public List<BrandResponse> findAll() {
+    public List<BrandResponse> findAll(@RequestParam(required = false) Long categoryId) {
+        if (categoryId != null) {
+            return brandService.findAllByCategoryId(categoryId);
+        }
+
         return brandService.findAll();
     }
 

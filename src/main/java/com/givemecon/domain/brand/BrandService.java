@@ -39,6 +39,18 @@ public class BrandService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<BrandResponse> findAllByCategoryId(Long categoryId) {
+        return brandRepository.findAll()
+                .stream()
+                .filter(brand -> brand.getCategory().getId() == categoryId)
+                .map(brand -> BrandResponse.builder()
+                        .id(brand.getId())
+                        .name(brand.getName())
+                        .icon(brand.getIcon())
+                        .build())
+                .toList();
+    }
 
     @Transactional(readOnly = true)
     public BrandResponse find(Long id) {
