@@ -114,7 +114,7 @@ public class EntityRelationshipTest {
         Member seller = Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.ROLE_USER)
+                .role(Role.USER)
                 .build();
 
         VoucherSelling voucherSelling = VoucherSelling.builder()
