@@ -3,7 +3,6 @@ package com.givemecon.domain.voucher;
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.category.Category;
-import com.givemecon.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,6 +21,9 @@ public class Voucher extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false, name = "min_price")
     private Long price;
 
     @Column(nullable = false)
@@ -35,12 +37,9 @@ public class Voucher extends BaseTimeEntity {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member seller;
-
     @Builder
-    public Voucher(Long price, String image) {
+    public Voucher(String title, Long price, String image) {
+        this.title = title;
         this.price = price;
         this.image = image;
     }
@@ -56,9 +55,5 @@ public class Voucher extends BaseTimeEntity {
 
     public void setBrand(Brand brand) {
         this.brand = brand;
-    }
-
-    public void setSeller(Member seller) {
-        this.seller = seller;
     }
 }
