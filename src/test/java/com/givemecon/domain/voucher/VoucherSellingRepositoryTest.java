@@ -6,40 +6,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @Transactional
 @SpringBootTest
-class VoucherRepositoryTest {
+class VoucherSellingRepositoryTest {
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherSellingRepository voucherSellingRepository;
 
     @Test
     void saveAndFindAll() {
         // given
-        String title = "Americano T";
+        String title = "Starbucks Americano T";
         Long price = 15_000L;
-        String image = "americano.jpg";
+        LocalDate expDate = LocalDate.now();
+        String image = "Starbucks_Americano_T.png";
 
-        Voucher voucher = Voucher.builder()
+        VoucherSelling voucher = VoucherSelling.builder()
                 .title(title)
                 .price(price)
+                .expDate(expDate)
                 .image(image)
                 .build();
 
         // when
-        voucherRepository.save(voucher);
-        List<Voucher> voucherList = voucherRepository.findAll();
+        voucherSellingRepository.save(voucher);
+        List<VoucherSelling> voucherList = voucherSellingRepository.findAll();
 
         // then
-        Voucher found = voucherList.get(0);
+        VoucherSelling found = voucherList.get(0);
         assertThat(found.getTitle()).isEqualTo(title);
         assertThat(found.getPrice()).isEqualTo(price);
+        assertThat(found.getExpDate()).isEqualTo(expDate);
         assertThat(found.getImage()).isEqualTo(image);
     }
 
@@ -47,17 +51,18 @@ class VoucherRepositoryTest {
     void BaseTimeEntity() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        voucherRepository.save(Voucher.builder()
+        voucherSellingRepository.save(VoucherSelling.builder()
                 .title("Cake")
                 .price(10_000L)
+                .expDate(LocalDate.now())
                 .image("cake.jpg")
                 .build());
 
         // when
-        List<Voucher> voucherList = voucherRepository.findAll();
+        List<VoucherSelling> voucherList = voucherSellingRepository.findAll();
 
         // then
-        Voucher found = voucherList.get(0);
+        VoucherSelling found = voucherList.get(0);
         log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
         assertThat(found.getCreatedDate()).isAfter(now);
         assertThat(found.getModifiedDate()).isAfter(now);
