@@ -2,11 +2,15 @@ package com.givemecon.domain.brand;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.category.Category;
+import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.*;
 
@@ -28,6 +32,14 @@ public class Brand extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToMany(
+            mappedBy = "brand",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    List<Voucher> vouchers = new ArrayList<>();
+
     @Builder
     public Brand(String name, String icon) {
         this.name = name;
@@ -41,5 +53,10 @@ public class Brand extends BaseTimeEntity {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public void addVoucher(Voucher voucher) {
+        vouchers.add(voucher);
+        voucher.setBrand(this);
     }
 }
