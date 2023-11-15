@@ -1,8 +1,11 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherSelling;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.time.LocalDate;
 
 public class VoucherDto {
 
@@ -12,11 +15,14 @@ public class VoucherDto {
 
         private Long price;
 
+        private String title;
+
         private String image;
 
         public Voucher toEntity() {
             return Voucher.builder()
                     .price(price)
+                    .title(title)
                     .image(image)
                     .build();
         }
@@ -39,6 +45,30 @@ public class VoucherDto {
 
         private Long price;
 
+        private String title;
+
         private String image;
+    }
+
+    @Getter
+    public static class VoucherSellingResponse {
+
+        private Long id;
+
+        private Long price;
+
+        private String title;
+
+        private String image;
+
+        private LocalDate expDate;
+
+        public VoucherSellingResponse(VoucherSelling voucherSelling) {
+            this.id = voucherSelling.getId();
+            this.price = voucherSelling.getPrice();
+            this.title = voucherSelling.getTitle();
+            this.image = voucherSelling.getImage();
+            this.expDate = voucherSelling.getExpDate();
+        }
     }
 }

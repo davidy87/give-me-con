@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.VoucherDto.*;
 
@@ -21,6 +23,7 @@ public class VoucherService {
         return VoucherResponse.builder()
                 .id(voucher.getId())
                 .price(voucher.getPrice())
+                .title(voucher.getTitle())
                 .image(voucher.getImage())
                 .build();
     }
@@ -33,8 +36,18 @@ public class VoucherService {
         return VoucherResponse.builder()
                 .id(voucher.getId())
                 .price(voucher.getPrice())
+                .title(voucher.getTitle())
                 .image(voucher.getImage())
                 .build();
+    }
+
+    public List<VoucherSellingResponse> findSellingListByVoucherId(Long id) {
+        Voucher voucher = voucherRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+
+        return voucher.getVoucherSellingList().stream()
+                .map(VoucherSellingResponse::new)
+                .toList();
     }
 
     public VoucherResponse update(Long id, VoucherUpdateRequest requestDto) {
@@ -46,6 +59,7 @@ public class VoucherService {
         return VoucherResponse.builder()
                 .id(voucher.getId())
                 .price(voucher.getPrice())
+                .title(voucher.getTitle())
                 .image(voucher.getImage())
                 .build();
     }

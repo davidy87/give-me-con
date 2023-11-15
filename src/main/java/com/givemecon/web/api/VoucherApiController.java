@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.givemecon.web.dto.VoucherDto.*;
 
 @RequiredArgsConstructor
@@ -23,6 +25,11 @@ public class VoucherApiController {
     @GetMapping("/{id}")
     public VoucherResponse find(@PathVariable Long id) {
         return voucherService.find(id);
+    }
+
+    @GetMapping("/{id}/selling-list")
+    public List<VoucherSellingResponse> findSellingListByVoucherId(@PathVariable Long id) {
+        return voucherService.findSellingListByVoucherId(id);
     }
 
     @PutMapping("/{id}")

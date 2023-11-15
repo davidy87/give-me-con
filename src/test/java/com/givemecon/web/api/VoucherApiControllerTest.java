@@ -3,6 +3,8 @@ package com.givemecon.web.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucher.VoucherSelling;
+import com.givemecon.domain.voucher.VoucherSellingRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.givemecon.web.dto.VoucherDto.*;
@@ -42,6 +45,9 @@ class VoucherApiControllerTest {
     @Autowired
     VoucherRepository voucherRepository;
 
+    @Autowired
+    VoucherSellingRepository voucherSellingRepository;
+
     @BeforeEach
     void setup() {
         mockMvc = MockMvcBuilders
@@ -54,9 +60,11 @@ class VoucherApiControllerTest {
     void saveVoucher() throws Exception {
         // given
         Long price = 4_000L;
+        String title = "Americano T";
         String image = "tall_americano.jpg";
         VoucherSaveRequest requestDto = VoucherSaveRequest.builder()
                 .price(price)
+                .title(title)
                 .image(image)
                 .build();
 
@@ -81,9 +89,11 @@ class VoucherApiControllerTest {
     void findVoucher() throws Exception {
         // given
         Long price = 20_000L;
+        String title = "Ice Cream Cake";
         String image = "ice_cream_cake.jpg";
         Voucher voucher = Voucher.builder()
                 .price(price)
+                .title(title)
                 .image(image)
                 .build();
 
@@ -102,12 +112,50 @@ class VoucherApiControllerTest {
     }
 
     @Test
+    void findSellingListByVoucherId() throws Exception {
+        // given
+        Long price = 4_000L;
+        String title = "Americano T";
+        String image = "americano.jpg";
+        Voucher voucher = Voucher.builder()
+                .price(price)
+                .title(title)
+                .image(image)
+                .build();
+
+        Voucher voucherSaved = voucherRepository.save(voucher);
+
+        for (int i = 1; i <= 10; i++) {
+            VoucherSelling voucherSelling = VoucherSelling.builder()
+                    .title("Americano T")
+                    .image("americano.jpg")
+                    .price(4_000L)
+                    .expDate(LocalDate.now())
+                    .build();
+
+            voucherSellingRepository.save(voucherSelling);
+            voucherSaved.addVoucherSelling(voucherSelling);
+        }
+
+        String url = "http://localhost:" + port + "/api/vouchers/" + voucherSaved.getId() + "/selling-list";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
+    }
+
+    @Test
     void updateVoucher() throws Exception {
         // given
         Long price = 3_000L;
+        String title = "Shine Musket Tang Hoo Ru";
         String image = "shine_musket_tang_hoo_ru.jpg";
         Voucher voucher = Voucher.builder()
                 .price(price)
+                .title(title)
                 .image(image)
                 .build();
 
@@ -137,9 +185,11 @@ class VoucherApiControllerTest {
     void deleteVoucher() throws Exception {
         // given
         Long price = 4_000L;
+        String title = "Milk Tea L";
         String image = "large_milk_tea.jpg";
         Voucher voucher = Voucher.builder()
                 .price(price)
+                .title(title)
                 .image(image)
                 .build();
 
