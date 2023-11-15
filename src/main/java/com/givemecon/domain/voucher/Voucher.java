@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.GenerationType.*;
 
 @Getter
@@ -37,6 +40,14 @@ public class Voucher extends BaseTimeEntity {
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
+    @OneToMany(
+            mappedBy = "voucher",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    List<VoucherSelling> voucherSellingList = new ArrayList<>();
+
     @Builder
     public Voucher(String title, Long price, String image) {
         this.title = title;
@@ -50,5 +61,10 @@ public class Voucher extends BaseTimeEntity {
 
     public void setBrand(Brand brand) {
         this.brand = brand;
+    }
+
+    public void addVoucherSelling(VoucherSelling voucherSelling) {
+        voucherSellingList.add(voucherSelling);
+        voucherSelling.setVoucher(this);
     }
 }
