@@ -19,13 +19,7 @@ public class VoucherService {
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
-
-        return VoucherResponse.builder()
-                .id(voucher.getId())
-                .price(voucher.getPrice())
-                .title(voucher.getTitle())
-                .image(voucher.getImage())
-                .build();
+        return new VoucherResponse(voucher);
     }
 
     @Transactional(readOnly = true)
@@ -33,12 +27,7 @@ public class VoucherService {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        return VoucherResponse.builder()
-                .id(voucher.getId())
-                .price(voucher.getPrice())
-                .title(voucher.getTitle())
-                .image(voucher.getImage())
-                .build();
+        return new VoucherResponse(voucher);
     }
 
     public List<VoucherSellingResponse> findSellingListByVoucherId(Long id) {
@@ -56,12 +45,7 @@ public class VoucherService {
 
         voucher.update(requestDto.getPrice(), requestDto.getImage());
 
-        return VoucherResponse.builder()
-                .id(voucher.getId())
-                .price(voucher.getPrice())
-                .title(voucher.getTitle())
-                .image(voucher.getImage())
-                .build();
+        return new VoucherResponse(voucher);
     }
 
     public Long delete(Long id) {

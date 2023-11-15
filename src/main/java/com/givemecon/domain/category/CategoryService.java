@@ -19,23 +19,14 @@ public class CategoryService {
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
         Category category = categoryRepository.save(requestDto.toEntity());
-
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .icon(category.getIcon())
-                .build();
+        return new CategoryResponse(category);
     }
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAll() {
         return categoryRepository.findAll()
                 .stream()
-                .map(category -> CategoryResponse.builder()
-                        .id(category.getId())
-                        .name(category.getName())
-                        .icon(category.getIcon())
-                        .build())
+                .map(CategoryResponse::new)
                 .toList();
     }
 
@@ -44,11 +35,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .icon(category.getIcon())
-                .build();
+        return new CategoryResponse(category);
     }
 
     public CategoryResponse update(Long id, CategoryUpdateRequest requestDto) {
@@ -57,11 +44,7 @@ public class CategoryService {
 
         category.update(requestDto.getName(), requestDto.getIcon());
 
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .icon(category.getIcon())
-                .build();
+        return new CategoryResponse(category);
     }
 
     public Long delete(Long id) {

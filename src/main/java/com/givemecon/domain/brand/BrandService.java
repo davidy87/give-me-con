@@ -19,23 +19,14 @@ public class BrandService {
 
     public BrandResponse save(BrandSaveRequest requestDto) {
         Brand brand = brandRepository.save(requestDto.toEntity());
-
-        return BrandResponse.builder()
-                .id(brand.getId())
-                .name(brand.getName())
-                .icon(brand.getIcon())
-                .build();
+        return new BrandResponse(brand);
     }
 
     @Transactional(readOnly = true)
     public List<BrandResponse> findAll() {
         return brandRepository.findAll()
                 .stream()
-                .map(brand -> BrandResponse.builder()
-                        .id(brand.getId())
-                        .name(brand.getName())
-                        .icon(brand.getIcon())
-                        .build())
+                .map(BrandResponse::new)
                 .toList();
     }
 
@@ -44,11 +35,7 @@ public class BrandService {
         return brandRepository.findAll()
                 .stream()
                 .filter(brand -> brand.getCategory().getId() == categoryId)
-                .map(brand -> BrandResponse.builder()
-                        .id(brand.getId())
-                        .name(brand.getName())
-                        .icon(brand.getIcon())
-                        .build())
+                .map(BrandResponse::new)
                 .toList();
     }
 
@@ -57,11 +44,7 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        return BrandResponse.builder()
-                .id(brand.getId())
-                .name(brand.getName())
-                .icon(brand.getIcon())
-                .build();
+        return new BrandResponse(brand);
     }
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
@@ -70,11 +53,7 @@ public class BrandService {
 
         brand.update(requestDto.getName(), requestDto.getIcon());
 
-        return BrandResponse.builder()
-                .id(brand.getId())
-                .name(brand.getName())
-                .icon(brand.getIcon())
-                .build();
+        return new BrandResponse(brand);
     }
 
     public Long delete(Long id) {

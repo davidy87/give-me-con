@@ -4,10 +4,6 @@ import com.givemecon.domain.category.Category;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
-import static com.givemecon.web.dto.BrandDto.*;
-
 public class CategoryDto {
 
     @Getter
@@ -36,7 +32,6 @@ public class CategoryDto {
     }
 
     @Getter
-    @Builder
     public static class CategoryResponse {
 
         private Long id;
@@ -45,6 +40,10 @@ public class CategoryDto {
 
         private String icon;
 
-        private List<BrandResponse> brands;
+        public CategoryResponse(Category category) {
+            this.id = category.getId();
+            this.name = category.getName();
+            this.icon = category.getIcon();
+        }
     }
 }

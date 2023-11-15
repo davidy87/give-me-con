@@ -32,7 +32,6 @@ public class BrandDto {
     }
 
     @Getter
-    @Builder
     public static class BrandResponse {
 
         private Long id;
@@ -40,5 +39,11 @@ public class BrandDto {
         private String name;
 
         private String icon;
+
+        public BrandResponse(Brand brand) {
+            this.id = brand.getId();
+            this.name = brand.getName();
+            this.icon = brand.getIcon();
+        }
     }
 }

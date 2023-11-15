@@ -38,7 +38,6 @@ public class VoucherDto {
     }
 
     @Getter
-    @Builder
     public static class VoucherResponse {
 
         private Long id;
@@ -48,6 +47,13 @@ public class VoucherDto {
         private String title;
 
         private String image;
+
+        public VoucherResponse(Voucher voucher) {
+            this.id = voucher.getId();
+            this.price = voucher.getPrice();
+            this.title = voucher.getTitle();
+            this.image = voucher.getImage();
+        }
     }
 
     @Getter
