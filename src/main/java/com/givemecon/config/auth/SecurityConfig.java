@@ -32,7 +32,8 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/h2-console/**"),
                                 new AntPathRequestMatcher("/profile"),
                                 new AntPathRequestMatcher("/api/categories/**", "GET"),
-                                new AntPathRequestMatcher("/api/brands/**", "GET")
+                                new AntPathRequestMatcher("/api/brands/**", "GET"),
+                                new AntPathRequestMatcher("/api/vouchers/**", "GET")
                         ).permitAll()
                         .requestMatchers(
                                 new AntPathRequestMatcher("/api/members/**"),

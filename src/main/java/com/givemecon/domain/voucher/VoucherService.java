@@ -30,6 +30,21 @@ public class VoucherService {
         return new VoucherResponse(voucher);
     }
 
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> findAll() {
+        return voucherRepository.findAll().stream()
+                .map(VoucherResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> findAllByBrandId(Long brandId) {
+        return voucherRepository.findAll().stream()
+                .filter(voucher -> voucher.getBrand().getId() == brandId)
+                .map(VoucherResponse::new)
+                .toList();
+    }
+
     public List<VoucherSellingResponse> findSellingListByVoucherId(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));

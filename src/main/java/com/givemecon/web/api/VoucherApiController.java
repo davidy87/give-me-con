@@ -22,6 +22,15 @@ public class VoucherApiController {
         return voucherService.save(requestDto);
     }
 
+    @GetMapping
+    public List<VoucherResponse> findAll(@RequestParam(required = false) Long brandId) {
+        if (brandId != null) {
+            return voucherService.findAllByBrandId(brandId);
+        }
+
+        return voucherService.findAll();
+    }
+
     @GetMapping("/{id}")
     public VoucherResponse find(@PathVariable Long id) {
         return voucherService.find(id);

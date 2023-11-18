@@ -1,6 +1,8 @@
 package com.givemecon.web.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucher.VoucherSelling;
@@ -47,6 +49,9 @@ class VoucherApiControllerTest {
 
     @Autowired
     VoucherSellingRepository voucherSellingRepository;
+
+    @Autowired
+    BrandRepository brandRepository;
 
     @BeforeEach
     void setup() {
@@ -109,6 +114,60 @@ class VoucherApiControllerTest {
                 .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("price").value(price))
                 .andExpect(jsonPath("image").value(image));
+    }
+
+    @Test
+    void findAllVouchers() throws Exception {
+        // given
+        for (int i = 1; i <= 10; i++) {
+            Voucher voucher = Voucher.builder()
+                    .price(10_000L)
+                    .title("Voucher" + i)
+                    .image("brand_" + i + ".png")
+                    .build();
+
+            voucherRepository.save(voucher);
+        }
+
+        String url = "http://localhost:" + port + "/api/vouchers";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
+    }
+
+    @Test
+    void findAllByBrandId() throws Exception {
+        // given
+        Brand brand = Brand.builder()
+                .name("Test Brand")
+                .icon("test_brand.png")
+                .build();
+
+        Brand brandSaved = brandRepository.save(brand);
+
+        for (int i = 1; i <= 10; i++) {
+            Voucher voucher = Voucher.builder()
+                    .price(10_000L)
+                    .title("Voucher" + i)
+                    .image("brand_" + i + ".png")
+                    .build();
+
+            voucher.setBrand(brandSaved);
+            voucherRepository.save(voucher);
+        }
+
+        String url = "http://localhost:" + port + "/api/vouchers?brandId=" + brandSaved.getId();
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
