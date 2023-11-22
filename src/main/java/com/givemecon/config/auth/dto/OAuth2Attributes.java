@@ -32,50 +32,50 @@ public class OAuth2Attributes {
         this.provider = provider;
     }
 
-    public static OAuth2Attributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
+    public static OAuth2Attributes of(String registrationId, String userNameAttributeKey, Map<String, Object> attributes) {
         registrationId = registrationId.toUpperCase();
 
         if (registrationId.equals(NAVER.name())) {
-            return ofNaver(userNameAttributeName, attributes);
+            return ofNaver("nickname", attributes);
         } else if (registrationId.equals(KAKAO.name())) {
-            return ofKakao(userNameAttributeName, attributes);
+            return ofKakao("nickname", attributes);
         }
 
-        return ofGoogle(userNameAttributeName, attributes);
+        return ofGoogle("given_name", attributes);
     }
 
-    private static OAuth2Attributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
+    private static OAuth2Attributes ofGoogle(String userNameAttributeKey, Map<String, Object> attributes) {
         return OAuth2Attributes.builder()
                 .attributes(attributes)
-                .nameAttributeKey(userNameAttributeName)
-                .username((String) attributes.get("given_name"))
+                .nameAttributeKey(userNameAttributeKey)
+                .username((String) attributes.get(userNameAttributeKey))
                 .email((String) attributes.get("email"))
                 .provider(GOOGLE)
                 .build();
     }
 
     @SuppressWarnings("unchecked")
-    private static OAuth2Attributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
-        Map<String, Object> response = (Map<String, Object>) attributes.get(userNameAttributeName);
+    private static OAuth2Attributes ofNaver(String userNameAttributeKey, Map<String, Object> attributes) {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         return OAuth2Attributes.builder()
                 .attributes(response)
-                .nameAttributeKey("id")
-                .username((String) response.get("nickname"))
+                .nameAttributeKey(userNameAttributeKey)
+                .username((String) response.get(userNameAttributeKey))
                 .email((String) response.get("email"))
                 .provider(NAVER)
                 .build();
     }
 
     @SuppressWarnings("unchecked")
-    private static OAuth2Attributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+    private static OAuth2Attributes ofKakao(String userNameAttributeKey, Map<String, Object> attributes) {
         Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
 
         return OAuth2Attributes.builder()
                 .attributes(attributes)
-                .nameAttributeKey(userNameAttributeName)
-                .username((String) properties.get("nickname"))
+                .nameAttributeKey(userNameAttributeKey)
+                .username((String) properties.get(userNameAttributeKey))
                 .email((String) kakaoAccount.get("email"))
                 .provider(KAKAO)
                 .build();

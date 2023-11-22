@@ -13,7 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
-@Configuration
+//@Configuration
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;

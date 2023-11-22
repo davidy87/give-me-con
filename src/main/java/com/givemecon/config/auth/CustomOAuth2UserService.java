@@ -28,7 +28,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
         String registrationId = userRequest.getClientRegistration()
-                .getRegistrationId();
+                .getRegistrationId()
+                .toUpperCase();
 
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails()
@@ -56,7 +57,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private boolean checkMemberExistence(Member member, String registrationId) {
         if (member == null) {
             return false;
-        } else if (!member.getRoleKey().equals(registrationId)) {
+        } else if (!member.getProvider().name().equals(registrationId)) {
             throw new OAuth2AuthenticationException("이미 해당 이메일로 가입된 계정이 존재합니다."); // TODO: 예외 처리
         }
 
