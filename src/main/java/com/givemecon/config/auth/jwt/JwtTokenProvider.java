@@ -71,8 +71,11 @@ public class JwtTokenProvider {
         Object auth = claims.get("auth");
 
         if (auth == null) {
-            throw new RuntimeException("Unauthorized Token");
+            throw new RuntimeException("Unauthorized Token"); // TODO: 예외 처리
         }
+
+        log.info("--- In JwtTokenProvider ---");
+        log.info("username = {}", claims.getSubject());
 
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(auth.toString().split(","))
