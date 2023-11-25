@@ -1,4 +1,5 @@
 ### properties ###
+application-jwt.properties
 application-oauth.properties
 
 HELP.md

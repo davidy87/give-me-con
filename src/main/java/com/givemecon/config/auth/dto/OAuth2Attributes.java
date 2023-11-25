@@ -5,11 +5,13 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 import static com.givemecon.config.auth.OAuth2Provider.*;
 
+@Slf4j
 @Getter
 public class OAuth2Attributes {
 
@@ -73,7 +75,7 @@ public class OAuth2Attributes {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
 
         return OAuth2Attributes.builder()
-                .attributes(attributes)
+                .attributes(properties)
                 .nameAttributeKey(userNameAttributeKey)
                 .username((String) properties.get(userNameAttributeKey))
                 .email((String) kakaoAccount.get("email"))
