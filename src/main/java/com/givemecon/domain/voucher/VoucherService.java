@@ -45,12 +45,12 @@ public class VoucherService {
                 .toList();
     }
 
-    public List<VoucherSellingResponse> findSellingListByVoucherId(Long id) {
+    public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        return voucher.getVoucherSellingList().stream()
-                .map(VoucherSellingResponse::new)
+        return voucher.getVoucherForSaleList().stream()
+                .map(VoucherForSaleResponse::new)
                 .toList();
     }
 

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherForSale;
+import com.givemecon.domain.voucher.VoucherForSaleRepository;
 import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucher.VoucherSelling;
-import com.givemecon.domain.voucher.VoucherSellingRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ class VoucherApiControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherSellingRepository voucherSellingRepository;
+    VoucherForSaleRepository voucherSellingRepository;
 
     @Autowired
     BrandRepository brandRepository;
@@ -185,7 +185,7 @@ class VoucherApiControllerTest {
         Voucher voucherSaved = voucherRepository.save(voucher);
 
         for (int i = 1; i <= 10; i++) {
-            VoucherSelling voucherSelling = VoucherSelling.builder()
+            VoucherForSale voucherSelling = VoucherForSale.builder()
                     .title("Americano T")
                     .image("americano.jpg")
                     .price(4_000L)
@@ -193,7 +193,7 @@ class VoucherApiControllerTest {
                     .build();
 
             voucherSellingRepository.save(voucherSelling);
-            voucherSaved.addVoucherSelling(voucherSelling);
+            voucherSaved.addVoucherForSale(voucherSelling);
         }
 
         String url = "http://localhost:" + port + "/api/vouchers/" + voucherSaved.getId() + "/selling-list";

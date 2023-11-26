@@ -37,7 +37,7 @@ public class VoucherApiController {
     }
 
     @GetMapping("/{id}/selling-list")
-    public List<VoucherSellingResponse> findSellingListByVoucherId(@PathVariable Long id) {
+    public List<VoucherForSaleResponse> findSellingListByVoucherId(@PathVariable Long id) {
         return voucherService.findSellingListByVoucherId(id);
     }
 

@@ -1,7 +1,7 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherSelling;
+import com.givemecon.domain.voucher.VoucherForSale;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -57,7 +57,7 @@ public class VoucherDto {
     }
 
     @Getter
-    public static class VoucherSellingResponse {
+    public static class VoucherForSaleResponse {
 
         private Long id;
 
@@ -69,7 +69,7 @@ public class VoucherDto {
 
         private LocalDate expDate;
 
-        public VoucherSellingResponse(VoucherSelling voucherSelling) {
+        public VoucherForSaleResponse(VoucherForSale voucherSelling) {
             this.id = voucherSelling.getId();
             this.price = voucherSelling.getPrice();
             this.title = voucherSelling.getTitle();
