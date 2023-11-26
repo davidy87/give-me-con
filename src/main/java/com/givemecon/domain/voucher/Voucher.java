@@ -32,6 +32,12 @@ public class Voucher extends BaseTimeEntity {
     @Column(nullable = false)
     private String image;
 
+    @Column(length = 500)
+    private String description;
+
+    @Column(length = 500)
+    private String caution;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -49,10 +55,20 @@ public class Voucher extends BaseTimeEntity {
     List<VoucherForSale> voucherForSaleList = new ArrayList<>();
 
     @Builder
-    public Voucher(String title, Long price, String image) {
+    public Voucher(String title, Long price, String image, String description, String caution) {
         this.title = title;
         this.price = price;
         this.image = image;
+        this.description = description;
+        this.caution = caution;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setCaution(String caution) {
+        this.caution = caution;
     }
 
     public void setCategory(Category category) {
@@ -63,7 +79,7 @@ public class Voucher extends BaseTimeEntity {
         this.brand = brand;
     }
 
-    public void addVoucherSelling(VoucherForSale voucherForSale) {
+    public void addVoucherForSale(VoucherForSale voucherForSale) {
         voucherForSaleList.add(voucherForSale);
         voucherForSale.setVoucher(this);
     }
