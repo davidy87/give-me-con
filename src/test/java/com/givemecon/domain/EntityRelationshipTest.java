@@ -9,8 +9,8 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucher.VoucherSelling;
-import com.givemecon.domain.voucher.VoucherSellingRepository;
+import com.givemecon.domain.voucher.VoucherForSale;
+import com.givemecon.domain.voucher.VoucherForSaleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class EntityRelationshipTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherSellingRepository voucherSellingRepository;
+    VoucherForSaleRepository voucherForSaleRepository;
 
     @Test
     void brand() {
@@ -111,7 +111,7 @@ public class EntityRelationshipTest {
                 .role(Role.ROLE_USER)
                 .build();
 
-        VoucherSelling voucherSelling = VoucherSelling.builder()
+        VoucherForSale voucherForSale = VoucherForSale.builder()
                 .title("Americano T")
                 .price(15_000L)
                 .expDate(LocalDate.now())
@@ -128,13 +128,13 @@ public class EntityRelationshipTest {
         Voucher voucherSaved = voucherRepository.save(voucher);
 
         // when
-        voucherSelling.setVoucher(voucherSaved);
-        voucherSelling.setSeller(sellerSaved);
-        voucherSellingRepository.save(voucherSelling);
+        voucherForSale.setVoucher(voucherSaved);
+        voucherForSale.setSeller(sellerSaved);
+        voucherForSaleRepository.save(voucherForSale);
 
         // then
-        List<VoucherSelling> voucherSellingList = voucherSellingRepository.findAll();
-        assertThat(voucherSellingList.get(0).getSeller()).isEqualTo(seller);
-        assertThat(voucherSellingList.get(0).getVoucher()).isEqualTo(voucher);
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
+        assertThat(voucherForSaleList.get(0).getSeller()).isEqualTo(seller);
+        assertThat(voucherForSaleList.get(0).getVoucher()).isEqualTo(voucher);
     }
 }

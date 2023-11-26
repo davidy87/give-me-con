@@ -46,7 +46,7 @@ public class Voucher extends BaseTimeEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    List<VoucherSelling> voucherSellingList = new ArrayList<>();
+    List<VoucherForSale> voucherForSaleList = new ArrayList<>();
 
     @Builder
     public Voucher(String title, Long price, String image) {
@@ -63,8 +63,8 @@ public class Voucher extends BaseTimeEntity {
         this.brand = brand;
     }
 
-    public void addVoucherSelling(VoucherSelling voucherSelling) {
-        voucherSellingList.add(voucherSelling);
-        voucherSelling.setVoucher(this);
+    public void addVoucherSelling(VoucherForSale voucherForSale) {
+        voucherForSaleList.add(voucherForSale);
+        voucherForSale.setVoucher(this);
     }
 }

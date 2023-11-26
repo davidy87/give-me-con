@@ -15,10 +15,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @Transactional
 @SpringBootTest
-class VoucherSellingRepositoryTest {
+class VoucherForSaleRepositoryTest {
 
     @Autowired
-    VoucherSellingRepository voucherSellingRepository;
+    VoucherForSaleRepository voucherForSaleRepository;
 
     @Test
     void saveAndFindAll() {
@@ -28,7 +28,7 @@ class VoucherSellingRepositoryTest {
         LocalDate expDate = LocalDate.now();
         String image = "Starbucks_Americano_T.png";
 
-        VoucherSelling voucher = VoucherSelling.builder()
+        VoucherForSale voucher = VoucherForSale.builder()
                 .title(title)
                 .price(price)
                 .expDate(expDate)
@@ -36,11 +36,11 @@ class VoucherSellingRepositoryTest {
                 .build();
 
         // when
-        voucherSellingRepository.save(voucher);
-        List<VoucherSelling> voucherList = voucherSellingRepository.findAll();
+        voucherForSaleRepository.save(voucher);
+        List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
 
         // then
-        VoucherSelling found = voucherList.get(0);
+        VoucherForSale found = voucherList.get(0);
         assertThat(found.getTitle()).isEqualTo(title);
         assertThat(found.getPrice()).isEqualTo(price);
         assertThat(found.getExpDate()).isEqualTo(expDate);
@@ -51,7 +51,7 @@ class VoucherSellingRepositoryTest {
     void BaseTimeEntity() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        voucherSellingRepository.save(VoucherSelling.builder()
+        voucherForSaleRepository.save(VoucherForSale.builder()
                 .title("Cake")
                 .price(10_000L)
                 .expDate(LocalDate.now())
@@ -59,10 +59,10 @@ class VoucherSellingRepositoryTest {
                 .build());
 
         // when
-        List<VoucherSelling> voucherList = voucherSellingRepository.findAll();
+        List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
 
         // then
-        VoucherSelling found = voucherList.get(0);
+        VoucherForSale found = voucherList.get(0);
         log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
         assertThat(found.getCreatedDate()).isAfter(now);
         assertThat(found.getModifiedDate()).isAfter(now);

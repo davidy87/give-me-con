@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class VoucherSelling extends BaseTimeEntity {
+public class VoucherForSale extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class VoucherSelling extends BaseTimeEntity {
     private Member seller;
 
     @Builder
-    public VoucherSelling(String title, Long price, LocalDate expDate, String image) {
+    public VoucherForSale(String title, Long price, LocalDate expDate, String image) {
         this.title = title;
         this.price = price;
         this.expDate = expDate;
