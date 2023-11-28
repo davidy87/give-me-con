@@ -23,9 +23,9 @@ public class VoucherApiController {
     }
 
     @GetMapping
-    public List<VoucherResponse> findAll(@RequestParam(required = false) Long brandId) {
-        if (brandId != null) {
-            return voucherService.findAllByBrandId(brandId);
+    public List<VoucherResponse> findAll(@RequestParam(required = false) String brand) {
+        if (brand != null) {
+            return voucherService.findAllByBrandName(brand);
         }
 
         return voucherService.findAll();
