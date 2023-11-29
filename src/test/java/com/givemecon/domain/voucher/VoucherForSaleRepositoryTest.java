@@ -26,12 +26,14 @@ class VoucherForSaleRepositoryTest {
         String title = "Starbucks Americano T";
         Long price = 15_000L;
         LocalDate expDate = LocalDate.now();
+        String barcode = "1111 1111 1111";
         String image = "Starbucks_Americano_T.png";
 
         VoucherForSale voucher = VoucherForSale.builder()
                 .title(title)
                 .price(price)
                 .expDate(expDate)
+                .barcode(barcode)
                 .image(image)
                 .build();
 
@@ -55,6 +57,7 @@ class VoucherForSaleRepositoryTest {
                 .title("Cake")
                 .price(10_000L)
                 .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
                 .image("cake.jpg")
                 .build());
 

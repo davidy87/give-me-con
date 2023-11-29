@@ -29,6 +29,9 @@ public class VoucherForSale extends BaseTimeEntity {
     private LocalDate expDate;
 
     @Column(nullable = false)
+    private String barcode;
+
+    @Column(nullable = false)
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,10 +43,11 @@ public class VoucherForSale extends BaseTimeEntity {
     private Member seller;
 
     @Builder
-    public VoucherForSale(String title, Long price, LocalDate expDate, String image) {
+    public VoucherForSale(String title, Long price, LocalDate expDate, String barcode, String image) {
         this.title = title;
         this.price = price;
         this.expDate = expDate;
+        this.barcode = barcode;
         this.image = image;
     }
 
