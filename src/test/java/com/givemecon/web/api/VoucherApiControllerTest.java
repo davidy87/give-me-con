@@ -190,6 +190,7 @@ class VoucherApiControllerTest {
                     .image("americano.jpg")
                     .price(4_000L)
                     .expDate(LocalDate.now())
+                    .barcode("1111 1111 1111")
                     .build();
 
             voucherSellingRepository.save(voucherSelling);
