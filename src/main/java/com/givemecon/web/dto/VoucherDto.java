@@ -61,20 +61,24 @@ public class VoucherDto {
 
         private Long id;
 
-        private Long price;
-
         private String title;
 
-        private String image;
+        private Long price;
 
         private LocalDate expDate;
 
-        public VoucherForSaleResponse(VoucherForSale voucherSelling) {
-            this.id = voucherSelling.getId();
-            this.price = voucherSelling.getPrice();
-            this.title = voucherSelling.getTitle();
-            this.image = voucherSelling.getImage();
-            this.expDate = voucherSelling.getExpDate();
+        private String barcode;
+
+        private String image;
+
+
+        public VoucherForSaleResponse(VoucherForSale voucherForSale) {
+            this.id = voucherForSale.getId();
+            this.title = voucherForSale.getTitle();
+            this.price = voucherForSale.getPrice();
+            this.expDate = voucherForSale.getExpDate();
+            this.barcode = voucherForSale.getBarcode();
+            this.image = voucherForSale.getImage();
         }
     }
 }
