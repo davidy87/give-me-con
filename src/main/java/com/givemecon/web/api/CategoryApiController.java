@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.givemecon.web.dto.BrandDto.*;
 import static com.givemecon.web.dto.CategoryDto.*;
 
 @RequiredArgsConstructor
@@ -30,6 +31,11 @@ public class CategoryApiController {
     @GetMapping("/{id}")
     public CategoryResponse find(@PathVariable Long id) {
         return categoryService.find(id);
+    }
+
+    @GetMapping("/{id}/brands")
+    public List<BrandResponse> findAllBrandsByCategoryId(@PathVariable Long id) {
+        return categoryService.findAllBrandsByCategoryId(id);
     }
 
     @PutMapping("/{id}")

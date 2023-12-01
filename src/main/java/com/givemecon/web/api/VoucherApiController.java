@@ -23,11 +23,7 @@ public class VoucherApiController {
     }
 
     @GetMapping
-    public List<VoucherResponse> findAll(@RequestParam(required = false) String brand) {
-        if (brand != null) {
-            return voucherService.findAllByBrandName(brand);
-        }
-
+    public List<VoucherResponse> findAll() {
         return voucherService.findAll();
     }
 

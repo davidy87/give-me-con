@@ -3,6 +3,8 @@ package com.givemecon.web.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ class BrandApiControllerTest {
 
     @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    VoucherRepository voucherRepository;
 
     @BeforeEach
     void setup() {
@@ -120,6 +125,43 @@ class BrandApiControllerTest {
                 .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("name").value(name))
                 .andExpect(jsonPath("icon").value(icon));
+    }
+
+    @Test
+    void findAllVouchersByBrandName() throws Exception {
+        // given
+        String name = "Starbucks";
+        String icon = "starbucks.jpg";
+        Brand brand = Brand.builder()
+                .name(name)
+                .icon(icon)
+                .build();
+
+        Brand brandSaved = brandRepository.save(brand);
+
+        for (int i = 1; i <= 5; i++) {
+            Voucher voucher = Voucher.builder()
+                    .title("Voucher " + 1)
+                    .price(1_000L * i)
+                    .image("voucher_" + i + ".png")
+                    .build();
+
+            Voucher voucherSaved = voucherRepository.save(voucher);
+            brandSaved.addVoucher(voucherSaved);
+        }
+
+        String url = "http://localhost:" + port + "/api/brands/" + brandSaved.getName() + "/vouchers";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url));
+
+        // then
+        response.andExpect(status().isOk());
+        List<Voucher> voucherList = voucherRepository.findAll();
+
+        for (Voucher voucher : voucherList) {
+            assertThat(voucher.getBrand()).isEqualTo(brandSaved);
+        }
     }
 
     @Test
