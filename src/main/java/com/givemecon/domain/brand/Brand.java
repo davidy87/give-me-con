@@ -26,6 +26,7 @@ public class Brand extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(length = 500)
     private String icon;
 
     @ManyToOne(fetch = FetchType.LAZY)

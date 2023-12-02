@@ -31,7 +31,7 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private String barcode;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
