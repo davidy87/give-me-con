@@ -22,7 +22,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String accessToken = retrieveToken((HttpServletRequest) request);
+        String accessToken = jwtTokenProvider.retrieveToken((HttpServletRequest) request);
 
         log.info("--- In JwtAuthenticationFilter ---");
         log.info("accessToken = {}", accessToken);
@@ -33,16 +33,5 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
 
         chain.doFilter(request, response);
-    }
-
-    private String retrieveToken(HttpServletRequest request) {
-        String grantType = "Bearer ";
-        String bearerToken = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(grantType)) {
-            return bearerToken.substring(grantType.length());
-        }
-
-        return null;
     }
 }
