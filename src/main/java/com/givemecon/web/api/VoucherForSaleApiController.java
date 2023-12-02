@@ -1,18 +1,17 @@
 package com.givemecon.web.api;
 
 import com.givemecon.domain.voucher.VoucherForSaleService;
-import com.givemecon.web.dto.VoucherForSaleDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import static com.givemecon.web.dto.VoucherDto.*;
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/vouchers-for-sale")
 @RestController
@@ -22,11 +21,11 @@ public class VoucherForSaleApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public VoucherForSaleResponse save(Authentication authentication,
+    public VoucherForSaleResponse save(@AuthenticationPrincipal OAuth2User principal,
                                        @RequestBody VoucherForSaleRequest requestDto) {
 
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
-        return voucherForSaleService.save(principal.getUsername(), requestDto);
+        log.info("username = {}", principal.getName());
+        return voucherForSaleService.save(principal.getName(), requestDto);
     }
 
     @DeleteMapping("/{id}")

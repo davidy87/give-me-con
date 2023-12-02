@@ -1,26 +1,20 @@
 package com.givemecon.web.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
-import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherForSale;
 import com.givemecon.domain.voucher.VoucherForSaleRepository;
-import com.givemecon.web.dto.VoucherDto;
-import com.givemecon.web.dto.VoucherForSaleDto;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -41,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(roles = "USER", username = "tester")
 class VoucherForSaleApiControllerTest {
 
     @LocalServerPort
@@ -94,6 +87,10 @@ class VoucherForSaleApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(post(url)
+                .with(SecurityMockMvcRequestPostProcessors.oauth2Login()
+                        .authorities(new SimpleGrantedAuthority("ROLE_USER"))
+                        .attributes(attributes -> attributes.put("sub", "tester"))
+                )
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)));
 
@@ -140,7 +137,11 @@ class VoucherForSaleApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers-for-sale/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url));
+        ResultActions response = mockMvc.perform(delete(url)
+                .with(SecurityMockMvcRequestPostProcessors.oauth2Login()
+                        .authorities(new SimpleGrantedAuthority("ROLE_USER"))
+                        .attributes(attributes -> attributes.put("sub", "tester"))
+                ));
 
         // then
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
