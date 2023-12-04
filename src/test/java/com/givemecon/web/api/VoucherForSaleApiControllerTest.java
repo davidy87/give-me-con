@@ -2,18 +2,24 @@ package com.givemecon.web.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
 import com.givemecon.domain.voucher.VoucherForSale;
 import com.givemecon.domain.voucher.VoucherForSaleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,8 +39,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@WithMockUser(authorities = "ROLE_USER", username = "tester")
 class VoucherForSaleApiControllerTest {
 
     @LocalServerPort
@@ -50,6 +58,9 @@ class VoucherForSaleApiControllerTest {
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setup() {
@@ -68,6 +79,11 @@ class VoucherForSaleApiControllerTest {
                 .role(Role.USER)
                 .build());
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+
+        log.info("accessToken = {}", tokenInfo.getAccessToken());
+
         String title = "Americano T";
         Long price = 4_000L;
         LocalDate expDate = LocalDate.now();
@@ -85,12 +101,8 @@ class VoucherForSaleApiControllerTest {
         // when
         String url = "http://localhost:" + port + "/api/vouchers-for-sale";
 
-        // when
         ResultActions response = mockMvc.perform(post(url)
-                .with(SecurityMockMvcRequestPostProcessors.oauth2Login()
-                        .authorities(new SimpleGrantedAuthority("ROLE_USER"))
-                        .attributes(attributes -> attributes.put("sub", "tester"))
-                )
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)));
 
