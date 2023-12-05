@@ -6,6 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+import static com.givemecon.web.dto.VoucherDto.*;
+
 @RequiredArgsConstructor
 @RequestMapping("/api/like")
 @RestController
@@ -17,6 +21,11 @@ public class VoucherLikedApiController {
     @PostMapping
     public Long save(Authentication authentication, @RequestBody Long voucherId) {
         return voucherLikedService.save(authentication.getName(), voucherId);
+    }
+
+    @GetMapping
+    public List<VoucherResponse> findAllByUsername(Authentication authentication) {
+        return voucherLikedService.findAllByUsername(authentication.getName());
     }
 
     @DeleteMapping

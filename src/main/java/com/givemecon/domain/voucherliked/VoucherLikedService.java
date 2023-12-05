@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.web.dto.VoucherDto.*;
 
 @RequiredArgsConstructor
 @Service
@@ -35,6 +38,17 @@ public class VoucherLikedService {
                 .build());
 
         return voucherLiked.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> findAllByUsername(String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+
+        return voucherLikedRepository.findAll().stream()
+                .filter(entity -> entity.getMember().equals(member))
+                .map(entity -> new VoucherResponse(entity.getVoucher()))
+                .toList();
     }
 
     public void delete(String username, Long voucherId) {
