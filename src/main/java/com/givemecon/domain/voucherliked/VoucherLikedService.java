@@ -29,9 +29,10 @@ public class VoucherLikedService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        VoucherLiked voucherLiked = voucherLikedRepository.save(new VoucherLiked());
-        voucherLiked.setMember(member);
-        voucherLiked.setVoucher(voucher);
+        VoucherLiked voucherLiked = voucherLikedRepository.save(VoucherLiked.builder()
+                .voucher(voucher)
+                .member(member)
+                .build());
 
         return voucherLiked.getId();
     }
