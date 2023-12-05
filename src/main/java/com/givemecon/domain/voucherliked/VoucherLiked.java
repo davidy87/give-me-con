@@ -5,6 +5,7 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,11 +28,9 @@ public class VoucherLiked extends BaseTimeEntity {
     @JoinColumn(name = "voucher_id")
     private Voucher voucher;
 
-    public void setMember(Member member) {
+    @Builder
+    public VoucherLiked(Member member, Voucher voucher) {
         this.member = member;
-    }
-
-    public void setVoucher(Voucher voucher) {
         this.voucher = voucher;
     }
 }

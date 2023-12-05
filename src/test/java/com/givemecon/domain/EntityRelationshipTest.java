@@ -11,6 +11,7 @@ import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucher.VoucherForSale;
 import com.givemecon.domain.voucher.VoucherForSaleRepository;
+import com.givemecon.domain.voucherliked.VoucherLiked;
 import com.givemecon.domain.voucherliked.VoucherLikedRepository;
 import com.givemecon.domain.voucherpurchased.VoucherPurchased;
 import com.givemecon.domain.voucherpurchased.VoucherPurchasedRepository;
@@ -152,6 +153,37 @@ public class EntityRelationshipTest {
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherForSaleList.get(0).getSeller()).isEqualTo(seller);
         assertThat(voucherForSaleList.get(0).getVoucher()).isEqualTo(voucher);
+    }
+
+    @Test
+    void voucherLiked() {
+        // given
+        Member memberSaved = memberRepository.save(Member.builder()
+                .email("test@gmail.com")
+                .username("tester")
+                .role(Role.USER)
+                .build());
+
+        Voucher voucherSaved = voucherRepository.save(Voucher.builder()
+                .title("Americano T")
+                .price(15_000L)
+                .image("americano.jpg")
+                .build());
+
+        VoucherLiked voucherLiked = VoucherLiked.builder()
+                .voucher(voucherSaved)
+                .member(memberSaved)
+                .build();
+
+        VoucherLiked voucherLikedSaved = voucherLikedRepository.save(voucherLiked);
+
+        // when
+        List<VoucherLiked> voucherLikedList = voucherLikedRepository.findAll();
+
+        // then
+        VoucherLiked found = voucherLikedList.get(0);
+        assertThat(found.getMember()).isEqualTo(memberSaved);
+        assertThat(found.getVoucher()).isEqualTo(voucherSaved);
     }
 
     @Test
