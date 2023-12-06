@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherliked;
+package com.givemecon.domain.likedvoucher;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.member.Member;
@@ -14,7 +14,7 @@ import static jakarta.persistence.GenerationType.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class VoucherLiked extends BaseTimeEntity {
+public class LikedVoucher extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -29,7 +29,7 @@ public class VoucherLiked extends BaseTimeEntity {
     private Voucher voucher;
 
     @Builder
-    public VoucherLiked(Member member, Voucher voucher) {
+    public LikedVoucher(Member member, Voucher voucher) {
         this.member = member;
         this.voucher = voucher;
     }

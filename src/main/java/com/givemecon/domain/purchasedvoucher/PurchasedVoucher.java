@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherpurchased;
+package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.brand.Brand;
@@ -17,7 +17,7 @@ import static jakarta.persistence.GenerationType.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class VoucherPurchased extends BaseTimeEntity {
+public class PurchasedVoucher extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -51,7 +51,7 @@ public class VoucherPurchased extends BaseTimeEntity {
     private Member owner;
 
     @Builder
-    public VoucherPurchased(String title, Long price, LocalDate expDate, String barcode, String image) {
+    public PurchasedVoucher(String title, Long price, LocalDate expDate, String barcode, String image) {
         this.title = title;
         this.price = price;
         this.expDate = expDate;
