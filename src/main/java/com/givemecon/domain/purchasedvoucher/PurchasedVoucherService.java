@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherpurchased;
+package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -10,31 +10,31 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.util.error.ErrorCode.*;
-import static com.givemecon.web.dto.VoucherPurchasedDto.*;
+import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class VoucherPurchasedService {
+public class PurchasedVoucherService {
 
     private final MemberRepository memberRepository;
 
     private final VoucherRepository voucherRepository;
 
-    private final VoucherPurchasedRepository voucherPurchasedRepository;
+    private final PurchasedVoucherRepository purchasedVoucherRepository;
 
-    public VoucherPurchasedResponse save(String username, VoucherPurchasedRequest requestDto) {
+    public PurchasedVoucherResponse save(String username, PurchasedVoucherRequest requestDto) {
         Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
         Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        VoucherPurchased voucherPurchased = voucherPurchasedRepository.save(requestDto.toEntity());
-        voucherPurchased.setCategory(voucher.getCategory());
-        voucherPurchased.setBrand(voucher.getBrand());
-        voucherPurchased.setOwner(buyer);
+        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(requestDto.toEntity());
+        purchasedVoucher.setCategory(voucher.getCategory());
+        purchasedVoucher.setBrand(voucher.getBrand());
+        purchasedVoucher.setOwner(buyer);
 
-        return new VoucherPurchasedResponse(voucherPurchased);
+        return new PurchasedVoucherResponse(purchasedVoucher);
     }
 }

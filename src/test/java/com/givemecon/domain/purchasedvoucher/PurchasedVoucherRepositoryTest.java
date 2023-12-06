@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherpurchased;
+package com.givemecon.domain.purchasedvoucher;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,10 @@ import static org.assertj.core.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class VoucherPurchasedRepositoryTest {
+class PurchasedVoucherRepositoryTest {
 
     @Autowired
-    VoucherPurchasedRepository voucherPurchasedRepository;
+    PurchasedVoucherRepository purchasedVoucherRepository;
 
     @Test
     void saveAndFindAll() {
@@ -27,7 +27,7 @@ class VoucherPurchasedRepositoryTest {
         String barcode = "1111 1111 1111";
         String image = "voucher.png";
 
-        VoucherPurchased voucherPurchased = VoucherPurchased.builder()
+        PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
                 .title(title)
                 .price(price)
                 .expDate(expDate)
@@ -36,11 +36,11 @@ class VoucherPurchasedRepositoryTest {
                 .build();
 
         // when
-        voucherPurchasedRepository.save(voucherPurchased);
-        List<VoucherPurchased> voucherPurchasedList = voucherPurchasedRepository.findAll();
+        purchasedVoucherRepository.save(purchasedVoucher);
+        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
-        VoucherPurchased found = voucherPurchasedList.get(0);
+        PurchasedVoucher found = purchasedVoucherList.get(0);
         assertThat(found.getTitle()).isEqualTo(title);
         assertThat(found.getPrice()).isEqualTo(price);
         assertThat(found.getExpDate()).isEqualTo(expDate);
@@ -57,7 +57,7 @@ class VoucherPurchasedRepositoryTest {
         String barcode = "1111 1111 1111";
         String image = "voucher.png";
 
-        VoucherPurchased voucherPurchased = VoucherPurchased.builder()
+        PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
                 .title(title)
                 .price(price)
                 .expDate(expDate)
@@ -66,13 +66,13 @@ class VoucherPurchasedRepositoryTest {
                 .build();
 
         LocalDateTime now = LocalDateTime.now();
-        voucherPurchasedRepository.save(voucherPurchased);
+        purchasedVoucherRepository.save(purchasedVoucher);
 
         // when
-        List<VoucherPurchased> voucherPurchasedList = voucherPurchasedRepository.findAll();
+        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
-        VoucherPurchased found = voucherPurchasedList.get(0);
+        PurchasedVoucher found = purchasedVoucherList.get(0);
         assertThat(found.getCreatedDate()).isAfter(now);
         assertThat(found.getModifiedDate()).isAfter(now);
     }

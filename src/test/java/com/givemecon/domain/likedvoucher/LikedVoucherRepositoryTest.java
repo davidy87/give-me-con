@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherliked;
+package com.givemecon.domain.likedvoucher;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,22 +12,22 @@ import static org.assertj.core.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class VoucherLikedRepositoryTest {
+class LikedVoucherRepositoryTest {
 
     @Autowired
-    VoucherLikedRepository voucherLikedRepository;
+    LikedVoucherRepository likedVoucherRepository;
 
     @Test
     void saveAndFindAll() {
         // given
-        VoucherLiked voucherLiked = new VoucherLiked();
+        LikedVoucher likedVoucher = new LikedVoucher();
 
         // when
-        VoucherLiked saved = voucherLikedRepository.save(voucherLiked);
-        List<VoucherLiked> voucherLikedList = voucherLikedRepository.findAll();
+        LikedVoucher saved = likedVoucherRepository.save(likedVoucher);
+        List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
 
         // then
-        VoucherLiked found = voucherLikedList.get(0);
+        LikedVoucher found = likedVoucherList.get(0);
         assertThat(found.getId()).isEqualTo(saved.getId());
     }
 
@@ -35,13 +35,13 @@ class VoucherLikedRepositoryTest {
     void BaseTimeEntity() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        voucherLikedRepository.save(new VoucherLiked());
+        likedVoucherRepository.save(new LikedVoucher());
 
         // when
-        List<VoucherLiked> voucherLikedList = voucherLikedRepository.findAll();
+        List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
 
         // then
-        VoucherLiked found = voucherLikedList.get(0);
+        LikedVoucher found = likedVoucherList.get(0);
         assertThat(found.getCreatedDate()).isAfter(now);
         assertThat(found.getModifiedDate()).isAfter(now);
     }

@@ -1,16 +1,16 @@
 package com.givemecon.web.dto;
 
-import com.givemecon.domain.voucherpurchased.VoucherPurchased;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
 
-public class VoucherPurchasedDto {
+public class PurchasedVoucherDto {
 
     @Getter
     @Builder
-    public static class VoucherPurchasedRequest {
+    public static class PurchasedVoucherRequest {
 
         private String title;
 
@@ -24,8 +24,8 @@ public class VoucherPurchasedDto {
 
         private Long voucherId;
 
-        public VoucherPurchased toEntity() {
-            return VoucherPurchased.builder()
+        public PurchasedVoucher toEntity() {
+            return PurchasedVoucher.builder()
                     .image(image)
                     .title(title)
                     .price(price)
@@ -36,7 +36,7 @@ public class VoucherPurchasedDto {
     }
 
     @Getter
-    public static class VoucherPurchasedResponse {
+    public static class PurchasedVoucherResponse {
 
         private Long id;
 
@@ -50,13 +50,13 @@ public class VoucherPurchasedDto {
 
         private String barcode;
 
-        public VoucherPurchasedResponse(VoucherPurchased voucherPurchased) {
-            this.id = voucherPurchased.getId();
-            this.title = voucherPurchased.getTitle();
-            this.price = voucherPurchased.getPrice();
-            this.expDate = voucherPurchased.getExpDate();
-            this.barcode = voucherPurchased.getBarcode();
-            this.image = voucherPurchased.getImage();
+        public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
+            this.id = purchasedVoucher.getId();
+            this.title = purchasedVoucher.getTitle();
+            this.price = purchasedVoucher.getPrice();
+            this.expDate = purchasedVoucher.getExpDate();
+            this.barcode = purchasedVoucher.getBarcode();
+            this.image = purchasedVoucher.getImage();
         }
     }
 }

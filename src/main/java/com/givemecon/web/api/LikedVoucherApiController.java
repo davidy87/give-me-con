@@ -1,6 +1,6 @@
 package com.givemecon.web.api;
 
-import com.givemecon.domain.voucherliked.VoucherLikedService;
+import com.givemecon.domain.likedvoucher.LikedVoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -13,23 +13,23 @@ import static com.givemecon.web.dto.VoucherDto.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/like")
 @RestController
-public class VoucherLikedApiController {
+public class LikedVoucherApiController {
 
-    private final VoucherLikedService voucherLikedService;
+    private final LikedVoucherService likedVoucherService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long save(Authentication authentication, @RequestBody Long voucherId) {
-        return voucherLikedService.save(authentication.getName(), voucherId);
+        return likedVoucherService.save(authentication.getName(), voucherId);
     }
 
     @GetMapping
     public List<VoucherResponse> findAllByUsername(Authentication authentication) {
-        return voucherLikedService.findAllByUsername(authentication.getName());
+        return likedVoucherService.findAllByUsername(authentication.getName());
     }
 
     @DeleteMapping
     public void delete(Authentication authentication, @RequestBody Long voucherId) {
-        voucherLikedService.delete(authentication.getName(), voucherId);
+        likedVoucherService.delete(authentication.getName(), voucherId);
     }
 }

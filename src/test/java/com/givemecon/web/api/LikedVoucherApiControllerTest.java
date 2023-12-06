@@ -1,8 +1,6 @@
 package com.givemecon.web.api;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
@@ -10,8 +8,8 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucherpurchased.VoucherPurchased;
-import com.givemecon.domain.voucherpurchased.VoucherPurchasedRepository;
+import com.givemecon.domain.likedvoucher.LikedVoucher;
+import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,20 +24,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import static com.givemecon.web.dto.VoucherPurchasedDto.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(roles = "USER", username = "tester")
-class VoucherPurchasedApiControllerTest {
+class LikedVoucherApiControllerTest {
 
     @LocalServerPort
     int port;
@@ -59,7 +55,7 @@ class VoucherPurchasedApiControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
-    VoucherPurchasedRepository voucherPurchasedRepository;
+    LikedVoucherRepository likedVoucherRepository;
 
     @BeforeEach
     void setup() {
@@ -70,49 +66,39 @@ class VoucherPurchasedApiControllerTest {
     }
 
     @Test
-    void saveVoucherPurchased() throws Exception {
+    void saveLikedVoucher() throws Exception {
         // given
-        Voucher voucherSaved = voucherRepository.save(Voucher.builder()
-                .image("voucher.png")
+        Voucher voucher = Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
-                .build());
+                .image("voucher.png")
+                .build();
 
-        memberRepository.save(Member.builder()
+        Member member = Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
                 .role(Role.USER)
-                .build());
-
-        VoucherPurchasedRequest requestDto = VoucherPurchasedRequest.builder()
-                .image("voucher.png")
-                .title("voucher")
-                .price(4_000L)
-                .expDate(LocalDate.now())
-                .barcode("1111 1111 1111")
-                .voucherId(voucherSaved.getId())
                 .build();
 
+        Voucher voucherSaved = voucherRepository.save(voucher);
+        Member memberSaved = memberRepository.save(member);
+
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
-        String url = "http://localhost:" + port + "/api/purchased";
+        String url = "http://localhost:" + port + "/api/like";
 
         // when
         ResultActions response = mockMvc.perform(post(url)
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())));
 
         // then
-        List<VoucherPurchased> voucherPurchasedList = voucherPurchasedRepository.findAll();
-        VoucherPurchased found = voucherPurchasedList.get(0);
+        response.andExpect(status().isCreated());
 
-        response
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(found.getId()))
-                .andExpect(jsonPath("image").value(found.getImage()))
-                .andExpect(jsonPath("title").value(found.getTitle()))
-                .andExpect(jsonPath("price").value(found.getPrice()))
-                .andExpect(jsonPath("expDate").value(found.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(found.getBarcode()));
+        List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
+        LikedVoucher found = likedVoucherList.get(0);
+
+        assertThat(found.getVoucher()).isEqualTo(voucherSaved);
+        assertThat(found.getMember()).isEqualTo(memberSaved);
     }
 }

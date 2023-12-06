@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherliked;
+package com.givemecon.domain.likedvoucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -17,13 +17,13 @@ import static com.givemecon.web.dto.VoucherDto.*;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class VoucherLikedService {
+public class LikedVoucherService {
 
     private final MemberRepository memberRepository;
 
     private final VoucherRepository voucherRepository;
 
-    private final VoucherLikedRepository voucherLikedRepository;
+    private final LikedVoucherRepository likedVoucherRepository;
 
     public Long save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
@@ -32,12 +32,12 @@ public class VoucherLikedService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        VoucherLiked voucherLiked = voucherLikedRepository.save(VoucherLiked.builder()
+        LikedVoucher likedVoucher = likedVoucherRepository.save(LikedVoucher.builder()
                 .voucher(voucher)
                 .member(member)
                 .build());
 
-        return voucherLiked.getId();
+        return likedVoucher.getId();
     }
 
     @Transactional(readOnly = true)
@@ -45,7 +45,7 @@ public class VoucherLikedService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        return voucherLikedRepository.findAll().stream()
+        return likedVoucherRepository.findAll().stream()
                 .filter(entity -> entity.getMember().equals(member))
                 .map(entity -> new VoucherResponse(entity.getVoucher()))
                 .toList();
@@ -58,11 +58,11 @@ public class VoucherLikedService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        VoucherLiked voucherLiked = voucherLikedRepository.findAll().stream()
+        LikedVoucher likedVoucher = likedVoucherRepository.findAll().stream()
                 .filter(entity -> entity.getMember().equals(member) && entity.getVoucher().equals(voucher))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));// TODO: 예외 처리 변경 필요
 
-        voucherLikedRepository.delete(voucherLiked);
+        likedVoucherRepository.delete(likedVoucher);
     }
 }

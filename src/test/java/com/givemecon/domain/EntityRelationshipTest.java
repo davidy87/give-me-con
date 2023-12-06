@@ -11,10 +11,10 @@ import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucher.VoucherForSale;
 import com.givemecon.domain.voucher.VoucherForSaleRepository;
-import com.givemecon.domain.voucherliked.VoucherLiked;
-import com.givemecon.domain.voucherliked.VoucherLikedRepository;
-import com.givemecon.domain.voucherpurchased.VoucherPurchased;
-import com.givemecon.domain.voucherpurchased.VoucherPurchasedRepository;
+import com.givemecon.domain.likedvoucher.LikedVoucher;
+import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +47,10 @@ public class EntityRelationshipTest {
     VoucherForSaleRepository voucherForSaleRepository;
 
     @Autowired
-    VoucherLikedRepository voucherLikedRepository;
+    LikedVoucherRepository likedVoucherRepository;
 
     @Autowired
-    VoucherPurchasedRepository voucherPurchasedRepository;
+    PurchasedVoucherRepository purchasedVoucherRepository;
 
     @Test
     void brand() {
@@ -156,7 +156,7 @@ public class EntityRelationshipTest {
     }
 
     @Test
-    void voucherLiked() {
+    void likedVoucher() {
         // given
         Member memberSaved = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
@@ -170,24 +170,24 @@ public class EntityRelationshipTest {
                 .image("americano.jpg")
                 .build());
 
-        VoucherLiked voucherLiked = VoucherLiked.builder()
+        LikedVoucher likedVoucher = LikedVoucher.builder()
                 .voucher(voucherSaved)
                 .member(memberSaved)
                 .build();
 
-        VoucherLiked voucherLikedSaved = voucherLikedRepository.save(voucherLiked);
+        LikedVoucher likedVoucherSaved = likedVoucherRepository.save(likedVoucher);
 
         // when
-        List<VoucherLiked> voucherLikedList = voucherLikedRepository.findAll();
+        List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
 
         // then
-        VoucherLiked found = voucherLikedList.get(0);
+        LikedVoucher found = likedVoucherList.get(0);
         assertThat(found.getMember()).isEqualTo(memberSaved);
         assertThat(found.getVoucher()).isEqualTo(voucherSaved);
     }
 
     @Test
-    void VoucherPurchased() {
+    void purchasedVoucher() {
         // given
         Category category = Category.builder()
                 .name("coffee")
@@ -205,7 +205,7 @@ public class EntityRelationshipTest {
                 .role(Role.USER)
                 .build();
 
-        VoucherPurchased voucherPurchased = VoucherPurchased.builder()
+        PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
                 .title("voucher")
                 .price(4_000L)
                 .expDate(LocalDate.now())
@@ -216,16 +216,16 @@ public class EntityRelationshipTest {
         Category categorySaved = categoryRepository.save(category);
         Brand brandSaved = brandRepository.save(brand);
         Member ownerSaved = memberRepository.save(owner);
-        VoucherPurchased voucherPurchasedSaved = voucherPurchasedRepository.save(voucherPurchased);
+        PurchasedVoucher purchasedVoucherSaved = purchasedVoucherRepository.save(purchasedVoucher);
 
         // when
-        voucherPurchasedSaved.setCategory(categorySaved);
-        voucherPurchasedSaved.setBrand(brandSaved);
-        voucherPurchasedSaved.setOwner(ownerSaved);
-        List<VoucherPurchased> voucherPurchasedList = voucherPurchasedRepository.findAll();
+        purchasedVoucherSaved.setCategory(categorySaved);
+        purchasedVoucherSaved.setBrand(brandSaved);
+        purchasedVoucherSaved.setOwner(ownerSaved);
+        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
-        VoucherPurchased found = voucherPurchasedList.get(0);
+        PurchasedVoucher found = purchasedVoucherList.get(0);
         assertThat(found.getCategory()).isEqualTo(categorySaved);
         assertThat(found.getBrand()).isEqualTo(brandSaved);
         assertThat(found.getOwner()).isEqualTo(ownerSaved);
