@@ -11,7 +11,7 @@ import java.util.List;
 import static com.givemecon.web.dto.VoucherDto.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/like")
+@RequestMapping("/api/liked-vouchers")
 @RestController
 public class LikedVoucherApiController {
 

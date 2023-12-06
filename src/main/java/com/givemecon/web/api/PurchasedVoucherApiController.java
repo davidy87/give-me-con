@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/purchased")
+@RequestMapping("/api/purchased-vouchers")
 @RestController
 public class PurchasedVoucherApiController {
 

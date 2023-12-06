@@ -94,7 +94,7 @@ class PurchasedVoucherApiControllerTest {
                 .build();
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
-        String url = "http://localhost:" + port + "/api/purchased";
+        String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
         ResultActions response = mockMvc.perform(post(url)
