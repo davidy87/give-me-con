@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 
 @RequiredArgsConstructor
@@ -17,9 +19,9 @@ public class PurchasedVoucherApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PurchasedVoucherResponse save(Authentication authentication,
-                                         @RequestBody PurchasedVoucherRequest requestDto) {
+    public List<PurchasedVoucherResponse> saveAll(Authentication authentication,
+                                                  @RequestBody List<PurchasedVoucherRequest> requestDto) {
 
-        return purchasedVoucherService.save(authentication.getName(), requestDto);
+        return purchasedVoucherService.saveAll(authentication.getName(), requestDto);
     }
 }

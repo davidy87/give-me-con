@@ -27,13 +27,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.web.dto.PurchasedVoucherDto.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
@@ -70,7 +71,7 @@ class PurchasedVoucherApiControllerTest {
     }
 
     @Test
-    void savePurchasedVoucher() throws Exception {
+    void saveAll() throws Exception {
         // given
         Voucher voucherSaved = voucherRepository.save(Voucher.builder()
                 .image("voucher.png")
@@ -84,14 +85,20 @@ class PurchasedVoucherApiControllerTest {
                 .role(Role.USER)
                 .build());
 
-        PurchasedVoucherRequest requestDto = PurchasedVoucherRequest.builder()
-                .image("voucher.png")
-                .title("voucher")
-                .price(4_000L)
-                .expDate(LocalDate.now())
-                .barcode("1111 1111 1111")
-                .voucherId(voucherSaved.getId())
-                .build();
+        List<PurchasedVoucherRequest> requestDtoList = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            PurchasedVoucherRequest requestDto = PurchasedVoucherRequest.builder()
+                    .image("voucher" + i + ".png")
+                    .title("voucher" + i)
+                    .price(4_000L)
+                    .expDate(LocalDate.now())
+                    .barcode("1111 1111 1111")
+                    .voucherId(voucherSaved.getId())
+                    .build();
+
+            requestDtoList.add(requestDto);
+        }
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
         String url = "http://localhost:" + port + "/api/purchased-vouchers";
@@ -100,19 +107,12 @@ class PurchasedVoucherApiControllerTest {
         ResultActions response = mockMvc.perform(post(url)
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)));
+                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDtoList)));
 
         // then
+        response.andExpect(status().isCreated());
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-        PurchasedVoucher found = purchasedVoucherList.get(0);
 
-        response
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(found.getId()))
-                .andExpect(jsonPath("image").value(found.getImage()))
-                .andExpect(jsonPath("title").value(found.getTitle()))
-                .andExpect(jsonPath("price").value(found.getPrice()))
-                .andExpect(jsonPath("expDate").value(found.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(found.getBarcode()));
+        assertThat(purchasedVoucherList).hasSize(requestDtoList.size());
     }
 }

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 
@@ -23,18 +25,25 @@ public class PurchasedVoucherService {
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
 
-    public PurchasedVoucherResponse save(String username, PurchasedVoucherRequest requestDto) {
+    public List<PurchasedVoucherResponse> saveAll(String username, List<PurchasedVoucherRequest> requestDtoList) {
         Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
+        Voucher voucher = voucherRepository.findById(requestDtoList.get(0).getVoucherId())
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(requestDto.toEntity());
-        purchasedVoucher.setCategory(voucher.getCategory());
-        purchasedVoucher.setBrand(voucher.getBrand());
-        purchasedVoucher.setOwner(buyer);
+        List<PurchasedVoucher> savedList = purchasedVoucherRepository.saveAll(requestDtoList.stream()
+                .map(PurchasedVoucherRequest::toEntity)
+                .toList());
 
-        return new PurchasedVoucherResponse(purchasedVoucher);
+        savedList.forEach(purchasedVoucher -> {
+            purchasedVoucher.setCategory(voucher.getCategory());
+            purchasedVoucher.setBrand(voucher.getBrand());
+            purchasedVoucher.setOwner(buyer);
+        });
+
+        return savedList.stream()
+                .map(PurchasedVoucherResponse::new)
+                .toList();
     }
 }
