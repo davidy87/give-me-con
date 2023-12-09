@@ -24,4 +24,9 @@ public class PurchasedVoucherApiController {
 
         return purchasedVoucherService.saveAll(authentication.getName(), requestDto);
     }
+
+    @GetMapping
+    public List<PurchasedVoucherResponse> findAllByUsername(Authentication authentication) {
+        return purchasedVoucherService.findAllByUsername(authentication.getName());
+    }
 }

@@ -34,6 +34,7 @@ import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,5 +115,46 @@ class PurchasedVoucherApiControllerTest {
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         assertThat(purchasedVoucherList).hasSize(requestDtoList.size());
+    }
+
+    @Test
+    void findAllByUsername() throws Exception {
+        // given
+        Member owner = memberRepository.save(Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(Role.USER)
+                .build());
+
+        List<PurchasedVoucher> entityList = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
+                    .image("voucher" + i + ".png")
+                    .title("voucher" + i)
+                    .price(4_000L)
+                    .expDate(LocalDate.now())
+                    .barcode("1111 1111 1111")
+                    .build();
+
+            purchasedVoucher.setOwner(owner);
+            entityList.add(purchasedVoucher);
+        }
+
+        purchasedVoucherRepository.saveAll(entityList);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        String url = "http://localhost:" + port + "/api/purchased-vouchers";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url)
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk());
+        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
+
+        assertThat(purchasedVoucherList).hasSize(entityList.size());
+        purchasedVoucherList.forEach(purchasedVoucher -> assertThat(purchasedVoucher.getOwner()).isEqualTo(owner));
     }
 }

@@ -46,4 +46,15 @@ public class PurchasedVoucherService {
                 .map(PurchasedVoucherResponse::new)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public List<PurchasedVoucherResponse> findAllByUsername(String username) {
+        Member owner = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+
+        return purchasedVoucherRepository.findAll().stream()
+                .filter(entity -> entity.getOwner().equals(owner))
+                .map(PurchasedVoucherResponse::new)
+                .toList();
+    }
 }
