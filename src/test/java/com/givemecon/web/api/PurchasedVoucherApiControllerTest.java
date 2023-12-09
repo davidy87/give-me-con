@@ -137,7 +137,7 @@ class PurchasedVoucherApiControllerTest {
                     .barcode("1111 1111 1111")
                     .build();
 
-            purchasedVoucher.setOwner(owner);
+            owner.addPurchasedVoucher(purchasedVoucher);
             entityList.add(purchasedVoucher);
         }
 

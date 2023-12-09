@@ -39,7 +39,7 @@ public class PurchasedVoucherService {
         savedList.forEach(purchasedVoucher -> {
             purchasedVoucher.setCategory(voucher.getCategory());
             purchasedVoucher.setBrand(voucher.getBrand());
-            purchasedVoucher.setOwner(buyer);
+            buyer.addPurchasedVoucher(purchasedVoucher);
         });
 
         return savedList.stream()
@@ -52,8 +52,7 @@ public class PurchasedVoucherService {
         Member owner = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
 
-        return purchasedVoucherRepository.findAll().stream()
-                .filter(entity -> entity.getOwner().equals(owner))
+        return owner.getPurchasedVoucherList().stream()
                 .map(PurchasedVoucherResponse::new)
                 .toList();
     }
