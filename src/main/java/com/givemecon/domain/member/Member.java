@@ -2,11 +2,15 @@ package com.givemecon.domain.member;
 
 import com.givemecon.config.auth.OAuth2Provider;
 import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.*;
 
@@ -33,6 +37,9 @@ public class Member extends BaseTimeEntity {
     @Column(length = 10)
     private OAuth2Provider provider;
 
+    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    List<PurchasedVoucher> purchasedVoucherList = new ArrayList<>();
+
     @Builder
     public Member(String email, String username, Role role) {
         this.email = email;
@@ -57,5 +64,10 @@ public class Member extends BaseTimeEntity {
 
     public String getRoleKey() {
         return role.getKey();
+    }
+
+    public void addPurchasedVoucher(PurchasedVoucher purchasedVoucher) {
+        purchasedVoucherList.add(purchasedVoucher);
+        purchasedVoucher.setOwner(this);
     }
 }

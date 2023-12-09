@@ -187,7 +187,7 @@ public class EntityRelationshipTest {
     }
 
     @Test
-    void VoucherPurchased() {
+    void purchasedVoucher() {
         // given
         Category category = Category.builder()
                 .name("coffee")
@@ -221,7 +221,7 @@ public class EntityRelationshipTest {
         // when
         purchasedVoucherSaved.setCategory(categorySaved);
         purchasedVoucherSaved.setBrand(brandSaved);
-        purchasedVoucherSaved.setOwner(ownerSaved);
+        ownerSaved.addPurchasedVoucher(purchasedVoucherSaved);
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
