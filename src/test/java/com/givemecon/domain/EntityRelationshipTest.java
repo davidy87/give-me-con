@@ -221,7 +221,7 @@ public class EntityRelationshipTest {
         // when
         purchasedVoucherSaved.setCategory(categorySaved);
         purchasedVoucherSaved.setBrand(brandSaved);
-        purchasedVoucherSaved.setOwner(ownerSaved);
+        ownerSaved.addPurchasedVoucher(purchasedVoucherSaved);
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
