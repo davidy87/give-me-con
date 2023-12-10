@@ -56,4 +56,15 @@ public class PurchasedVoucherService {
                 .map(PurchasedVoucherResponse::new)
                 .toList();
     }
+
+    public PurchasedVoucherResponse find(String username, Long id) {
+        Member owner = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+
+        return owner.getPurchasedVoucherList().stream()
+                .filter(purchasedVoucher -> purchasedVoucher.getId().equals(id))
+                .map(PurchasedVoucherResponse::new)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+    }
 }

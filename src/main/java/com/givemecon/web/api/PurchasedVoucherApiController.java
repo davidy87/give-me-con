@@ -29,4 +29,9 @@ public class PurchasedVoucherApiController {
     public List<PurchasedVoucherResponse> findAllByUsername(Authentication authentication) {
         return purchasedVoucherService.findAllByUsername(authentication.getName());
     }
+
+    @GetMapping("/{id}")
+    public PurchasedVoucherResponse find(Authentication authentication, @PathVariable Long id) {
+        return purchasedVoucherService.find(authentication.getName(), id);
+    }
 }
