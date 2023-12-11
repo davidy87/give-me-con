@@ -50,6 +50,8 @@ public class PurchasedVoucherDto {
 
         private String barcode;
 
+        private Boolean valid;
+
         public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
             this.id = purchasedVoucher.getId();
             this.title = purchasedVoucher.getTitle();
@@ -57,6 +59,7 @@ public class PurchasedVoucherDto {
             this.expDate = purchasedVoucher.getExpDate();
             this.barcode = purchasedVoucher.getBarcode();
             this.image = purchasedVoucher.getImage();
+            this.valid = purchasedVoucher.getValid();
         }
     }
 }

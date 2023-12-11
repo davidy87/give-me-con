@@ -34,4 +34,9 @@ public class PurchasedVoucherApiController {
     public PurchasedVoucherResponse find(Authentication authentication, @PathVariable Long id) {
         return purchasedVoucherService.find(authentication.getName(), id);
     }
+
+    @PutMapping("/{id}")
+    public PurchasedVoucherResponse updateValidity(Authentication authentication, @PathVariable Long id) {
+        return purchasedVoucherService.updateValidity(authentication.getName(), id);
+    }
 }

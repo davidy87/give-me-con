@@ -34,8 +34,7 @@ import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -192,6 +191,44 @@ class PurchasedVoucherApiControllerTest {
                 .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
                 .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
                 .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()));
+                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
+                .andExpect(jsonPath("valid").value(purchasedVoucher.getValid()));
+    }
+
+    @Test
+    void updateValidity() throws Exception {
+        // given
+        Member owner = memberRepository.save(Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(Role.USER)
+                .build());
+
+        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(PurchasedVoucher.builder()
+                .image("voucher.png")
+                .title("voucher")
+                .price(4_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .build());
+
+        owner.addPurchasedVoucher(purchasedVoucher);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
+
+        // when
+        ResultActions response = mockMvc.perform(put(url)
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
+                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
+                .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
+                .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
+                .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
+                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
+                .andExpect(jsonPath("valid").value(purchasedVoucher.getValid()));
     }
 }

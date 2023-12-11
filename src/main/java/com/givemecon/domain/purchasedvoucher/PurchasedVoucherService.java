@@ -67,4 +67,18 @@ public class PurchasedVoucherService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
     }
+
+    public PurchasedVoucherResponse updateValidity(String username, Long id) {
+        Member owner = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+
+        PurchasedVoucher purchasedVoucher = owner.getPurchasedVoucherList().stream()
+                .filter(entity -> entity.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+
+        purchasedVoucher.updateValidity();
+
+        return new PurchasedVoucherResponse(purchasedVoucher);
+    }
 }
