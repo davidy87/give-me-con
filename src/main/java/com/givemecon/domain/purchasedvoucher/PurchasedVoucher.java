@@ -54,13 +54,13 @@ public class PurchasedVoucher extends BaseTimeEntity {
     private Member owner;
 
     @Builder
-    public PurchasedVoucher(String title, Long price, LocalDate expDate, String barcode, String image, Boolean valid) {
+    public PurchasedVoucher(String title, Long price, LocalDate expDate, String barcode, String image) {
         this.title = title;
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
         this.image = image;
-        this.valid = valid;
+        this.valid = true;
     }
 
     public void setCategory(Category category) {
@@ -73,5 +73,9 @@ public class PurchasedVoucher extends BaseTimeEntity {
 
     public void setOwner(Member owner) {
         this.owner = owner;
+    }
+
+    public void updateValidity() {
+        valid = !valid;
     }
 }

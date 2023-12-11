@@ -211,7 +211,6 @@ public class EntityRelationshipTest {
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .image("voucher.png")
-                .valid(true)
                 .build();
 
         Category categorySaved = categoryRepository.save(category);
