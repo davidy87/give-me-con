@@ -38,6 +38,9 @@ public class PurchasedVoucher extends BaseTimeEntity {
     @Column(nullable = false, length = 500)
     private String image;
 
+    @Column(nullable = false)
+    private Boolean valid;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -51,12 +54,13 @@ public class PurchasedVoucher extends BaseTimeEntity {
     private Member owner;
 
     @Builder
-    public PurchasedVoucher(String title, Long price, LocalDate expDate, String barcode, String image) {
+    public PurchasedVoucher(String title, Long price, LocalDate expDate, String barcode, String image, Boolean valid) {
         this.title = title;
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
         this.image = image;
+        this.valid = valid;
     }
 
     public void setCategory(Category category) {

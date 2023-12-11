@@ -26,6 +26,7 @@ class PurchasedVoucherRepositoryTest {
         LocalDate expDate = LocalDate.now();
         String barcode = "1111 1111 1111";
         String image = "voucher.png";
+        Boolean valid = true;
 
         PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
                 .title(title)
@@ -33,6 +34,7 @@ class PurchasedVoucherRepositoryTest {
                 .expDate(expDate)
                 .barcode(barcode)
                 .image(image)
+                .valid(valid)
                 .build();
 
         // when
@@ -46,6 +48,7 @@ class PurchasedVoucherRepositoryTest {
         assertThat(found.getExpDate()).isEqualTo(expDate);
         assertThat(found.getBarcode()).isEqualTo(barcode);
         assertThat(found.getImage()).isEqualTo(image);
+        assertThat(found.getValid()).isEqualTo(valid);
     }
 
     @Test
@@ -56,6 +59,7 @@ class PurchasedVoucherRepositoryTest {
         LocalDate expDate = LocalDate.now();
         String barcode = "1111 1111 1111";
         String image = "voucher.png";
+        Boolean valid = true;
 
         PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
                 .title(title)
@@ -63,6 +67,7 @@ class PurchasedVoucherRepositoryTest {
                 .expDate(expDate)
                 .barcode(barcode)
                 .image(image)
+                .valid(valid)
                 .build();
 
         LocalDateTime now = LocalDateTime.now();
