@@ -34,7 +34,6 @@ class PurchasedVoucherRepositoryTest {
                 .expDate(expDate)
                 .barcode(barcode)
                 .image(image)
-                .valid(valid)
                 .build();
 
         // when
@@ -67,7 +66,6 @@ class PurchasedVoucherRepositoryTest {
                 .expDate(expDate)
                 .barcode(barcode)
                 .image(image)
-                .valid(valid)
                 .build();
 
         LocalDateTime now = LocalDateTime.now();
