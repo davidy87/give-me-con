@@ -1,10 +1,7 @@
 package com.givemecon.config.auth.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -69,7 +66,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보 추출
-    public Authentication getAuthentication(String accessToken) {
+    public Authentication getAuthentication(String accessToken) throws ClaimJwtException {
         Claims claims = getClaims(accessToken);
         Object auth = claims.get("auth");
 
@@ -99,19 +96,6 @@ public class JwtTokenProvider {
         }
 
         return null;
-    }
-
-    public boolean isTokenValidate(String token) throws ExpiredJwtException {
-//        try {
-//            getClaims(token);
-//            return true;
-//        } catch (Exception e) {
-//            log.info("Exception: ", e);
-//        }
-//
-//        return false;
-        getClaims(token);
-        return true;
     }
 
     private Claims getClaims(String accessToken) {

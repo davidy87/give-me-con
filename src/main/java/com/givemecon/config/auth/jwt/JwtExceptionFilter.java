@@ -3,7 +3,7 @@ package com.givemecon.config.auth.jwt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.error.ErrorResponse;
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +17,6 @@ import java.io.IOException;
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -25,12 +24,12 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
+        } catch (JwtException e) {
             log.info("Access Token 만료");
 
             ErrorResponse errorResponse = ErrorResponse.builder()
                     .code(ErrorCode.TOKEN_EXPIRED.getCode())
-                    .status(ErrorCode.TOKEN_EXPIRED.getStatus().value())
+                    .status(ErrorCode.TOKEN_EXPIRED.getStatus())
                     .message(ErrorCode.TOKEN_EXPIRED.getMessage())
                     .build();
 

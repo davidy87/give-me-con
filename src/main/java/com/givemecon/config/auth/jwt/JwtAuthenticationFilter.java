@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         log.info("--- In JwtAuthenticationFilter ---");
         log.info("accessToken = {}", accessToken);
 
-        if (accessToken != null && jwtTokenProvider.isTokenValidate(accessToken)) {
+        if (accessToken != null) {
             Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
