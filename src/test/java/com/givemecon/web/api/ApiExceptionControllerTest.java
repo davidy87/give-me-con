@@ -1,11 +1,14 @@
 package com.givemecon.web.api;
 
+import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.util.error.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -15,8 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,6 +34,9 @@ public class ApiExceptionControllerTest {
     WebApplicationContext context;
 
     MockMvc mockMvc;
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setup() {
@@ -52,7 +57,7 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.name()))
+                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
                 .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
     }
@@ -68,7 +73,7 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.name()))
+                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
                 .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
     }
@@ -84,7 +89,7 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.name()))
+                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
                 .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
     }
@@ -100,8 +105,26 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.name()))
+                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
                 .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
+    }
+
+    @Test
+    void jwtException() throws Exception {
+        // given
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        String invalidAccessToken = tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken() + "a";
+        String url = "http://localhost:" + port + "/api/liked-vouchers/" + 1;
+
+        // when
+        ResultActions response = mockMvc.perform(get(url)
+                .header("Authorization", invalidAccessToken));
+
+        // then
+        response.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("code").value(ErrorCode.TOKEN_EXPIRED.getCode()))
+                .andExpect(jsonPath("status").value(ErrorCode.TOKEN_EXPIRED.getStatus()))
+                .andExpect(jsonPath("message").value(ErrorCode.TOKEN_EXPIRED.getMessage()));
     }
 }
