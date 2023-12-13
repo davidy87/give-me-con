@@ -102,14 +102,16 @@ public class JwtTokenProvider {
     }
 
     public boolean isTokenValidate(String token) throws ExpiredJwtException {
-        try {
-            getClaims(token);
-            return true;
-        } catch (Exception e) {
-            log.info("Exception: ", e);
-        }
-
-        return false;
+//        try {
+//            getClaims(token);
+//            return true;
+//        } catch (Exception e) {
+//            log.info("Exception: ", e);
+//        }
+//
+//        return false;
+        getClaims(token);
+        return true;
     }
 
     private Claims getClaims(String accessToken) {
