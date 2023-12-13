@@ -2,6 +2,7 @@ package com.givemecon.config.auth.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -100,7 +101,7 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public boolean isTokenValidate(String token) {
+    public boolean isTokenValidate(String token) throws ExpiredJwtException {
         try {
             getClaims(token);
             return true;

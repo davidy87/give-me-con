@@ -1,6 +1,7 @@
 package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.jwt.JwtAuthenticationFilter;
+import com.givemecon.config.auth.jwt.JwtExceptionFilter;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -62,6 +63,10 @@ public class SecurityConfig {
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider),
                         OAuth2LoginAuthenticationFilter.class
+                )
+                .addFilterBefore(
+                        new JwtExceptionFilter(),
+                        JwtAuthenticationFilter.class
                 );
 
         return http.build();
