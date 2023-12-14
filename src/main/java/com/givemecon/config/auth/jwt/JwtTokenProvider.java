@@ -66,7 +66,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보 추출
-    public Authentication getAuthentication(String accessToken) throws ClaimJwtException {
+    public Authentication getAuthentication(String accessToken) throws JwtException {
         Claims claims = getClaims(accessToken);
         Object auth = claims.get("auth");
 
