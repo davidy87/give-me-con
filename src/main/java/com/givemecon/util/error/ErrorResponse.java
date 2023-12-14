@@ -7,9 +7,9 @@ import lombok.Getter;
 @Builder
 public class ErrorResponse {
 
-    private String code;
-
     private int status;
+
+    private String code;
 
     private String message;
 }
