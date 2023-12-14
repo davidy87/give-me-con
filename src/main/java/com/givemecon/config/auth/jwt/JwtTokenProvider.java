@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -28,7 +29,9 @@ public class JwtTokenProvider {
 
     private final SecretKey key;
 
-    private static final int DURATION = 1000 * 60 * 30; // 30 mins
+    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
+
+    private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
     public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret) {
         if (jwtSecret.equals("test")) {
@@ -44,17 +47,16 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
 
         Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + DURATION);
 
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
-                .setExpiration(expirationDate)
+                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_DURATION))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now.getTime() + DURATION))
+                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_DURATION))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
