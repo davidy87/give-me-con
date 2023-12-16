@@ -2,6 +2,10 @@ package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.domain.member.Member;
+import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.util.error.ErrorCode;
+import com.givemecon.util.exception.EntityNotFoundException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,14 +29,20 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    private final MemberRepository memberRepository;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
         log.info("--- In AuthSuccessHandler ---");
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
         OAuth2User principal = (OAuth2User) authentication.getPrincipal();
+
+        Member member = memberRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grantType", tokenInfo.getGrantType());

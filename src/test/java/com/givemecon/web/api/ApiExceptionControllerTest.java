@@ -2,13 +2,15 @@ package com.givemecon.web.api;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.domain.member.Member;
+import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.member.Role;
 import com.givemecon.util.error.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -37,6 +39,9 @@ public class ApiExceptionControllerTest {
 
     @Autowired
     JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    MemberRepository memberRepository;
 
     @BeforeEach
     void setup() {
@@ -113,7 +118,13 @@ public class ApiExceptionControllerTest {
     @Test
     void jwtException() throws Exception {
         // given
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        Member member = memberRepository.save(Member.builder()
+                .email("test@gmail.com")
+                .username("tester")
+                .role(Role.USER)
+                .build());
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
         String invalidAccessToken = tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken() + "a";
         String url = "http://localhost:" + port + "/api/liked-vouchers/" + 1;
 

@@ -1,6 +1,7 @@
 package com.givemecon.config.auth.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.domain.member.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -14,6 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
@@ -22,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -29,36 +32,33 @@ public class JwtTokenProvider {
 
     private final SecretKey key;
 
-    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
+    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(1).toMillis(); // 30 mins
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret) {
+    private static final long REFRESH_TOKEN_DURATION = Duration.ofMinutes(5).toMillis(); // 14 days
+
+    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret, RefreshTokenRepository refreshTokenRepository) {
         if (jwtSecret.equals("test")) {
             this.key = null;
         } else {
             this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
         }
+
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    public TokenInfo generateToken(Authentication authentication) {
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
+    /**
+     * 로그인 성공 시, 응답으로 전달하는 토큰 정보
+     * @param member 로그인 성공 후 생성된 사용자 정보
+     * @return {@link TokenInfo} Grant type, access token, refresh token이 담겨있는 객체. API 응답으로 전달.
+     */
+    @Transactional
+    public TokenInfo generateToken(Member member) {
+        String accessToken = generateAccessToken(member);
+        String refreshToken = generateRefreshToken();
 
-        Date now = new Date();
-
-        String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("auth", authorities)
-                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_DURATION))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now.getTime() + REFRESH_TOKEN_DURATION))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        refreshTokenRepository.save(new RefreshToken(member.getId(), refreshToken));
 
         return TokenInfo.builder()
                 .grantType("Bearer")
@@ -67,7 +67,32 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    // JWT 토큰을 복호화하여 토큰에 들어있는 정보 추출
+    public String generateAccessToken(Member member) {
+        String authorities = Stream.of(new SimpleGrantedAuthority(member.getRoleKey()))
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        return Jwts.builder()
+                .setSubject(member.getUsername())
+                .claim("auth", authorities)
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String generateRefreshToken() {
+        return Jwts.builder()
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    /**
+     *
+     * @param accessToken 사용자의 access token
+     * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token
+     * @throws JwtException getClaims 호출 시, accessToken이 올바르지 않다면, JwtException을 던짐
+     */
     public Authentication getAuthentication(String accessToken) throws JwtException {
         Claims claims = getClaims(accessToken);
         Object auth = claims.get("auth");
@@ -89,6 +114,11 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    /**
+     * 요청으로 전달된 토큰을 추출
+     * @param request API 요청
+     * @return token (만약 올바르지 않은 요청이면 <code>null</code>)
+     */
     public String retrieveToken(HttpServletRequest request) {
         String grantType = "Bearer ";
         String bearerToken = request.getHeader("Authorization");
@@ -100,7 +130,7 @@ public class JwtTokenProvider {
         return null;
     }
 
-    private Claims getClaims(String accessToken) {
+    public Claims getClaims(String accessToken) throws JwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()

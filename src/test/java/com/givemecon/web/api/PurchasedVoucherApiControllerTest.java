@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -80,7 +79,7 @@ class PurchasedVoucherApiControllerTest {
                 .price(4_000L)
                 .build());
 
-        memberRepository.save(Member.builder()
+        Member memberSaved = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
                 .role(Role.USER)
@@ -101,7 +100,7 @@ class PurchasedVoucherApiControllerTest {
             requestDtoList.add(requestDto);
         }
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(memberSaved);
         String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
@@ -143,7 +142,7 @@ class PurchasedVoucherApiControllerTest {
 
         purchasedVoucherRepository.saveAll(entityList);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(owner);
         String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
@@ -177,7 +176,7 @@ class PurchasedVoucherApiControllerTest {
 
         owner.addPurchasedVoucher(purchasedVoucher);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(owner);
         String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
 
         // when
@@ -214,7 +213,7 @@ class PurchasedVoucherApiControllerTest {
 
         owner.addPurchasedVoucher(purchasedVoucher);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(owner);
         String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
 
         // when

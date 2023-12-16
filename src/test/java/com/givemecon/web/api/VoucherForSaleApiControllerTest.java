@@ -80,7 +80,7 @@ class VoucherForSaleApiControllerTest {
                 .build());
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(seller);
 
         log.info("accessToken = {}", tokenInfo.getAccessToken());
 
