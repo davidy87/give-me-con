@@ -6,7 +6,6 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.exception.EntityNotFoundException;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -34,27 +31,24 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+                                        Authentication authentication) throws IOException {
 
         log.info("--- In AuthSuccessHandler ---");
         OAuth2User principal = (OAuth2User) authentication.getPrincipal();
+
+        log.info("principal name = {}", principal.getName());
+        log.info("principal name = {}", principal.getAttributes());
 
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grantType", tokenInfo.getGrantType());
-        params.add("accessToken", tokenInfo.getAccessToken());
-        params.add("refreshToken", tokenInfo.getRefreshToken());
-        params.add("username", principal.getName());
-
-        log.info("principal name = {}", principal.getName());
-        log.info("principal name = {}", principal.getAttributes());
-
         String url = UriComponentsBuilder.fromUriString("http://localhost:8081/login")
-                .queryParams(params)
+                .queryParam("grantType", tokenInfo.getGrantType())
+                .queryParam("accessToken", tokenInfo.getAccessToken())
+                .queryParam("refreshToken", tokenInfo.getRefreshToken())
+                .queryParam("username", principal.getName())
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();

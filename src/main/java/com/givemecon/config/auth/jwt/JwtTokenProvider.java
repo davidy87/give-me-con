@@ -34,24 +34,21 @@ public class JwtTokenProvider {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(1).toMillis(); // 30 mins
+    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
 
-    private static final long REFRESH_TOKEN_DURATION = Duration.ofMinutes(5).toMillis(); // 14 days
+    private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret, RefreshTokenRepository refreshTokenRepository) {
-        if (jwtSecret.equals("test")) {
-            this.key = null;
-        } else {
-            this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-        }
+    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret,
+                            RefreshTokenRepository refreshTokenRepository) {
 
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
     /**
      * 로그인 성공 시, 응답으로 전달하는 토큰 정보
-     * @param member 로그인 성공 후 생성된 사용자 정보
-     * @return {@link TokenInfo} Grant type, access token, refresh token이 담겨있는 객체. API 응답으로 전달.
+     * @param member 로그인 성공 후 생성된 사용자 entity
+     * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
     @Transactional
     public TokenInfo generateToken(Member member) {
