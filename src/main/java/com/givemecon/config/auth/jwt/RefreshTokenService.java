@@ -23,7 +23,7 @@ public class RefreshTokenService {
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TOKEN_EXPIRED));
 
-        Member member = memberRepository.findById(tokenEntity.getUserId())
+        Member member = memberRepository.findById(tokenEntity.getMemberId())
                 .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
 
         try {

@@ -21,14 +21,18 @@ public class RefreshToken {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Long userId;
+    private Long memberId;
 
     @Column(nullable = false, unique = true)
     private String refreshToken;
 
     @Builder
-    public RefreshToken(Long userId, String refreshToken) {
-        this.userId = userId;
+    public RefreshToken(Long memberId, String refreshToken) {
+        this.memberId = memberId;
+        this.refreshToken = refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 }

@@ -55,7 +55,11 @@ public class JwtTokenProvider {
         String accessToken = generateAccessToken(member);
         String refreshToken = generateRefreshToken();
 
-        refreshTokenRepository.save(new RefreshToken(member.getId(), refreshToken));
+        refreshTokenRepository.findByMemberId(member.getId())
+                .ifPresentOrElse(
+                        entity -> entity.setRefreshToken(refreshToken),
+                        () -> refreshTokenRepository.save(new RefreshToken(member.getId(), refreshToken))
+                );
 
         return TokenInfo.builder()
                 .grantType("Bearer")
