@@ -43,7 +43,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         String url = UriComponentsBuilder.fromUriString("http://localhost:8081/login")
                 .queryParam("grantType", tokenInfo.getGrantType())

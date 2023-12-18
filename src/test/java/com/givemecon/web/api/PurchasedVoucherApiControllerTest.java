@@ -100,7 +100,7 @@ class PurchasedVoucherApiControllerTest {
             requestDtoList.add(requestDto);
         }
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(memberSaved);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
         String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
@@ -142,7 +142,7 @@ class PurchasedVoucherApiControllerTest {
 
         purchasedVoucherRepository.saveAll(entityList);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(owner);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
         String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
@@ -176,7 +176,7 @@ class PurchasedVoucherApiControllerTest {
 
         owner.addPurchasedVoucher(purchasedVoucher);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(owner);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
         String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
 
         // when
@@ -213,7 +213,7 @@ class PurchasedVoucherApiControllerTest {
 
         owner.addPurchasedVoucher(purchasedVoucher);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(owner);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
         String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
 
         // when

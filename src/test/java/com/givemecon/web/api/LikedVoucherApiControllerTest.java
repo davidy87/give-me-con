@@ -82,7 +82,7 @@ class LikedVoucherApiControllerTest {
         Voucher voucherSaved = voucherRepository.save(voucher);
         Member memberSaved = memberRepository.save(member);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(memberSaved);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
         String url = "http://localhost:" + port + "/api/liked-vouchers";
 
         // when

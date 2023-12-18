@@ -51,7 +51,7 @@ public class JwtTokenProvider {
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
     @Transactional
-    public TokenInfo generateToken(Member member) {
+    public TokenInfo getTokenInfo(Member member) {
         String accessToken = generateAccessToken(member);
         String refreshToken = generateRefreshToken();
 

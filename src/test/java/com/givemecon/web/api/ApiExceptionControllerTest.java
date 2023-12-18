@@ -124,7 +124,7 @@ public class ApiExceptionControllerTest {
                 .role(Role.USER)
                 .build());
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
         String invalidAccessToken = tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken() + "a";
         String url = "http://localhost:" + port + "/api/liked-vouchers/" + 1;
 
