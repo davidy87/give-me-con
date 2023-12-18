@@ -25,7 +25,7 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public VoucherResponse find(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return new VoucherResponse(voucher);
     }
@@ -55,7 +55,7 @@ public class VoucherService {
 
     public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return voucher.getVoucherForSaleList().stream()
                 .map(VoucherForSaleResponse::new)
@@ -64,7 +64,7 @@ public class VoucherService {
 
     public VoucherResponse update(Long id, VoucherUpdateRequest requestDto) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         voucher.update(requestDto.getPrice(), requestDto.getImage());
 
@@ -73,7 +73,7 @@ public class VoucherService {
 
     public Long delete(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         voucherRepository.delete(voucher);
 

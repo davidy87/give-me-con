@@ -4,7 +4,6 @@ import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.exception.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,6 +17,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         log.info("principal name = {}", principal.getAttributes());
 
         Member member = memberRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
 

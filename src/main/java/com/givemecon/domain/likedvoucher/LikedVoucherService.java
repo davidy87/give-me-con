@@ -27,10 +27,10 @@ public class LikedVoucherService {
 
     public Long save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         Voucher voucher = voucherRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         LikedVoucher likedVoucher = likedVoucherRepository.save(LikedVoucher.builder()
                 .voucher(voucher)
@@ -43,7 +43,7 @@ public class LikedVoucherService {
     @Transactional(readOnly = true)
     public List<VoucherResponse> findAllByUsername(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return likedVoucherRepository.findAll().stream()
                 .filter(entity -> entity.getMember().equals(member))
@@ -53,15 +53,15 @@ public class LikedVoucherService {
 
     public void delete(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         Voucher voucher = voucherRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         LikedVoucher likedVoucher = likedVoucherRepository.findAll().stream()
                 .filter(entity -> entity.getMember().equals(member) && entity.getVoucher().equals(voucher))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));// TODO: 예외 처리 변경 필요
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));// TODO: 예외 처리 변경 필요
 
         likedVoucherRepository.delete(likedVoucher);
     }

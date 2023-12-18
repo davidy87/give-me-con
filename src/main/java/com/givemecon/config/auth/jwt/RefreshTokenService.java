@@ -4,6 +4,7 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.exception.EntityNotFoundException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +22,16 @@ public class RefreshTokenService {
 
     public String reissueAccessToken(String refreshToken) {
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.TOKEN_EXPIRED));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.REFRESH_TOKEN_EXPIRED));
 
         Member member = memberRepository.findById(tokenEntity.getMemberId())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.ENTITY_NOT_FOUND));
 
         try {
             jwtTokenProvider.getClaims(tokenEntity.getRefreshToken());
-        } catch (Exception e) {
+        } catch (JwtException e) {
             refreshTokenRepository.delete(tokenEntity);
-            throw new EntityNotFoundException(ErrorCode.TOKEN_EXPIRED);
+            throw new EntityNotFoundException(ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
 
         return jwtTokenProvider.generateAccessToken(member);

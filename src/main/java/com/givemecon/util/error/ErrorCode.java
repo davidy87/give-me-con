@@ -8,8 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    NOT_FOUND(HttpStatus.NOT_FOUND.value(), "001", "Entity Not Found (존재하지 않는 Entity입니다)."),
-    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "002", "Access Token Expired (기간이 만료된 토큰입니다).");
+    ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "001", "Entity Not Found (존재하지 않는 Entity입니다)."),
+    ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "002", "Access Token Expired (Access Token의 유효기간이 만료되었습니다)."),
+    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "003", "Refresh Token Expired (Refresh Token의 유효기간이 만료되었습니다).");
 
     private final int status;
     private final String code;

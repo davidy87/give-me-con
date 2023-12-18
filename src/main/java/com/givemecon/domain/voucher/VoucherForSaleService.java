@@ -2,12 +2,12 @@ package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.VoucherDto.*;
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
 
@@ -24,7 +24,7 @@ public class VoucherForSaleService {
 
     public VoucherForSaleResponse save(String username, VoucherForSaleRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
 
@@ -46,7 +46,7 @@ public class VoucherForSaleService {
 
     public Long delete(Long id) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         voucherForSaleRepository.delete(voucherForSale);
 

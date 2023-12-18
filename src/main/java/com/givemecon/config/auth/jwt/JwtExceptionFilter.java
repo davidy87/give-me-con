@@ -25,12 +25,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
-            log.info("Access Token 만료");
-
             ErrorResponse errorResponse = ErrorResponse.builder()
-                    .code(ErrorCode.TOKEN_EXPIRED.getCode())
-                    .status(ErrorCode.TOKEN_EXPIRED.getStatus())
-                    .message(ErrorCode.TOKEN_EXPIRED.getMessage())
+                    .code(ErrorCode.ACCESS_TOKEN_EXPIRED.getCode())
+                    .status(ErrorCode.ACCESS_TOKEN_EXPIRED.getStatus())
+                    .message(ErrorCode.ACCESS_TOKEN_EXPIRED.getMessage())
                     .build();
 
             response.setStatus(errorResponse.getStatus());

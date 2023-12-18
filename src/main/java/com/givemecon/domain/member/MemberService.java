@@ -16,7 +16,7 @@ public class MemberService {
 
     public Long delete(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         memberRepository.delete(member);
 

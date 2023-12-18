@@ -27,10 +27,10 @@ public class PurchasedVoucherService {
 
     public List<PurchasedVoucherResponse> saveAll(String username, List<PurchasedVoucherRequest> requestDtoList) {
         Member buyer = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         Voucher voucher = voucherRepository.findById(requestDtoList.get(0).getVoucherId())
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         List<PurchasedVoucher> savedList = purchasedVoucherRepository.saveAll(requestDtoList.stream()
                 .map(PurchasedVoucherRequest::toEntity)
@@ -50,7 +50,7 @@ public class PurchasedVoucherService {
     @Transactional(readOnly = true)
     public List<PurchasedVoucherResponse> findAllByUsername(String username) {
         Member owner = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return owner.getPurchasedVoucherList().stream()
                 .map(PurchasedVoucherResponse::new)
@@ -59,23 +59,23 @@ public class PurchasedVoucherService {
 
     public PurchasedVoucherResponse find(String username, Long id) {
         Member owner = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return owner.getPurchasedVoucherList().stream()
                 .filter(purchasedVoucher -> purchasedVoucher.getId().equals(id))
                 .map(PurchasedVoucherResponse::new)
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
     }
 
     public PurchasedVoucherResponse updateValidity(String username, Long id) {
         Member owner = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         PurchasedVoucher purchasedVoucher = owner.getPurchasedVoucherList().stream()
                 .filter(entity -> entity.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         purchasedVoucher.updateValidity();
 

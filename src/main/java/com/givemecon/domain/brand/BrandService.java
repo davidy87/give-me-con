@@ -34,7 +34,7 @@ public class BrandService {
     @Transactional(readOnly = true)
     public BrandResponse find(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return new BrandResponse(brand);
     }
@@ -42,7 +42,7 @@ public class BrandService {
     @Transactional(readOnly = true)
     public List<VoucherResponse> findAllVouchersByBrandName(String brandName) {
         Brand brand = brandRepository.findByName(brandName)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return brand.getVoucherList().stream()
                 .map(VoucherResponse::new)
@@ -51,7 +51,7 @@ public class BrandService {
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         brand.update(requestDto.getName(), requestDto.getIcon());
 
@@ -60,7 +60,7 @@ public class BrandService {
 
     public Long delete(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         brandRepository.delete(brand);
 

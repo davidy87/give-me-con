@@ -5,7 +5,6 @@ import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
-import com.givemecon.util.error.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.givemecon.util.error.ErrorCode.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -62,9 +62,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -78,9 +78,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -94,9 +94,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -110,9 +110,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ErrorCode.NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ErrorCode.NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ErrorCode.NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -134,8 +134,8 @@ public class ApiExceptionControllerTest {
 
         // then
         response.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("code").value(ErrorCode.TOKEN_EXPIRED.getCode()))
-                .andExpect(jsonPath("status").value(ErrorCode.TOKEN_EXPIRED.getStatus()))
-                .andExpect(jsonPath("message").value(ErrorCode.TOKEN_EXPIRED.getMessage()));
+                .andExpect(jsonPath("code").value(ACCESS_TOKEN_EXPIRED.getCode()))
+                .andExpect(jsonPath("status").value(ACCESS_TOKEN_EXPIRED.getStatus()))
+                .andExpect(jsonPath("message").value(ACCESS_TOKEN_EXPIRED.getMessage()));
     }
 }
