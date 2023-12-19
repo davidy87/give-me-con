@@ -3,9 +3,11 @@ package com.givemecon.config.auth;
 import com.givemecon.config.auth.jwt.JwtAuthenticationFilter;
 import com.givemecon.config.auth.jwt.JwtExceptionFilter;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.domain.member.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -13,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -43,14 +46,20 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                new AntPathRequestMatcher("/"),
-                                new AntPathRequestMatcher("/css/**"),
-                                new AntPathRequestMatcher("/images/**"),
-                                new AntPathRequestMatcher("/js/**"),
-                                new AntPathRequestMatcher("/h2-console/**"),
-                                new AntPathRequestMatcher("/**", "GET")
+                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/categories/**"),
+                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/brands/**"),
+                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers/**"),
+                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers-for-sale/**")
                         ).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/api/categories/**"),
+                                AntPathRequestMatcher.antMatcher("/api/brands/**"),
+                                AntPathRequestMatcher.antMatcher("/api/vouchers/**"),
+                                AntPathRequestMatcher.antMatcher("/api/vouchers-for-sale/**")
+                        ).hasRole(Role.ADMIN.name())
+                        .requestMatchers(
+                                AntPathRequestMatcher.antMatcher("/**")
+                        ).authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
