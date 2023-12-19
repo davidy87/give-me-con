@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -49,7 +48,8 @@ public class SecurityConfig {
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/categories/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/brands/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers/**"),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers-for-sale/**")
+                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers-for-sale/**"),
+                                AntPathRequestMatcher.antMatcher("/auth/refresh")
                         ).permitAll()
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/categories/**"),
