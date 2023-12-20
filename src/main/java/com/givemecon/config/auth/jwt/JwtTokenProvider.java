@@ -118,7 +118,7 @@ public class JwtTokenProvider {
     /**
      * 요청으로 전달된 토큰을 추출
      * @param request API 요청
-     * @return token (만약 올바르지 않은 요청이면 <code>null</code>)
+     * @return Access token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
      */
     public String retrieveToken(HttpServletRequest request) {
         String grantType = "Bearer ";

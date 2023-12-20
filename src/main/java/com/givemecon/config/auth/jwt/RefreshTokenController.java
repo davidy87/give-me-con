@@ -13,7 +13,7 @@ public class RefreshTokenController {
 
     private final RefreshTokenService refreshTokenService;
 
-    @GetMapping("/auth/refresh")
+    @GetMapping("/api/auth/refresh")
     public String reissueAccessToken(HttpServletRequest request) {
         log.info("--- In RefreshTokenController ---");
         String refreshToken = request.getHeader("Refresh-Token");
