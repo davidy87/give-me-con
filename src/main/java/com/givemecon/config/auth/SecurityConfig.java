@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/brands/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers-for-sale/**"),
-                                AntPathRequestMatcher.antMatcher("/auth/refresh")
+                                AntPathRequestMatcher.antMatcher("/api/auth/refresh")
                         ).permitAll()
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/categories/**"),
