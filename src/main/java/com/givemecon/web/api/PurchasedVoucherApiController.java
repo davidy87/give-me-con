@@ -32,11 +32,11 @@ public class PurchasedVoucherApiController {
 
     @GetMapping("/{id}")
     public PurchasedVoucherResponse find(Authentication authentication, @PathVariable Long id) {
-        return purchasedVoucherService.find(authentication.getName(), id);
+        return purchasedVoucherService.find(id, authentication.getName());
     }
 
     @PutMapping("/{id}")
-    public PurchasedVoucherResponse updateValidity(Authentication authentication, @PathVariable Long id) {
-        return purchasedVoucherService.updateValidity(authentication.getName(), id);
+    public PurchasedVoucherResponse updateValidity(@PathVariable Long id) {
+        return purchasedVoucherService.updateValidity(id);
     }
 }
