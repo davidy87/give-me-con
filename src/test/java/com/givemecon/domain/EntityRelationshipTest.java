@@ -172,10 +172,10 @@ public class EntityRelationshipTest {
 
         LikedVoucher likedVoucher = LikedVoucher.builder()
                 .voucher(voucherSaved)
-                .member(memberSaved)
                 .build();
 
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(likedVoucher);
+        memberSaved.addLikedVoucher(likedVoucherSaved);
 
         // when
         List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();

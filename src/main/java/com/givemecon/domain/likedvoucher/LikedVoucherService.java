@@ -34,8 +34,9 @@ public class LikedVoucherService {
 
         LikedVoucher likedVoucher = likedVoucherRepository.save(LikedVoucher.builder()
                 .voucher(voucher)
-                .member(member)
                 .build());
+
+        member.addLikedVoucher(likedVoucher);
 
         return likedVoucher.getId();
     }
@@ -45,9 +46,8 @@ public class LikedVoucherService {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        return likedVoucherRepository.findAll().stream()
-                .filter(entity -> entity.getMember().equals(member))
-                .map(entity -> new VoucherResponse(entity.getVoucher()))
+        return member.getLikedVoucherList().stream()
+                .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()))
                 .toList();
     }
 
@@ -58,10 +58,10 @@ public class LikedVoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        LikedVoucher likedVoucher = likedVoucherRepository.findAll().stream()
-                .filter(entity -> entity.getMember().equals(member) && entity.getVoucher().equals(voucher))
+        LikedVoucher likedVoucher = member.getLikedVoucherList().stream()
+                .filter(entity -> entity.getVoucher().equals(voucher))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));// TODO: 예외 처리 변경 필요
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND)); // TODO: 예외 처리 변경 필요
 
         likedVoucherRepository.delete(likedVoucher);
     }

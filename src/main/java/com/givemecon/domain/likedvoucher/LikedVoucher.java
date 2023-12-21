@@ -29,8 +29,11 @@ public class LikedVoucher extends BaseTimeEntity {
     private Voucher voucher;
 
     @Builder
-    public LikedVoucher(Member member, Voucher voucher) {
-        this.member = member;
+    public LikedVoucher(Voucher voucher) {
         this.voucher = voucher;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 }
