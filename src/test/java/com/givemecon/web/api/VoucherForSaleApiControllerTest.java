@@ -16,11 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(authorities = "ROLE_USER", username = "tester")
 class VoucherForSaleApiControllerTest {
 
     @LocalServerPort
@@ -76,10 +70,9 @@ class VoucherForSaleApiControllerTest {
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .build());
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
 
         log.info("accessToken = {}", tokenInfo.getAccessToken());
@@ -125,8 +118,10 @@ class VoucherForSaleApiControllerTest {
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .build());
+
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
 
         String title = "Americano T";
         Long price = 4_000L;
@@ -149,11 +144,8 @@ class VoucherForSaleApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers-for-sale/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url)
-                .with(SecurityMockMvcRequestPostProcessors.oauth2Login()
-                        .authorities(new SimpleGrantedAuthority("ROLE_USER"))
-                        .attributes(attributes -> attributes.put("sub", "tester"))
-                ));
+        mockMvc.perform(delete(url)
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
 
         // then
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();

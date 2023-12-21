@@ -61,7 +61,7 @@ public class RefreshTokenControllerTest {
                 .build());
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
-        String url = "http://localhost:" + port + "/auth/refresh";
+        String url = "http://localhost:" + port + "/api/auth/refresh";
         Claims oldClaims = jwtTokenProvider.getClaims(tokenInfo.getAccessToken());
 
         // when
