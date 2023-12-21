@@ -37,22 +37,6 @@ public class VoucherService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllByBrandId(Long brandId) {
-        return voucherRepository.findAll().stream()
-                .filter(voucher -> voucher.getBrand().getId() == brandId)
-                .map(VoucherResponse::new)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllByBrandName(String brandName) {
-        return voucherRepository.findAll().stream()
-                .filter(voucher -> voucher.getBrand().getName().equals(brandName))
-                .map(VoucherResponse::new)
-                .toList();
-    }
-
     public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
