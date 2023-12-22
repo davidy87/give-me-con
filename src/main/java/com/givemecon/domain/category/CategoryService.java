@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.givemecon.util.error.ErrorCode.*;
 import java.util.List;
 
-import static com.givemecon.web.dto.BrandDto.*;
 import static com.givemecon.web.dto.CategoryDto.*;
 
 @RequiredArgsConstructor
@@ -28,24 +27,6 @@ public class CategoryService {
         return categoryRepository.findAll()
                 .stream()
                 .map(CategoryResponse::new)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public CategoryResponse find(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
-        return new CategoryResponse(category);
-    }
-
-    @Transactional(readOnly = true)
-    public List<BrandResponse> findAllBrandsByCategoryId(Long id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
-        return category.getBrandList().stream()
-                .map(BrandResponse::new)
                 .toList();
     }
 

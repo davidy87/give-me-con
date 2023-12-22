@@ -11,7 +11,6 @@ import static com.givemecon.util.error.ErrorCode.*;
 import java.util.List;
 
 import static com.givemecon.web.dto.BrandDto.*;
-import static com.givemecon.web.dto.VoucherDto.*;
 
 @RequiredArgsConstructor
 @Service
@@ -36,30 +35,12 @@ public class BrandService {
     }
 
     @Transactional(readOnly = true)
-    public BrandResponse find(Long id) {
-        Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
-        return new BrandResponse(brand);
-    }
-
-    @Transactional(readOnly = true)
     public List<BrandResponse> findAllByCategoryId(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return category.getBrandList().stream()
                 .map(BrandResponse::new)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllVouchersByBrandName(String brandName) {
-        Brand brand = brandRepository.findByName(brandName)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
-        return brand.getVoucherList().stream()
-                .map(VoucherResponse::new)
                 .toList();
     }
 

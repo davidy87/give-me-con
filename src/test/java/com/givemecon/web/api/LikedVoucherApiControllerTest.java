@@ -27,8 +27,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
@@ -98,6 +97,40 @@ class LikedVoucherApiControllerTest {
 
         assertThat(found.getVoucher()).isEqualTo(voucherSaved);
         assertThat(found.getMember()).isEqualTo(memberSaved);
+    }
+
+    @Test
+    void findAllByUsername() throws Exception {
+        // given
+        Member member = Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(Role.USER)
+                .build();
+
+        Member memberSaved = memberRepository.save(member);
+
+        for (int i = 1; i <= 10; i++) {
+            Voucher voucher = Voucher.builder()
+                    .title("voucher" + i)
+                    .price(4_000L)
+                    .image("voucher" + i + ".png")
+                    .build();
+
+            Voucher voucherSaved = voucherRepository.save(voucher);
+            memberSaved.addLikedVoucher(new LikedVoucher(voucherSaved));
+        }
+
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
+        String url = "http://localhost:" + port + "/api/liked-vouchers";
+
+        // when
+        ResultActions response = mockMvc.perform(get(url)
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test

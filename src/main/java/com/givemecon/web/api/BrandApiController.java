@@ -31,11 +31,6 @@ public class BrandApiController {
         return brandService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public BrandResponse find(@PathVariable Long id) {
-        return brandService.find(id);
-    }
-
     @PutMapping("/{id}")
     public BrandResponse update(@PathVariable Long id,
                                 @RequestBody BrandUpdateRequest requestDto) {

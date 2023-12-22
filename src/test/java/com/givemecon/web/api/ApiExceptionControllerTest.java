@@ -1,5 +1,6 @@
 package com.givemecon.web.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -18,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.web.dto.BrandDto.*;
+import static com.givemecon.web.dto.CategoryDto.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -54,10 +58,17 @@ public class ApiExceptionControllerTest {
     @Test
     void categoryExceptionTest() throws Exception {
         // given
+        CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
+                .name("category")
+                .icon("category.png")
+                .build();
+
         String url = "http://localhost:" + port + "/api/categories/" + 1;
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
         response
@@ -70,10 +81,17 @@ public class ApiExceptionControllerTest {
     @Test
     void brandsExceptionTest() throws Exception {
         // given
+        BrandUpdateRequest requestDto = BrandUpdateRequest.builder()
+                .name("brand")
+                .icon("brand.png")
+                .build();
+
         String url = "http://localhost:" + port + "/api/brands/" + 1;
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
 
         // then
         response

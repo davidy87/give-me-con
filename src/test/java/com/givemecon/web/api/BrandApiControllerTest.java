@@ -104,30 +104,6 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void findBrand() throws Exception {
-        // given
-        String name = "Starbucks";
-        String icon = "starbucks.jpg";
-        Brand brand = Brand.builder()
-                .name(name)
-                .icon(icon)
-                .build();
-
-        Long id = brandRepository.save(brand).getId();
-        String url = "http://localhost:" + port + "/api/brands/" + id;
-
-        // when
-        ResultActions response = mockMvc.perform(get(url));
-
-        // then
-        response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id))
-                .andExpect(jsonPath("name").value(name))
-                .andExpect(jsonPath("icon").value(icon));
-    }
-
-    @Test
     void findAllByCategoryId() throws Exception {
         // given
         String name = "Bubble Tea";

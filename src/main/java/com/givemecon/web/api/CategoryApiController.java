@@ -27,11 +27,6 @@ public class CategoryApiController {
         return categoryService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public CategoryResponse find(@PathVariable Long id) {
-        return categoryService.find(id);
-    }
-
     @PutMapping("/{id}")
     public CategoryResponse update(@PathVariable Long id,
                                    @RequestBody CategoryUpdateRequest requestDto) {

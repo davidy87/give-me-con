@@ -100,30 +100,6 @@ class CategoryApiControllerTest {
     }
 
     @Test
-    void findCategory() throws Exception {
-        // given
-        String name = "Bubble Tea";
-        String icon = "bubble_tea.jpg";
-        Category category = Category.builder()
-                .name(name)
-                .icon(icon)
-                .build();
-
-        Long id = categoryRepository.save(category).getId();
-        String url = "http://localhost:" + port + "/api/categories/" + id;
-
-        // when
-        ResultActions response = mockMvc.perform(get(url));
-
-        // then
-        response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id))
-                .andExpect(jsonPath("name").value(name))
-                .andExpect(jsonPath("icon").value(icon));
-    }
-
-    @Test
     void updateCategory() throws Exception {
         // given
         String name = "Bubble Tea";
