@@ -1,8 +1,6 @@
 package com.givemecon.web.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,9 +41,6 @@ class CategoryApiControllerTest {
 
     @Autowired
     CategoryRepository categoryRepository;
-
-    @Autowired
-    BrandRepository brandRepository;
 
     @BeforeEach
     void setup() {
@@ -126,42 +121,6 @@ class CategoryApiControllerTest {
                 .andExpect(jsonPath("id").value(id))
                 .andExpect(jsonPath("name").value(name))
                 .andExpect(jsonPath("icon").value(icon));
-    }
-
-    @Test
-    void findAllBrandsByCategoryId() throws Exception {
-        // given
-        String name = "Bubble Tea";
-        String icon = "bubble_tea.jpg";
-        Category category = Category.builder()
-                .name(name)
-                .icon(icon)
-                .build();
-
-        Category categorySaved = categoryRepository.save(category);
-
-        for (int i = 1; i <= 5; i++) {
-            Brand brand = Brand.builder()
-                    .icon("brand_" + i + ".png")
-                    .name("Brand " + i)
-                    .build();
-
-            Brand brandSaved = brandRepository.save(brand);
-            categorySaved.addBrand(brandSaved);
-        }
-
-        String url = "http://localhost:" + port + "/api/categories/" + categorySaved.getId() + "/brands";
-
-        // when
-        ResultActions response = mockMvc.perform(get(url));
-
-        // then
-        response.andExpect(status().isOk());
-        List<Brand> brandList = brandRepository.findAll();
-
-        for (Brand brand : brandList) {
-            assertThat(brand.getCategory()).isEqualTo(categorySaved);
-        }
     }
 
     @Test

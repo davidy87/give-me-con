@@ -1,5 +1,7 @@
 package com.givemecon.domain.brand;
 
+import com.givemecon.domain.category.Category;
+import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import static com.givemecon.web.dto.VoucherDto.*;
 public class BrandService {
 
     private final BrandRepository brandRepository;
+
+    private final CategoryRepository categoryRepository;
 
     public BrandResponse save(BrandSaveRequest requestDto) {
         Brand brand = brandRepository.save(requestDto.toEntity());
@@ -37,6 +41,16 @@ public class BrandService {
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return new BrandResponse(brand);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BrandResponse> findAllByCategoryId(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
+        return category.getBrandList().stream()
+                .map(BrandResponse::new)
+                .toList();
     }
 
     @Transactional(readOnly = true)

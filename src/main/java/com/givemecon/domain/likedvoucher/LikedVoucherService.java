@@ -50,8 +50,8 @@ public class LikedVoucherService {
                 .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()))
                 .toList();
     }
-    
+
     public void deleteByUsernameAndVoucherId(String username, Long voucherId) {
-        likedVoucherRepository.deleteByUsernameAndVoucherId(voucherId, username);
+        likedVoucherRepository.deleteByUsernameAndVoucherId(username, voucherId);
     }
 }

@@ -3,8 +3,8 @@ package com.givemecon.web.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.category.Category;
+import com.givemecon.domain.category.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +42,10 @@ class BrandApiControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    BrandRepository brandRepository;
+    CategoryRepository categoryRepository;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    BrandRepository brandRepository;
 
     @BeforeEach
     void setup() {
@@ -128,39 +128,38 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void findAllVouchersByBrandName() throws Exception {
+    void findAllByCategoryId() throws Exception {
         // given
-        String name = "Starbucks";
-        String icon = "starbucks.jpg";
-        Brand brand = Brand.builder()
+        String name = "Bubble Tea";
+        String icon = "bubble_tea.jpg";
+        Category category = Category.builder()
                 .name(name)
                 .icon(icon)
                 .build();
 
-        Brand brandSaved = brandRepository.save(brand);
+        Category categorySaved = categoryRepository.save(category);
 
         for (int i = 1; i <= 5; i++) {
-            Voucher voucher = Voucher.builder()
-                    .title("Voucher " + 1)
-                    .price(1_000L * i)
-                    .image("voucher_" + i + ".png")
+            Brand brand = Brand.builder()
+                    .icon("brand_" + i + ".png")
+                    .name("Brand " + i)
                     .build();
 
-            Voucher voucherSaved = voucherRepository.save(voucher);
-            brandSaved.addVoucher(voucherSaved);
+            Brand brandSaved = brandRepository.save(brand);
+            categorySaved.addBrand(brandSaved);
         }
 
-        String url = "http://localhost:" + port + "/api/brands/" + brandSaved.getName() + "/vouchers";
+        String url = "http://localhost:" + port + "/api/brands?categoryId=" + categorySaved.getId();
 
         // when
         ResultActions response = mockMvc.perform(get(url));
 
         // then
         response.andExpect(status().isOk());
-        List<Voucher> voucherList = voucherRepository.findAll();
+        List<Brand> brandList = brandRepository.findAll();
 
-        for (Voucher voucher : voucherList) {
-            assertThat(voucher.getBrand()).isEqualTo(brandSaved);
+        for (Brand brand : brandList) {
+            assertThat(brand.getCategory()).isEqualTo(categorySaved);
         }
     }
 

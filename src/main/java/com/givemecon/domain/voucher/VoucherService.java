@@ -1,5 +1,7 @@
 package com.givemecon.domain.voucher;
 
+import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import static com.givemecon.web.dto.VoucherDto.*;
 @Service
 @Transactional
 public class VoucherService {
+
+    private final BrandRepository brandRepository;
 
     private final VoucherRepository voucherRepository;
 
@@ -37,6 +41,17 @@ public class VoucherService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> findAllByBrandName(String brandName) {
+        Brand brand = brandRepository.findByName(brandName)
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
+        return brand.getVoucherList().stream()
+                .map(VoucherResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));

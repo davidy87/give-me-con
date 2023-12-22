@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.givemecon.web.dto.BrandDto.*;
-import static com.givemecon.web.dto.VoucherDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/brands")
@@ -24,18 +23,17 @@ public class BrandApiController {
     }
 
     @GetMapping
-    public List<BrandResponse> findAll() {
+    public List<BrandResponse> findAll(@RequestParam(required = false) Long categoryId) {
+        if (categoryId != null) {
+            return brandService.findAllByCategoryId(categoryId);
+        }
+
         return brandService.findAll();
     }
 
     @GetMapping("/{id}")
     public BrandResponse find(@PathVariable Long id) {
         return brandService.find(id);
-    }
-
-    @GetMapping("/{brandName}/vouchers")
-    public List<VoucherResponse> findAllVouchersByBrandName(@PathVariable String brandName) {
-        return brandService.findAllVouchersByBrandName(brandName);
     }
 
     @PutMapping("/{id}")

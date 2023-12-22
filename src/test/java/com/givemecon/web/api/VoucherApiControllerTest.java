@@ -140,7 +140,7 @@ class VoucherApiControllerTest {
     }
 
     @Test
-    void findAllByBrandId() throws Exception {
+    void findAllByBrandName() throws Exception {
         // given
         Brand brand = Brand.builder()
                 .name("Test Brand")
@@ -156,11 +156,11 @@ class VoucherApiControllerTest {
                     .image("brand_" + i + ".png")
                     .build();
 
-            voucher.setBrand(brandSaved);
+            brandSaved.addVoucher(voucher);
             voucherRepository.save(voucher);
         }
 
-        String url = "http://localhost:" + port + "/api/vouchers?brandId=" + brandSaved.getId();
+        String url = "http://localhost:" + port + "/api/vouchers?brandName=" + brandSaved.getName();
 
         // when
         ResultActions response = mockMvc.perform(get(url));
