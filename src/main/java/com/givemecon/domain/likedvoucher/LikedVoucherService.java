@@ -51,18 +51,22 @@ public class LikedVoucherService {
                 .toList();
     }
 
-    public void delete(String username, Long voucherId) {
-        Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+//    public void delete(String username, Long voucherId) {
+//        Member member = memberRepository.findByUsername(username)
+//                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+//
+//        Voucher voucher = voucherRepository.findById(voucherId)
+//                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+//
+//        LikedVoucher likedVoucher = member.getLikedVoucherList().stream()
+//                .filter(entity -> entity.getVoucher().equals(voucher))
+//                .findFirst()
+//                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND)); // TODO: 예외 처리 변경 필요
+//
+//        likedVoucherRepository.delete(likedVoucher);
+//    }
 
-        Voucher voucher = voucherRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
-
-        LikedVoucher likedVoucher = member.getLikedVoucherList().stream()
-                .filter(entity -> entity.getVoucher().equals(voucher))
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND)); // TODO: 예외 처리 변경 필요
-
-        likedVoucherRepository.delete(likedVoucher);
+    public void deleteByUsernameAndVoucherId(String username, Long voucherId) {
+        likedVoucherRepository.deleteByUsernameAndVoucherId(voucherId, username);
     }
 }

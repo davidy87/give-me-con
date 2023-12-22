@@ -28,8 +28,8 @@ public class LikedVoucherApiController {
         return likedVoucherService.findAllByUsername(authentication.getName());
     }
 
-    @DeleteMapping
-    public void delete(Authentication authentication, @RequestBody Long voucherId) {
-        likedVoucherService.delete(authentication.getName(), voucherId);
+    @DeleteMapping("/{voucherId}")
+    public void deleteByUsernameAndVoucherId(Authentication authentication, @PathVariable Long voucherId) {
+        likedVoucherService.deleteByUsernameAndVoucherId(authentication.getName(), voucherId);
     }
 }

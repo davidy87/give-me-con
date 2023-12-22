@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,12 +27,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@WithMockUser(roles = "USER", username = "tester")
 class LikedVoucherApiControllerTest {
 
     @LocalServerPort
@@ -99,5 +98,37 @@ class LikedVoucherApiControllerTest {
 
         assertThat(found.getVoucher()).isEqualTo(voucherSaved);
         assertThat(found.getMember()).isEqualTo(memberSaved);
+    }
+
+    @Test
+    void deleteLikedVoucher() throws Exception {
+        // given
+        Voucher voucher = Voucher.builder()
+                .title("voucher")
+                .price(4_000L)
+                .image("voucher.png")
+                .build();
+
+        Member member = Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(Role.USER)
+                .build();
+
+        Voucher voucherSaved = voucherRepository.save(voucher);
+        Member memberSaved = memberRepository.save(member);
+        LikedVoucher likedVoucherSaved = likedVoucherRepository.save(LikedVoucher.builder().voucher(voucherSaved).build());
+        likedVoucherSaved.setMember(member);
+
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
+        String url = "http://localhost:" + port + "/api/liked-vouchers/" + voucherSaved.getId();
+
+        // when
+        ResultActions response = mockMvc.perform(delete(url)
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk());
+        assertThat(likedVoucherRepository.existsById(likedVoucherSaved.getId())).isFalse();
     }
 }
