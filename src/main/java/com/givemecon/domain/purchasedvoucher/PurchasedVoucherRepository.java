@@ -7,8 +7,7 @@ import java.util.Optional;
 
 public interface PurchasedVoucherRepository extends JpaRepository<PurchasedVoucher, Long> {
 
-    @Query("select pv, o from PurchasedVoucher pv " +
-            "inner join pv.owner o on o.username = :username " +
-            "where pv.id = :id")
+    @Query("select pv from PurchasedVoucher pv " +
+            "where pv.id = :id and pv.owner.username = :username")
     Optional<PurchasedVoucher> findByIdAndUsername(Long id, String username);
 }
