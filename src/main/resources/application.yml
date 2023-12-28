@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    show_sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+  profiles:
+    include: oauth,jwt
