@@ -7,11 +7,17 @@ import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,14 +29,23 @@ import java.util.List;
 import static com.givemecon.web.dto.BrandDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureRestDocs(outputDir = "build/snippets/brands")
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(roles = "ADMIN")
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 class BrandApiControllerTest {
 
     @LocalServerPort
@@ -48,10 +63,11 @@ class BrandApiControllerTest {
     BrandRepository brandRepository;
 
     @BeforeEach
-    void setup() {
+    void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
+                .apply(documentationConfiguration(restDoc))
                 .build();
     }
 
@@ -70,7 +86,21 @@ class BrandApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("저장할 브랜드 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("저장할 브랜드 아이콘")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 브랜드 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 브랜드 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("저장된 브랜드 아이콘")
+                        ))
+                );
 
         // then
         List<Brand> brandList = brandRepository.findAll();
@@ -97,7 +127,16 @@ class BrandApiControllerTest {
         String url = "http://localhost:8080" + port + "/api/brands";
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드명"),
+                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("브랜드 아이콘")
+                        ))
+                );
 
         // then
         response.andExpect(status().isOk());
@@ -128,7 +167,16 @@ class BrandApiControllerTest {
         String url = "http://localhost:" + port + "/api/brands?categoryId=" + categorySaved.getId();
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드명"),
+                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("브랜드 아이콘")
+                        ))
+                );
 
         // then
         response.andExpect(status().isOk());
@@ -160,7 +208,21 @@ class BrandApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(put(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).optional().description("변경할 브랜드명"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).optional().description("변경할 브랜드 아이콘")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("변경된 브랜드 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("변경된 브랜드명"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("변경된 브랜드 아이콘")
+                        ))
+                );
 
         // then
         List<Brand> brandList = brandRepository.findAll();
@@ -186,7 +248,12 @@ class BrandApiControllerTest {
         String url = "http://localhost:" + port + "/api/brands/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url));
+        ResultActions response = mockMvc.perform(delete(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseBody())
+                );
 
         // then
         response.andExpect(status().isOk());

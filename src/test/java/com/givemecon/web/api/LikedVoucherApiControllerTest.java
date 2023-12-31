@@ -12,10 +12,15 @@ import com.givemecon.domain.likedvoucher.LikedVoucher;
 import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,10 +31,18 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class LikedVoucherApiControllerTest {
@@ -55,10 +68,11 @@ class LikedVoucherApiControllerTest {
     LikedVoucherRepository likedVoucherRepository;
 
     @BeforeEach
-    void setup() {
+    void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
+                .apply(documentationConfiguration(restDoc))
                 .build();
     }
 
@@ -87,7 +101,12 @@ class LikedVoucherApiControllerTest {
         ResultActions response = mockMvc.perform(post(url)
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())));
+                .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        requestBody(),
+                        responseBody())
+                );
 
         // then
         response.andExpect(status().isCreated());
@@ -126,7 +145,17 @@ class LikedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get(url)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
+                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                        ))
+                );
 
         // then
         response.andExpect(status().isOk())
@@ -158,7 +187,9 @@ class LikedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(delete(url)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}"));
 
         // then
         response.andExpect(status().isOk());

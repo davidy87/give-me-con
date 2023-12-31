@@ -5,11 +5,17 @@ import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -21,14 +27,22 @@ import java.util.List;
 import static com.givemecon.web.dto.CategoryDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureRestDocs(outputDir = "build/snippets/brands")
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
-@SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(roles = "ADMIN")
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 class CategoryApiControllerTest {
 
     @LocalServerPort
@@ -43,10 +57,11 @@ class CategoryApiControllerTest {
     CategoryRepository categoryRepository;
 
     @BeforeEach
-    void setup() {
+    void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
+                .apply(documentationConfiguration(restDoc))
                 .build();
     }
 
@@ -65,7 +80,21 @@ class CategoryApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("카테고리 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
+                        ))
+                );
 
         // then
         List<Category> categoryList = categoryRepository.findAll();
@@ -92,7 +121,16 @@ class CategoryApiControllerTest {
         String url = "http://localhost:" + port + "/api/categories";
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("카테고리 id"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("카테고리 이름"),
+                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
+                        ))
+                );
 
         // then
         response
@@ -119,7 +157,21 @@ class CategoryApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(put(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("변경할 카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("변경할 카테고리 아이콘")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("새로운 카테고리 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("새로운 카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("새로운 카테고리 아이콘")
+                        ))
+                );
 
         // then
         List<Category> categoryList = categoryRepository.findAll();
@@ -145,7 +197,12 @@ class CategoryApiControllerTest {
         String url = "http://localhost:" + port + "/api/categories/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url));
+        ResultActions response = mockMvc.perform(delete(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseBody())
+                );
 
         // then
         response.andExpect(status().isOk());

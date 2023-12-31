@@ -9,11 +9,16 @@ import com.givemecon.domain.voucher.VoucherForSaleRepository;
 import com.givemecon.domain.voucher.VoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,11 +31,19 @@ import java.util.List;
 import static com.givemecon.web.dto.VoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(roles = "ADMIN")
@@ -54,10 +67,11 @@ class VoucherApiControllerTest {
     BrandRepository brandRepository;
 
     @BeforeEach
-    void setup() {
+    void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
+                .apply(documentationConfiguration(restDoc))
                 .build();
     }
 
@@ -78,7 +92,23 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("저장할 기프티콘 타이틀"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("저장할 기프티콘 가격"),
+                                fieldWithPath("image").type(JsonFieldType.STRING).description("저장할 기프티콘 이미지")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 기프티콘 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("저장된 기프티콘 타이틀"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("저장된 기프티콘 가격"),
+                                fieldWithPath("image").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지")
+                        ))
+                );
 
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
@@ -106,7 +136,17 @@ class VoucherApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                        ))
+                );
 
         // then
         response
@@ -132,7 +172,17 @@ class VoucherApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers";
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                        ))
+                );
 
         // then
         response.andExpect(status().isOk())
@@ -163,7 +213,17 @@ class VoucherApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers?brandName=" + brandSaved.getName();
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                        ))
+                );
 
         // then
         response.andExpect(status().isOk())
@@ -200,7 +260,19 @@ class VoucherApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers/" + voucherSaved.getId() + "/selling-list";
 
         // when
-        ResultActions response = mockMvc.perform(get(url));
+        ResultActions response = mockMvc.perform(get(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
+                        ))
+                );
 
         // then
         response.andExpect(status().isOk())
@@ -229,7 +301,22 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(put(url)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestFields(
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).optional().description("수정할 기프티콘 가격"),
+                                fieldWithPath("image").type(JsonFieldType.STRING).optional().description("수정할 기프티콘 이미지")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 기프티콘 타이틀"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("수정된 기프티콘 가격"),
+                                fieldWithPath("image").type(JsonFieldType.STRING).description("수정된 기프티콘 이미지")
+                        ))
+                );
 
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
@@ -257,7 +344,12 @@ class VoucherApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url));
+        ResultActions response = mockMvc.perform(delete(url))
+                .andDo(print())
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
+                        responseBody())
+                );
 
         // then
         response.andExpect(status().isOk());
