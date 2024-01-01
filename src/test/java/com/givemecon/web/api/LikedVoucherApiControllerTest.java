@@ -104,6 +104,7 @@ class LikedVoucherApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())))
                 .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessResponse(prettyPrint()),
                         requestBody(),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
