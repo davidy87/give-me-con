@@ -2,10 +2,8 @@ package com.givemecon.web.api;
 
 import com.givemecon.domain.member.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
@@ -14,8 +12,9 @@ public class MemberApiController {
 
     private final MemberService memberService;
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id) {
-        return memberService.delete(id);
+    public void delete(@PathVariable Long id) {
+        memberService.delete(id);
     }
 }

@@ -28,6 +28,7 @@ public class LikedVoucherApiController {
         return likedVoucherService.findAllByUsername(authentication.getName());
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{voucherId}")
     public void deleteByUsernameAndVoucherId(Authentication authentication, @PathVariable Long voucherId) {
         likedVoucherService.deleteByUsernameAndVoucherId(authentication.getName(), voucherId);

@@ -49,8 +49,9 @@ public class VoucherApiController {
         return voucherService.update(id, requestDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id) {
-        return voucherService.delete(id);
+    public void delete(@PathVariable Long id) {
+        voucherService.delete(id);
     }
 }

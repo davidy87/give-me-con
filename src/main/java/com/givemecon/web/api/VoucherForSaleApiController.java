@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.web.dto.VoucherDto.*;
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
 
 @Slf4j
@@ -33,8 +32,9 @@ public class VoucherForSaleApiController {
         return voucherForSaleService.save(authentication.getName(), requestDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id) {
-        return voucherForSaleService.delete(id);
+    public void delete(@PathVariable Long id) {
+        voucherForSaleService.delete(id);
     }
 }

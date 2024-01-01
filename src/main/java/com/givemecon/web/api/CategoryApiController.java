@@ -34,8 +34,9 @@ public class CategoryApiController {
         return categoryService.update(id, requestDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id) {
-        return categoryService.delete(id);
+    public void delete(@PathVariable Long id) {
+        categoryService.delete(id);
     }
 }

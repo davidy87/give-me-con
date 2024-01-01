@@ -38,8 +38,9 @@ public class BrandApiController {
         return brandService.update(id, requestDto);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id) {
-        return brandService.delete(id);
+    public void delete(@PathVariable Long id) {
+        brandService.delete(id);
     }
 }
