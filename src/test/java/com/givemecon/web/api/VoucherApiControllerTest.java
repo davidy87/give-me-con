@@ -162,8 +162,8 @@ class VoucherApiControllerTest {
         for (int i = 1; i <= 5; i++) {
             Voucher voucher = Voucher.builder()
                     .price(10_000L)
-                    .title("Voucher" + i)
-                    .image("brand_" + i + ".png")
+                    .title("Voucher " + i)
+                    .image("voucher_" + i + ".png")
                     .build();
 
             voucherRepository.save(voucher);
@@ -199,11 +199,11 @@ class VoucherApiControllerTest {
 
         Brand brandSaved = brandRepository.save(brand);
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             Voucher voucher = Voucher.builder()
                     .price(10_000L)
-                    .title("Voucher" + i)
-                    .image("brand_" + i + ".png")
+                    .title("Voucher " + i)
+                    .image("voucher_" + i + ".png")
                     .build();
 
             brandSaved.addVoucher(voucher);
@@ -244,7 +244,7 @@ class VoucherApiControllerTest {
 
         Voucher voucherSaved = voucherRepository.save(voucher);
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             VoucherForSale voucherSelling = VoucherForSale.builder()
                     .title("Americano T")
                     .image("americano.jpg")
