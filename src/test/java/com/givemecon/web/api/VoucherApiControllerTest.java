@@ -76,7 +76,7 @@ class VoucherApiControllerTest {
     }
 
     @Test
-    void saveVoucher() throws Exception {
+    void save() throws Exception {
         // given
         Long price = 4_000L;
         String title = "Americano T";
@@ -121,7 +121,7 @@ class VoucherApiControllerTest {
     }
 
     @Test
-    void findVoucher() throws Exception {
+    void findOne() throws Exception {
         // given
         Long price = 20_000L;
         String title = "Ice Cream Cake";
@@ -157,9 +157,9 @@ class VoucherApiControllerTest {
     }
 
     @Test
-    void findAllVouchers() throws Exception {
+    void findAll() throws Exception {
         // given
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             Voucher voucher = Voucher.builder()
                     .price(10_000L)
                     .title("Voucher" + i)
@@ -280,7 +280,7 @@ class VoucherApiControllerTest {
     }
 
     @Test
-    void updateVoucher() throws Exception {
+    void update() throws Exception {
         // given
         Long price = 3_000L;
         String title = "Shine Musket Tang Hoo Ru";
@@ -329,7 +329,7 @@ class VoucherApiControllerTest {
     }
 
     @Test
-    void deleteVoucher() throws Exception {
+    void deleteOne() throws Exception {
         // given
         Long price = 4_000L;
         String title = "Milk Tea L";
@@ -346,14 +346,10 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete(url))
                 .andDo(print())
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessResponse(prettyPrint()),
-                        responseBody())
-                );
+                .andDo(document("{class-name}/{method-name}"));
 
         // then
-        response.andExpect(status().isOk());
-
+        response.andExpect(status().isNoContent());
         List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(voucherList).isEmpty();
     }

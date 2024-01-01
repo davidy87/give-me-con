@@ -77,7 +77,7 @@ class VoucherForSaleApiControllerTest {
     }
 
     @Test
-    void saveVoucherForSale() throws Exception {
+    void save() throws Exception {
         // given
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
@@ -143,7 +143,7 @@ class VoucherForSaleApiControllerTest {
     }
 
     @Test
-    void deleteVoucherForSale() throws Exception {
+    void deleteOne() throws Exception {
         // given
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
@@ -174,15 +174,13 @@ class VoucherForSaleApiControllerTest {
         String url = "http://localhost:" + port + "/api/vouchers-for-sale/" + id;
 
         // when
-        mockMvc.perform(delete(url)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+        ResultActions response = mockMvc.perform(delete(url)
+                        .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
                 .andDo(print())
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessResponse(prettyPrint()),
-                        responseBody())
-                );
+                .andDo(document("{class-name}/{method-name}"));
 
         // then
+        response.andExpect(status().isNoContent());
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherForSaleList).isEmpty();
     }

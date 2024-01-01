@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
@@ -41,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureRestDocs(outputDir = "build/snippets/brands")
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @WithMockUser(roles = "ADMIN")
@@ -72,7 +70,7 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void saveBrand() throws Exception {
+    void save() throws Exception {
         // given
         String name = "Starbucks";
         String icon = "starbucks.jpg";
@@ -113,9 +111,9 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void findAllBrands() throws Exception {
+    void findAll() throws Exception {
         // given
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             Brand brand = Brand.builder()
                     .name("brand" + i)
                     .icon("brand" + i + ".png")
@@ -188,7 +186,7 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void updateBrand() throws Exception {
+    void update() throws Exception {
         // given
         String name = "Paris Baguette";
         String icon = "paris_baguette.jpg";
@@ -235,7 +233,7 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void deleteBrand() throws Exception {
+    void deleteOne() throws Exception {
         // given
         String name = "Starbucks";
         String icon = "starbucks.jpg";
@@ -250,13 +248,10 @@ class BrandApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete(url))
                 .andDo(print())
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessResponse(prettyPrint()),
-                        responseBody())
-                );
+                .andDo(document("{class-name}/{method-name}"));
 
         // then
-        response.andExpect(status().isOk());
+        response.andExpect(status().isNoContent());
 
         List<Brand> brandList = brandRepository.findAll();
         assertThat(brandList).isEmpty();

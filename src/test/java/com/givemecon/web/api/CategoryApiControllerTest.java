@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
@@ -38,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureRestDocs(outputDir = "build/snippets/brands")
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @WithMockUser(roles = "ADMIN")
@@ -66,7 +64,7 @@ class CategoryApiControllerTest {
     }
 
     @Test
-    void saveCategory() throws Exception {
+    void save() throws Exception {
         // given
         String name = "coffee";
         String icon = "coffee.jpg";
@@ -86,13 +84,13 @@ class CategoryApiControllerTest {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestFields(
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리 이름"),
-                                fieldWithPath("icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("저장할 카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("저장할 카테고리 아이콘")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("카테고리 id"),
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리 이름"),
-                                fieldWithPath("icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 카테고리 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("저장된 카테고리 아이콘")
                         ))
                 );
 
@@ -107,9 +105,9 @@ class CategoryApiControllerTest {
     }
 
     @Test
-    void findAllCategories() throws Exception {
+    void findAll() throws Exception {
         // given
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             Category category = Category.builder()
                     .name("category" + i)
                     .icon("category" + i + ".png")
@@ -138,7 +136,7 @@ class CategoryApiControllerTest {
     }
 
     @Test
-    void updateCategory() throws Exception {
+    void update() throws Exception {
         // given
         String name = "Bubble Tea";
         String icon = "bubble_tea.jpg";
@@ -167,9 +165,9 @@ class CategoryApiControllerTest {
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("변경할 카테고리 아이콘")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("새로운 카테고리 id"),
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("새로운 카테고리 이름"),
-                                fieldWithPath("icon").type(JsonFieldType.STRING).description("새로운 카테고리 아이콘")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("변경된 카테고리 id"),
+                                fieldWithPath("name").type(JsonFieldType.STRING).description("변경된 카테고리 이름"),
+                                fieldWithPath("icon").type(JsonFieldType.STRING).description("변경된 카테고리 아이콘")
                         ))
                 );
 
@@ -184,7 +182,7 @@ class CategoryApiControllerTest {
     }
 
     @Test
-    void deleteCategory() throws Exception {
+    void deleteOne() throws Exception {
         // given
         String name = "Bubble Tea";
         String icon = "bubble_tea.jpg";
@@ -199,13 +197,10 @@ class CategoryApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete(url))
                 .andDo(print())
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessResponse(prettyPrint()),
-                        responseBody())
-                );
+                .andDo(document("{class-name}/{method-name}"));
 
         // then
-        response.andExpect(status().isOk());
+        response.andExpect(status().isNoContent());
 
         List<Category> categoryList = categoryRepository.findAll();
         assertThat(categoryList).isEmpty();

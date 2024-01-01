@@ -77,7 +77,7 @@ class LikedVoucherApiControllerTest {
     }
 
     @Test
-    void saveLikedVoucher() throws Exception {
+    void save() throws Exception {
         // given
         Voucher voucher = Voucher.builder()
                 .title("voucher")
@@ -105,7 +105,12 @@ class LikedVoucherApiControllerTest {
                 .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
                         requestBody(),
-                        responseBody())
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
+                                fieldWithPath("image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                        ))
                 );
 
         // then
@@ -129,7 +134,7 @@ class LikedVoucherApiControllerTest {
 
         Member memberSaved = memberRepository.save(member);
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             Voucher voucher = Voucher.builder()
                     .title("voucher" + i)
                     .price(4_000L)
@@ -163,7 +168,7 @@ class LikedVoucherApiControllerTest {
     }
 
     @Test
-    void deleteLikedVoucher() throws Exception {
+    void deleteOne() throws Exception {
         // given
         Voucher voucher = Voucher.builder()
                 .title("voucher")
@@ -192,7 +197,7 @@ class LikedVoucherApiControllerTest {
                 .andDo(document("{class-name}/{method-name}"));
 
         // then
-        response.andExpect(status().isOk());
+        response.andExpect(status().isNoContent());
         assertThat(likedVoucherRepository.existsById(likedVoucherSaved.getId())).isFalse();
     }
 }

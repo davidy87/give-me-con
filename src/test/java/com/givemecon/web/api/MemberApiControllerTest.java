@@ -21,12 +21,8 @@ import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseBody;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -54,7 +50,7 @@ class MemberApiControllerTest {
     }
 
     @Test
-    void deleteMember() throws Exception {
+    void deleteOne() throws Exception {
         // given
         Member member = Member.builder()
                 .username("tester")
@@ -68,13 +64,9 @@ class MemberApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete(url))
                 .andDo(print())
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessResponse(prettyPrint()),
-                        responseBody())
-                );
+                .andDo(document("{class-name}/{method-name}"));
 
         // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").value(memberSaved.getId()));
+        response.andExpect(status().isNoContent());
     }
 }
