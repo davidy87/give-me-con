@@ -25,7 +25,7 @@ public class LikedVoucherService {
 
     private final LikedVoucherRepository likedVoucherRepository;
 
-    public Long save(String username, Long voucherId) {
+    public VoucherResponse save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
@@ -38,7 +38,7 @@ public class LikedVoucherService {
 
         member.addLikedVoucher(likedVoucher);
 
-        return likedVoucher.getId();
+        return new VoucherResponse(voucher);
     }
 
     @Transactional(readOnly = true)

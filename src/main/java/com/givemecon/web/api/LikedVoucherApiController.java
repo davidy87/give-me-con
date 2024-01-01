@@ -19,7 +19,7 @@ public class LikedVoucherApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Long save(Authentication authentication, @RequestBody Long voucherId) {
+    public VoucherResponse save(Authentication authentication, @RequestBody Long voucherId) {
         return likedVoucherService.save(authentication.getName(), voucherId);
     }
 
