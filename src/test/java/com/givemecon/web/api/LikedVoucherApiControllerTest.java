@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -30,7 +29,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -44,11 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 class LikedVoucherApiControllerTest {
-
-    @LocalServerPort
-    int port;
 
     @Autowired
     WebApplicationContext context;
@@ -73,6 +68,7 @@ class LikedVoucherApiControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -93,17 +89,19 @@ class LikedVoucherApiControllerTest {
 
         Voucher voucherSaved = voucherRepository.save(voucher);
         Member memberSaved = memberRepository.save(member);
-
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
-        String url = "http://localhost:" + port + "/api/liked-vouchers";
 
         // when
-        ResultActions response = mockMvc.perform(post(url)
+        ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestBody(),
                         responseFields(
@@ -147,13 +145,17 @@ class LikedVoucherApiControllerTest {
         }
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
-        String url = "http://localhost:" + port + "/api/liked-vouchers";
 
         // when
-        ResultActions response = mockMvc.perform(get(url)
+        ResultActions response = mockMvc.perform(get("/api/liked-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
                 .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
@@ -187,15 +189,18 @@ class LikedVoucherApiControllerTest {
         Member memberSaved = memberRepository.save(member);
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(LikedVoucher.builder().voucher(voucherSaved).build());
         likedVoucherSaved.setMember(member);
-
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
-        String url = "http://localhost:" + port + "/api/liked-vouchers/" + voucherSaved.getId();
 
         // when
-        ResultActions response = mockMvc.perform(delete(url)
+        ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherSaved.getId())
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
-                .andDo(print())
-                .andDo(document("{class-name}/{method-name}"));
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ))
+                );
 
         // then
         response.andExpect(status().isNoContent());

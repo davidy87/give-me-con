@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -25,7 +24,6 @@ import java.util.List;
 
 import static com.givemecon.web.dto.CategoryDto.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -40,11 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @WithMockUser(roles = "ADMIN")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 class CategoryApiControllerTest {
-
-    @LocalServerPort
-    int port;
 
     @Autowired
     WebApplicationContext context;
@@ -60,6 +55,7 @@ class CategoryApiControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -73,15 +69,15 @@ class CategoryApiControllerTest {
                 .icon(icon)
                 .build();
 
-        String url = "http://localhost:" + port + "/api/categories";
-
         // when
-        ResultActions response = mockMvc.perform(post(url)
+        ResultActions response = mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()),
+                        preprocessRequest(
+                                modifyHeaders().remove("Host"),
+                                prettyPrint()
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("저장할 카테고리 이름"),
@@ -116,12 +112,10 @@ class CategoryApiControllerTest {
             categoryRepository.save(category);
         }
 
-        String url = "http://localhost:" + port + "/api/categories";
-
         // when
-        ResultActions response = mockMvc.perform(get(url))
-                .andDo(print())
+        ResultActions response = mockMvc.perform(get("/api/categories"))
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(modifyHeaders().remove("Host")),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("카테고리 id"),
@@ -146,19 +140,20 @@ class CategoryApiControllerTest {
                 .build();
 
         Long id = categoryRepository.save(category).getId();
-        String url = "http://localhost:" + port + "/api/categories/" + id;
         CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
                 .name("Smoothie")
                 .icon("smoothie.jpg")
                 .build();
 
         // when
-        ResultActions response = mockMvc.perform(put(url)
+        ResultActions response = mockMvc.perform(put("/api/categories/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()),
+                        preprocessRequest(
+                                modifyHeaders().remove("Host"),
+                                prettyPrint()
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("변경할 카테고리 이름"),
@@ -192,12 +187,11 @@ class CategoryApiControllerTest {
                 .build();
 
         Long id = categoryRepository.save(category).getId();
-        String url = "http://localhost:" + port + "/api/categories/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url))
-                .andDo(print())
-                .andDo(document("{class-name}/{method-name}"));
+        ResultActions response = mockMvc.perform(delete("/api/categories/{id}", id))
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(modifyHeaders().remove("Host"))));
 
         // then
         response.andExpect(status().isNoContent());

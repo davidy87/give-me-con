@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -36,7 +35,6 @@ import java.util.List;
 
 import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -51,12 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 @WithMockUser(roles = "USER", username = "tester")
 class PurchasedVoucherApiControllerTest {
-
-    @LocalServerPort
-    int port;
 
     @Autowired
     WebApplicationContext context;
@@ -81,6 +76,7 @@ class PurchasedVoucherApiControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -115,16 +111,19 @@ class PurchasedVoucherApiControllerTest {
         }
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
-        String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
-        ResultActions response = mockMvc.perform(post(url)
+        ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDtoList)))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()),
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host"),
+                                prettyPrint()
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
@@ -177,15 +176,17 @@ class PurchasedVoucherApiControllerTest {
         }
 
         purchasedVoucherRepository.saveAll(entityList);
-
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-        String url = "http://localhost:" + port + "/api/purchased-vouchers";
 
         // when
-        ResultActions response = mockMvc.perform(get(url)
+        ResultActions response = mockMvc.perform(get("/api/purchased-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
@@ -224,15 +225,17 @@ class PurchasedVoucherApiControllerTest {
                 .build());
 
         owner.addPurchasedVoucher(purchasedVoucher);
-
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-        String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
 
         // when
-        ResultActions response = mockMvc.perform(get(url)
+        ResultActions response = mockMvc.perform(get("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
@@ -274,15 +277,17 @@ class PurchasedVoucherApiControllerTest {
                 .build());
 
         owner.addPurchasedVoucher(purchasedVoucher);
-
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-        String url = "http://localhost:" + port + "/api/purchased-vouchers/" + purchasedVoucher.getId();
 
         // when
-        ResultActions response = mockMvc.perform(put(url)
+        ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),

@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -27,7 +26,6 @@ import java.util.List;
 
 import static com.givemecon.web.dto.BrandDto.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
@@ -43,11 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @WithMockUser(roles = "ADMIN")
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 class BrandApiControllerTest {
-
-    @LocalServerPort
-    int port;
 
     @Autowired
     WebApplicationContext context;
@@ -66,6 +61,7 @@ class BrandApiControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -79,15 +75,15 @@ class BrandApiControllerTest {
                 .icon(icon)
                 .build();
 
-        String url = "http://localhost:" + port + "/api/brands";
-
         // when
-        ResultActions response = mockMvc.perform(post(url)
+        ResultActions response = mockMvc.perform(post("/api/brands")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()),
+                        preprocessRequest(
+                                modifyHeaders().remove("Host"),
+                                prettyPrint()
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("저장할 브랜드 이름"),
@@ -122,12 +118,10 @@ class BrandApiControllerTest {
             brandRepository.save(brand);
         }
 
-        String url = "http://localhost:8080" + port + "/api/brands";
-
         // when
-        ResultActions response = mockMvc.perform(get(url))
-                .andDo(print())
+        ResultActions response = mockMvc.perform(get("/api/brands"))
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(modifyHeaders().remove("Host")),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
@@ -162,12 +156,10 @@ class BrandApiControllerTest {
             categorySaved.addBrand(brandSaved);
         }
 
-        String url = "http://localhost:" + port + "/api/brands?categoryId=" + categorySaved.getId();
-
         // when
-        ResultActions response = mockMvc.perform(get(url))
-                .andDo(print())
+        ResultActions response = mockMvc.perform(get("/api/brands?categoryId={categoryId}", categorySaved.getId()))
                 .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(modifyHeaders().remove("Host")),
                         preprocessResponse(prettyPrint()),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
@@ -196,20 +188,20 @@ class BrandApiControllerTest {
                 .build();
 
         Long id = brandRepository.save(brand).getId();
-
-        String url = "http://localhost:" + port + "/api/brands/" + id;
         BrandUpdateRequest requestDto = BrandUpdateRequest.builder()
                 .name("Tous Res Jours")
                 .icon("tous_res_jours.jpg")
                 .build();
 
         // when
-        ResultActions response = mockMvc.perform(put(url)
+        ResultActions response = mockMvc.perform(put("/api/brands/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()),
+                        preprocessRequest(
+                                modifyHeaders().remove("Host"),
+                                prettyPrint()
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).optional().description("변경할 브랜드명"),
@@ -243,12 +235,11 @@ class BrandApiControllerTest {
                 .build();
 
         Long id = brandRepository.save(brand).getId();
-        String url = "http://localhost:" + port + "/api/brands/" + id;
 
         // when
-        ResultActions response = mockMvc.perform(delete(url))
-                .andDo(print())
-                .andDo(document("{class-name}/{method-name}"));
+        ResultActions response = mockMvc.perform(delete("/api/brands/{id}", id))
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(modifyHeaders().remove("Host"))));
 
         // then
         response.andExpect(status().isNoContent());

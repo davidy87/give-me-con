@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -18,20 +17,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 class MemberApiControllerTest {
-
-    @LocalServerPort
-    int port;
 
     @Autowired
     WebApplicationContext context;
@@ -46,6 +43,7 @@ class MemberApiControllerTest {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -59,12 +57,11 @@ class MemberApiControllerTest {
                 .build();
 
         Member memberSaved = memberRepository.save(member);
-        String url = "http://localhost:" + port + "/api/members/" + memberSaved.getId();
 
         // when
-        ResultActions response = mockMvc.perform(delete(url))
-                .andDo(print())
-                .andDo(document("{class-name}/{method-name}"));
+        ResultActions response = mockMvc.perform(delete("/api/members/{id}", memberSaved.getId()))
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(modifyHeaders().remove("Host"))));
 
         // then
         response.andExpect(status().isNoContent());

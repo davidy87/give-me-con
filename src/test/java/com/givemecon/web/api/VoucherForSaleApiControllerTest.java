@@ -73,6 +73,7 @@ class VoucherForSaleApiControllerTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
     }
 
@@ -108,9 +109,13 @@ class VoucherForSaleApiControllerTest {
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)))
-                .andDo(print())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(prettyPrint()),
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host"),
+                                prettyPrint()
+                        ),
                         preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("저장할 기프티콘 타이틀"),
@@ -176,8 +181,13 @@ class VoucherForSaleApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete(url)
                         .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
-                .andDo(print())
-                .andDo(document("{class-name}/{method-name}"));
+                .andDo(document("{class-name}/{method-name}",
+                        preprocessRequest(
+                                modifyHeaders()
+                                        .set("Authorization", "{ACCESS-TOKEN}")
+                                        .remove("Host")
+                        ))
+                );
 
         // then
         response.andExpect(status().isNoContent());
