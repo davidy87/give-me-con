@@ -27,16 +27,16 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.givemecon.web.ApiDocumentUtils.*;
 import static com.givemecon.web.dto.VoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -86,13 +86,18 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(post("/api/vouchers")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
+
+        // then
+        List<Voucher> voucherList = voucherRepository.findAll();
+
+        response.andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
+                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("image").value(voucherList.get(0).getImage()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders().remove("Host"),
-                                prettyPrint()
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("저장할 기프티콘 타이틀"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("저장할 기프티콘 가격"),
@@ -105,15 +110,6 @@ class VoucherApiControllerTest {
                                 fieldWithPath("image").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지")
                         ))
                 );
-
-        // then
-        List<Voucher> voucherList = voucherRepository.findAll();
-
-        response
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
-                .andExpect(jsonPath("image").value(voucherList.get(0).getImage()));
     }
 
     @Test
@@ -131,10 +127,20 @@ class VoucherApiControllerTest {
         Long id = voucherRepository.save(voucher).getId();
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers/{id}", id))
+        ResultActions response = mockMvc.perform(get("/api/vouchers/{id}", id));
+
+        // then
+        response
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(id))
+                .andExpect(jsonPath("price").value(price))
+                .andExpect(jsonPath("image").value(image))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("기프티콘 id")
+                        ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
@@ -142,13 +148,6 @@ class VoucherApiControllerTest {
                                 fieldWithPath("image").type(JsonFieldType.STRING).description("기프티콘 이미지")
                         ))
                 );
-
-        // then
-        response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(id))
-                .andExpect(jsonPath("price").value(price))
-                .andExpect(jsonPath("image").value(image));
     }
 
     @Test
@@ -165,10 +164,14 @@ class VoucherApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers"))
+        ResultActions response = mockMvc.perform(get("/api/vouchers"));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
@@ -176,10 +179,6 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
@@ -204,10 +203,17 @@ class VoucherApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers?brandName={brandName}", brandSaved.getName()))
+        ResultActions response = mockMvc.perform(get("/api/vouchers?brandName={brandName}", brandSaved.getName()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("brandName").description("브랜드 이름")
+                        ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
@@ -215,10 +221,6 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
@@ -249,10 +251,17 @@ class VoucherApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers/{id}/selling-list", voucherSaved.getId()))
+        ResultActions response = mockMvc.perform(get("/api/vouchers/{id}/selling-list", voucherSaved.getId()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("기프티콘 id")
+                        ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
@@ -262,10 +271,6 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].image").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
@@ -289,13 +294,22 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(put("/api/vouchers/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
+
+        // then
+        List<Voucher> voucherList = voucherRepository.findAll();
+
+        response
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
+                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("image").value(voucherList.get(0).getImage()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders().remove("Host"),
-                                prettyPrint()
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("기프티콘 id")
                         ),
-                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).optional().description("수정할 기프티콘 가격"),
                                 fieldWithPath("image").type(JsonFieldType.STRING).optional().description("수정할 기프티콘 이미지")
@@ -307,15 +321,6 @@ class VoucherApiControllerTest {
                                 fieldWithPath("image").type(JsonFieldType.STRING).description("수정된 기프티콘 이미지")
                         ))
                 );
-
-        // then
-        List<Voucher> voucherList = voucherRepository.findAll();
-
-        response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
-                .andExpect(jsonPath("image").value(voucherList.get(0).getImage()));
     }
 
     @Test
@@ -335,7 +340,12 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", id))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host"))));
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("기프티콘 id")
+                        ))
+                );
 
         // then
         response.andExpect(status().isNoContent());

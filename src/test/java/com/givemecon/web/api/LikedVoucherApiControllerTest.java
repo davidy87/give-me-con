@@ -28,15 +28,15 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static com.givemecon.web.ApiDocumentUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -95,14 +95,13 @@ class LikedVoucherApiControllerTest {
         ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())))
+                .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())));
+
+        // then
+        response.andExpect(status().isCreated())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host")
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
                         requestBody(),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
@@ -112,12 +111,8 @@ class LikedVoucherApiControllerTest {
                         ))
                 );
 
-        // then
-        response.andExpect(status().isCreated());
-
         List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
         LikedVoucher found = likedVoucherList.get(0);
-
         assertThat(found.getVoucher()).isEqualTo(voucherSaved);
         assertThat(found.getMember()).isEqualTo(memberSaved);
     }
@@ -148,15 +143,14 @@ class LikedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/liked-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
-                .andDo(print())
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host")
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
@@ -164,10 +158,6 @@ class LikedVoucherApiControllerTest {
                                 fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
     }
 
     @Test
@@ -193,17 +183,18 @@ class LikedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherSaved.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host")
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("voucherId").description("기프티콘 id")
                         ))
                 );
 
-        // then
-        response.andExpect(status().isNoContent());
         assertThat(likedVoucherRepository.existsById(likedVoucherSaved.getId())).isFalse();
     }
 }

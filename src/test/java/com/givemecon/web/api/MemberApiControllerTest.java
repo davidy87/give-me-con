@@ -17,11 +17,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.givemecon.web.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.modifyHeaders;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -59,11 +59,16 @@ class MemberApiControllerTest {
         Member memberSaved = memberRepository.save(member);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/members/{id}", memberSaved.getId()))
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host"))));
+        ResultActions response = mockMvc.perform(delete("/api/members/{id}", memberSaved.getId()));
 
         // then
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isNoContent())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("회원 id")
+                        ))
+                );
     }
 }

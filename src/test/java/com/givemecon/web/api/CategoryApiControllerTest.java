@@ -22,15 +22,15 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static com.givemecon.web.ApiDocumentUtils.*;
 import static com.givemecon.web.dto.CategoryDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -72,13 +72,19 @@ class CategoryApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(post("/api/categories")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
+
+        // then
+        List<Category> categoryList = categoryRepository.findAll();
+
+        response
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
+                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(categoryList.get(0).getIcon()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders().remove("Host"),
-                                prettyPrint()
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("저장할 카테고리 이름"),
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("저장할 카테고리 아이콘")
@@ -89,15 +95,6 @@ class CategoryApiControllerTest {
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("저장된 카테고리 아이콘")
                         ))
                 );
-
-        // then
-        List<Category> categoryList = categoryRepository.findAll();
-
-        response
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
-                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(categoryList.get(0).getIcon()));
     }
 
     @Test
@@ -113,20 +110,19 @@ class CategoryApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/categories"))
+        ResultActions response = mockMvc.perform(get("/api/categories"));
+
+        // then
+        response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("카테고리 id"),
                                 fieldWithPath("[].name").type(JsonFieldType.STRING).description("카테고리 이름"),
                                 fieldWithPath("[].icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
                         ))
                 );
-
-        // then
-        response
-                .andExpect(status().isOk());
     }
 
     @Test
@@ -148,13 +144,21 @@ class CategoryApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(put("/api/categories/{id}", id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
+
+        // then
+        List<Category> categoryList = categoryRepository.findAll();
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
+                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(categoryList.get(0).getIcon()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders().remove("Host"),
-                                prettyPrint()
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("카테고리 id")
                         ),
-                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("변경할 카테고리 이름"),
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("변경할 카테고리 아이콘")
@@ -165,15 +169,6 @@ class CategoryApiControllerTest {
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("변경된 카테고리 아이콘")
                         ))
                 );
-
-        // then
-        List<Category> categoryList = categoryRepository.findAll();
-
-        response
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
-                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(categoryList.get(0).getIcon()));
     }
 
     @Test
@@ -189,12 +184,17 @@ class CategoryApiControllerTest {
         Long id = categoryRepository.save(category).getId();
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/categories/{id}", id))
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host"))));
+        ResultActions response = mockMvc.perform(delete("/api/categories/{id}", id));
 
         // then
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isNoContent())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("카테고리 id")
+                        ))
+                );
 
         List<Category> categoryList = categoryRepository.findAll();
         assertThat(categoryList).isEmpty();

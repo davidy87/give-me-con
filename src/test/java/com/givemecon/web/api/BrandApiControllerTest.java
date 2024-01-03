@@ -24,16 +24,17 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static com.givemecon.web.ApiDocumentUtils.*;
 import static com.givemecon.web.dto.BrandDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,15 +77,20 @@ class BrandApiControllerTest {
                 .build();
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/brands")
+        ResultActions result = mockMvc.perform(post("/api/brands")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .content(new ObjectMapper().writeValueAsString(requestDto)));
+
+        // then
+        List<Brand> brandList = brandRepository.findAll();
+
+        result.andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value(brandList.get(0).getId()))
+                .andExpect(jsonPath("name").value(brandList.get(0).getName()))
+                .andExpect(jsonPath("icon").value(brandList.get(0).getIcon()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders().remove("Host"),
-                                prettyPrint()
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("저장할 브랜드 이름"),
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("저장할 브랜드 아이콘")
@@ -95,15 +101,6 @@ class BrandApiControllerTest {
                                 fieldWithPath("icon").type(JsonFieldType.STRING).description("저장된 브랜드 아이콘")
                         ))
                 );
-
-        // then
-        List<Brand> brandList = brandRepository.findAll();
-
-        response
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(brandList.get(0).getId()))
-                .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(brandList.get(0).getIcon()));
     }
 
     @Test
@@ -119,19 +116,19 @@ class BrandApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/brands"))
+        ResultActions response = mockMvc.perform(get("/api/brands"));
+
+        // then
+        response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
                                 fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드명"),
                                 fieldWithPath("[].icon").type(JsonFieldType.STRING).description("브랜드 아이콘")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk());
     }
 
     @Test
@@ -157,10 +154,16 @@ class BrandApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/brands?categoryId={categoryId}", categorySaved.getId()))
+        ResultActions response = mockMvc.perform(get("/api/brands?categoryId={categoryId}", categorySaved.getId()));
+
+        // then
+        response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host")),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("categoryId").description("카테고리 id")
+                        ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
                                 fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드명"),
@@ -168,8 +171,6 @@ class BrandApiControllerTest {
                         ))
                 );
 
-        // then
-        response.andExpect(status().isOk());
         List<Brand> brandList = brandRepository.findAll();
 
         for (Brand brand : brandList) {
@@ -198,11 +199,11 @@ class BrandApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDto)))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders().remove("Host"),
-                                prettyPrint()
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("브랜드 id")
                         ),
-                        preprocessResponse(prettyPrint()),
                         requestFields(
                                 fieldWithPath("name").type(JsonFieldType.STRING).optional().description("변경할 브랜드명"),
                                 fieldWithPath("icon").type(JsonFieldType.STRING).optional().description("변경할 브랜드 아이콘")
@@ -237,12 +238,17 @@ class BrandApiControllerTest {
         Long id = brandRepository.save(brand).getId();
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/brands/{id}", id))
-                .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(modifyHeaders().remove("Host"))));
+        ResultActions response = mockMvc.perform(delete("/api/brands/{id}", id));
 
         // then
-        response.andExpect(status().isNoContent());
+        response.andExpect(status().isNoContent())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("브랜드 id")
+                        ))
+                );
 
         List<Brand> brandList = brandRepository.findAll();
         assertThat(brandList).isEmpty();

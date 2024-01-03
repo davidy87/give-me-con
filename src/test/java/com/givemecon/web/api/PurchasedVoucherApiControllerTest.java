@@ -33,16 +33,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.givemecon.web.ApiDocumentUtils.*;
 import static com.givemecon.web.dto.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -116,15 +115,13 @@ class PurchasedVoucherApiControllerTest {
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDtoList)))
+                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDtoList)));
+
+        // then
+        response.andExpect(status().isCreated())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host"),
-                                prettyPrint()
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
                                 fieldWithPath("[].image").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
@@ -144,10 +141,7 @@ class PurchasedVoucherApiControllerTest {
                         ))
                 );
 
-        // then
-        response.andExpect(status().isCreated());
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-
         assertThat(purchasedVoucherList).hasSize(requestDtoList.size());
     }
 
@@ -180,14 +174,13 @@ class PurchasedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host")
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
@@ -199,10 +192,7 @@ class PurchasedVoucherApiControllerTest {
                         ))
                 );
 
-        // then
-        response.andExpect(status().isOk());
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-
         assertThat(purchasedVoucherList).hasSize(entityList.size());
         purchasedVoucherList.forEach(purchasedVoucher -> assertThat(purchasedVoucher.getOwner()).isEqualTo(owner));
     }
@@ -229,14 +219,20 @@ class PurchasedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
+                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
+                .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
+                .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
+                .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
+                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
+                .andExpect(jsonPath("valid").value(purchasedVoucher.getValid()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host")
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
@@ -247,16 +243,6 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("valid").type(JsonFieldType.BOOLEAN).description("기프티콘 유효 여부")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
-                .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
-                .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
-                .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
-                .andExpect(jsonPath("valid").value(purchasedVoucher.getValid()));
     }
 
     @Test
@@ -281,14 +267,20 @@ class PurchasedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()))
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
+                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
+                .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
+                .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
+                .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
+                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
+                .andExpect(jsonPath("valid").value(purchasedVoucher.getValid()))
                 .andDo(document("{class-name}/{method-name}",
-                        preprocessRequest(
-                                modifyHeaders()
-                                        .set("Authorization", "{ACCESS-TOKEN}")
-                                        .remove("Host")
-                        ),
-                        preprocessResponse(prettyPrint()),
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
@@ -299,15 +291,5 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("valid").type(JsonFieldType.BOOLEAN).description("기프티콘 유효 여부")
                         ))
                 );
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
-                .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
-                .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
-                .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
-                .andExpect(jsonPath("valid").value(purchasedVoucher.getValid()));
     }
 }
