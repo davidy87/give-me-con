@@ -10,19 +10,16 @@
 = Overview
 
 == 공통 에러 응답
-
 ----
-HTTP/1.1 400 Bad Request
-Content-Type: text/plain;charset=UTF-8
-Content-Length:
+HTTP/1.1 404 Not Found
+Content-Type: application/json
 
 {
-    "errors": [
-        {
-            "field": "...",
-            "message": "..."
-        }
-    ]
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
 }
 ----
 
