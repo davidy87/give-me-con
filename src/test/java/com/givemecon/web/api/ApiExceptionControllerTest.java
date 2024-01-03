@@ -73,9 +73,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -96,9 +96,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -112,9 +112,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -128,9 +128,9 @@ public class ApiExceptionControllerTest {
         // then
         response
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("status").value(ENTITY_NOT_FOUND.getStatus()))
-                .andExpect(jsonPath("code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
+                .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -152,8 +152,8 @@ public class ApiExceptionControllerTest {
 
         // then
         response.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("code").value(ACCESS_TOKEN_EXPIRED.getCode()))
-                .andExpect(jsonPath("status").value(ACCESS_TOKEN_EXPIRED.getStatus()))
-                .andExpect(jsonPath("message").value(ACCESS_TOKEN_EXPIRED.getMessage()));
+                .andExpect(jsonPath("error.code").value(ACCESS_TOKEN_EXPIRED.getCode()))
+                .andExpect(jsonPath("error.status").value(ACCESS_TOKEN_EXPIRED.getStatus()))
+                .andExpect(jsonPath("error.message").value(ACCESS_TOKEN_EXPIRED.getMessage()));
     }
 }

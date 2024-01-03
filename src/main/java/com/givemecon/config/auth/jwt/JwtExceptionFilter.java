@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
@@ -34,7 +35,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             response.setStatus(errorResponse.getStatus());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
+            response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("error", errorResponse)));
         }
     }
 }
