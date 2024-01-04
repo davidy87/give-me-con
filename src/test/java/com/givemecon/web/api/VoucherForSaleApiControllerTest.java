@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -32,7 +31,6 @@ import java.util.List;
 import static com.givemecon.web.ApiDocumentUtils.*;
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -46,11 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest
 class VoucherForSaleApiControllerTest {
-
-    @LocalServerPort
-    int port;
 
     @Autowired
     WebApplicationContext context;
@@ -102,9 +97,7 @@ class VoucherForSaleApiControllerTest {
                 .build();
 
         // when
-        String url = "http://localhost:" + port + "/api/vouchers-for-sale";
-
-        ResultActions response = mockMvc.perform(post(url)
+        ResultActions response = mockMvc.perform(post("/api/vouchers-for-sale")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)));
@@ -179,7 +172,7 @@ class VoucherForSaleApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("삭제된 판매중인 기프티콘 id")
+                                parameterWithName("id").description("판매중인 기프티콘 id")
                         ))
                 );
 
