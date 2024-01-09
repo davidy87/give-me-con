@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -45,11 +47,12 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/categories/**"),
+                                AntPathRequestMatcher.antMatcher(HttpMethod.GET,"/api/categories/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/brands/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers-for-sale/**"),
-                                AntPathRequestMatcher.antMatcher("/api/auth/refresh")
+                                AntPathRequestMatcher.antMatcher("/api/auth/refresh"),
+                                AntPathRequestMatcher.antMatcher("/api/members/admin/**")
                         ).permitAll()
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/categories/**"),
@@ -94,5 +97,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

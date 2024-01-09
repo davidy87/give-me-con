@@ -30,6 +30,8 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String username;
 
+    private String password;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     private Role role;
@@ -45,9 +47,10 @@ public class Member extends BaseTimeEntity {
     List<PurchasedVoucher> purchasedVoucherList = new ArrayList<>();
 
     @Builder
-    public Member(String email, String username, Role role) {
+    public Member(String email, String username, String password, Role role) {
         this.email = email;
         this.username = username;
+        this.password = password;
         this.role = role;
     }
 
