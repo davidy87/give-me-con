@@ -25,6 +25,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
         log.info("--- In JwtAuthenticationFilter ---");
         log.info("accessToken = {}", accessToken);
+        log.info("url = {}", ((HttpServletRequest) request).getRequestURL());
 
         if (accessToken != null) {
             Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);

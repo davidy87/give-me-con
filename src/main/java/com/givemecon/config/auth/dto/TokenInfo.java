@@ -1,5 +1,6 @@
 package com.givemecon.config.auth.dto;
 
+import com.givemecon.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,4 +15,6 @@ public class TokenInfo {
     private String accessToken;
 
     private String refreshToken;
+
+    private Role role;
 }
