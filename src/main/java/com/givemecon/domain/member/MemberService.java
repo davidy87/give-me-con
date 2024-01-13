@@ -35,8 +35,9 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public TokenInfo login(LoginRequest loginRequest) {
-        Member loginMember = memberRepository.findByUsername(loginRequest.getUsername())
+        Member loginMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .filter(member -> passwordEncoder.matches(loginRequest.getPassword(), member.getPassword()))
+                .filter(member -> member.getRole() == Role.ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         return jwtTokenProvider.getTokenInfo(loginMember);

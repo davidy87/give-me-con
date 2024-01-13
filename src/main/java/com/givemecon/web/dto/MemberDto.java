@@ -43,7 +43,7 @@ public class MemberDto {
     @Builder
     public static class LoginRequest {
 
-        private String username;
+        private String email;
 
         private String password;
     }
