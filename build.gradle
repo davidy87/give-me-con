@@ -53,6 +53,11 @@ dependencies {
 	// H2
 	runtimeOnly 'com.h2database:h2'
 
+	// Spring Cloud (S3)
+	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.0")
+	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+	testImplementation 'io.findify:s3mock_2.13:0.2.6'
+
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

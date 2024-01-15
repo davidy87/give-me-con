@@ -104,7 +104,7 @@ class MemberApiControllerTest {
                 .build());
 
         LoginRequest loginRequest = LoginRequest.builder()
-                .username(member.getUsername())
+                .email(member.getEmail())
                 .password(password)
                 .build();
 
@@ -119,13 +119,14 @@ class MemberApiControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("username").type(JsonFieldType.STRING).description("닉네임"),
+                                fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                                 fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
                         ),
                         responseFields(
                                 fieldWithPath("grantType").type(JsonFieldType.STRING).description("인증 타입"),
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
-                                fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token")
+                                fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("권한 타입")
                         ))
                 );
     }
