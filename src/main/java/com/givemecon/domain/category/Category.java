@@ -26,6 +26,10 @@ public class Category extends BaseTimeEntity {
     @Column(length = 500)
     private String icon;
 
+    @OneToOne
+    @JoinColumn(name = "category_icon_id")
+    private CategoryIcon categoryIcon;
+
     @OneToMany(
             mappedBy = "category",
             fetch = FetchType.LAZY,
@@ -43,6 +47,11 @@ public class Category extends BaseTimeEntity {
     public void update(String name, String icon) {
         this.name = name;
         this.icon = icon;
+    }
+
+    public void setCategoryIcon(CategoryIcon categoryIcon) {
+        this.categoryIcon = categoryIcon;
+        categoryIcon.setCategory(this);
     }
 
     public void addBrand(Brand brand) {
