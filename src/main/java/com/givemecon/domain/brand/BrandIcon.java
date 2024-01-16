@@ -29,8 +29,9 @@ public class BrandIcon extends BaseTimeEntity {
     private Brand brand;
 
     @Builder
-    public BrandIcon(String imageKey, String originalName) {
+    public BrandIcon(String imageKey, String imageUrl, String originalName) {
         this.imageKey = imageKey;
+        this.imageUrl = imageUrl;
         this.originalName = originalName;
     }
 

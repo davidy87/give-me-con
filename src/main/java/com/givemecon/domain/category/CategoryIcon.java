@@ -29,8 +29,9 @@ public class CategoryIcon extends BaseTimeEntity {
     private Category category;
 
     @Builder
-    public CategoryIcon(String imageKey, String originalName) {
+    public CategoryIcon(String imageKey, String imageUrl, String originalName) {
         this.imageKey = imageKey;
+        this.imageUrl = imageUrl;
         this.originalName = originalName;
     }
 
