@@ -19,6 +19,9 @@ public class CategoryIcon extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String imageKey;
 
+    @Column(nullable = false, unique = true)
+    private String imageUrl;
+
     @Column(nullable = false)
     private String originalName;
 
