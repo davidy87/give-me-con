@@ -3,6 +3,7 @@ package com.givemecon.web.dto;
 import com.givemecon.domain.category.Category;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 public class CategoryDto {
 
@@ -12,12 +13,11 @@ public class CategoryDto {
 
         private String name;
 
-        private String icon;
+        private MultipartFile icon;
 
         public Category toEntity() {
             return Category.builder()
                     .name(name)
-                    .icon(icon)
                     .build();
         }
     }
@@ -28,7 +28,7 @@ public class CategoryDto {
 
         private String name;
 
-        private String icon;
+        private MultipartFile icon;
     }
 
     @Getter
@@ -43,7 +43,7 @@ public class CategoryDto {
         public CategoryResponse(Category category) {
             this.id = category.getId();
             this.name = category.getName();
-            this.icon = category.getIcon();
+            this.icon = category.getCategoryIcon().getImageUrl();
         }
     }
 }

@@ -23,9 +23,6 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(length = 500)
-    private String icon;
-
     @OneToOne
     @JoinColumn(name = "category_icon_id")
     private CategoryIcon categoryIcon;
@@ -39,14 +36,12 @@ public class Category extends BaseTimeEntity {
     List<Brand> brandList = new ArrayList<>();
 
     @Builder
-    public Category(String name, String icon) {
+    public Category(String name) {
         this.name = name;
-        this.icon = icon;
     }
 
-    public void update(String name, String icon) {
+    public void updateName(String name) {
         this.name = name;
-        this.icon = icon;
     }
 
     public void setCategoryIcon(CategoryIcon categoryIcon) {

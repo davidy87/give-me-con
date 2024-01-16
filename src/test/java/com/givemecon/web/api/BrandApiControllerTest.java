@@ -138,7 +138,6 @@ class BrandApiControllerTest {
         String icon = "bubble_tea.jpg";
         Category category = Category.builder()
                 .name(name)
-                .icon(icon)
                 .build();
 
         Category categorySaved = categoryRepository.save(category);

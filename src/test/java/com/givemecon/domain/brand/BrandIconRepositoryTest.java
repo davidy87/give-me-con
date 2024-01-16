@@ -23,9 +23,11 @@ class BrandIconRepositoryTest {
         // given
         String imageKey = UUID.randomUUID() + ".png";
         String originalName = "testImage.png";
+        String imageUrl = "imageUrl";
         BrandIcon brandIcon = BrandIcon.builder()
                 .imageKey(imageKey)
                 .originalName(originalName)
+                .imageUrl(imageUrl)
                 .build();
 
         // when
@@ -36,6 +38,7 @@ class BrandIconRepositoryTest {
         BrandIcon found = brandIconList.get(0);
         assertThat(found.getImageKey()).isEqualTo(imageKey);
         assertThat(found.getOriginalName()).isEqualTo(originalName);
+        assertThat(found.getImageUrl()).isEqualTo(imageUrl);
     }
 
     @Test
@@ -45,6 +48,7 @@ class BrandIconRepositoryTest {
         brandIconRepository.save(BrandIcon.builder()
                 .imageKey("imageKey")
                 .originalName("testImage.png")
+                .imageUrl("imageUrl")
                 .build());
 
         // when

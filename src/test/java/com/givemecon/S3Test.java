@@ -1,4 +1,4 @@
-package com.givemecon.domain;
+package com.givemecon;
 
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;

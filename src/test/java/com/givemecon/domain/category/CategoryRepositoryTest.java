@@ -28,7 +28,6 @@ class CategoryRepositoryTest {
 
         Category category = Category.builder()
                 .name(name)
-                .icon(icon)
                 .build();
 
         // when
@@ -38,7 +37,6 @@ class CategoryRepositoryTest {
         // then
         Category found = categoryList.get(0);
         assertThat(found.getName()).isEqualTo(name);
-        assertThat(found.getIcon()).isEqualTo(icon);
     }
 
     @Test
@@ -47,7 +45,6 @@ class CategoryRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         categoryRepository.save(Category.builder()
                 .name("coffee")
-                .icon("coffee.jpg")
                 .build());
 
         // when

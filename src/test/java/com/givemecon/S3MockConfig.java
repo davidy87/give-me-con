@@ -1,4 +1,4 @@
-package com.givemecon.domain;
+package com.givemecon;
 
 import io.findify.s3mock.S3Mock;
 import lombok.extern.slf4j.Slf4j;

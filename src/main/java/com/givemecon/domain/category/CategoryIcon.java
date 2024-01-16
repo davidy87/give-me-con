@@ -38,4 +38,9 @@ public class CategoryIcon extends BaseTimeEntity {
     public void setCategory(Category category) {
         this.category = category;
     }
+
+    public void update(String imageUrl, String originalName) {
+        this.imageUrl = imageUrl;
+        this.originalName = originalName;
+    }
 }

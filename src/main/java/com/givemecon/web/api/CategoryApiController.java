@@ -3,7 +3,9 @@ package com.givemecon.web.api;
 import com.givemecon.domain.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,8 +19,13 @@ public class CategoryApiController {
     private final CategoryService categoryService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public CategoryResponse save(@RequestBody CategorySaveRequest requestDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public CategoryResponse save(@RequestPart String name, @RequestPart MultipartFile icon) {
+        CategorySaveRequest requestDto = CategorySaveRequest.builder()
+                .name(name)
+                .icon(icon)
+                .build();
+
         return categoryService.save(requestDto);
     }
 
@@ -27,9 +34,15 @@ public class CategoryApiController {
         return categoryService.findAll();
     }
 
-    @PutMapping("/{id}")
+    @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CategoryResponse update(@PathVariable Long id,
-                                   @RequestBody CategoryUpdateRequest requestDto) {
+                                   @RequestPart(required = false) String name,
+                                   @RequestPart(required = false) MultipartFile icon) {
+
+        CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
+                .name(name)
+                .icon(icon)
+                .build();
 
         return categoryService.update(id, requestDto);
     }

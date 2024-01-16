@@ -72,6 +72,7 @@ public class EntityRelationshipTest {
         CategoryIcon icon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey("imageKey")
                 .originalName("testIcon.png")
+                .imageUrl("imageUrl")
                 .build());
 
         // when
@@ -92,6 +93,7 @@ public class EntityRelationshipTest {
         BrandIcon icon = brandIconRepository.save(BrandIcon.builder()
                 .imageKey("imageKey")
                 .originalName("testIcon.png")
+                .imageUrl("imageUrl")
                 .build());
 
         // when
@@ -107,7 +109,6 @@ public class EntityRelationshipTest {
         // given
         Category category = Category.builder()
                 .name("coffee")
-                .icon("coffee.jpg")
                 .build();
 
         Brand brand = Brand.builder()
@@ -132,7 +133,6 @@ public class EntityRelationshipTest {
         // given
         Category category = Category.builder()
                 .name("coffee")
-                .icon("coffee.jpg")
                 .build();
 
         Brand brand = Brand.builder()
@@ -241,7 +241,6 @@ public class EntityRelationshipTest {
         // given
         Category category = Category.builder()
                 .name("coffee")
-                .icon("coffee.jpg")
                 .build();
 
         Brand brand = Brand.builder()

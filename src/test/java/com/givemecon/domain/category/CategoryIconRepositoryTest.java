@@ -22,9 +22,11 @@ class CategoryIconRepositoryTest {
         // given
         String imageKey = "imageKey";
         String originalName = "testImage.png";
+        String imageUrl = "imageUrl";
         CategoryIcon categoryIcon = CategoryIcon.builder()
                 .imageKey(imageKey)
                 .originalName(originalName)
+                .imageUrl(imageUrl)
                 .build();
 
         // when
@@ -35,6 +37,7 @@ class CategoryIconRepositoryTest {
         CategoryIcon found = categoryIconList.get(0);
         assertThat(found.getImageKey()).isEqualTo(imageKey);
         assertThat(found.getOriginalName()).isEqualTo(originalName);
+        assertThat(found.getImageUrl()).isEqualTo(imageUrl);
     }
 
     @Test
@@ -44,6 +47,7 @@ class CategoryIconRepositoryTest {
         categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey("imageKey")
                 .originalName("testImage.png")
+                .imageUrl("imageUrl")
                 .build());
 
         // when

@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: test
+    include: API-KEY,oauth,jwt
+
+  cloud:
+    aws:
+      s3:
+        bucket: test-bucket
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false
