@@ -1,8 +1,12 @@
 package com.givemecon.domain;
 
 import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.brand.BrandIcon;
+import com.givemecon.domain.brand.BrandIconRepository;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
+import com.givemecon.domain.category.CategoryIcon;
+import com.givemecon.domain.category.CategoryIconRepository;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -35,7 +39,13 @@ public class EntityRelationshipTest {
     CategoryRepository categoryRepository;
 
     @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    BrandIconRepository brandIconRepository;
 
     @Autowired
     MemberRepository memberRepository;
@@ -51,6 +61,46 @@ public class EntityRelationshipTest {
 
     @Autowired
     PurchasedVoucherRepository purchasedVoucherRepository;
+
+    @Test
+    void categoryAndCategoryIcon() {
+        // given
+        Category category = categoryRepository.save(Category.builder()
+                .name("coffee")
+                .build());
+
+        CategoryIcon icon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("imageKey")
+                .originalName("testIcon.png")
+                .build());
+
+        // when
+        category.setCategoryIcon(icon);
+
+        // then
+        CategoryIcon found = category.getCategoryIcon();
+        assertThat(found).isEqualTo(icon);
+    }
+
+    @Test
+    void brandAndBrandIcon() {
+        // given
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("Starbucks")
+                .build());
+
+        BrandIcon icon = brandIconRepository.save(BrandIcon.builder()
+                .imageKey("imageKey")
+                .originalName("testIcon.png")
+                .build());
+
+        // when
+        brand.setBrandIcon(icon);
+
+        // then
+        BrandIcon found = brand.getBrandIcon();
+        assertThat(found).isEqualTo(icon);
+    }
 
     @Test
     void brand() {
