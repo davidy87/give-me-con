@@ -5,7 +5,6 @@ import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryIcon;
 import com.givemecon.domain.category.CategoryIconRepository;
 import com.givemecon.domain.category.CategoryRepository;
-import io.awspring.cloud.s3.S3Template;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,9 +63,6 @@ class CategoryApiControllerTest {
 
     @Autowired
     S3Mock s3Mock;
-
-    @Autowired
-    S3Template s3Template;
 
     @Autowired
     S3Client s3Client;
