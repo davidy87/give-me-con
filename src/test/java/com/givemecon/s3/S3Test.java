@@ -1,4 +1,4 @@
-package com.givemecon;
+package com.givemecon.s3;
 
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -32,13 +33,14 @@ public class S3Test {
     @Autowired
     S3Client s3Client;
 
-    private static final String BUCKET_NAME = "test-bucket";
+    @Value("${spring.cloud.aws.s3.bucket}")
+    private String bucketName;
 
     @BeforeEach
     void setup() {
         s3Mock.start();
         s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(BUCKET_NAME)
+                .bucket(bucketName)
                 .build());
     }
 
@@ -54,12 +56,12 @@ public class S3Test {
         String imageKey = UUID.randomUUID() + ".png";
 
         // when
-        String imageUrl = s3Template.upload(BUCKET_NAME, imageKey, inputStream)
+        String imageUrl = s3Template.upload(bucketName, imageKey, inputStream)
                 .getURL()
                 .toString();
 
         // then
-        String downloadUrl = s3Template.download(BUCKET_NAME, imageKey)
+        String downloadUrl = s3Template.download(bucketName, imageKey)
                 .getURL()
                 .toString();
 
@@ -71,13 +73,13 @@ public class S3Test {
         // given
         InputStream inputStream = new ByteArrayInputStream("testImage.png".getBytes());
         String imageKey = UUID.randomUUID() + ".png";
-        s3Template.upload(BUCKET_NAME, imageKey, inputStream);
+        s3Template.upload(bucketName, imageKey, inputStream);
 
         // when
-        s3Template.deleteObject(BUCKET_NAME, imageKey);
+        s3Template.deleteObject(bucketName, imageKey);
 
         // then
-        S3Resource found = s3Template.download(BUCKET_NAME, imageKey);
+        S3Resource found = s3Template.download(bucketName, imageKey);
         assertThat(found.exists()).isFalse();
     }
 }

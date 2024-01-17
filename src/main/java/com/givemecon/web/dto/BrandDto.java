@@ -3,6 +3,7 @@ package com.givemecon.web.dto;
 import com.givemecon.domain.brand.Brand;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 public class BrandDto {
 
@@ -12,12 +13,11 @@ public class BrandDto {
 
         private String name;
 
-        private String icon;
+        private MultipartFile icon;
 
         public Brand toEntity() {
             return Brand.builder()
                     .name(name)
-                    .icon(icon)
                     .build();
         }
     }
@@ -28,7 +28,7 @@ public class BrandDto {
 
         private String name;
 
-        private String icon;
+        private MultipartFile icon;
     }
 
     @Getter
@@ -43,7 +43,7 @@ public class BrandDto {
         public BrandResponse(Brand brand) {
             this.id = brand.getId();
             this.name = brand.getName();
-            this.icon = brand.getIcon();
+            this.icon = brand.getBrandIcon().getImageUrl();
         }
     }
 }

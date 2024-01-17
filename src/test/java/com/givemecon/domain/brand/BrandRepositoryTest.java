@@ -28,7 +28,6 @@ class BrandRepositoryTest {
 
         Brand brand = Brand.builder()
                 .name(name)
-                .icon(icon)
                 .build();
 
         // when
@@ -38,7 +37,6 @@ class BrandRepositoryTest {
         // then
         Brand found = brandList.get(0);
         assertThat(found.getName()).isEqualTo(name);
-        assertThat(found.getIcon()).isEqualTo(icon);
     }
 
     @Test
@@ -47,7 +45,6 @@ class BrandRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         brandRepository.save(Brand.builder()
                 .name("BR31")
-                .icon("BR31.jpg")
                 .build());
 
         // when

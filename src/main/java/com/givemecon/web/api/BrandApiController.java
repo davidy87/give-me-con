@@ -3,6 +3,7 @@ package com.givemecon.web.api;
 import com.givemecon.domain.brand.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,8 @@ public class BrandApiController {
     private final BrandService brandService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public BrandResponse save(@RequestBody BrandSaveRequest requestDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BrandResponse save(@ModelAttribute BrandSaveRequest requestDto) {
         return brandService.save(requestDto);
     }
 
@@ -31,9 +32,9 @@ public class BrandApiController {
         return brandService.findAll();
     }
 
-    @PutMapping("/{id}")
+    @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BrandResponse update(@PathVariable Long id,
-                                @RequestBody BrandUpdateRequest requestDto) {
+                                @ModelAttribute BrandUpdateRequest requestDto) {
 
         return brandService.update(id, requestDto);
     }

@@ -26,9 +26,6 @@ public class Brand extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(length = 500)
-    private String icon;
-
     @OneToOne
     @JoinColumn(name = "brand_icon_id")
     private BrandIcon brandIcon;
@@ -46,14 +43,12 @@ public class Brand extends BaseTimeEntity {
     List<Voucher> voucherList = new ArrayList<>();
 
     @Builder
-    public Brand(String name, String icon) {
+    public Brand(String name) {
         this.name = name;
-        this.icon = icon;
     }
 
-    public void update(String name, String icon) {
+    public void updateName(String name) {
         this.name = name;
-        this.icon = icon;
     }
 
     public void setBrandIcon(BrandIcon brandIcon) {

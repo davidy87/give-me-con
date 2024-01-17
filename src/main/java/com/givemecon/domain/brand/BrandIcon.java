@@ -38,4 +38,9 @@ public class BrandIcon extends BaseTimeEntity {
     public void setBrand(Brand brand) {
         this.brand = brand;
     }
+
+    public void update(String imageUrl, String originalName) {
+        this.imageUrl = imageUrl;
+        this.originalName = originalName;
+    }
 }

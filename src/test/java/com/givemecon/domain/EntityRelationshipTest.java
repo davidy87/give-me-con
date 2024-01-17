@@ -113,7 +113,6 @@ public class EntityRelationshipTest {
 
         Brand brand = Brand.builder()
                 .name("Starbucks")
-                .icon("starbucks.jpg")
                 .build();
 
         Category categorySaved = categoryRepository.save(category);
@@ -137,7 +136,6 @@ public class EntityRelationshipTest {
 
         Brand brand = Brand.builder()
                 .name("Starbucks")
-                .icon("starbucks.jpg")
                 .build();
 
         Member seller = Member.builder()
@@ -245,7 +243,6 @@ public class EntityRelationshipTest {
 
         Brand brand = Brand.builder()
                 .name("Starbucks")
-                .icon("starbucks.jpg")
                 .build();
 
         Member owner = Member.builder()

@@ -1,6 +1,5 @@
 package com.givemecon.web.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -24,7 +22,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 
 import static com.givemecon.util.error.ErrorCode.*;
-import static com.givemecon.web.dto.BrandDto.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -87,17 +84,17 @@ public class ApiExceptionControllerTest {
     @Test
     void brandsExceptionTest() throws Exception {
         // given
-        BrandUpdateRequest requestDto = BrandUpdateRequest.builder()
-                .name("brand")
-                .icon("brand.png")
-                .build();
-
-        String url = "http://localhost:" + port + "/api/brands/" + 1;
+        String newName = "newCategory";
+        MockMultipartFile newIconFile = new MockMultipartFile(
+                "icon",
+                "new_brand.jpg",
+                "image/jpg",
+                "new_brand.jpg.jpg".getBytes());
 
         // when
-        ResultActions response = mockMvc.perform(put(url)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDto)));
+        ResultActions response = mockMvc.perform(multipart("/api/brands/{id}", 1)
+                .file(newIconFile)
+                        .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8))));
 
         // then
         response

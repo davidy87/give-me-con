@@ -186,7 +186,6 @@ class VoucherApiControllerTest {
         // given
         Brand brand = Brand.builder()
                 .name("Test Brand")
-                .icon("test_brand.png")
                 .build();
 
         Brand brandSaved = brandRepository.save(brand);

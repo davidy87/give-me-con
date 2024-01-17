@@ -1,6 +1,6 @@
 package com.givemecon.web.api;
 
-import com.givemecon.S3MockConfig;
+import com.givemecon.s3.S3MockConfig;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryIcon;
 import com.givemecon.domain.category.CategoryIconRepository;

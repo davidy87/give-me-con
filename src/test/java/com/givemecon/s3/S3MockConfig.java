@@ -1,7 +1,6 @@
-package com.givemecon;
+package com.givemecon.s3;
 
 import io.findify.s3mock.S3Mock;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
@@ -13,7 +12,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Slf4j
 @TestConfiguration
 public class S3MockConfig {
 
