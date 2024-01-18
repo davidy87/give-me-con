@@ -33,7 +33,6 @@ public class MemberService {
         return new SignupResponse(member);
     }
 
-    @Transactional(readOnly = true)
     public TokenInfo login(LoginRequest loginRequest) {
         Member loginMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .filter(member -> passwordEncoder.matches(loginRequest.getPassword(), member.getPassword()))

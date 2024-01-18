@@ -52,6 +52,8 @@ dependencies {
 
 	// H2
 	runtimeOnly 'com.h2database:h2'
+	// MySQL
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
 	// Spring Cloud (S3)
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.0")
