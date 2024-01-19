@@ -99,6 +99,10 @@ class BrandApiControllerTest {
     @Test
     void save() throws Exception {
         // given
+        Category categorySaved = categoryRepository.save(Category.builder()
+                .name("coffee")
+                .build());
+
         String name = "Starbucks";
         String icon = "starbucks.jpg";
         MockMultipartFile iconFile = new MockMultipartFile("icon", icon, "image/jpg", icon.getBytes());
@@ -106,7 +110,9 @@ class BrandApiControllerTest {
         // when
         ResultActions result = mockMvc.perform(multipart("/api/brands")
                 .file(iconFile)
-                .part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8))));
+                .part(new MockPart("categoryId", String.valueOf(categorySaved.getId()).getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8)))
+        );
 
         // then
         List<Brand> brandList = brandRepository.findAll();
@@ -119,6 +125,7 @@ class BrandApiControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParts(
+                                partWithName("categoryId").description("설정할 카테고리 id"),
                                 partWithName("name").description("저장할 브랜드 이름"),
                                 partWithName("icon").description("저장할 브랜드 아이콘 파일")
                         ),
@@ -214,6 +221,10 @@ class BrandApiControllerTest {
     @Test
     void update() throws Exception {
         // given
+        Category categorySaved = categoryRepository.save(Category.builder()
+                .name("category")
+                .build());
+
         Brand brand = brandRepository.save(Brand.builder()
                 .name("oldBrand")
                 .build());
@@ -236,7 +247,9 @@ class BrandApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/brands/{id}", brand.getId())
                 .file(newIconFile)
-                .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8))));
+                .part(new MockPart("categoryId", String.valueOf(categorySaved.getId()).getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
+        );
 
         // then
         List<Brand> brandList = brandRepository.findAll();
@@ -252,8 +265,9 @@ class BrandApiControllerTest {
                                 parameterWithName("id").description("브랜드 id")
                         ),
                         requestParts(
-                                partWithName("name").description("변경할 브랜드 이름"),
-                                partWithName("icon").description("변경할 브랜드 아이콘 파일")
+                                partWithName("categoryId").description("변경할 카테고리 id").optional(),
+                                partWithName("name").description("변경할 브랜드 이름").optional(),
+                                partWithName("icon").description("변경할 브랜드 아이콘 파일").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("변경된 브랜드 id"),

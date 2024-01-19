@@ -32,6 +32,9 @@ public class BrandService {
     private final AwsS3Service awsS3Service;
 
     public BrandResponse save(BrandSaveRequest requestDto) {
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
         Brand brand = brandRepository.save(requestDto.toEntity());
         MultipartFile iconFile = requestDto.getIcon();
 
@@ -45,6 +48,7 @@ public class BrandService {
                     .imageUrl(imageUrl)
                     .build());
 
+            brand.setCategory(category);
             brand.setBrandIcon(brandIcon);
         } catch (IOException e) {
             throw new RuntimeException("브랜드 아이콘 업로드 실패"); // TODO: 예외 처리

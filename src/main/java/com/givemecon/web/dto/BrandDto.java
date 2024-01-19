@@ -11,6 +11,8 @@ public class BrandDto {
     @Builder
     public static class BrandSaveRequest {
 
+        private Long categoryId;
+
         private String name;
 
         private MultipartFile icon;
@@ -25,6 +27,8 @@ public class BrandDto {
     @Getter
     @Builder
     public static class BrandUpdateRequest {
+
+        private Long categoryId;
 
         private String name;
 
