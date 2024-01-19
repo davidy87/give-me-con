@@ -65,13 +65,16 @@ public class CategoryService {
         CategoryIcon categoryIcon = category.getCategoryIcon();
         MultipartFile iconFile = requestDto.getIcon();
 
-        try {
-            String imageUrl = awsS3Service.upload(categoryIcon.getImageKey(), iconFile.getInputStream());
-            String originalName = iconFile.getOriginalFilename();
-            category.updateName(requestDto.getName());
-            categoryIcon.update(imageUrl, originalName);
-        } catch (IOException e) {
-            throw new RuntimeException("카테고리 아이콘 업로드 실패."); // TODO: 예외 처리
+        category.updateName(requestDto.getName());
+
+        if (iconFile != null) {
+            try {
+                String imageUrl = awsS3Service.upload(categoryIcon.getImageKey(), iconFile.getInputStream());
+                String originalName = iconFile.getOriginalFilename();
+                categoryIcon.update(imageUrl, originalName);
+            } catch (IOException e) {
+                throw new RuntimeException("카테고리 아이콘 업로드 실패."); // TODO: 예외 처리
+            }
         }
 
         return new CategoryResponse(category);

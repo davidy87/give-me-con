@@ -94,7 +94,9 @@ public class ApiExceptionControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/brands/{id}", 1)
                 .file(newIconFile)
-                        .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8))));
+                .part(new MockPart("categoryId", String.valueOf(1).getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
+        );
 
         // then
         response

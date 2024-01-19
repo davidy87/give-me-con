@@ -83,12 +83,14 @@ public class BrandService {
         BrandIcon brandIcon = brand.getBrandIcon();
         MultipartFile newIconFile = requestDto.getIcon();
 
-        try {
-            String newImageUrl = awsS3Service.upload(brandIcon.getImageKey(), newIconFile.getInputStream());
-            String newOriginalName = newIconFile.getOriginalFilename();
-            brandIcon.update(newImageUrl, newOriginalName);
-        } catch (IOException e) {
-            throw new RuntimeException("브랜드 아이콘 업로드 실패"); // TODO: 예외 처리
+        if (newIconFile != null) {
+            try {
+                String newImageUrl = awsS3Service.upload(brandIcon.getImageKey(), newIconFile.getInputStream());
+                String newOriginalName = newIconFile.getOriginalFilename();
+                brandIcon.update(newImageUrl, newOriginalName);
+            } catch (IOException e) {
+                throw new RuntimeException("브랜드 아이콘 업로드 실패"); // TODO: 예외 처리
+            }
         }
 
         return new BrandResponse(brand);
