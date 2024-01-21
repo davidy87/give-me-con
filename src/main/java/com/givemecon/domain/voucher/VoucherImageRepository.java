@@ -2,5 +2,5 @@ package com.givemecon.domain.voucher;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, Long> {
+public interface VoucherImageRepository extends JpaRepository<VoucherImage, Long> {
 }

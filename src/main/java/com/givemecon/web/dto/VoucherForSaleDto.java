@@ -1,6 +1,6 @@
 package com.givemecon.web.dto;
 
-import com.givemecon.domain.voucher.VoucherForSale;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
 import lombok.Builder;
 import lombok.Getter;
 

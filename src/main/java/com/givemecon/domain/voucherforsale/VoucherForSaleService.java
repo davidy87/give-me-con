@@ -1,7 +1,9 @@
-package com.givemecon.domain.voucher;
+package com.givemecon.domain.voucherforsale;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

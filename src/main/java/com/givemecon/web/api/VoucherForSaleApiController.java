@@ -1,7 +1,7 @@
 package com.givemecon.web.api;
 
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
-import com.givemecon.domain.voucher.VoucherForSaleService;
+import com.givemecon.domain.voucherforsale.VoucherForSaleService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

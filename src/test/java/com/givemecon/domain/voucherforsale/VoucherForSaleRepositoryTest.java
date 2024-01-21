@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucher;
+package com.givemecon.domain.voucherforsale;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
