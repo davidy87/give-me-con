@@ -7,14 +7,23 @@ import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.s3.S3MockConfig;
+import io.findify.s3mock.S3Mock;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -24,7 +33,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -43,6 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@Import(S3MockConfig.class)
 @Transactional
 @SpringBootTest
 class VoucherForSaleApiControllerTest {
@@ -56,10 +69,22 @@ class VoucherForSaleApiControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
+    VoucherRepository voucherRepository;
+
+    @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
 
     @Autowired
     JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    S3Mock s3Mock;
+
+    @Autowired
+    S3Client s3Client;
+
+    @Value("${spring.cloud.aws.s3.bucket}")
+    private String bucketName;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -69,6 +94,16 @@ class VoucherForSaleApiControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        s3Mock.start();
+        s3Client.createBucket(CreateBucketRequest.builder()
+                .bucket(bucketName)
+                .build());
+    }
+
+    @AfterEach
+    void stop() {
+        s3Mock.stop();
     }
 
     @Test
@@ -87,41 +122,41 @@ class VoucherForSaleApiControllerTest {
         LocalDate expDate = LocalDate.now();
         String barcode = "1111 1111 1111";
         String image = "Americano_T.png";
-
-        VoucherForSaleRequest requestDto = VoucherForSaleRequest.builder()
-                .title(title)
-                .price(price)
-                .expDate(expDate)
-                .barcode(barcode)
-                .image(image)
-                .build();
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                image,
+                "image/png",
+                image.getBytes());
 
         // when
-        ResultActions response = mockMvc.perform(post("/api/vouchers-for-sale")
+        ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
+                .file(imageFile)
+                .part(new MockPart("title", title.getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("price", price.toString().getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("expDate", expDate.toString().getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("barcode", barcode.getBytes(StandardCharsets.UTF_8)))
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDto)));
+                .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
 
-        response
-                .andExpect(status().isCreated())
+        response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherForSaleList.get(0).getId()))
                 .andExpect(jsonPath("title").value(voucherForSaleList.get(0).getTitle()))
                 .andExpect(jsonPath("price").value(voucherForSaleList.get(0).getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSaleList.get(0).getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSaleList.get(0).getBarcode()))
-                .andExpect(jsonPath("image").value(voucherForSaleList.get(0).getImage()))
+                .andExpect(jsonPath("image").value(voucherForSaleList.get(0).getVoucherForSaleImage().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
-                        requestFields(
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매할 기프티콘 타이틀"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매할 기프티콘 가격"),
-                                fieldWithPath("expDate").type(JsonFieldType.ARRAY).description("판매할 기프티콘 유효기간"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매할 기프티콘 바코드"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("판매할 기프티콘 이미지")
+                        requestParts(
+                                partWithName("title").description("판매할 기프티콘 타이틀"),
+                                partWithName("price").description("판매할 기프티콘 가격"),
+                                partWithName("expDate").description("판매할 기프티콘 유효기한"),
+                                partWithName("barcode").description("판매할 기프티콘 바코드"),
+                                partWithName("imageFile").description("판매할 기프티콘 이미지 파일")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
@@ -129,9 +164,47 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
+                                fieldWithPath("image").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL")
                         ))
                 );
+    }
+
+    @Test
+    void checkVoucherSaved() throws Exception {
+        // given
+        Member seller = memberRepository.save(Member.builder()
+                .email("test@gmail.com")
+                .username("tester")
+                .role(Role.ADMIN)
+                .build());
+
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
+
+        String title = "Americano T";
+        Long price = 4_000L;
+        LocalDate expDate = LocalDate.now();
+        String barcode = "1111 1111 1111";
+        String image = "Americano_T.png";
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                image,
+                "image/png",
+                image.getBytes());
+
+        // when
+        ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
+                .file(imageFile)
+                .part(new MockPart("title", title.getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("price", price.toString().getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("expDate", expDate.toString().getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("barcode", barcode.getBytes(StandardCharsets.UTF_8)))
+                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .contentType(MediaType.MULTIPART_FORM_DATA));
+
+        // then
+        Voucher found = voucherRepository.findAll().get(0);
+        assertThat(found.getTitle()).isEqualTo(title);
+        assertThat(found.getPrice()).isEqualTo(price);
     }
 
     @Test
@@ -156,7 +229,6 @@ class VoucherForSaleApiControllerTest {
                 .price(price)
                 .expDate(expDate)
                 .barcode(barcode)
-                .image(image)
                 .build();
 
         VoucherForSale voucherForSaleSaved = voucherForSaleRepository.save(requestDto.toEntity());

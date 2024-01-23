@@ -27,14 +27,12 @@ class VoucherForSaleRepositoryTest {
         Long price = 15_000L;
         LocalDate expDate = LocalDate.now();
         String barcode = "1111 1111 1111";
-        String image = "Starbucks_Americano_T.png";
 
         VoucherForSale voucher = VoucherForSale.builder()
                 .title(title)
                 .price(price)
                 .expDate(expDate)
                 .barcode(barcode)
-                .image(image)
                 .build();
 
         // when
@@ -46,7 +44,6 @@ class VoucherForSaleRepositoryTest {
         assertThat(found.getTitle()).isEqualTo(title);
         assertThat(found.getPrice()).isEqualTo(price);
         assertThat(found.getExpDate()).isEqualTo(expDate);
-        assertThat(found.getImage()).isEqualTo(image);
     }
 
     @Test
@@ -58,7 +55,6 @@ class VoucherForSaleRepositoryTest {
                 .price(10_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
-                .image("cake.jpg")
                 .build());
 
         // when

@@ -3,6 +3,7 @@ package com.givemecon.web.dto;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -20,7 +21,7 @@ public class VoucherForSaleDto {
 
         private String barcode;
 
-        private String image;
+        private MultipartFile imageFile;
 
         public VoucherForSale toEntity() {
             return VoucherForSale.builder()
@@ -28,7 +29,6 @@ public class VoucherForSaleDto {
                     .price(price)
                     .expDate(expDate)
                     .barcode(barcode)
-                    .image(image)
                     .build();
         }
     }
@@ -55,7 +55,7 @@ public class VoucherForSaleDto {
             this.price = voucherForSale.getPrice();
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
-            this.image = voucherForSale.getImage();
+            this.image = voucherForSale.getVoucherForSaleImage().getImageUrl();
         }
     }
 }

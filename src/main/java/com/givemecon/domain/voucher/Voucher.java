@@ -30,7 +30,6 @@ public class Voucher extends BaseTimeEntity {
     @Column(nullable = false, name = "min_price")
     private Long price;
 
-    @Column(nullable = false, length = 500)
     private String image;
 
     @Column(length = 500)

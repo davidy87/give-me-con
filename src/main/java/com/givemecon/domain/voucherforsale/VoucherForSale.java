@@ -32,8 +32,8 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private String barcode;
 
-    @Column(nullable = false, length = 500)
-    private String image;
+//    @Column(nullable = false, length = 500)
+//    private String image;
 
     @OneToOne
     @JoinColumn(name = "voucher_for_sale_image_id")
@@ -48,12 +48,12 @@ public class VoucherForSale extends BaseTimeEntity {
     private Member seller;
 
     @Builder
-    public VoucherForSale(String title, Long price, LocalDate expDate, String barcode, String image) {
+    public VoucherForSale(String title, Long price, LocalDate expDate, String barcode) {
         this.title = title;
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
-        this.image = image;
+//        this.image = image;
     }
 
     public void setVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

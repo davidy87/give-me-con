@@ -180,7 +180,6 @@ public class EntityRelationshipTest {
                 .price(15_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
-                .image("americano_T.png")
                 .build();
 
         Voucher voucher = Voucher.builder()

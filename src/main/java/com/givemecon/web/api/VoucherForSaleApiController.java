@@ -1,13 +1,13 @@
 package com.givemecon.web.api;
 
-import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.voucherforsale.VoucherForSaleService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
 
@@ -19,15 +19,10 @@ public class VoucherForSaleApiController {
 
     private final VoucherForSaleService voucherForSaleService;
 
-    private final JwtTokenProvider jwtTokenProvider;
-
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public VoucherForSaleResponse save(HttpServletRequest request,
-                                       @RequestBody VoucherForSaleRequest requestDto) {
-
-        String accessToken = jwtTokenProvider.retrieveToken(request);
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public VoucherForSaleResponse save(Authentication authentication,
+                                       @ModelAttribute VoucherForSaleRequest requestDto) {
 
         return voucherForSaleService.save(authentication.getName(), requestDto);
     }

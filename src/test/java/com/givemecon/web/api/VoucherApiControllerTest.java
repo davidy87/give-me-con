@@ -5,6 +5,8 @@ import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucherforsale.VoucherForSaleImage;
+import com.givemecon.domain.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.domain.voucher.VoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +58,10 @@ class VoucherApiControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherForSaleRepository voucherSellingRepository;
+    VoucherForSaleRepository voucherForSaleRepository;
+
+    @Autowired
+    VoucherForSaleImageRepository voucherForSaleImageRepository;
 
     @Autowired
     BrandRepository brandRepository;
@@ -237,16 +242,23 @@ class VoucherApiControllerTest {
         Voucher voucherSaved = voucherRepository.save(voucher);
 
         for (int i = 1; i <= 5; i++) {
-            VoucherForSale voucherSelling = VoucherForSale.builder()
-                    .title("Americano T")
-                    .image("americano.jpg")
-                    .price(4_000L)
-                    .expDate(LocalDate.now())
-                    .barcode("1111 1111 1111")
-                    .build();
+            VoucherForSale voucherForSale = voucherForSaleRepository.save(
+                    VoucherForSale.builder()
+                            .title("Americano T")
+                            .price(4_000L)
+                            .expDate(LocalDate.now())
+                            .barcode("1111 1111 1111")
+                            .build());
 
-            voucherSellingRepository.save(voucherSelling);
-            voucherSaved.addVoucherForSale(voucherSelling);
+            VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
+                    VoucherForSaleImage.builder()
+                            .imageKey("imageKey" + i)
+                            .imageUrl("imageUrl" + i)
+                            .originalName("voucherImage" + i + ".png")
+                            .build());
+
+            voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+            voucherSaved.addVoucherForSale(voucherForSale);
         }
 
         // when
