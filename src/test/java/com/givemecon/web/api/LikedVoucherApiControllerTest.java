@@ -7,6 +7,8 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.member.Role;
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherImage;
+import com.givemecon.domain.voucher.VoucherImageRepository;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.likedvoucher.LikedVoucher;
 import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
@@ -57,6 +59,9 @@ class LikedVoucherApiControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
+    VoucherImageRepository voucherImageRepository;
+
+    @Autowired
     MemberRepository memberRepository;
 
     @Autowired
@@ -75,27 +80,31 @@ class LikedVoucherApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        Voucher voucher = Voucher.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
-                .image("voucher.png")
-                .build();
+                .build());
 
-        Member member = Member.builder()
+        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("voucherImage.png")
+                .build());
+
+        Member member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
                 .role(Role.USER)
-                .build();
+                .build());
 
-        Voucher voucherSaved = voucherRepository.save(voucher);
-        Member memberSaved = memberRepository.save(member);
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
+        voucher.setVoucherImage(voucherImage);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(voucherSaved.getId())));
+                .content(new ObjectMapper().writeValueAsString(voucher.getId())));
 
         // then
         response.andExpect(status().isCreated())
@@ -113,8 +122,8 @@ class LikedVoucherApiControllerTest {
 
         List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
         LikedVoucher found = likedVoucherList.get(0);
-        assertThat(found.getVoucher()).isEqualTo(voucherSaved);
-        assertThat(found.getMember()).isEqualTo(memberSaved);
+        assertThat(found.getVoucher()).isEqualTo(voucher);
+        assertThat(found.getMember()).isEqualTo(member);
     }
 
     @Test
@@ -129,14 +138,19 @@ class LikedVoucherApiControllerTest {
         Member memberSaved = memberRepository.save(member);
 
         for (int i = 1; i <= 5; i++) {
-            Voucher voucher = Voucher.builder()
+            Voucher voucher = voucherRepository.save(Voucher.builder()
                     .title("voucher" + i)
                     .price(4_000L)
-                    .image("voucher" + i + ".png")
-                    .build();
+                    .build());
 
-            Voucher voucherSaved = voucherRepository.save(voucher);
-            memberSaved.addLikedVoucher(new LikedVoucher(voucherSaved));
+            VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+                    .imageKey("imageKey" + i)
+                    .imageUrl("imageUrl" + i)
+                    .originalName("voucherImage" + i + ".png")
+                    .build());
+
+            voucher.setVoucherImage(voucherImage);
+            memberSaved.addLikedVoucher(new LikedVoucher(voucher));
         }
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
@@ -166,7 +180,6 @@ class LikedVoucherApiControllerTest {
         Voucher voucher = Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
-                .image("voucher.png")
                 .build();
 
         Member member = Member.builder()

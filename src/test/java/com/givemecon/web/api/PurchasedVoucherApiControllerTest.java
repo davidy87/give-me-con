@@ -84,7 +84,6 @@ class PurchasedVoucherApiControllerTest {
     void saveAll() throws Exception {
         // given
         Voucher voucherSaved = voucherRepository.save(Voucher.builder()
-                .image("voucher.png")
                 .title("voucher")
                 .price(4_000L)
                 .build());

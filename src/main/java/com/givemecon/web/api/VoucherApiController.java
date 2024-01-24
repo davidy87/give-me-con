@@ -3,7 +3,9 @@ package com.givemecon.web.api;
 import com.givemecon.domain.voucher.VoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,8 +20,17 @@ public class VoucherApiController {
     private final VoucherService voucherService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping
-    public VoucherResponse save(@RequestBody VoucherSaveRequest requestDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public VoucherResponse save(@RequestParam String title,
+                                @RequestParam Long price,
+                                @RequestPart MultipartFile imageFile) {
+
+        VoucherSaveRequest requestDto = VoucherSaveRequest.builder()
+                .title(title)
+                .price(price)
+                .imageFile(imageFile)
+                .build();
+
         return voucherService.save(requestDto);
     }
 
@@ -42,9 +53,19 @@ public class VoucherApiController {
         return voucherService.findSellingListByVoucherId(id);
     }
 
-    @PutMapping("/{id}")
+    @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VoucherResponse update(@PathVariable Long id,
-                                  @RequestBody VoucherUpdateRequest requestDto) {
+                                  @RequestParam(required = false) String title,
+                                  @RequestParam(required = false) String description,
+                                  @RequestParam(required = false) String caution,
+                                  @RequestPart(required = false) MultipartFile imageFile) {
+
+        VoucherUpdateRequest requestDto = VoucherUpdateRequest.builder()
+                .title(title)
+                .description(description)
+                .caution(caution)
+                .imageFile(imageFile)
+                .build();
 
         return voucherService.update(id, requestDto);
     }

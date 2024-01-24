@@ -32,9 +32,6 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private String barcode;
 
-//    @Column(nullable = false, length = 500)
-//    private String image;
-
     @OneToOne
     @JoinColumn(name = "voucher_for_sale_image_id")
     private VoucherForSaleImage voucherForSaleImage;
@@ -53,7 +50,6 @@ public class VoucherForSale extends BaseTimeEntity {
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
-//        this.image = image;
     }
 
     public void setVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

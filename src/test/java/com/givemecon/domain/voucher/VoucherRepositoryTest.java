@@ -29,7 +29,6 @@ class VoucherRepositoryTest {
         Voucher voucher = Voucher.builder()
                 .title(title)
                 .price(price)
-                .image(image)
                 .build();
 
         // when
@@ -40,7 +39,6 @@ class VoucherRepositoryTest {
         Voucher found = voucherList.get(0);
         assertThat(found.getTitle()).isEqualTo(title);
         assertThat(found.getPrice()).isEqualTo(price);
-        assertThat(found.getImage()).isEqualTo(image);
     }
 
     @Test
@@ -50,7 +48,6 @@ class VoucherRepositoryTest {
         voucherRepository.save(Voucher.builder()
                 .title("Cake")
                 .price(10_000L)
-                .image("cake.jpg")
                 .build());
 
         // when

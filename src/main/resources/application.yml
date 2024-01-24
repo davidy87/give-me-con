@@ -9,9 +9,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        ddl-auto: none
-  h2:
-    console:
-      enabled: true
+        hbm2ddl:
+          auto: update
+
   profiles:
     include: oauth,jwt,aws

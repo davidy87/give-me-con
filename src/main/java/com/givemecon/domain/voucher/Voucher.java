@@ -24,13 +24,11 @@ public class Voucher extends BaseTimeEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @Column(nullable = false, name = "min_price")
     private Long price;
-
-    private String image;
 
     @Column(length = 500)
     private String description;
@@ -59,25 +57,27 @@ public class Voucher extends BaseTimeEntity {
     List<VoucherForSale> voucherForSaleList = new ArrayList<>();
 
     @Builder
-    public Voucher(String title, Long price, String image, String description, String caution) {
+    public Voucher(String title, Long price, String description, String caution) {
         this.title = title;
         this.price = price;
-        this.image = image;
         this.description = description;
         this.caution = caution;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void updateTitle(String title) {
+        this.title = title;
     }
 
-    public void setCaution(String caution) {
-        this.caution = caution;
-    }
-
-    public void update(Long price, String image) {
+    public void updatePrice(Long price) {
         this.price = price;
-        this.image = image;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
+
+    public void updateCaution(String caution) {
+        this.caution = caution;
     }
 
     public void setVoucherImage(VoucherImage voucherImage) {

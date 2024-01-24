@@ -147,7 +147,6 @@ public class EntityRelationshipTest {
         Voucher voucher = Voucher.builder()
                 .title("Starbucks Americano T")
                 .price(15_000L)
-                .image("americano.jpg")
                 .build();
 
         Category categorySaved = categoryRepository.save(category);
@@ -185,7 +184,6 @@ public class EntityRelationshipTest {
         Voucher voucher = Voucher.builder()
                 .title("Americano T")
                 .price(15_000L)
-                .image("americano.jpg")
                 .build();
 
         Member sellerSaved = memberRepository.save(seller);
@@ -214,7 +212,6 @@ public class EntityRelationshipTest {
         Voucher voucherSaved = voucherRepository.save(Voucher.builder()
                 .title("Americano T")
                 .price(15_000L)
-                .image("americano.jpg")
                 .build());
 
         LikedVoucher likedVoucher = LikedVoucher.builder()

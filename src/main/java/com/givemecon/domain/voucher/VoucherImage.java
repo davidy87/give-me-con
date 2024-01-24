@@ -40,4 +40,9 @@ public class VoucherImage extends BaseTimeEntity {
     public void setVoucher(Voucher voucher) {
         this.voucher = voucher;
     }
+
+    public void update(String imageUrl, String originalName) {
+        this.imageUrl = imageUrl;
+        this.originalName = originalName;
+    }
 }

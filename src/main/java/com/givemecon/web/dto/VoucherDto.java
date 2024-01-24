@@ -3,6 +3,7 @@ package com.givemecon.web.dto;
 import com.givemecon.domain.voucher.Voucher;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
 public class VoucherDto {
 
@@ -10,17 +11,16 @@ public class VoucherDto {
     @Builder
     public static class VoucherSaveRequest {
 
-        private Long price;
+        private final Long price;
 
-        private String title;
+        private final String title;
 
-        private String image;
+        private final MultipartFile imageFile;
 
         public Voucher toEntity() {
             return Voucher.builder()
                     .price(price)
                     .title(title)
-                    .image(image)
                     .build();
         }
     }
@@ -29,27 +29,31 @@ public class VoucherDto {
     @Builder
     public static class VoucherUpdateRequest {
 
-        private Long price;
+        private final String title;
 
-        private String image;
+        private final String description;
+
+        private final String caution;
+
+        private final MultipartFile imageFile;
     }
 
     @Getter
     public static class VoucherResponse {
 
-        private Long id;
+        private final Long id;
 
-        private Long price;
+        private final Long price;
 
-        private String title;
+        private final String title;
 
-        private String image;
+        private final String image;
 
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
             this.price = voucher.getPrice();
             this.title = voucher.getTitle();
-            this.image = voucher.getImage();
+            this.image = voucher.getVoucherImage().getImageUrl();
         }
     }
 }
