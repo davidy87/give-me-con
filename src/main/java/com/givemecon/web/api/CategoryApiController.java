@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,13 +30,12 @@ public class CategoryApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CategoryResponse update(@PathVariable Long id,
-                                   @RequestParam String name,
-                                   @RequestPart(required = false) MultipartFile icon) {
+                                   @ModelAttribute CategoryUpdateRequest requestDto) {
 
-        CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
-                .name(name)
-                .icon(icon)
-                .build();
+//        CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
+//                .name(name)
+//                .icon(icon)
+//                .build();
 
         return categoryService.update(id, requestDto);
     }

@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,15 +34,7 @@ public class BrandApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BrandResponse update(@PathVariable Long id,
-                                @RequestParam Long categoryId,
-                                @RequestParam String name,
-                                @RequestPart(required = false) MultipartFile icon) {
-
-        BrandUpdateRequest requestDto = BrandUpdateRequest.builder()
-                .categoryId(categoryId)
-                .name(name)
-                .icon(icon)
-                .build();
+                                @ModelAttribute BrandUpdateRequest requestDto) {
 
         return brandService.update(id, requestDto);
     }
