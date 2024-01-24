@@ -32,11 +32,6 @@ public class CategoryApiController {
     public CategoryResponse update(@PathVariable Long id,
                                    @ModelAttribute CategoryUpdateRequest requestDto) {
 
-//        CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
-//                .name(name)
-//                .icon(icon)
-//                .build();
-
         return categoryService.update(id, requestDto);
     }
 
