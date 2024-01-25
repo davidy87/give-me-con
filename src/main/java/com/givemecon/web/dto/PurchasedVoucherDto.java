@@ -12,17 +12,17 @@ public class PurchasedVoucherDto {
     @Builder
     public static class PurchasedVoucherRequest {
 
-        private String title;
+        private final String title;
 
-        private String image;
+        private final String image;
 
-        private Long price;
+        private final Long price;
 
-        private LocalDate expDate;
+        private final LocalDate expDate;
 
-        private String barcode;
+        private final String barcode;
 
-        private Long voucherId;
+        private final Long voucherId;
 
         public PurchasedVoucher toEntity() {
             return PurchasedVoucher.builder()
@@ -38,19 +38,19 @@ public class PurchasedVoucherDto {
     @Getter
     public static class PurchasedVoucherResponse {
 
-        private Long id;
+        private final Long id;
 
-        private String image;
+        private final String image;
 
-        private String title;
+        private final String title;
 
-        private Long price;
+        private final Long price;
 
-        private LocalDate expDate;
+        private final LocalDate expDate;
 
-        private String barcode;
+        private final String barcode;
 
-        private Boolean valid;
+        private final Boolean valid;
 
         public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
             this.id = purchasedVoucher.getId();

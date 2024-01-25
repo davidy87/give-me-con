@@ -11,11 +11,11 @@ public class BrandDto {
     @Builder
     public static class BrandSaveRequest {
 
-        private Long categoryId;
+        private final Long categoryId;
 
-        private String name;
+        private final String name;
 
-        private MultipartFile icon;
+        private final MultipartFile icon;
 
         public Brand toEntity() {
             return Brand.builder()
@@ -28,21 +28,21 @@ public class BrandDto {
     @Builder
     public static class BrandUpdateRequest {
 
-        private Long categoryId;
+        private final Long categoryId;
 
-        private String name;
+        private final String name;
 
-        private MultipartFile icon;
+        private final MultipartFile icon;
     }
 
     @Getter
     public static class BrandResponse {
 
-        private Long id;
+        private final Long id;
 
-        private String name;
+        private final String name;
 
-        private String icon;
+        private final String icon;
 
         public BrandResponse(Brand brand) {
             this.id = brand.getId();

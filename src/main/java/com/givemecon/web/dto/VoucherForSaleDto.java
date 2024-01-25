@@ -13,15 +13,15 @@ public class VoucherForSaleDto {
     @Builder
     public static class VoucherForSaleRequest {
 
-        private String title;
+        private final String title;
 
-        private Long price;
+        private final Long price;
 
-        private LocalDate expDate;
+        private final LocalDate expDate;
 
-        private String barcode;
+        private final String barcode;
 
-        private MultipartFile imageFile;
+        private final MultipartFile imageFile;
 
         public VoucherForSale toEntity() {
             return VoucherForSale.builder()
@@ -36,17 +36,17 @@ public class VoucherForSaleDto {
     @Getter
     public static class VoucherForSaleResponse {
 
-        private Long id;
+        private final Long id;
 
-        private String title;
+        private final String title;
 
-        private Long price;
+        private final Long price;
 
-        private LocalDate expDate;
+        private final LocalDate expDate;
 
-        private String barcode;
+        private final String barcode;
 
-        private String image;
+        private final String image;
 
 
         public VoucherForSaleResponse(VoucherForSale voucherForSale) {

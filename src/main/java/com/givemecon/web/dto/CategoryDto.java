@@ -11,9 +11,9 @@ public class CategoryDto {
     @Builder
     public static class CategorySaveRequest {
 
-        private String name;
+        private final String name;
 
-        private MultipartFile icon;
+        private final MultipartFile icon;
 
         public Category toEntity() {
             return Category.builder()
@@ -26,19 +26,19 @@ public class CategoryDto {
     @Builder
     public static class CategoryUpdateRequest {
 
-        private String name;
+        private final String name;
 
-        private MultipartFile icon;
+        private final MultipartFile icon;
     }
 
     @Getter
     public static class CategoryResponse {
 
-        private Long id;
+        private final Long id;
 
-        private String name;
+        private final String name;
 
-        private String icon;
+        private final String icon;
 
         public CategoryResponse(Category category) {
             this.id = category.getId();
