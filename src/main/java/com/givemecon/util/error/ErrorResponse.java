@@ -2,16 +2,26 @@ package com.givemecon.util.error;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@Builder
-@ToString
 public class ErrorResponse {
 
-    private int status;
+    private final int status;
 
-    private String code;
+    private final String code;
 
-    private String message;
+    private final String message;
+
+    @Builder
+    public ErrorResponse(int status, String code, String message) {
+        this.status = status;
+        this.code = code;
+        this.message = message;
+    }
+
+    public ErrorResponse(ErrorCode errorCode) {
+        this.status = errorCode.getStatus();
+        this.code = errorCode.getCode();
+        this.message = errorCode.getMessage();
+    }
 }

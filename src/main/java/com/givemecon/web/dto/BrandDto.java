@@ -1,6 +1,10 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.brand.Brand;
+import com.givemecon.util.validator.ValidFile;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,10 +15,14 @@ public class BrandDto {
     @Builder
     public static class BrandSaveRequest {
 
+        @NotNull
+        @Min(1)
         private final Long categoryId;
 
+        @NotBlank
         private final String name;
 
+        @ValidFile
         private final MultipartFile icon;
 
         public Brand toEntity() {
@@ -28,6 +36,7 @@ public class BrandDto {
     @Builder
     public static class BrandUpdateRequest {
 
+        @Min(1)
         private final Long categoryId;
 
         private final String name;

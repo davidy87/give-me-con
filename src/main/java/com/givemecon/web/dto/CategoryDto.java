@@ -1,6 +1,8 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.category.Category;
+import com.givemecon.util.validator.ValidFile;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,8 +13,10 @@ public class CategoryDto {
     @Builder
     public static class CategorySaveRequest {
 
+        @NotBlank
         private final String name;
 
+        @ValidFile
         private final MultipartFile icon;
 
         public Category toEntity() {

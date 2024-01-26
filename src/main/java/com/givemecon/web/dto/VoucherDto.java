@@ -1,6 +1,8 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.util.validator.ValidFile;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,10 +13,14 @@ public class VoucherDto {
     @Builder
     public static class VoucherSaveRequest {
 
+        @NotNull
+        @Min(0)
         private final Long price;
 
+        @NotBlank
         private final String title;
 
+        @ValidFile
         private final MultipartFile imageFile;
 
         public Voucher toEntity() {

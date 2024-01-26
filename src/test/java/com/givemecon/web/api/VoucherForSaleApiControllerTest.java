@@ -1,7 +1,5 @@
 package com.givemecon.web.api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
@@ -119,7 +117,7 @@ class VoucherForSaleApiControllerTest {
 
         String title = "Americano T";
         Long price = 4_000L;
-        LocalDate expDate = LocalDate.now();
+        LocalDate expDate = LocalDate.of(2024, 8, 7);
         String barcode = "1111 1111 1111";
         String image = "Americano_T.png";
         MockMultipartFile imageFile = new MockMultipartFile(
@@ -182,7 +180,7 @@ class VoucherForSaleApiControllerTest {
 
         String title = "Americano T";
         Long price = 4_000L;
-        LocalDate expDate = LocalDate.now();
+        LocalDate expDate = LocalDate.of(2024, 8, 7);
         String barcode = "1111 1111 1111";
         String image = "Americano_T.png";
         MockMultipartFile imageFile = new MockMultipartFile(
@@ -220,7 +218,7 @@ class VoucherForSaleApiControllerTest {
 
         String title = "Americano T";
         Long price = 4_000L;
-        LocalDate expDate = LocalDate.now();
+        LocalDate expDate = LocalDate.of(2024, 8, 7);
         String barcode = "1111 1111 1111";
         String image = "Americano_T.png";
 

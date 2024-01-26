@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
@@ -21,7 +22,7 @@ public class VoucherForSaleApiController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VoucherForSaleResponse save(Authentication authentication,
-                                       @ModelAttribute VoucherForSaleRequest requestDto) {
+                                       @Validated @ModelAttribute VoucherForSaleRequest requestDto) {
 
         return voucherForSaleService.save(authentication.getName(), requestDto);
     }
