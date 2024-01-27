@@ -62,15 +62,19 @@ public class CategoryService {
     public CategoryResponse update(Long id, CategoryUpdateRequest requestDto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
         CategoryIcon categoryIcon = category.getCategoryIcon();
-        MultipartFile iconFile = requestDto.getIcon();
+        String newCategoryName = requestDto.getName();
+        MultipartFile newIconFile = requestDto.getIcon();
 
-        category.updateName(requestDto.getName());
+        if (newCategoryName != null) {
+            category.updateName(newCategoryName);
+        }
 
-        if (iconFile != null) {
+        if (newIconFile != null) {
             try {
-                String imageUrl = awsS3Service.upload(categoryIcon.getImageKey(), iconFile.getInputStream());
-                String originalName = iconFile.getOriginalFilename();
+                String imageUrl = awsS3Service.upload(categoryIcon.getImageKey(), newIconFile.getInputStream());
+                String originalName = newIconFile.getOriginalFilename();
                 categoryIcon.update(imageUrl, originalName);
             } catch (IOException e) {
                 throw new RuntimeException("카테고리 아이콘 업로드 실패."); // TODO: 예외 처리

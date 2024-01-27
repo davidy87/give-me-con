@@ -79,9 +79,13 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        brand.updateName(requestDto.getName());
         BrandIcon brandIcon = brand.getBrandIcon();
+        String newBrandName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIcon();
+
+        if (newBrandName != null) {
+            brand.updateName(newBrandName);
+        }
 
         if (newIconFile != null) {
             try {
