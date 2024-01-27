@@ -53,14 +53,14 @@ public class PurchasedVoucherDto {
 
         @NotEmpty
         @Valid
-        private final List<PurchasedVoucherRequest> requestList;
+        private final List<PurchasedVoucherRequest> requests;
 
         public PurchasedVoucherRequestList() {
-            requestList = new ArrayList<>();
+            requests = new ArrayList<>();
         }
 
-        public PurchasedVoucherRequestList(List<PurchasedVoucherRequest> requestList) {
-            this.requestList = requestList;
+        public PurchasedVoucherRequestList(List<PurchasedVoucherRequest> requests) {
+            this.requests = requests;
         }
     }
 

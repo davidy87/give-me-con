@@ -124,12 +124,12 @@ class PurchasedVoucherApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("requestList.[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
-                                fieldWithPath("requestList.[].image").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
-                                fieldWithPath("requestList.[].price").type(JsonFieldType.NUMBER).description("구매할 기프티콘 가격"),
-                                fieldWithPath("requestList.[].expDate").type(JsonFieldType.ARRAY).description("구매할 기프티콘 유효기간"),
-                                fieldWithPath("requestList.[].barcode").type(JsonFieldType.STRING).description("구매할 기프티콘 바코드"),
-                                fieldWithPath("requestList.[].voucherId").type(JsonFieldType.NUMBER).description("구매할 기프티콘 id")
+                                fieldWithPath("requests.[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
+                                fieldWithPath("requests.[].image").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
+                                fieldWithPath("requests.[].price").type(JsonFieldType.NUMBER).description("구매할 기프티콘 가격"),
+                                fieldWithPath("requests.[].expDate").type(JsonFieldType.ARRAY).description("구매할 기프티콘 유효기간"),
+                                fieldWithPath("requests.[].barcode").type(JsonFieldType.STRING).description("구매할 기프티콘 바코드"),
+                                fieldWithPath("requests.[].voucherId").type(JsonFieldType.NUMBER).description("구매할 기프티콘 id")
                         ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
@@ -143,7 +143,7 @@ class PurchasedVoucherApiControllerTest {
                 );
 
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-        assertThat(purchasedVoucherList).hasSize(requestDtoList.getRequestList().size());
+        assertThat(purchasedVoucherList).hasSize(requestDtoList.getRequests().size());
     }
 
     @Test
