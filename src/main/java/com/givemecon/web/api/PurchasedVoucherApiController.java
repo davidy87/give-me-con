@@ -4,6 +4,7 @@ import com.givemecon.domain.purchasedvoucher.PurchasedVoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,9 +21,9 @@ public class PurchasedVoucherApiController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public List<PurchasedVoucherResponse> saveAll(Authentication authentication,
-                                                  @RequestBody List<PurchasedVoucherRequest> requestDto) {
+                                                  @Validated @RequestBody PurchasedVoucherRequestList requestDto) {
 
-        return purchasedVoucherService.saveAll(authentication.getName(), requestDto);
+        return purchasedVoucherService.saveAll(authentication.getName(), requestDto.getRequests());
     }
 
     @GetMapping

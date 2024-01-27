@@ -1,10 +1,14 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PurchasedVoucherDto {
 
@@ -12,17 +16,26 @@ public class PurchasedVoucherDto {
     @Builder
     public static class PurchasedVoucherRequest {
 
-        private String title;
+        @NotBlank
+        private final String title;
 
-        private String image;
+        @NotBlank
+        private final String image;
 
-        private Long price;
+        @NotNull
+        @Min(0)
+        private final Long price;
 
-        private LocalDate expDate;
+        @NotNull
+        @Future
+        private final LocalDate expDate;
 
-        private String barcode;
+        @NotBlank
+        private final String barcode;
 
-        private Long voucherId;
+        @NotNull
+        @Min(1)
+        private final Long voucherId;
 
         public PurchasedVoucher toEntity() {
             return PurchasedVoucher.builder()
@@ -36,21 +49,37 @@ public class PurchasedVoucherDto {
     }
 
     @Getter
+    public static class PurchasedVoucherRequestList {
+
+        @NotEmpty
+        @Valid
+        private final List<PurchasedVoucherRequest> requests;
+
+        public PurchasedVoucherRequestList() {
+            requests = new ArrayList<>();
+        }
+
+        public PurchasedVoucherRequestList(List<PurchasedVoucherRequest> requests) {
+            this.requests = requests;
+        }
+    }
+
+    @Getter
     public static class PurchasedVoucherResponse {
 
-        private Long id;
+        private final Long id;
 
-        private String image;
+        private final String image;
 
-        private String title;
+        private final String title;
 
-        private Long price;
+        private final Long price;
 
-        private LocalDate expDate;
+        private final LocalDate expDate;
 
-        private String barcode;
+        private final String barcode;
 
-        private Boolean valid;
+        private final Boolean valid;
 
         public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
             this.id = purchasedVoucher.getId();

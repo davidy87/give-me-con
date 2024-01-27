@@ -1,6 +1,11 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.util.validator.ValidFile;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,15 +18,22 @@ public class VoucherForSaleDto {
     @Builder
     public static class VoucherForSaleRequest {
 
-        private String title;
+        @NotBlank
+        private final String title;
 
-        private Long price;
+        @NotNull
+        @Min(0)
+        private final Long price;
 
-        private LocalDate expDate;
+        @NotNull
+        @Future
+        private final LocalDate expDate;
 
-        private String barcode;
+        @NotBlank
+        private final String barcode;
 
-        private MultipartFile imageFile;
+        @ValidFile
+        private final MultipartFile imageFile;
 
         public VoucherForSale toEntity() {
             return VoucherForSale.builder()
@@ -36,17 +48,17 @@ public class VoucherForSaleDto {
     @Getter
     public static class VoucherForSaleResponse {
 
-        private Long id;
+        private final Long id;
 
-        private String title;
+        private final String title;
 
-        private Long price;
+        private final Long price;
 
-        private LocalDate expDate;
+        private final LocalDate expDate;
 
-        private String barcode;
+        private final String barcode;
 
-        private String image;
+        private final String image;
 
 
         public VoucherForSaleResponse(VoucherForSale voucherForSale) {

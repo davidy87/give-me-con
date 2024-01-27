@@ -4,6 +4,7 @@ import com.givemecon.domain.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class CategoryApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CategoryResponse save(@ModelAttribute CategorySaveRequest requestDto) {
+    public CategoryResponse save(@Validated @ModelAttribute CategorySaveRequest requestDto) {
         return categoryService.save(requestDto);
     }
 
@@ -30,7 +31,7 @@ public class CategoryApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CategoryResponse update(@PathVariable Long id,
-                                   @ModelAttribute CategoryUpdateRequest requestDto) {
+                                   @Validated @ModelAttribute CategoryUpdateRequest requestDto) {
 
         return categoryService.update(id, requestDto);
     }

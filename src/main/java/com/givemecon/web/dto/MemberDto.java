@@ -11,13 +11,13 @@ public class MemberDto {
     @Builder
     public static class SignupRequest {
 
-        private String email;
+        private final String email;
 
-        private String username;
+        private final String username;
 
-        private String password;
+        private final String password;
 
-        private String passwordConfirm;
+        private final String passwordConfirm;
 
         public Member toEntity(String encodedPassword) {
             return Member.builder()
@@ -32,7 +32,7 @@ public class MemberDto {
     @Getter
     public static class SignupResponse {
 
-        private String username;
+        private final String username;
 
         public SignupResponse(Member member) {
             this.username = member.getUsername();
@@ -43,9 +43,9 @@ public class MemberDto {
     @Builder
     public static class LoginRequest {
 
-        private String email;
+        private final String email;
 
-        private String password;
+        private final String password;
     }
 
 }

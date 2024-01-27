@@ -4,6 +4,7 @@ import com.givemecon.domain.voucher.VoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +21,7 @@ public class VoucherApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public VoucherResponse save(@ModelAttribute VoucherSaveRequest requestDto) {
-
+    public VoucherResponse save(@Validated @ModelAttribute VoucherSaveRequest requestDto) {
         return voucherService.save(requestDto);
     }
 
@@ -46,7 +46,7 @@ public class VoucherApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VoucherResponse update(@PathVariable Long id,
-                                  @ModelAttribute VoucherUpdateRequest requestDto) {
+                                  @Validated @ModelAttribute VoucherUpdateRequest requestDto) {
 
         return voucherService.update(id, requestDto);
     }

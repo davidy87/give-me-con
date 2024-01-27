@@ -94,21 +94,22 @@ class PurchasedVoucherApiControllerTest {
                 .role(Role.USER)
                 .build());
 
-        List<PurchasedVoucherRequest> requestDtoList = new ArrayList<>();
+        List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
             PurchasedVoucherRequest requestDto = PurchasedVoucherRequest.builder()
                     .image("voucher" + i + ".png")
                     .title("voucher" + i)
                     .price(4_000L)
-                    .expDate(LocalDate.now())
+                    .expDate(LocalDate.now().plusDays(1))
                     .barcode("1111 1111 1111")
                     .voucherId(voucherSaved.getId())
                     .build();
 
-            requestDtoList.add(requestDto);
+            dtoList.add(requestDto);
         }
 
+        PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(dtoList);
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
 
         // when
@@ -123,12 +124,12 @@ class PurchasedVoucherApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매할 기프티콘 가격"),
-                                fieldWithPath("[].expDate").type(JsonFieldType.ARRAY).description("구매할 기프티콘 유효기간"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매할 기프티콘 바코드"),
-                                fieldWithPath("[].voucherId").type(JsonFieldType.NUMBER).description("구매할 기프티콘 id")
+                                fieldWithPath("requests.[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
+                                fieldWithPath("requests.[].image").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
+                                fieldWithPath("requests.[].price").type(JsonFieldType.NUMBER).description("구매할 기프티콘 가격"),
+                                fieldWithPath("requests.[].expDate").type(JsonFieldType.ARRAY).description("구매할 기프티콘 유효기간"),
+                                fieldWithPath("requests.[].barcode").type(JsonFieldType.STRING).description("구매할 기프티콘 바코드"),
+                                fieldWithPath("requests.[].voucherId").type(JsonFieldType.NUMBER).description("구매할 기프티콘 id")
                         ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
@@ -142,7 +143,7 @@ class PurchasedVoucherApiControllerTest {
                 );
 
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-        assertThat(purchasedVoucherList).hasSize(requestDtoList.size());
+        assertThat(purchasedVoucherList).hasSize(requestDtoList.getRequests().size());
     }
 
     @Test
@@ -161,7 +162,7 @@ class PurchasedVoucherApiControllerTest {
                     .image("voucher" + i + ".png")
                     .title("voucher" + i)
                     .price(4_000L)
-                    .expDate(LocalDate.now())
+                    .expDate(LocalDate.now().plusDays(1))
                     .barcode("1111 1111 1111")
                     .build();
 
@@ -210,7 +211,7 @@ class PurchasedVoucherApiControllerTest {
                 .image("voucher.png")
                 .title("voucher")
                 .price(4_000L)
-                .expDate(LocalDate.now())
+                .expDate(LocalDate.now().plusDays(1))
                 .barcode("1111 1111 1111")
                 .build());
 
@@ -261,7 +262,7 @@ class PurchasedVoucherApiControllerTest {
                 .image("voucher.png")
                 .title("voucher")
                 .price(4_000L)
-                .expDate(LocalDate.now())
+                .expDate(LocalDate.now().plusDays(1))
                 .barcode("1111 1111 1111")
                 .build());
 
