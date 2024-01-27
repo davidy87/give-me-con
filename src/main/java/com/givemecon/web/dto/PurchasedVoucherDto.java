@@ -1,10 +1,14 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PurchasedVoucherDto {
 
@@ -12,16 +16,25 @@ public class PurchasedVoucherDto {
     @Builder
     public static class PurchasedVoucherRequest {
 
+        @NotBlank
         private final String title;
 
+        @NotBlank
         private final String image;
 
+        @NotNull
+        @Min(0)
         private final Long price;
 
+        @NotNull
+        @Future
         private final LocalDate expDate;
 
+        @NotBlank
         private final String barcode;
 
+        @NotNull
+        @Min(1)
         private final Long voucherId;
 
         public PurchasedVoucher toEntity() {
@@ -32,6 +45,22 @@ public class PurchasedVoucherDto {
                     .expDate(expDate)
                     .barcode(barcode)
                     .build();
+        }
+    }
+
+    @Getter
+    public static class PurchasedVoucherRequestList {
+
+        @NotEmpty
+        @Valid
+        private final List<PurchasedVoucherRequest> requestList;
+
+        public PurchasedVoucherRequestList() {
+            requestList = new ArrayList<>();
+        }
+
+        public PurchasedVoucherRequestList(List<PurchasedVoucherRequest> requestList) {
+            this.requestList = requestList;
         }
     }
 

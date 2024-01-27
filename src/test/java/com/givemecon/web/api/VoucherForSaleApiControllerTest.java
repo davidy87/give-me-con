@@ -117,14 +117,13 @@ class VoucherForSaleApiControllerTest {
 
         String title = "Americano T";
         Long price = 4_000L;
-        LocalDate expDate = LocalDate.of(2024, 8, 7);
+        LocalDate expDate = LocalDate.now().plusDays(1);
         String barcode = "1111 1111 1111";
-        String image = "Americano_T.png";
         MockMultipartFile imageFile = new MockMultipartFile(
                 "imageFile",
-                image,
+                "Americano_T.png",
                 "image/png",
-                image.getBytes());
+                "Americano_T.png".getBytes());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
@@ -180,17 +179,16 @@ class VoucherForSaleApiControllerTest {
 
         String title = "Americano T";
         Long price = 4_000L;
-        LocalDate expDate = LocalDate.of(2024, 8, 7);
+        LocalDate expDate = LocalDate.now().plusDays(1);
         String barcode = "1111 1111 1111";
-        String image = "Americano_T.png";
         MockMultipartFile imageFile = new MockMultipartFile(
                 "imageFile",
-                image,
+                "Americano_T.png",
                 "image/png",
-                image.getBytes());
+                "Americano_T.png".getBytes());
 
         // when
-        ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
+        mockMvc.perform(multipart("/api/vouchers-for-sale")
                 .file(imageFile)
                 .part(new MockPart("title", title.getBytes(StandardCharsets.UTF_8)))
                 .part(new MockPart("price", price.toString().getBytes(StandardCharsets.UTF_8)))
@@ -218,15 +216,20 @@ class VoucherForSaleApiControllerTest {
 
         String title = "Americano T";
         Long price = 4_000L;
-        LocalDate expDate = LocalDate.of(2024, 8, 7);
+        LocalDate expDate = LocalDate.now().plusDays(1);
         String barcode = "1111 1111 1111";
-        String image = "Americano_T.png";
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "imageFile",
+                "Americano_T.png",
+                "image/png",
+                "Americano_T.png".getBytes());
 
         VoucherForSaleRequest requestDto = VoucherForSaleRequest.builder()
                 .title(title)
                 .price(price)
                 .expDate(expDate)
                 .barcode(barcode)
+                .imageFile(imageFile)
                 .build();
 
         VoucherForSale voucherForSaleSaved = voucherForSaleRepository.save(requestDto.toEntity());
