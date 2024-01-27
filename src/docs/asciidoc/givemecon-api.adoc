@@ -36,13 +36,13 @@ operation::member-api-controller-test/delete-one[snippets='path-parameters,http-
 :sectnums!:
 
 === 새 카테고리 생성
-operation::category-api-controller-test/save[snippets='request-fields,http-request,response-fields,http-response']
+operation::category-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 
 === 전체 카테고리 조회
 operation::category-api-controller-test/find-all[snippets='http-request,response-fields,http-response']
 
 === 카테고리 수정
-operation::category-api-controller-test/update[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
+operation::category-api-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
 
 === 카테고리 삭제
 operation::category-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
@@ -53,7 +53,7 @@ operation::category-api-controller-test/delete-one[snippets='path-parameters,htt
 :sectnums!:
 
 === 새 브랜드 생성
-operation::brand-api-controller-test/save[snippets='request-fields,http-request,response-fields,http-response']
+operation::brand-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 
 === 전체 브랜드 조회
 operation::brand-api-controller-test/find-all[snippets='http-request,response-fields,http-response']
@@ -62,7 +62,7 @@ operation::brand-api-controller-test/find-all[snippets='http-request,response-fi
 operation::brand-api-controller-test/find-all-by-category-id[snippets='query-parameters,http-request,response-fields,http-response']
 
 === 브랜드 수정
-operation::brand-api-controller-test/update[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
+operation::brand-api-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
 
 === 브랜드 삭제
 operation::brand-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
@@ -73,7 +73,7 @@ operation::brand-api-controller-test/delete-one[snippets='path-parameters,http-r
 :sectnums!:
 
 === 새 기프티콘 생성
-operation::voucher-api-controller-test/save[snippets='request-fields,http-request,response-fields,http-response']
+operation::voucher-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 
 === 기프티콘 단일 조회
 operation::voucher-api-controller-test/find-one[snippets='path-parameters,http-request,response-fields,http-response']
@@ -88,7 +88,7 @@ operation::voucher-api-controller-test/find-all-by-brand-name[snippets='query-pa
 operation::voucher-api-controller-test/find-selling-list-by-voucher-id[snippets='path-parameters,http-request,response-fields,http-response']
 
 === 기프티콘 수정
-operation::voucher-api-controller-test/update[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
+operation::voucher-api-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
 
 === 기프티콘 삭제
 operation::voucher-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
@@ -99,7 +99,7 @@ operation::voucher-api-controller-test/delete-one[snippets='path-parameters,http
 :sectnums!:
 
 === 기프티콘 판매 등록
-operation::voucher-for-sale-api-controller-test/save[snippets='request-fields,http-request,response-fields,http-response']
+operation::voucher-for-sale-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 
 === 판매중인 기프티콘 삭제
 operation::voucher-for-sale-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
