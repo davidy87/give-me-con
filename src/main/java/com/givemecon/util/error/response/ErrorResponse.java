@@ -1,6 +1,6 @@
-package com.givemecon.util.error;
+package com.givemecon.util.error.response;
 
-import lombok.Builder;
+import com.givemecon.util.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
@@ -11,13 +11,6 @@ public class ErrorResponse {
     private final String code;
 
     private final String message;
-
-    @Builder
-    public ErrorResponse(int status, String code, String message) {
-        this.status = status;
-        this.code = code;
-        this.message = message;
-    }
 
     public ErrorResponse(ErrorCode errorCode) {
         this.status = errorCode.getStatus();

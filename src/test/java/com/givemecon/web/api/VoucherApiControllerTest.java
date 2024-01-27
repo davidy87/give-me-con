@@ -291,7 +291,7 @@ class VoucherApiControllerTest {
                     VoucherForSale.builder()
                             .title("Americano T")
                             .price(4_000L)
-                            .expDate(LocalDate.now())
+                            .expDate(LocalDate.now().plusDays(1))
                             .barcode("1111 1111 1111")
                             .build());
 
@@ -346,12 +346,11 @@ class VoucherApiControllerTest {
         voucher.setVoucherImage(voucherImage);
 
         String newTitle = "newTitle";
-        String image = "oldImage.png";
         MockMultipartFile imageFileToUpdate = new MockMultipartFile(
                 "imageFile",
-                image,
+                "oldImage.png",
                 "image/png",
-                image.getBytes());
+                "oldImage.png".getBytes());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers/{id}", voucher.getId())
@@ -392,7 +391,6 @@ class VoucherApiControllerTest {
         // given
         Long price = 4_000L;
         String title = "Milk Tea L";
-        String image = "large_milk_tea.jpg";
         Voucher voucher = Voucher.builder()
                 .price(price)
                 .title(title)

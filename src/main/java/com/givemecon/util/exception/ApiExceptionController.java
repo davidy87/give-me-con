@@ -1,8 +1,7 @@
 package com.givemecon.util.exception;
 
-import com.givemecon.util.error.ErrorResponse;
-import com.givemecon.util.error.FieldErrorResponse;
-import com.givemecon.util.error.ValidationErrorResponse;
+import com.givemecon.util.error.response.ErrorResponse;
+import com.givemecon.util.error.response.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,13 +20,9 @@ public class ApiExceptionController {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> entityNotFoundExceptionHandler(EntityNotFoundException e) {
-        ErrorResponse errorResponse = ErrorResponse.builder()
-                .status(e.getStatus())
-                .code(e.getCode())
-                .message(e.getMessage())
-                .build();
+        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
 
-        return ResponseEntity.status(e.getStatus())
+        return ResponseEntity.status(errorResponse.getStatus())
                 .body(Map.of("error", errorResponse));
     }
 
@@ -45,7 +40,7 @@ public class ApiExceptionController {
         for (FieldError fieldError: bindingResult.getFieldErrors()) {
             String field = fieldError.getField();
             String message = fieldError.isBindingFailure() ? "Type Mismatch Error" : fieldError.getDefaultMessage();
-            errorResponse.addFieldError(new FieldErrorResponse(field, message));
+            errorResponse.addFieldMessage(field, message);
         }
 
         return errorResponse;
