@@ -31,7 +31,7 @@ public class CategoryService {
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
         Category category = categoryRepository.save(requestDto.toEntity());
-        MultipartFile iconFile = requestDto.getIcon();
+        MultipartFile iconFile = requestDto.getIconFile();
 
         try {
             String originalName = iconFile.getOriginalFilename();
@@ -63,7 +63,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
         CategoryIcon categoryIcon = category.getCategoryIcon();
-        MultipartFile iconFile = requestDto.getIcon();
+        MultipartFile iconFile = requestDto.getIconFile();
 
         category.updateName(requestDto.getName());
 

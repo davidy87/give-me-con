@@ -92,9 +92,12 @@ class CategoryApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        String name = "icon";
-        String icon = "icon.jpg";
-        MockMultipartFile iconFile = new MockMultipartFile(name, icon, "image/jpg", icon.getBytes());
+        String name = "category";
+        MockMultipartFile iconFile = new MockMultipartFile(
+                "iconFile",
+                "categoryIcon.png",
+                "image/jpg",
+                "categoryIcon.png".getBytes());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/categories")
@@ -107,18 +110,18 @@ class CategoryApiControllerTest {
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
                 .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(categoryList.get(0).getCategoryIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getCategoryIcon().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParts(
                                 partWithName("name").description("저장할 카테고리 이름"),
-                                partWithName("icon").description("저장할 카테고리 아이콘 파일")
+                                partWithName("iconFile").description("저장할 카테고리 아이콘 파일")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 카테고리 id"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 카테고리 이름"),
-                                fieldWithPath("icon").type(JsonFieldType.STRING).description("저장된 카테고리 아이콘 URL")
+                                fieldWithPath("iconUrl").type(JsonFieldType.STRING).description("저장된 카테고리 아이콘 URL")
                         ))
                 );
     }
@@ -134,7 +137,7 @@ class CategoryApiControllerTest {
             CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
-                    .originalName("categoryIcon")
+                    .originalName("categoryIcon" + i + ".png")
                     .build());
 
             category.setCategoryIcon(categoryIcon);
@@ -151,7 +154,7 @@ class CategoryApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("카테고리 id"),
                                 fieldWithPath("[].name").type(JsonFieldType.STRING).description("카테고리 이름"),
-                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("카테고리 아이콘")
+                                fieldWithPath("[].iconUrl").type(JsonFieldType.STRING).description("카테고리 아이콘")
                         ))
                 );
     }
@@ -159,8 +162,8 @@ class CategoryApiControllerTest {
     @Test
     void update() throws Exception {
         // given
-        String name = "category";
-        String icon = "category.jpg";
+        String name = "oldCategory";
+        String icon = "oldCategoryIcon.png";
         String imageKey = "imageKey";
         String imageUrl = "imageUrl";
 
@@ -178,10 +181,10 @@ class CategoryApiControllerTest {
 
         String newName = "newCategory";
         MockMultipartFile newIconFile = new MockMultipartFile(
-                "icon",
-                "newCategory.jpg",
-                "image/jpg",
-                "newCategory.jpg".getBytes());
+                "iconFile",
+                "newCategoryIcon.png",
+                "image/png",
+                "newCategoryIcon.png".getBytes());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/categories/{id}", category.getId())
@@ -194,7 +197,7 @@ class CategoryApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
                 .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(categoryList.get(0).getCategoryIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getCategoryIcon().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -203,12 +206,12 @@ class CategoryApiControllerTest {
                         ),
                         requestParts(
                                 partWithName("name").description("수정할 카테고리 이름").optional(),
-                                partWithName("icon").description("수정할 카테고리 아이콘 파일").optional()
+                                partWithName("iconFile").description("수정할 카테고리 아이콘 파일").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("변경된 카테고리 id"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("변경된 카테고리 이름"),
-                                fieldWithPath("icon").type(JsonFieldType.VARIES).description("변경된 카테고리 아이콘")
+                                fieldWithPath("iconUrl").type(JsonFieldType.VARIES).description("변경된 카테고리 아이콘")
                         ))
                 );
     }
@@ -216,18 +219,30 @@ class CategoryApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        String name = "Bubble Tea";
-        String icon = "bubble_tea.jpg";
-        Category category = Category.builder()
-                .name(name)
-                .build();
+        String name = "category";
+        String icon = "categoryIcon.png";
+        String imageKey = "imageKey";
+        String imageUrl = "imageUrl";
 
-        Long id = categoryRepository.save(category).getId();
+        Category category = categoryRepository.save(Category.builder()
+                .name(name)
+                .build());
+
+        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey(imageKey)
+                .originalName(icon)
+                .imageUrl(imageUrl)
+                .build());
+
+        category.setCategoryIcon(categoryIcon);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/categories/{id}", id));
+        ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));
 
         // then
+        List<Category> categoryList = categoryRepository.findAll();
+        assertThat(categoryList).isEmpty();
+
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
@@ -236,8 +251,5 @@ class CategoryApiControllerTest {
                                 parameterWithName("id").description("카테고리 id")
                         ))
                 );
-
-        List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList).isEmpty();
     }
 }

@@ -58,7 +58,7 @@ public class VoucherForSaleDto {
 
         private final String barcode;
 
-        private final String image;
+        private final String imageUrl;
 
 
         public VoucherForSaleResponse(VoucherForSale voucherForSale) {
@@ -67,7 +67,7 @@ public class VoucherForSaleDto {
             this.price = voucherForSale.getPrice();
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
-            this.image = voucherForSale.getVoucherForSaleImage().getImageUrl();
+            this.imageUrl = voucherForSale.getVoucherForSaleImage().getImageUrl();
         }
     }
 }

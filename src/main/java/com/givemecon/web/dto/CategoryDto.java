@@ -17,7 +17,7 @@ public class CategoryDto {
         private final String name;
 
         @ValidFile
-        private final MultipartFile icon;
+        private final MultipartFile iconFile;
 
         public Category toEntity() {
             return Category.builder()
@@ -32,7 +32,7 @@ public class CategoryDto {
 
         private final String name;
 
-        private final MultipartFile icon;
+        private final MultipartFile iconFile;
     }
 
     @Getter
@@ -42,12 +42,12 @@ public class CategoryDto {
 
         private final String name;
 
-        private final String icon;
+        private final String iconUrl;
 
         public CategoryResponse(Category category) {
             this.id = category.getId();
             this.name = category.getName();
-            this.icon = category.getCategoryIcon().getImageUrl();
+            this.iconUrl = category.getCategoryIcon().getImageUrl();
         }
     }
 }

@@ -23,7 +23,7 @@ public class BrandDto {
         private final String name;
 
         @ValidFile
-        private final MultipartFile icon;
+        private final MultipartFile iconFile;
 
         public Brand toEntity() {
             return Brand.builder()
@@ -36,12 +36,9 @@ public class BrandDto {
     @Builder
     public static class BrandUpdateRequest {
 
-        @Min(1)
-        private final Long categoryId;
-
         private final String name;
 
-        private final MultipartFile icon;
+        private final MultipartFile iconFile;
     }
 
     @Getter
@@ -51,12 +48,12 @@ public class BrandDto {
 
         private final String name;
 
-        private final String icon;
+        private final String iconUrl;
 
         public BrandResponse(Brand brand) {
             this.id = brand.getId();
             this.name = brand.getName();
-            this.icon = brand.getBrandIcon().getImageUrl();
+            this.iconUrl = brand.getBrandIcon().getImageUrl();
         }
     }
 }

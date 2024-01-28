@@ -98,7 +98,7 @@ class PurchasedVoucherApiControllerTest {
 
         for (int i = 1; i <= 5; i++) {
             PurchasedVoucherRequest requestDto = PurchasedVoucherRequest.builder()
-                    .image("voucher" + i + ".png")
+                    .imageUrl("voucher" + i + ".png")
                     .title("voucher" + i)
                     .price(4_000L)
                     .expDate(LocalDate.now().plusDays(1))
@@ -125,7 +125,7 @@ class PurchasedVoucherApiControllerTest {
                         getDocumentResponse(),
                         requestFields(
                                 fieldWithPath("requests.[].title").type(JsonFieldType.STRING).description("구매할 기프티콘 타이틀"),
-                                fieldWithPath("requests.[].image").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
+                                fieldWithPath("requests.[].imageUrl").type(JsonFieldType.STRING).description("구매할 기프티콘 이미지"),
                                 fieldWithPath("requests.[].price").type(JsonFieldType.NUMBER).description("구매할 기프티콘 가격"),
                                 fieldWithPath("requests.[].expDate").type(JsonFieldType.ARRAY).description("구매할 기프티콘 유효기간"),
                                 fieldWithPath("requests.[].barcode").type(JsonFieldType.STRING).description("구매할 기프티콘 바코드"),
@@ -134,7 +134,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기간"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -185,7 +185,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기간"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -225,8 +225,8 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
                 .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(purchasedVoucher.getImage()))
                 .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
                 .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
@@ -240,7 +240,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기간"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -276,8 +276,8 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("image").value(purchasedVoucher.getImage()))
                 .andExpect(jsonPath("title").value(purchasedVoucher.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(purchasedVoucher.getImage()))
                 .andExpect(jsonPath("price").value(purchasedVoucher.getPrice()))
                 .andExpect(jsonPath("expDate").value(purchasedVoucher.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(purchasedVoucher.getBarcode()))
@@ -291,7 +291,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기간"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),

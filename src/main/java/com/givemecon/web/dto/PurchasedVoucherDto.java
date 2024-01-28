@@ -20,7 +20,7 @@ public class PurchasedVoucherDto {
         private final String title;
 
         @NotBlank
-        private final String image;
+        private final String imageUrl;
 
         @NotNull
         @Min(0)
@@ -39,7 +39,7 @@ public class PurchasedVoucherDto {
 
         public PurchasedVoucher toEntity() {
             return PurchasedVoucher.builder()
-                    .image(image)
+                    .image(imageUrl)
                     .title(title)
                     .price(price)
                     .expDate(expDate)
@@ -69,7 +69,7 @@ public class PurchasedVoucherDto {
 
         private final Long id;
 
-        private final String image;
+        private final String imageUrl;
 
         private final String title;
 
@@ -87,7 +87,7 @@ public class PurchasedVoucherDto {
             this.price = purchasedVoucher.getPrice();
             this.expDate = purchasedVoucher.getExpDate();
             this.barcode = purchasedVoucher.getBarcode();
-            this.image = purchasedVoucher.getImage();
+            this.imageUrl = purchasedVoucher.getImage();
             this.valid = purchasedVoucher.getValid();
         }
     }
