@@ -23,8 +23,12 @@ public class Category extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToOne
-    @JoinColumn(name = "category_icon_id")
+    @OneToOne(
+            mappedBy = "category",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private CategoryIcon categoryIcon;
 
     @OneToMany(

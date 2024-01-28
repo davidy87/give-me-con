@@ -32,8 +32,12 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private String barcode;
 
-    @OneToOne
-    @JoinColumn(name = "voucher_for_sale_image_id")
+    @OneToOne(
+            mappedBy = "voucherForSale",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private VoucherForSaleImage voucherForSaleImage;
 
     @ManyToOne(fetch = FetchType.LAZY)

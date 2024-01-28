@@ -25,7 +25,8 @@ public class BrandIcon extends BaseTimeEntity {
     @Column(nullable = false)
     private String originalName;
 
-    @OneToOne(mappedBy = "brandIcon", fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "brand_id")
     private Brand brand;
 
     @Builder

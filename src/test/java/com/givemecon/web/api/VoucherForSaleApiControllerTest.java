@@ -8,6 +8,8 @@ import com.givemecon.domain.member.Role;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucherforsale.VoucherForSaleImage;
+import com.givemecon.domain.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
@@ -71,6 +73,9 @@ class VoucherForSaleApiControllerTest {
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
+
+    @Autowired
+    VoucherForSaleImageRepository voucherForSaleImageRepository;
 
     @Autowired
     JwtTokenProvider jwtTokenProvider;
@@ -214,29 +219,23 @@ class VoucherForSaleApiControllerTest {
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
 
-        String title = "Americano T";
-        Long price = 4_000L;
-        LocalDate expDate = LocalDate.now().plusDays(1);
-        String barcode = "1111 1111 1111";
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "imageFile",
-                "Americano_T.png",
-                "image/png",
-                "Americano_T.png".getBytes());
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+                .title("Americano T")
+                .price(4_000L)
+                .expDate(LocalDate.now().plusDays(1))
+                .barcode("1111 1111 1111")
+                .build());
 
-        VoucherForSaleRequest requestDto = VoucherForSaleRequest.builder()
-                .title(title)
-                .price(price)
-                .expDate(expDate)
-                .barcode(barcode)
-                .imageFile(imageFile)
-                .build();
+        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+                .imageUrl("imageUrl")
+                .imageKey("imageKey")
+                .originalName("Americano_T.png")
+                .build());
 
-        VoucherForSale voucherForSaleSaved = voucherForSaleRepository.save(requestDto.toEntity());
-        Long id = voucherForSaleSaved.getId();
+        voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", id)
+        ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
 
         // then
@@ -250,6 +249,8 @@ class VoucherForSaleApiControllerTest {
                 );
 
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
+        List<VoucherForSaleImage> voucherForSaleImageList = voucherForSaleImageRepository.findAll();
         assertThat(voucherForSaleList).isEmpty();
+        assertThat(voucherForSaleImageList).isEmpty();
     }
 }

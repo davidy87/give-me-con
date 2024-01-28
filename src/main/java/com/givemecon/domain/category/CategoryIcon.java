@@ -25,7 +25,8 @@ public class CategoryIcon extends BaseTimeEntity {
     @Column(nullable = false)
     private String originalName;
 
-    @OneToOne(mappedBy = "categoryIcon", fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Builder

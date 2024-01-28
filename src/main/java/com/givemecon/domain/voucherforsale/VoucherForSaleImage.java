@@ -25,7 +25,8 @@ public class VoucherForSaleImage extends BaseTimeEntity {
     @Column(nullable = false)
     private String originalName;
 
-    @OneToOne(mappedBy = "voucherForSaleImage", fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "voucher_for_sale_id")
     private VoucherForSale voucherForSale;
 
     @Builder

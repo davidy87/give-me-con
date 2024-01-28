@@ -388,17 +388,21 @@ class VoucherApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        Long price = 4_000L;
-        String title = "Milk Tea L";
-        Voucher voucher = Voucher.builder()
-                .price(price)
-                .title(title)
-                .build();
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(4_000L)
+                .title("voucher")
+                .build());
 
-        Long id = voucherRepository.save(voucher).getId();
+        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("voucherImage.jpg")
+                .build());
+
+        voucher.setVoucherImage(voucherImage);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", id))
+        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -410,6 +414,8 @@ class VoucherApiControllerTest {
         // then
         response.andExpect(status().isNoContent());
         List<Voucher> voucherList = voucherRepository.findAll();
+        List<VoucherImage> voucherImageList = voucherImageRepository.findAll();
         assertThat(voucherList).isEmpty();
+        assertThat(voucherImageList).isEmpty();
     }
 }

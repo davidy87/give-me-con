@@ -240,8 +240,6 @@ class CategoryApiControllerTest {
         ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));
 
         // then
-        List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList).isEmpty();
 
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
@@ -251,5 +249,10 @@ class CategoryApiControllerTest {
                                 parameterWithName("id").description("카테고리 id")
                         ))
                 );
+
+        List<Category> categoryList = categoryRepository.findAll();
+        List<CategoryIcon> categoryIconList = categoryIconRepository.findAll();
+        assertThat(categoryList).isEmpty();
+        assertThat(categoryIconList).isEmpty();
     }
 }
