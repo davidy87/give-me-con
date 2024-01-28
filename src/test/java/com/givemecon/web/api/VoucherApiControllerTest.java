@@ -133,7 +133,7 @@ class VoucherApiControllerTest {
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
                 .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
-                .andExpect(jsonPath("image").value(voucherList.get(0).getVoucherImage().getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getVoucherImage().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -146,7 +146,7 @@ class VoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("저장된 기프티콘 타이틀"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("저장된 기프티콘 가격"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지")
                         ))
                 );
     }
@@ -175,7 +175,7 @@ class VoucherApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucher.getId()))
                 .andExpect(jsonPath("price").value(voucher.getPrice()))
-                .andExpect(jsonPath("image").value(voucherImage.getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherImage.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -186,7 +186,7 @@ class VoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
                         ))
                 );
     }
@@ -222,7 +222,7 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
                         ))
                 );
     }
@@ -268,7 +268,7 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
                         ))
                 );
     }
@@ -278,7 +278,6 @@ class VoucherApiControllerTest {
         // given
         Long price = 4_000L;
         String title = "Americano T";
-        String image = "americano.jpg";
         Voucher voucher = Voucher.builder()
                 .price(price)
                 .title(title)
@@ -324,7 +323,7 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
                         ))
                 );
     }
@@ -364,7 +363,7 @@ class VoucherApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
                 .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
-                .andExpect(jsonPath("image").value(voucherList.get(0).getVoucherImage().getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getVoucherImage().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -381,7 +380,7 @@ class VoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 기프티콘 타이틀"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("수정된 기프티콘 가격"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("수정된 기프티콘 이미지")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("수정된 기프티콘 이미지")
                         ))
                 );
     }

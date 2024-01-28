@@ -144,7 +144,7 @@ class VoucherForSaleApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherForSaleList.get(0).getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSaleList.get(0).getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSaleList.get(0).getBarcode()))
-                .andExpect(jsonPath("image").value(voucherForSaleList.get(0).getVoucherForSaleImage().getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherForSaleList.get(0).getVoucherForSaleImage().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -161,7 +161,7 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL")
                         ))
                 );
     }

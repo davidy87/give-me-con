@@ -36,7 +36,7 @@ public class BrandService {
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         Brand brand = brandRepository.save(requestDto.toEntity());
-        MultipartFile iconFile = requestDto.getIcon();
+        MultipartFile iconFile = requestDto.getIconFile();
 
         try {
             String originalName = iconFile.getOriginalFilename();
@@ -81,7 +81,7 @@ public class BrandService {
 
         BrandIcon brandIcon = brand.getBrandIcon();
         String newBrandName = requestDto.getName();
-        MultipartFile newIconFile = requestDto.getIcon();
+        MultipartFile newIconFile = requestDto.getIconFile();
 
         if (newBrandName != null) {
             brand.updateName(newBrandName);

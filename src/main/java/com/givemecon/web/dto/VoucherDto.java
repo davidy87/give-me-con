@@ -53,13 +53,13 @@ public class VoucherDto {
 
         private final String title;
 
-        private final String image;
+        private final String imageUrl;
 
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
             this.price = voucher.getPrice();
             this.title = voucher.getTitle();
-            this.image = voucher.getVoucherImage().getImageUrl();
+            this.imageUrl = voucher.getVoucherImage().getImageUrl();
         }
     }
 }

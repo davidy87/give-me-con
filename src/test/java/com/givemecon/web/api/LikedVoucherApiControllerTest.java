@@ -116,7 +116,7 @@ class LikedVoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지")
                         ))
                 );
 
@@ -169,7 +169,7 @@ class LikedVoucherApiControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("[].image").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지")
                         ))
                 );
     }

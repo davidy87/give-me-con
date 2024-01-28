@@ -31,7 +31,7 @@ public class CategoryService {
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
         Category category = categoryRepository.save(requestDto.toEntity());
-        MultipartFile iconFile = requestDto.getIcon();
+        MultipartFile iconFile = requestDto.getIconFile();
 
         try {
             String originalName = iconFile.getOriginalFilename();
@@ -65,7 +65,7 @@ public class CategoryService {
 
         CategoryIcon categoryIcon = category.getCategoryIcon();
         String newCategoryName = requestDto.getName();
-        MultipartFile newIconFile = requestDto.getIcon();
+        MultipartFile newIconFile = requestDto.getIconFile();
 
         if (newCategoryName != null) {
             category.updateName(newCategoryName);

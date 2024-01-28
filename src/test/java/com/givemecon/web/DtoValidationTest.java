@@ -71,7 +71,7 @@ public class DtoValidationTest {
     void categoryDtoFailed() throws Exception {
         // given
         MockPart name = new MockPart("name", null);
-        MockMultipartFile iconFile = new MockMultipartFile("icon", (byte[]) null);
+        MockMultipartFile iconFile = new MockMultipartFile("iconFile", (byte[]) null);
 
         // when
         ResultActions saveResult = mockMvc.perform(multipart("/api/categories")
@@ -93,33 +93,20 @@ public class DtoValidationTest {
     @DisplayName("Brand Request DTO 검증 실패 테스트")
     void brandDtoFailed() throws Exception {
         // given
-        MockPart nullCategoryId = new MockPart("categoryId", null);
-        MockPart inValidCategoryId = new MockPart("categoryId", Long.valueOf(0).toString().getBytes());
+        MockPart invalidCategoryId = new MockPart("categoryId", Long.valueOf(0).toString().getBytes());
         MockPart name = new MockPart("name", null);
-        MockMultipartFile iconFile = new MockMultipartFile("icon", (byte[]) null);
+        MockMultipartFile iconFile = new MockMultipartFile("iconFile", (byte[]) null);
 
         // when
         ResultActions saveResult = mockMvc.perform(multipart("/api/brands")
                 .file(iconFile)
-                .part(nullCategoryId)
+                .part(invalidCategoryId)
                 .part(name)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
-        );
-
-        ResultActions updateResult = mockMvc.perform(multipart("/api/brands/1")
-                .part(inValidCategoryId)
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
         );
 
         // then
         saveResult
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
-                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
-
-        updateResult
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
                 .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))

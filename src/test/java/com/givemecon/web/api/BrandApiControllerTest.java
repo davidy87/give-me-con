@@ -100,12 +100,15 @@ class BrandApiControllerTest {
     void save() throws Exception {
         // given
         Category categorySaved = categoryRepository.save(Category.builder()
-                .name("coffee")
+                .name("category")
                 .build());
 
-        String name = "Starbucks";
-        String icon = "starbucks.jpg";
-        MockMultipartFile iconFile = new MockMultipartFile("icon", icon, "image/jpg", icon.getBytes());
+        String name = "Brand";
+        MockMultipartFile iconFile = new MockMultipartFile(
+                "iconFile",
+                "brandIcon.png",
+                "image/png",
+                "brandIcon.png".getBytes());
 
         // when
         ResultActions result = mockMvc.perform(multipart("/api/brands")
@@ -120,19 +123,19 @@ class BrandApiControllerTest {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))
                 .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(brandList.get(0).getBrandIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getBrandIcon().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParts(
                                 partWithName("categoryId").description("설정할 카테고리 id"),
                                 partWithName("name").description("저장할 브랜드 이름"),
-                                partWithName("icon").description("저장할 브랜드 아이콘 파일")
+                                partWithName("iconFile").description("저장할 브랜드 아이콘 파일")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 브랜드 id"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("저장된 브랜드 이름"),
-                                fieldWithPath("icon").type(JsonFieldType.STRING).description("저장된 브랜드 아이콘")
+                                fieldWithPath("iconUrl").type(JsonFieldType.STRING).description("저장된 브랜드 아이콘")
                         ))
                 );
     }
@@ -142,13 +145,13 @@ class BrandApiControllerTest {
         // given
         for (int i = 1; i <= 5; i++) {
             Brand brand = brandRepository.save(Brand.builder()
-                    .name("brand" + i)
+                    .name("Brand" + i)
                     .build());
 
             BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
-                    .originalName("brand_icon_" + i + ".jpg")
+                    .originalName("brandIcon" + i + ".png")
                     .build());
 
             brand.setBrandIcon(brandIcon);
@@ -165,7 +168,7 @@ class BrandApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
                                 fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드명"),
-                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("브랜드 아이콘")
+                                fieldWithPath("[].iconUrl").type(JsonFieldType.STRING).description("브랜드 아이콘")
                         ))
                 );
     }
@@ -173,20 +176,19 @@ class BrandApiControllerTest {
     @Test
     void findAllByCategoryId() throws Exception {
         // given
-        String name = "Bubble Tea";
         Category category = categoryRepository.save(Category.builder()
-                .name(name)
+                .name("category")
                 .build());
 
         for (int i = 1; i <= 5; i++) {
             Brand brand = brandRepository.save(Brand.builder()
-                    .name(name + "Brand " + i)
+                    .name("Brand " + i)
                     .build());
 
             BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
-                    .originalName("brand_icon_" + i + ".jpg")
+                    .originalName("brandIcon" + i + ".jpg")
                     .build());
 
             brand.setBrandIcon(brandIcon);
@@ -207,7 +209,7 @@ class BrandApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
                                 fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드명"),
-                                fieldWithPath("[].icon").type(JsonFieldType.STRING).description("브랜드 아이콘")
+                                fieldWithPath("[].iconUrl").type(JsonFieldType.STRING).description("브랜드 아이콘")
                         ))
                 );
 
@@ -221,10 +223,6 @@ class BrandApiControllerTest {
     @Test
     void update() throws Exception {
         // given
-        Category categorySaved = categoryRepository.save(Category.builder()
-                .name("category")
-                .build());
-
         Brand brand = brandRepository.save(Brand.builder()
                 .name("oldBrand")
                 .build());
@@ -232,22 +230,21 @@ class BrandApiControllerTest {
         BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
-                .originalName("brand_icon.jpg")
+                .originalName("brandIcon.jpg")
                 .build());
 
         brand.setBrandIcon(brandIcon);
 
         String newName = "newBrand";
         MockMultipartFile newIconFile = new MockMultipartFile(
-                "icon",
-                "new_brand_icon.jpg",
-                "image/jpg",
-                "new_brand_icon.jpg".getBytes());
+                "iconFile",
+                "newBrand.png",
+                "image/png",
+                "newBrand.png".getBytes());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/brands/{id}", brand.getId())
                 .file(newIconFile)
-                .part(new MockPart("categoryId", String.valueOf(categorySaved.getId()).getBytes(StandardCharsets.UTF_8)))
                 .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
         );
 
@@ -257,7 +254,7 @@ class BrandApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))
                 .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("icon").value(brandList.get(0).getBrandIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getBrandIcon().getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -265,14 +262,13 @@ class BrandApiControllerTest {
                                 parameterWithName("id").description("브랜드 id")
                         ),
                         requestParts(
-                                partWithName("categoryId").description("변경할 카테고리 id").optional(),
                                 partWithName("name").description("변경할 브랜드 이름").optional(),
-                                partWithName("icon").description("변경할 브랜드 아이콘 파일").optional()
+                                partWithName("iconFile").description("변경할 브랜드 아이콘 파일").optional()
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("변경된 브랜드 id"),
                                 fieldWithPath("name").type(JsonFieldType.STRING).description("변경된 브랜드명"),
-                                fieldWithPath("icon").type(JsonFieldType.STRING).description("변경된 브랜드 아이콘")
+                                fieldWithPath("iconUrl").type(JsonFieldType.STRING).description("변경된 브랜드 아이콘")
                         ))
                 );
     }
@@ -280,16 +276,20 @@ class BrandApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        String name = "Starbucks";
-        String icon = "starbucks.jpg";
-        Brand brand = Brand.builder()
-                .name(name)
-                .build();
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("Brand")
+                .build());
 
-        Long id = brandRepository.save(brand).getId();
+        BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("brandIcon.png")
+                .build());
+
+        brand.setBrandIcon(brandIcon);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/brands/{id}", id));
+        ResultActions response = mockMvc.perform(delete("/api/brands/{id}", brand.getId()));
 
         // then
         response.andExpect(status().isNoContent())
