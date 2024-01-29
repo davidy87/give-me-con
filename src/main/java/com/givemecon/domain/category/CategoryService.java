@@ -32,10 +32,10 @@ public class CategoryService {
     public CategoryResponse save(CategorySaveRequest requestDto) {
         Category category = categoryRepository.save(requestDto.toEntity());
         MultipartFile iconFile = requestDto.getIconFile();
+        String originalName = iconFile.getOriginalFilename();
+        String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
 
         try {
-            String originalName = iconFile.getOriginalFilename();
-            String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
             String imageUrl = awsS3Service.upload(imageKey, iconFile.getInputStream());
             CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                     .imageKey(imageKey)
@@ -63,7 +63,6 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        CategoryIcon categoryIcon = category.getCategoryIcon();
         String newCategoryName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
 
@@ -72,10 +71,12 @@ public class CategoryService {
         }
 
         if (newIconFile != null && !newIconFile.isEmpty()) {
+            CategoryIcon categoryIcon = category.getCategoryIcon();
+
             try {
-                String imageUrl = awsS3Service.upload(categoryIcon.getImageKey(), newIconFile.getInputStream());
-                String originalName = newIconFile.getOriginalFilename();
-                categoryIcon.update(imageUrl, originalName);
+                String newImageUrl = awsS3Service.upload(categoryIcon.getImageKey(), newIconFile.getInputStream());
+                String newOriginalName = newIconFile.getOriginalFilename();
+                categoryIcon.update(newImageUrl, newOriginalName);
             } catch (IOException e) {
                 throw new RuntimeException("카테고리 아이콘 업로드 실패."); // TODO: 예외 처리
             }

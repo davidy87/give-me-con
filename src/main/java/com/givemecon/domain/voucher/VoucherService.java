@@ -130,12 +130,11 @@ public class VoucherService {
 
         if (newImageFile != null && !newImageFile.isEmpty()) {
             VoucherImage voucherImage = voucher.getVoucherImage();
-            String imageKey = voucherImage.getImageKey();
-            String originalName = newImageFile.getOriginalFilename();
 
             try {
-                String imageUrl = awsS3Service.upload(imageKey, newImageFile.getInputStream());
-                voucherImage.update(imageUrl, originalName);
+                String newImageUrl = awsS3Service.upload(voucherImage.getImageKey(), newImageFile.getInputStream());
+                String newOriginalName = newImageFile.getOriginalFilename();
+                voucherImage.update(newImageUrl, newOriginalName);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

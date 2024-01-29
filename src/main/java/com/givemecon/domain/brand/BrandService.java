@@ -79,7 +79,6 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        BrandIcon brandIcon = brand.getBrandIcon();
         String newBrandName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
 
@@ -88,6 +87,8 @@ public class BrandService {
         }
 
         if (newIconFile != null && !newIconFile.isEmpty()) {
+            BrandIcon brandIcon = brand.getBrandIcon();
+
             try {
                 String newImageUrl = awsS3Service.upload(brandIcon.getImageKey(), newIconFile.getInputStream());
                 String newOriginalName = newIconFile.getOriginalFilename();
