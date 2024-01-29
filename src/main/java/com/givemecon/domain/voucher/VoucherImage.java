@@ -27,19 +27,11 @@ public class VoucherImage extends BaseTimeEntity {
     @Column(nullable = false)
     private String originalName;
 
-    @OneToOne
-    @JoinColumn(name = "voucher_id")
-    private Voucher voucher;
-
     @Builder
     public VoucherImage(String imageKey, String imageUrl, String originalName) {
         this.imageKey = imageKey;
         this.imageUrl = imageUrl;
         this.originalName = originalName;
-    }
-
-    public void setVoucher(Voucher voucher) {
-        this.voucher = voucher;
     }
 
     public void update(String imageUrl, String originalName) {

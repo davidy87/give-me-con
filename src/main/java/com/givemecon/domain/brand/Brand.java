@@ -26,12 +26,8 @@ public class Brand extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToOne(
-            mappedBy = "brand",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToOne
+    @JoinColumn(name = "brand_icon_id")
     private BrandIcon brandIcon;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,7 +53,6 @@ public class Brand extends BaseTimeEntity {
 
     public void setBrandIcon(BrandIcon brandIcon) {
         this.brandIcon = brandIcon;
-        brandIcon.setBrand(this);
     }
 
     public void setCategory(Category category) {

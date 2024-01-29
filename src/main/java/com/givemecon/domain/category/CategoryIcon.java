@@ -25,19 +25,11 @@ public class CategoryIcon extends BaseTimeEntity {
     @Column(nullable = false)
     private String originalName;
 
-    @OneToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-
     @Builder
     public CategoryIcon(String imageKey, String imageUrl, String originalName) {
         this.imageKey = imageKey;
         this.imageUrl = imageUrl;
         this.originalName = originalName;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
     }
 
     public void update(String imageUrl, String originalName) {

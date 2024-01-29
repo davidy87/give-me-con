@@ -25,19 +25,11 @@ public class BrandIcon extends BaseTimeEntity {
     @Column(nullable = false)
     private String originalName;
 
-    @OneToOne
-    @JoinColumn(name = "brand_id")
-    private Brand brand;
-
     @Builder
     public BrandIcon(String imageKey, String imageUrl, String originalName) {
         this.imageKey = imageKey;
         this.imageUrl = imageUrl;
         this.originalName = originalName;
-    }
-
-    public void setBrand(Brand brand) {
-        this.brand = brand;
     }
 
     public void update(String imageUrl, String originalName) {

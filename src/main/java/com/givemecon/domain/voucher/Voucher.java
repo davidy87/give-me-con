@@ -36,12 +36,8 @@ public class Voucher extends BaseTimeEntity {
     @Column(length = 500)
     private String caution;
 
-    @OneToOne(
-            mappedBy = "voucher",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
+    @OneToOne
+    @JoinColumn(name = "voucher_id")
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -86,7 +82,6 @@ public class Voucher extends BaseTimeEntity {
 
     public void setVoucherImage(VoucherImage voucherImage) {
         this.voucherImage = voucherImage;
-        voucherImage.setVoucher(this);
     }
 
     public void setCategory(Category category) {
