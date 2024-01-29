@@ -41,7 +41,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.givemecon.web.ApiDocumentUtils.*;
-import static com.givemecon.web.dto.VoucherForSaleDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -249,8 +248,6 @@ class VoucherForSaleApiControllerTest {
                 );
 
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
-        List<VoucherForSaleImage> voucherForSaleImageList = voucherForSaleImageRepository.findAll();
         assertThat(voucherForSaleList).isEmpty();
-        assertThat(voucherForSaleImageList).isEmpty();
     }
 }

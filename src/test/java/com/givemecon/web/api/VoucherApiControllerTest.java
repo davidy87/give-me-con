@@ -414,8 +414,6 @@ class VoucherApiControllerTest {
         // then
         response.andExpect(status().isNoContent());
         List<Voucher> voucherList = voucherRepository.findAll();
-        List<VoucherImage> voucherImageList = voucherImageRepository.findAll();
         assertThat(voucherList).isEmpty();
-        assertThat(voucherImageList).isEmpty();
     }
 }

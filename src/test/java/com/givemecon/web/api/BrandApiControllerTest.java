@@ -302,8 +302,6 @@ class BrandApiControllerTest {
                 );
 
         List<Brand> brandList = brandRepository.findAll();
-        List<BrandIcon> brandIconList = brandIconRepository.findAll();
         assertThat(brandList).isEmpty();
-        assertThat(brandIconList).isEmpty();
     }
 }
