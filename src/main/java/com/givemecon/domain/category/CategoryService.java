@@ -71,7 +71,7 @@ public class CategoryService {
             category.updateName(newCategoryName);
         }
 
-        if (newIconFile != null) {
+        if (newIconFile != null && !newIconFile.isEmpty()) {
             try {
                 String imageUrl = awsS3Service.upload(categoryIcon.getImageKey(), newIconFile.getInputStream());
                 String originalName = newIconFile.getOriginalFilename();

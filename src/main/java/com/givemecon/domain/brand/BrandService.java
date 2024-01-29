@@ -87,7 +87,7 @@ public class BrandService {
             brand.updateName(newBrandName);
         }
 
-        if (newIconFile != null) {
+        if (newIconFile != null && !newIconFile.isEmpty()) {
             try {
                 String newImageUrl = awsS3Service.upload(brandIcon.getImageKey(), newIconFile.getInputStream());
                 String newOriginalName = newIconFile.getOriginalFilename();

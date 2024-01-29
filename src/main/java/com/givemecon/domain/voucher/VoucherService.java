@@ -128,7 +128,7 @@ public class VoucherService {
             voucher.updateCaution(newCaution);
         }
 
-        if (newImageFile != null) {
+        if (newImageFile != null && !newImageFile.isEmpty()) {
             VoucherImage voucherImage = voucher.getVoucherImage();
             String imageKey = voucherImage.getImageKey();
             String originalName = newImageFile.getOriginalFilename();
