@@ -223,6 +223,14 @@ class BrandApiControllerTest {
     @Test
     void update() throws Exception {
         // given
+        Category oldCategory = categoryRepository.save(Category.builder()
+                .name("oldCategory")
+                .build());
+
+        Category newCategory = categoryRepository.save(Category.builder()
+                .name("newCategory")
+                .build());
+
         Brand brand = brandRepository.save(Brand.builder()
                 .name("oldBrand")
                 .build());
@@ -233,6 +241,7 @@ class BrandApiControllerTest {
                 .originalName("brandIcon.jpg")
                 .build());
 
+        oldCategory.addBrand(brand);
         brand.setBrandIcon(brandIcon);
 
         String newName = "newBrand";
@@ -245,11 +254,13 @@ class BrandApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/brands/{id}", brand.getId())
                 .file(newIconFile)
-                .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("categoryId", newCategory.getId().toString().getBytes()))
+                .part(new MockPart("name", newName.getBytes()))
         );
 
         // then
         List<Brand> brandList = brandRepository.findAll();
+        assertThat(brandList.get(0).getCategory()).isSameAs(newCategory);
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))
@@ -262,6 +273,7 @@ class BrandApiControllerTest {
                                 parameterWithName("id").description("브랜드 id")
                         ),
                         requestParts(
+                                partWithName("categoryId").description("변경할 브랜드 카테고리 id").optional(),
                                 partWithName("name").description("변경할 브랜드 이름").optional(),
                                 partWithName("iconFile").description("변경할 브랜드 아이콘 파일").optional()
                         ),

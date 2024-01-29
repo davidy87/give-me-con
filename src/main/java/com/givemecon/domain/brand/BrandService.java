@@ -79,8 +79,17 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
+        Long categoryId = requestDto.getCategoryId();
         String newBrandName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
+
+        if (categoryId != null) {
+            Category newCategory = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
+            brand.setCategory(null);
+            newCategory.addBrand(brand);
+        }
 
         if (newBrandName != null) {
             brand.updateName(newBrandName);

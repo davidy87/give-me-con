@@ -36,6 +36,8 @@ public class BrandDto {
     @Builder
     public static class BrandUpdateRequest {
 
+        private final Long categoryId;
+
         private final String name;
 
         private final MultipartFile iconFile;
