@@ -87,7 +87,6 @@ public class BrandService {
             Category newCategory = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-            brand.setCategory(null);
             newCategory.addBrand(brand);
         }
 
