@@ -35,7 +35,12 @@ public class VoucherService {
     private final AwsS3Service awsS3Service;
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
+        Brand brand = brandRepository.findById(requestDto.getBrandId())
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
+        brand.addVoucher(voucher);
+
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
         String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);

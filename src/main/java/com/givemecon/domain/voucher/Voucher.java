@@ -37,7 +37,7 @@ public class Voucher extends BaseTimeEntity {
     private String caution;
 
     @OneToOne
-    @JoinColumn(name = "voucher_id")
+    @JoinColumn(name = "voucher_image_id")
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)

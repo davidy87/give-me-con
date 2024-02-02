@@ -2,6 +2,7 @@ package com.givemecon.web.api;
 
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
+import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherImage;
 import com.givemecon.domain.voucher.VoucherImageRepository;
@@ -65,6 +66,12 @@ class VoucherApiControllerTest {
     MockMvc mockMvc;
 
     @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    BrandRepository brandRepository;
+
+    @Autowired
     VoucherRepository voucherRepository;
 
     @Autowired
@@ -75,9 +82,6 @@ class VoucherApiControllerTest {
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
-
-    @Autowired
-    BrandRepository brandRepository;
 
     @Autowired
     S3Client s3Client;
@@ -120,15 +124,21 @@ class VoucherApiControllerTest {
                 "image/png",
                 image.getBytes());
 
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("brand")
+                .build());
+
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
-                .part(new MockPart("price", price.toString().getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("title", title.getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("brandId", brand.getId().toString().getBytes()))
+                .part(new MockPart("price", price.toString().getBytes()))
+                .part(new MockPart("title", title.getBytes()))
         );
 
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList.get(0).getBrand()).isEqualTo(brand);
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
@@ -138,6 +148,7 @@ class VoucherApiControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParts(
+                                partWithName("brandId").description("저장할 기프티콘의 브랜드 id"),
                                 partWithName("price").description("저장할 기프티콘 최소 가격"),
                                 partWithName("title").description("저장할 기프티콘 타이틀"),
                                 partWithName("imageFile").description("저장할 기프티콘 이미지 파일")
