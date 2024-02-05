@@ -1,10 +1,11 @@
 package com.givemecon.web.dto;
 
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,38 +14,15 @@ import java.util.List;
 public class PurchasedVoucherDto {
 
     @Getter
-    @Builder
+    @NoArgsConstructor
     public static class PurchasedVoucherRequest {
-
-        @NotBlank
-        private final String title;
-
-        @NotBlank
-        private final String imageUrl;
-
-        @NotNull
-        @Min(0)
-        private final Long price;
-
-        @NotNull
-        @Future
-        private final LocalDate expDate;
-
-        @NotBlank
-        private final String barcode;
 
         @NotNull
         @Min(1)
-        private final Long voucherId;
+        private Long voucherForSaleId;
 
-        public PurchasedVoucher toEntity() {
-            return PurchasedVoucher.builder()
-                    .image(imageUrl)
-                    .title(title)
-                    .price(price)
-                    .expDate(expDate)
-                    .barcode(barcode)
-                    .build();
+        public PurchasedVoucherRequest(Long voucherForSaleId) {
+            this.voucherForSaleId = voucherForSaleId;
         }
     }
 
@@ -69,8 +47,6 @@ public class PurchasedVoucherDto {
 
         private final Long id;
 
-        private final String imageUrl;
-
         private final String title;
 
         private final Long price;
@@ -79,16 +55,20 @@ public class PurchasedVoucherDto {
 
         private final String barcode;
 
-        private final Boolean valid;
+        private final String imageUrl;
+
+        private final Boolean isValid;
 
         public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
+            VoucherForSale voucherForSale = purchasedVoucher.getVoucherForSale();
+
             this.id = purchasedVoucher.getId();
-            this.title = purchasedVoucher.getTitle();
-            this.price = purchasedVoucher.getPrice();
-            this.expDate = purchasedVoucher.getExpDate();
-            this.barcode = purchasedVoucher.getBarcode();
-            this.imageUrl = purchasedVoucher.getImage();
-            this.valid = purchasedVoucher.getValid();
+            this.title = voucherForSale.getTitle();
+            this.price = voucherForSale.getPrice();
+            this.expDate = voucherForSale.getExpDate();
+            this.barcode = voucherForSale.getBarcode();
+            this.imageUrl = voucherForSale.getVoucherForSaleImage().getImageUrl();
+            this.isValid = purchasedVoucher.getIsValid();
         }
     }
 }

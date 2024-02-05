@@ -21,9 +21,9 @@ public class PurchasedVoucherApiController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public List<PurchasedVoucherResponse> saveAll(Authentication authentication,
-                                                  @Validated @RequestBody PurchasedVoucherRequestList requestDto) {
+                                                  @Validated @RequestBody PurchasedVoucherRequestList requestDtoList) {
 
-        return purchasedVoucherService.saveAll(authentication.getName(), requestDto.getRequests());
+        return purchasedVoucherService.saveAll(authentication.getName(), requestDtoList.getRequests());
     }
 
     @GetMapping

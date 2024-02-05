@@ -138,12 +138,6 @@ public class EntityRelationshipTest {
                 .name("Starbucks")
                 .build();
 
-        Member seller = Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build();
-
         Voucher voucher = Voucher.builder()
                 .title("Starbucks Americano T")
                 .price(15_000L)
@@ -233,43 +227,49 @@ public class EntityRelationshipTest {
     @Test
     void purchasedVoucher() {
         // given
-        Category category = Category.builder()
+        Category category = categoryRepository.save(Category.builder()
                 .name("coffee")
-                .build();
+                .build());
 
-        Brand brand = Brand.builder()
+        Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
-                .build();
+                .build());
 
-        Member owner = Member.builder()
+        Member owner = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
                 .role(Role.USER)
-                .build();
+                .build());
 
-        PurchasedVoucher purchasedVoucher = PurchasedVoucher.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
-                .expDate(LocalDate.now())
-                .barcode("1111 1111 1111")
-                .image("voucher.png")
-                .build();
+                .build());
 
-        Category categorySaved = categoryRepository.save(category);
-        Brand brandSaved = brandRepository.save(brand);
-        Member ownerSaved = memberRepository.save(owner);
-        PurchasedVoucher purchasedVoucherSaved = purchasedVoucherRepository.save(purchasedVoucher);
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+                .title("voucherForSale")
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now().plusDays(1))
+                .build());
+
+        category.addBrand(brand);
+        brand.addVoucher(voucher);
+        voucher.setCategory(category);
+        voucher.addVoucherForSale(voucherForSale);
+        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         // when
-        purchasedVoucherSaved.setCategory(categorySaved);
-        purchasedVoucherSaved.setBrand(brandSaved);
-        ownerSaved.addPurchasedVoucher(purchasedVoucherSaved);
+        purchasedVoucher.setVoucherForSale(voucherForSale);
+        owner.addPurchasedVoucher(purchasedVoucher);
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
         PurchasedVoucher found = purchasedVoucherList.get(0);
-        assertThat(found.getCategory()).isEqualTo(categorySaved);
-        assertThat(found.getBrand()).isEqualTo(brandSaved);
-        assertThat(found.getOwner()).isEqualTo(ownerSaved);
+        assertThat(found.getOwner()).isEqualTo(owner);
+        assertThat(found.getVoucherForSale()).isEqualTo(voucherForSale);
+        assertThat(found.getVoucherForSale().getVoucher()).isEqualTo(voucher);
+        assertThat(found.getVoucherForSale().getVoucher().getCategory()).isEqualTo(category);
+        assertThat(found.getVoucherForSale().getVoucher().getBrand()).isEqualTo(brand);
     }
 }

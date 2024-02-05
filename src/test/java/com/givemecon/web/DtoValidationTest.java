@@ -1,7 +1,6 @@
 package com.givemecon.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
@@ -172,14 +171,14 @@ public class DtoValidationTest {
     @DisplayName("PurchasedVoucher Request DTO 검증 실패 테스트")
     void purchasedVoucherDtoFailed() throws Exception {
         // given
-        PurchasedVoucherRequest requestDto = PurchasedVoucherRequest.builder().build();
+        PurchasedVoucherRequest requestDto = new PurchasedVoucherRequest(0L);
         PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(List.of(requestDto));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(requestDtoList))
+                .content(new ObjectMapper().writeValueAsString(requestDtoList))
         );
 
         response.andExpect(status().is4xxClientError())

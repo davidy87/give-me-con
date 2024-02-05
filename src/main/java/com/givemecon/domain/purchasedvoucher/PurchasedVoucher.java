@@ -1,21 +1,14 @@
 package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.BaseTimeEntity;
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.category.Category;
 import com.givemecon.domain.member.Member;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 import static jakarta.persistence.GenerationType.*;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class PurchasedVoucher extends BaseTimeEntity {
 
@@ -24,51 +17,22 @@ public class PurchasedVoucher extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private Boolean isValid;
 
-    @Column(nullable = false)
-    private Long price;
-
-    @Column(nullable = false)
-    private LocalDate expDate;
-
-    @Column(nullable = false)
-    private String barcode;
-
-    @Column(nullable = false, length = 500)
-    private String image;
-
-    @Column(nullable = false)
-    private Boolean valid;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id")
-    private Brand brand;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "voucher_for_sale_id")
+    private VoucherForSale voucherForSale;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member owner;
 
-    @Builder
-    public PurchasedVoucher(String title, Long price, LocalDate expDate, String barcode, String image) {
-        this.title = title;
-        this.price = price;
-        this.expDate = expDate;
-        this.barcode = barcode;
-        this.image = image;
-        this.valid = true;
+    public PurchasedVoucher() {
+        this.isValid = true;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public void setBrand(Brand brand) {
-        this.brand = brand;
+    public void setVoucherForSale(VoucherForSale voucherForSale) {
+        this.voucherForSale = voucherForSale;
     }
 
     public void setOwner(Member owner) {
@@ -76,6 +40,6 @@ public class PurchasedVoucher extends BaseTimeEntity {
     }
 
     public void updateValidity() {
-        valid = !valid;
+        isValid = !isValid;
     }
 }

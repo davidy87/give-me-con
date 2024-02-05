@@ -2,8 +2,8 @@ package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class PurchasedVoucherService {
 
     private final MemberRepository memberRepository;
 
-    private final VoucherRepository voucherRepository;
+    private final VoucherForSaleRepository voucherForSaleRepository;
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
 
@@ -29,22 +29,31 @@ public class PurchasedVoucherService {
         Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        Voucher voucher = voucherRepository.findById(requestDtoList.get(0).getVoucherId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+        List<PurchasedVoucher> purchasedVouchers = purchasedVoucherRepository.saveAll(
+                requestDtoList.stream()
+                        .map(requestDto -> saveOne(buyer, requestDto))
+                        .toList());
 
-        List<PurchasedVoucher> savedList = purchasedVoucherRepository.saveAll(requestDtoList.stream()
-                .map(PurchasedVoucherRequest::toEntity)
-                .toList());
-
-        savedList.forEach(purchasedVoucher -> {
-            purchasedVoucher.setCategory(voucher.getCategory());
-            purchasedVoucher.setBrand(voucher.getBrand());
-            buyer.addPurchasedVoucher(purchasedVoucher);
-        });
-
-        return savedList.stream()
+        return purchasedVouchers.stream()
                 .map(PurchasedVoucherResponse::new)
                 .toList();
+    }
+
+    /**
+     * saveAll() 의 helper method
+     * @param buyer 기프티콘 구매 요청한 회원
+     * @param requestDto 요청 DTO
+     * @return PurchasedVoucher Entity
+     */
+    private PurchasedVoucher saveOne(Member buyer, PurchasedVoucherRequest requestDto) {
+        VoucherForSale voucherForSale = voucherForSaleRepository.findById(requestDto.getVoucherForSaleId())
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
+        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
+        purchasedVoucher.setVoucherForSale(voucherForSale);
+        buyer.addPurchasedVoucher(purchasedVoucher);
+
+        return purchasedVoucher;
     }
 
     @Transactional(readOnly = true)
