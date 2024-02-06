@@ -53,17 +53,17 @@ public class Category extends BaseTimeEntity {
         this.name = name;
     }
 
-    public void setCategoryIcon(CategoryIcon categoryIcon) {
+    public void updateCategoryIcon(CategoryIcon categoryIcon) {
         this.categoryIcon = categoryIcon;
     }
 
     public void addBrand(Brand brand) {
         brandList.add(brand);
-        brand.setCategory(this);
+        brand.updateCategory(this);
     }
 
     public void addVoucher(Voucher voucher) {
         voucherList.add(voucher);
-        voucher.setCategory(this);
+        voucher.updateCategory(this);
     }
 }

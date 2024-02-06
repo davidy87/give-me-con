@@ -31,11 +31,11 @@ public class PurchasedVoucher extends BaseTimeEntity {
         this.isValid = true;
     }
 
-    public void setVoucherForSale(VoucherForSale voucherForSale) {
+    public void updateVoucherForSale(VoucherForSale voucherForSale) {
         this.voucherForSale = voucherForSale;
     }
 
-    public void setOwner(Member owner) {
+    public void updateOwner(Member owner) {
         this.owner = owner;
     }
 

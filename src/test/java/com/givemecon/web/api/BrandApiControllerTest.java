@@ -154,7 +154,7 @@ class BrandApiControllerTest {
                     .originalName("brandIcon" + i + ".png")
                     .build());
 
-            brand.setBrandIcon(brandIcon);
+            brand.updateBrandIcon(brandIcon);
         }
 
         // when
@@ -191,7 +191,7 @@ class BrandApiControllerTest {
                     .originalName("brandIcon" + i + ".jpg")
                     .build());
 
-            brand.setBrandIcon(brandIcon);
+            brand.updateBrandIcon(brandIcon);
             category.addBrand(brand);
         }
 
@@ -242,7 +242,7 @@ class BrandApiControllerTest {
                 .build());
 
         oldCategory.addBrand(brand);
-        brand.setBrandIcon(brandIcon);
+        brand.updateBrandIcon(brandIcon);
 
         String newName = "newBrand";
         MockMultipartFile newIconFile = new MockMultipartFile(
@@ -298,7 +298,7 @@ class BrandApiControllerTest {
                 .originalName("brandIcon.png")
                 .build());
 
-        brand.setBrandIcon(brandIcon);
+        brand.updateBrandIcon(brandIcon);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/brands/{id}", brand.getId()));

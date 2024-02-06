@@ -33,7 +33,7 @@ public class LikedVoucher extends BaseTimeEntity {
         this.voucher = voucher;
     }
 
-    public void setMember(Member member) {
+    public void updateMember(Member member) {
         this.member = member;
     }
 }

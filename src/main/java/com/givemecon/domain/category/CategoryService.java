@@ -43,7 +43,7 @@ public class CategoryService {
                     .originalName(originalName)
                     .build());
 
-            category.setCategoryIcon(categoryIcon);
+            category.updateCategoryIcon(categoryIcon);
         } catch (IOException e) {
             throw new RuntimeException("카테고리 아이콘 업로드 실패."); // TODO: 예외 처리
         }

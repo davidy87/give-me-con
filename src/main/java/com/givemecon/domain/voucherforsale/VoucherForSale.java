@@ -56,15 +56,15 @@ public class VoucherForSale extends BaseTimeEntity {
         return voucherForSaleImage.getImageUrl();
     }
 
-    public void setVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {
+    public void updateVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {
         this.voucherForSaleImage = voucherForSaleImage;
     }
 
-    public void setVoucher(Voucher voucher) {
+    public void updateVoucher(Voucher voucher) {
         this.voucher = voucher;
     }
 
-    public void setSeller(Member seller) {
+    public void updateSeller(Member seller) {
         this.seller = seller;
     }
 }

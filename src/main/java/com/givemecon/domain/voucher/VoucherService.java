@@ -57,7 +57,7 @@ public class VoucherService {
                     .build());
 
             Voucher voucher = voucherRepository.save(requestDto.toEntity());
-            voucher.setVoucherImage(voucherImage);
+            voucher.updateVoucherImage(voucherImage);
             category.addVoucher(voucher);
             brand.addVoucher(voucher);
 

@@ -140,7 +140,7 @@ class CategoryApiControllerTest {
                     .originalName("categoryIcon" + i + ".png")
                     .build());
 
-            category.setCategoryIcon(categoryIcon);
+            category.updateCategoryIcon(categoryIcon);
         }
 
         // when
@@ -177,7 +177,7 @@ class CategoryApiControllerTest {
                 .imageUrl(imageUrl)
                 .build());
 
-        category.setCategoryIcon(categoryIcon);
+        category.updateCategoryIcon(categoryIcon);
 
         String newName = "newCategory";
         MockMultipartFile newIconFile = new MockMultipartFile(
@@ -234,7 +234,7 @@ class CategoryApiControllerTest {
                 .imageUrl(imageUrl)
                 .build());
 
-        category.setCategoryIcon(categoryIcon);
+        category.updateCategoryIcon(categoryIcon);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));

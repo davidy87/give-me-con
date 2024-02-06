@@ -80,25 +80,25 @@ public class Voucher extends BaseTimeEntity {
         this.caution = caution;
     }
 
-    public void setVoucherImage(VoucherImage voucherImage) {
+    public void updateVoucherImage(VoucherImage voucherImage) {
         this.voucherImage = voucherImage;
     }
 
-    public void setCategory(Category category) {
+    public void updateCategory(Category category) {
         this.category = category;
     }
 
-    public void setBrand(Brand brand) {
+    public void updateBrand(Brand brand) {
         this.brand = brand;
     }
 
     public void addVoucherForSale(VoucherForSale voucherForSale) {
         voucherForSaleList.add(voucherForSale);
-        voucherForSale.setVoucher(this);
+        voucherForSale.updateVoucher(this);
     }
 
     public void removeVoucherForSale(VoucherForSale voucherForSale) {
         voucherForSaleList.remove(voucherForSale);
-        voucherForSale.setVoucher(null);
+        voucherForSale.updateVoucher(null);
     }
 }

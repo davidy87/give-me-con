@@ -121,7 +121,7 @@ class PurchasedVoucherApiControllerTest {
                     .originalName("image" + i + ".png")
                     .build());
 
-            voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucher.addVoucherForSale(voucherForSale);
             dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
         }
@@ -188,9 +188,9 @@ class PurchasedVoucherApiControllerTest {
 
             PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
-            voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucher.addVoucherForSale(voucherForSale);
-            purchasedVoucher.setVoucherForSale(voucherForSale);
+            purchasedVoucher.updateVoucherForSale(voucherForSale);
             owner.addPurchasedVoucher(purchasedVoucher);
         }
 
@@ -248,9 +248,9 @@ class PurchasedVoucherApiControllerTest {
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
 
-        voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
-        purchasedVoucher.setVoucherForSale(voucherForSale);
+        purchasedVoucher.updateVoucherForSale(voucherForSale);
         owner.addPurchasedVoucher(purchasedVoucher);
 
         // when
@@ -314,9 +314,9 @@ class PurchasedVoucherApiControllerTest {
 
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
-        voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
-        purchasedVoucher.setVoucherForSale(voucherForSale);
+        purchasedVoucher.updateVoucherForSale(voucherForSale);
         owner.addPurchasedVoucher(purchasedVoucher);
 
         // when

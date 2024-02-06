@@ -97,7 +97,7 @@ class LikedVoucherApiControllerTest {
                 .role(Role.USER)
                 .build());
 
-        voucher.setVoucherImage(voucherImage);
+        voucher.updateVoucherImage(voucherImage);
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         // when
@@ -149,7 +149,7 @@ class LikedVoucherApiControllerTest {
                     .originalName("voucherImage" + i + ".png")
                     .build());
 
-            voucher.setVoucherImage(voucherImage);
+            voucher.updateVoucherImage(voucherImage);
             memberSaved.addLikedVoucher(new LikedVoucher(voucher));
         }
 
@@ -191,7 +191,7 @@ class LikedVoucherApiControllerTest {
         Voucher voucherSaved = voucherRepository.save(voucher);
         Member memberSaved = memberRepository.save(member);
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(LikedVoucher.builder().voucher(voucherSaved).build());
-        likedVoucherSaved.setMember(member);
+        likedVoucherSaved.updateMember(member);
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
 
         // when

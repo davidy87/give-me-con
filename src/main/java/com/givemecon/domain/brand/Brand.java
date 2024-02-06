@@ -51,16 +51,16 @@ public class Brand extends BaseTimeEntity {
         this.name = name;
     }
 
-    public void setBrandIcon(BrandIcon brandIcon) {
+    public void updateBrandIcon(BrandIcon brandIcon) {
         this.brandIcon = brandIcon;
     }
 
-    public void setCategory(Category category) {
+    public void updateCategory(Category category) {
         this.category = category;
     }
 
     public void addVoucher(Voucher voucher) {
         voucherList.add(voucher);
-        voucher.setBrand(this);
+        voucher.updateBrand(this);
     }
 }

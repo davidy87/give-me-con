@@ -184,7 +184,7 @@ class VoucherApiControllerTest {
                 .originalName("ice_cream_cake.png")
                 .build());
 
-        voucher.setVoucherImage(voucherImage);
+        voucher.updateVoucherImage(voucherImage);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers/{id}", voucher.getId()));
@@ -225,7 +225,7 @@ class VoucherApiControllerTest {
                     .originalName("voucherImage" + i + ".png")
                     .build());
 
-            voucher.setVoucherImage(voucherImage);
+            voucher.updateVoucherImage(voucherImage);
         }
 
         // when
@@ -267,7 +267,7 @@ class VoucherApiControllerTest {
                     .originalName("voucherImage" + i + ".png")
                     .build());
 
-            voucher.setVoucherImage(voucherImage);
+            voucher.updateVoucherImage(voucherImage);
             brandSaved.addVoucher(voucher);
         }
 
@@ -319,7 +319,7 @@ class VoucherApiControllerTest {
                             .originalName("voucherImage" + i + ".png")
                             .build());
 
-            voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherSaved.addVoucherForSale(voucherForSale);
         }
 
@@ -360,7 +360,7 @@ class VoucherApiControllerTest {
                 .originalName("oldVoucherImage.jpg")
                 .build());
 
-        voucher.setVoucherImage(voucherImage);
+        voucher.updateVoucherImage(voucherImage);
 
         String newTitle = "newTitle";
         MockMultipartFile imageFileToUpdate = new MockMultipartFile(
@@ -417,7 +417,7 @@ class VoucherApiControllerTest {
                 .originalName("voucherImage.jpg")
                 .build());
 
-        voucher.setVoucherImage(voucherImage);
+        voucher.updateVoucherImage(voucherImage);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()))

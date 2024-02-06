@@ -76,7 +76,7 @@ public class EntityRelationshipTest {
                 .build());
 
         // when
-        category.setCategoryIcon(icon);
+        category.updateCategoryIcon(icon);
 
         // then
         CategoryIcon found = category.getCategoryIcon();
@@ -97,7 +97,7 @@ public class EntityRelationshipTest {
                 .build());
 
         // when
-        brand.setBrandIcon(icon);
+        brand.updateBrandIcon(icon);
 
         // then
         BrandIcon found = brand.getBrandIcon();
@@ -118,7 +118,7 @@ public class EntityRelationshipTest {
         Category categorySaved = categoryRepository.save(category);
 
         // when
-        brand.setCategory(categorySaved);
+        brand.updateCategory(categorySaved);
         brandRepository.save(brand);
         List<Brand> brandList = brandRepository.findAll();
 
@@ -144,12 +144,12 @@ public class EntityRelationshipTest {
                 .build();
 
         Category categorySaved = categoryRepository.save(category);
-        brand.setCategory(categorySaved);
+        brand.updateCategory(categorySaved);
         Brand brandSaved = brandRepository.save(brand);
 
         // when
-        voucher.setCategory(categorySaved);
-        voucher.setBrand(brandSaved);
+        voucher.updateCategory(categorySaved);
+        voucher.updateBrand(brandSaved);
         voucherRepository.save(voucher);
         List<Voucher> voucherList = voucherRepository.findAll();
 
@@ -180,7 +180,7 @@ public class EntityRelationshipTest {
                 .build());
 
         // when
-        voucherForSale.setSeller(seller);
+        voucherForSale.updateSeller(seller);
         voucher.addVoucherForSale(voucherForSale);
 
         // then
@@ -249,12 +249,12 @@ public class EntityRelationshipTest {
 
         category.addBrand(brand);
         brand.addVoucher(voucher);
-        voucher.setCategory(category);
+        voucher.updateCategory(category);
         voucher.addVoucherForSale(voucherForSale);
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         // when
-        purchasedVoucher.setVoucherForSale(voucherForSale);
+        purchasedVoucher.updateVoucherForSale(voucherForSale);
         owner.addPurchasedVoucher(purchasedVoucher);
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 

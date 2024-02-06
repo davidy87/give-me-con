@@ -50,7 +50,7 @@ public class PurchasedVoucherService {
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
-        purchasedVoucher.setVoucherForSale(voucherForSale);
+        purchasedVoucher.updateVoucherForSale(voucherForSale);
         buyer.addPurchasedVoucher(purchasedVoucher);
 
         return purchasedVoucher;

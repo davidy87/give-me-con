@@ -202,7 +202,7 @@ class VoucherForSaleApiControllerTest {
                 .originalName("Americano_T.png")
                 .build());
 
-        voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
 
         // when

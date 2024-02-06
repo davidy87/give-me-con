@@ -54,8 +54,8 @@ public class VoucherForSaleService {
                     .originalName(originalName)
                     .build());
 
-            voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
-            voucherForSale.setSeller(seller);
+            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
+            voucherForSale.updateSeller(seller);
             voucher.addVoucherForSale(voucherForSale);
         } catch (IOException e) {
             throw new RuntimeException("판매할 기프티콘 이미지 업로드 실패.");

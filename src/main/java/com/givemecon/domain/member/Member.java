@@ -75,11 +75,11 @@ public class Member extends BaseTimeEntity {
 
     public void addLikedVoucher(LikedVoucher likedVoucher) {
         likedVoucherList.add(likedVoucher);
-        likedVoucher.setMember(this);
+        likedVoucher.updateMember(this);
     }
 
     public void addPurchasedVoucher(PurchasedVoucher purchasedVoucher) {
         purchasedVoucherList.add(purchasedVoucher);
-        purchasedVoucher.setOwner(this);
+        purchasedVoucher.updateOwner(this);
     }
 }

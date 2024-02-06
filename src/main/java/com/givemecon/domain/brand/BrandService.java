@@ -48,8 +48,8 @@ public class BrandService {
                     .imageUrl(imageUrl)
                     .build());
 
-            brand.setCategory(category);
-            brand.setBrandIcon(brandIcon);
+            brand.updateCategory(category);
+            brand.updateBrandIcon(brandIcon);
         } catch (IOException e) {
             throw new RuntimeException("브랜드 아이콘 업로드 실패"); // TODO: 예외 처리
         }
