@@ -2,6 +2,7 @@ package com.givemecon.web.api;
 
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
+import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherImage;
@@ -124,13 +125,18 @@ class VoucherApiControllerTest {
                 "image/png",
                 image.getBytes());
 
+        Category category = categoryRepository.save(Category.builder()
+                .name("Cafe")
+                .build());
+
         Brand brand = brandRepository.save(Brand.builder()
-                .name("brand")
+                .name("Starbucks")
                 .build());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
+                .part(new MockPart("categoryId", category.getId().toString().getBytes()))
                 .part(new MockPart("brandId", brand.getId().toString().getBytes()))
                 .part(new MockPart("price", price.toString().getBytes()))
                 .part(new MockPart("title", title.getBytes()))
@@ -138,6 +144,7 @@ class VoucherApiControllerTest {
 
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList.get(0).getCategory()).isEqualTo(category);
         assertThat(voucherList.get(0).getBrand()).isEqualTo(brand);
 
         response.andExpect(status().isCreated())
@@ -148,6 +155,7 @@ class VoucherApiControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         requestParts(
+                                partWithName("categoryId").description("저장할 기프티콘의 카테고리 id"),
                                 partWithName("brandId").description("저장할 기프티콘의 브랜드 id"),
                                 partWithName("price").description("저장할 기프티콘 최소 가격"),
                                 partWithName("title").description("저장할 기프티콘 타이틀"),

@@ -3,6 +3,8 @@ package com.givemecon.domain.voucher;
 import com.givemecon.domain.AwsS3Service;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
+import com.givemecon.domain.category.Category;
+import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,8 @@ import static com.givemecon.web.dto.VoucherForSaleDto.*;
 @Transactional
 public class VoucherService {
 
+    private final CategoryRepository categoryRepository;
+
     private final BrandRepository brandRepository;
 
     private final VoucherRepository voucherRepository;
@@ -34,11 +38,11 @@ public class VoucherService {
     private final AwsS3Service awsS3Service;
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
-        Brand brand = brandRepository.findById(requestDto.getBrandId())
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        Voucher voucher = voucherRepository.save(requestDto.toEntity());
-        brand.addVoucher(voucher);
+        Brand brand = brandRepository.findById(requestDto.getBrandId())
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
@@ -52,12 +56,15 @@ public class VoucherService {
                     .originalName(originalName)
                     .build());
 
+            Voucher voucher = voucherRepository.save(requestDto.toEntity());
             voucher.setVoucherImage(voucherImage);
+            category.addVoucher(voucher);
+            brand.addVoucher(voucher);
+
+            return new VoucherResponse(voucher);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return new VoucherResponse(voucher);
     }
 
 //    /**

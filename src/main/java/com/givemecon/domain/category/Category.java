@@ -2,6 +2,7 @@ package com.givemecon.domain.category;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +36,14 @@ public class Category extends BaseTimeEntity {
     )
     List<Brand> brandList = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "category",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    List<Voucher> voucherList = new ArrayList<>();
+
     @Builder
     public Category(String name) {
         this.name = name;
@@ -51,5 +60,10 @@ public class Category extends BaseTimeEntity {
     public void addBrand(Brand brand) {
         brandList.add(brand);
         brand.setCategory(this);
+    }
+
+    public void addVoucher(Voucher voucher) {
+        voucherList.add(voucher);
+        voucher.setCategory(this);
     }
 }

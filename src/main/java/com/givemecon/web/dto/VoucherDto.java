@@ -14,11 +14,15 @@ public class VoucherDto {
     public static class VoucherSaveRequest {
 
         @NotNull
-        @Min(1)
+        @Min(1L)
+        private final Long categoryId;
+
+        @NotNull
+        @Min(1L)
         private final Long brandId;
 
         @NotNull
-        @Min(0)
+        @Min(0L)
         private final Long price;
 
         @NotBlank
