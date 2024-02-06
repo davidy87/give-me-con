@@ -110,7 +110,6 @@ class PurchasedVoucherApiControllerTest {
 
         for (int i = 1; i <= 5; i++) {
             VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
-                    .title(voucher.getTitle())
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now().plusDays(1))
@@ -123,9 +122,8 @@ class PurchasedVoucherApiControllerTest {
                     .build());
 
             voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
-
-            PurchasedVoucherRequest requestDto = new PurchasedVoucherRequest(voucherForSale.getId());
-            dtoList.add(requestDto);
+            voucher.addVoucherForSale(voucherForSale);
+            dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
         }
 
         PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(dtoList);
@@ -170,9 +168,13 @@ class PurchasedVoucherApiControllerTest {
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
 
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .price(4_000L)
+                .build());
+
         for (int i = 1; i <= 5; i++) {
             VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
-                    .title("voucher")
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now().plusDays(1))
@@ -187,6 +189,7 @@ class PurchasedVoucherApiControllerTest {
             PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
             voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+            voucher.addVoucherForSale(voucherForSale);
             purchasedVoucher.setVoucherForSale(voucherForSale);
             owner.addPurchasedVoucher(purchasedVoucher);
         }
@@ -224,8 +227,12 @@ class PurchasedVoucherApiControllerTest {
                 .role(Role.USER)
                 .build());
 
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
+                .price(4_000L)
+                .build());
+
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now().plusDays(1))
@@ -242,6 +249,7 @@ class PurchasedVoucherApiControllerTest {
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
 
         voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+        voucher.addVoucherForSale(voucherForSale);
         purchasedVoucher.setVoucherForSale(voucherForSale);
         owner.addPurchasedVoucher(purchasedVoucher);
 
@@ -252,7 +260,7 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
+                .andExpect(jsonPath("title").value(voucherForSale.getVoucher().getTitle()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
@@ -285,8 +293,14 @@ class PurchasedVoucherApiControllerTest {
                 .role(Role.USER)
                 .build());
 
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
+
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
+                .price(4_000L)
+                .build());
+
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now().plusDays(1))
@@ -300,12 +314,10 @@ class PurchasedVoucherApiControllerTest {
 
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-
         voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+        voucher.addVoucherForSale(voucherForSale);
         purchasedVoucher.setVoucherForSale(voucherForSale);
         owner.addPurchasedVoucher(purchasedVoucher);
-
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
@@ -314,7 +326,7 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
+                .andExpect(jsonPath("title").value(voucherForSale.getVoucher().getTitle()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))

@@ -3,7 +3,6 @@ package com.givemecon.domain.voucher;
 import com.givemecon.domain.AwsS3Service;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,21 +60,21 @@ public class VoucherService {
         return new VoucherResponse(voucher);
     }
 
-    /**
-     * VoucherForSale 생성 시, 해당 VoucherForSale의 title과 일치하는 Voucher entity가 없다면, Voucher 새로
-     * 저장 후 VoucherForSale 등록
-     * @param voucherForSale 생성된 VoucherForSale entity
-     */
-    public void saveIfNotExist(VoucherForSale voucherForSale) {
-        Voucher voucher = voucherRepository.findByTitle(voucherForSale.getTitle())
-                .orElse(Voucher.builder()
-                        .title(voucherForSale.getTitle())
-                        .price(voucherForSale.getPrice())
-                        .build());
-
-        Voucher voucherSaved = voucherRepository.save(voucher);
-        voucherSaved.addVoucherForSale(voucherForSale);
-    }
+//    /**
+//     * VoucherForSale 생성 시, 해당 VoucherForSale의 title과 일치하는 Voucher entity가 없다면, Voucher 새로
+//     * 저장 후 VoucherForSale 등록
+//     * @param voucherForSale 생성된 VoucherForSale entity
+//     */
+//    public void saveIfNotExist(VoucherForSale voucherForSale) {
+//        Voucher voucher = voucherRepository.findByTitle(voucherForSale.getTitle())
+//                .orElse(Voucher.builder()
+//                        .title(voucherForSale.getTitle())
+//                        .price(voucherForSale.getPrice())
+//                        .build());
+//
+//        Voucher voucherSaved = voucherRepository.save(voucher);
+//        voucherSaved.addVoucherForSale(voucherForSale);
+//    }
 
     @Transactional(readOnly = true)
     public VoucherResponse find(Long id) {

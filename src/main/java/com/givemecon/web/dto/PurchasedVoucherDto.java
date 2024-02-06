@@ -18,7 +18,7 @@ public class PurchasedVoucherDto {
     public static class PurchasedVoucherRequest {
 
         @NotNull
-        @Min(1)
+        @Min(1L)
         private Long voucherForSaleId;
 
         public PurchasedVoucherRequest(Long voucherForSaleId) {
@@ -67,7 +67,7 @@ public class PurchasedVoucherDto {
             this.price = voucherForSale.getPrice();
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
-            this.imageUrl = voucherForSale.getVoucherForSaleImage().getImageUrl();
+            this.imageUrl = voucherForSale.getImageUrl();
             this.isValid = purchasedVoucher.getIsValid();
         }
     }

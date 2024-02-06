@@ -21,9 +21,6 @@ public class VoucherForSale extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
     private Long price;
 
     @Column(nullable = false)
@@ -45,11 +42,18 @@ public class VoucherForSale extends BaseTimeEntity {
     private Member seller;
 
     @Builder
-    public VoucherForSale(String title, Long price, LocalDate expDate, String barcode) {
-        this.title = title;
+    public VoucherForSale(Long price, LocalDate expDate, String barcode) {
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
+    }
+
+    public String getTitle() {
+        return voucher.getTitle();
+    }
+
+    public String getImageUrl() {
+        return voucherForSaleImage.getImageUrl();
     }
 
     public void setVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

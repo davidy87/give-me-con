@@ -18,11 +18,12 @@ public class VoucherForSaleDto {
     @Builder
     public static class VoucherForSaleRequest {
 
-        @NotBlank
-        private final String title;
+        @NotNull
+        @Min(1L)
+        private final Long voucherId;
 
         @NotNull
-        @Min(0)
+        @Min(0L)
         private final Long price;
 
         @NotNull
@@ -37,7 +38,6 @@ public class VoucherForSaleDto {
 
         public VoucherForSale toEntity() {
             return VoucherForSale.builder()
-                    .title(title)
                     .price(price)
                     .expDate(expDate)
                     .barcode(barcode)
@@ -60,14 +60,13 @@ public class VoucherForSaleDto {
 
         private final String imageUrl;
 
-
         public VoucherForSaleResponse(VoucherForSale voucherForSale) {
             this.id = voucherForSale.getId();
             this.title = voucherForSale.getTitle();
             this.price = voucherForSale.getPrice();
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
-            this.imageUrl = voucherForSale.getVoucherForSaleImage().getImageUrl();
+            this.imageUrl = voucherForSale.getImageUrl();
         }
     }
 }

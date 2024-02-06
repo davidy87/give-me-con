@@ -36,7 +36,6 @@ import org.springframework.web.context.WebApplicationContext;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -129,13 +128,18 @@ class VoucherForSaleApiControllerTest {
                 "image/png",
                 "Americano_T.png".getBytes());
 
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title(title)
+                .price(price)
+                .build());
+
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
                 .file(imageFile)
-                .part(new MockPart("title", title.getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("price", price.toString().getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("expDate", expDate.toString().getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("barcode", barcode.getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("voucherId", voucher.getId().toString().getBytes()))
+                .part(new MockPart("price", price.toString().getBytes()))
+                .part(new MockPart("expDate", expDate.toString().getBytes()))
+                .part(new MockPart("barcode", barcode.getBytes()))
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
@@ -144,7 +148,7 @@ class VoucherForSaleApiControllerTest {
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherForSaleList.get(0).getId()))
-                .andExpect(jsonPath("title").value(voucherForSaleList.get(0).getTitle()))
+                .andExpect(jsonPath("title").value(voucherForSaleList.get(0).getVoucher().getTitle()))
                 .andExpect(jsonPath("price").value(voucherForSaleList.get(0).getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSaleList.get(0).getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSaleList.get(0).getBarcode()))
@@ -153,7 +157,7 @@ class VoucherForSaleApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestParts(
-                                partWithName("title").description("판매할 기프티콘 타이틀"),
+                                partWithName("voucherId").description("기프티콘 상품 id"),
                                 partWithName("price").description("판매할 기프티콘 가격"),
                                 partWithName("expDate").description("판매할 기프티콘 유효기한"),
                                 partWithName("barcode").description("판매할 기프티콘 바코드"),
@@ -171,43 +175,6 @@ class VoucherForSaleApiControllerTest {
     }
 
     @Test
-    void checkVoucherSaved() throws Exception {
-        // given
-        Member seller = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .role(Role.ADMIN)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
-
-        String title = "Americano T";
-        Long price = 4_000L;
-        LocalDate expDate = LocalDate.now().plusDays(1);
-        String barcode = "1111 1111 1111";
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "imageFile",
-                "Americano_T.png",
-                "image/png",
-                "Americano_T.png".getBytes());
-
-        // when
-        mockMvc.perform(multipart("/api/vouchers-for-sale")
-                .file(imageFile)
-                .part(new MockPart("title", title.getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("price", price.toString().getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("expDate", expDate.toString().getBytes(StandardCharsets.UTF_8)))
-                .part(new MockPart("barcode", barcode.getBytes(StandardCharsets.UTF_8)))
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
-                .contentType(MediaType.MULTIPART_FORM_DATA));
-
-        // then
-        Voucher found = voucherRepository.findAll().get(0);
-        assertThat(found.getTitle()).isEqualTo(title);
-        assertThat(found.getPrice()).isEqualTo(price);
-    }
-
-    @Test
     void deleteOne() throws Exception {
         // given
         Member seller = memberRepository.save(Member.builder()
@@ -218,8 +185,12 @@ class VoucherForSaleApiControllerTest {
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
 
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .price(4_000L)
+                .build());
+
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
-                .title("Americano T")
                 .price(4_000L)
                 .expDate(LocalDate.now().plusDays(1))
                 .barcode("1111 1111 1111")
@@ -232,6 +203,7 @@ class VoucherForSaleApiControllerTest {
                 .build());
 
         voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+        voucher.addVoucherForSale(voucherForSale);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())

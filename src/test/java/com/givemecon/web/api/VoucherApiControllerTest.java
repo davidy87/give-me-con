@@ -299,7 +299,6 @@ class VoucherApiControllerTest {
         for (int i = 1; i <= 5; i++) {
             VoucherForSale voucherForSale = voucherForSaleRepository.save(
                     VoucherForSale.builder()
-                            .title("Americano T")
                             .price(4_000L)
                             .expDate(LocalDate.now().plusDays(1))
                             .barcode("1111 1111 1111")

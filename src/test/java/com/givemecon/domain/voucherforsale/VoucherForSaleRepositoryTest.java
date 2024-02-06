@@ -23,27 +23,21 @@ class VoucherForSaleRepositoryTest {
     @Test
     void saveAndFindAll() {
         // given
-        String title = "Starbucks Americano T";
-        Long price = 15_000L;
-        LocalDate expDate = LocalDate.now();
-        String barcode = "1111 1111 1111";
-
-        VoucherForSale voucher = VoucherForSale.builder()
-                .title(title)
-                .price(price)
-                .expDate(expDate)
-                .barcode(barcode)
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(LocalDate.now().plusDays(1))
+                .barcode("1111 1111 1111")
                 .build();
 
         // when
-        voucherForSaleRepository.save(voucher);
+        voucherForSaleRepository.save(voucherForSale);
         List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
 
         // then
         VoucherForSale found = voucherList.get(0);
-        assertThat(found.getTitle()).isEqualTo(title);
-        assertThat(found.getPrice()).isEqualTo(price);
-        assertThat(found.getExpDate()).isEqualTo(expDate);
+        assertThat(found.getPrice()).isEqualTo(voucherForSale.getPrice());
+        assertThat(found.getExpDate()).isEqualTo(voucherForSale.getExpDate());
+        assertThat(found.getBarcode()).isEqualTo(voucherForSale.getBarcode());
     }
 
     @Test
@@ -51,7 +45,6 @@ class VoucherForSaleRepositoryTest {
         // given
         LocalDateTime now = LocalDateTime.now();
         voucherForSaleRepository.save(VoucherForSale.builder()
-                .title("Cake")
                 .price(10_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")

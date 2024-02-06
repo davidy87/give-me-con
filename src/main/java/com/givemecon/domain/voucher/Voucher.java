@@ -96,4 +96,9 @@ public class Voucher extends BaseTimeEntity {
         voucherForSaleList.add(voucherForSale);
         voucherForSale.setVoucher(this);
     }
+
+    public void removeVoucherForSale(VoucherForSale voucherForSale) {
+        voucherForSaleList.remove(voucherForSale);
+        voucherForSale.setVoucher(null);
+    }
 }

@@ -3,7 +3,8 @@ package com.givemecon.domain.voucherforsale;
 import com.givemecon.domain.AwsS3Service;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.VoucherService;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class VoucherForSaleService {
 
     private final MemberRepository memberRepository;
 
-    private final VoucherService voucherService;
+    private final VoucherRepository voucherRepository;
 
     private final VoucherForSaleRepository voucherForSaleRepository;
 
@@ -36,12 +37,14 @@ public class VoucherForSaleService {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
+        Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
+
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
         String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
-
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
-        voucherForSale.setSeller(seller);
 
         try {
             String imageUrl = awsS3Service.upload(imageKey, imageFile.getInputStream());
@@ -52,12 +55,11 @@ public class VoucherForSaleService {
                     .build());
 
             voucherForSale.setVoucherForSaleImage(voucherForSaleImage);
+            voucherForSale.setSeller(seller);
+            voucher.addVoucherForSale(voucherForSale);
         } catch (IOException e) {
             throw new RuntimeException("판매할 기프티콘 이미지 업로드 실패.");
         }
-
-        // Voucher entity가 없을 시, Voucher 새로 저장 후 VoucherForSale 등록
-        voucherService.saveIfNotExist(voucherForSale);
 
         return new VoucherForSaleResponse(voucherForSale);
     }
@@ -67,6 +69,7 @@ public class VoucherForSaleService {
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         voucherForSaleRepository.delete(voucherForSale);
+        voucherForSale.getVoucher().removeVoucherForSale(voucherForSale);
 
         return id;
     }

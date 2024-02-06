@@ -162,31 +162,26 @@ public class EntityRelationshipTest {
     @Test
     void voucherSelling() {
         // given
-        Member seller = Member.builder()
+        Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
                 .role(Role.USER)
-                .build();
+                .build());
 
-        VoucherForSale voucherForSale = VoucherForSale.builder()
-                .title("Americano T")
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(15_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
-                .build();
+                .build());
 
-        Voucher voucher = Voucher.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("Americano T")
                 .price(15_000L)
-                .build();
-
-        Member sellerSaved = memberRepository.save(seller);
-        Voucher voucherSaved = voucherRepository.save(voucher);
+                .build());
 
         // when
-        voucherForSale.setVoucher(voucherSaved);
-        voucherForSale.setSeller(sellerSaved);
-        voucherForSaleRepository.save(voucherForSale);
+        voucherForSale.setSeller(seller);
+        voucher.addVoucherForSale(voucherForSale);
 
         // then
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
@@ -247,7 +242,6 @@ public class EntityRelationshipTest {
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
-                .title("voucherForSale")
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now().plusDays(1))
