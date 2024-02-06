@@ -130,7 +130,7 @@ class VoucherForSaleApiControllerTest {
 
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title(title)
-                .price(price)
+                .price(0L)
                 .build());
 
         // when
@@ -144,6 +144,7 @@ class VoucherForSaleApiControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
+        assertThat(voucher.getPrice()).isEqualTo(price);
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
 
         response.andExpect(status().isCreated())
@@ -210,6 +211,8 @@ class VoucherForSaleApiControllerTest {
                 .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
 
         // then
+        assertThat(voucher.getPrice()).isEqualTo(0L);
+
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),

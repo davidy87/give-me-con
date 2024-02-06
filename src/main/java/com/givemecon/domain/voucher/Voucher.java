@@ -68,10 +68,6 @@ public class Voucher extends BaseTimeEntity {
         this.title = title;
     }
 
-    public void updatePrice(Long price) {
-        this.price = price;
-    }
-
     public void updateDescription(String description) {
         this.description = description;
     }
@@ -95,10 +91,22 @@ public class Voucher extends BaseTimeEntity {
     public void addVoucherForSale(VoucherForSale voucherForSale) {
         voucherForSaleList.add(voucherForSale);
         voucherForSale.updateVoucher(this);
+
+        if (this.price == 0L) {
+            this.price = voucherForSale.getPrice();
+        } else {
+            this.price = Math.min(this.price, voucherForSale.getPrice());
+        }
     }
 
     public void removeVoucherForSale(VoucherForSale voucherForSale) {
         voucherForSaleList.remove(voucherForSale);
         voucherForSale.updateVoucher(null);
+
+        this.price = voucherForSaleList.stream()
+                .map(VoucherForSale::getPrice)
+                .mapToLong(Long::longValue)
+                .min()
+                .orElse(0L);
     }
 }
