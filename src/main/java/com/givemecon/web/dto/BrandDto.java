@@ -55,7 +55,7 @@ public class BrandDto {
         public BrandResponse(Brand brand) {
             this.id = brand.getId();
             this.name = brand.getName();
-            this.iconUrl = brand.getBrandIcon().getImageUrl();
+            this.iconUrl = brand.getImageUrl();
         }
     }
 }

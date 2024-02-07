@@ -149,11 +149,11 @@ class VoucherForSaleApiControllerTest {
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherForSaleList.get(0).getId()))
-                .andExpect(jsonPath("title").value(voucherForSaleList.get(0).getVoucher().getTitle()))
+                .andExpect(jsonPath("title").value(voucherForSaleList.get(0).getTitle()))
                 .andExpect(jsonPath("price").value(voucherForSaleList.get(0).getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSaleList.get(0).getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSaleList.get(0).getBarcode()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleList.get(0).getVoucherForSaleImage().getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherForSaleList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),

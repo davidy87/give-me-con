@@ -64,6 +64,10 @@ public class Voucher extends BaseTimeEntity {
         this.caution = caution;
     }
 
+    public String getImageUrl() {
+        return voucherImage.getImageUrl();
+    }
+
     public void updateTitle(String title) {
         this.title = title;
     }

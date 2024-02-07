@@ -150,7 +150,7 @@ class VoucherApiControllerTest {
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
                 .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
-                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getVoucherImage().getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -381,7 +381,7 @@ class VoucherApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
                 .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
-                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getVoucherImage().getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),

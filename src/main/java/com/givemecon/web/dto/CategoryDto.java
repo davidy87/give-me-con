@@ -47,7 +47,7 @@ public class CategoryDto {
         public CategoryResponse(Category category) {
             this.id = category.getId();
             this.name = category.getName();
-            this.iconUrl = category.getCategoryIcon().getImageUrl();
+            this.iconUrl = category.getImageUrl();
         }
     }
 }

@@ -260,7 +260,7 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getVoucher().getTitle()))
+                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))

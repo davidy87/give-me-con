@@ -47,6 +47,10 @@ public class Brand extends BaseTimeEntity {
         this.name = name;
     }
 
+    public String getImageUrl() {
+        return brandIcon.getImageUrl();
+    }
+
     public void updateName(String name) {
         this.name = name;
     }

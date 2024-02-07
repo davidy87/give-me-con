@@ -67,7 +67,7 @@ public class VoucherDto {
             this.id = voucher.getId();
             this.price = voucher.getPrice();
             this.title = voucher.getTitle();
-            this.imageUrl = voucher.getVoucherImage().getImageUrl();
+            this.imageUrl = voucher.getImageUrl();
         }
     }
 }

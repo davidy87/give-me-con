@@ -123,7 +123,7 @@ class BrandApiControllerTest {
         result.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))
                 .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getBrandIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -265,7 +265,7 @@ class BrandApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))
                 .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getBrandIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),

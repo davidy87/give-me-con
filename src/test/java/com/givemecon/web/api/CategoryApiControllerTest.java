@@ -110,7 +110,7 @@ class CategoryApiControllerTest {
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
                 .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getCategoryIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -197,7 +197,7 @@ class CategoryApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
                 .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getCategoryIcon().getImageUrl()))
+                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
