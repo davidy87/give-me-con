@@ -5,10 +5,8 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @MappedSuperclass
 public abstract class ImageEntity extends BaseTimeEntity {
@@ -28,5 +26,8 @@ public abstract class ImageEntity extends BaseTimeEntity {
         this.originalName = originalName;
     }
 
-    public abstract void update(String imageUrl, String originalName);
+    public void update(String imageUrl, String originalName) {
+        this.imageUrl = imageUrl;
+        this.originalName = originalName;
+    }
 }

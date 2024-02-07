@@ -1,6 +1,6 @@
 package com.givemecon.domain.brand;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.ImageEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,30 +10,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class BrandIcon extends BaseTimeEntity {
+public class BrandIcon extends ImageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String imageKey;
-
-    @Column(nullable = false, unique = true)
-    private String imageUrl;
-
-    @Column(nullable = false)
-    private String originalName;
-
     @Builder
     public BrandIcon(String imageKey, String imageUrl, String originalName) {
-        this.imageKey = imageKey;
-        this.imageUrl = imageUrl;
-        this.originalName = originalName;
-    }
-
-    public void update(String imageUrl, String originalName) {
-        this.imageUrl = imageUrl;
-        this.originalName = originalName;
+        super(imageKey, imageUrl, originalName);
     }
 }

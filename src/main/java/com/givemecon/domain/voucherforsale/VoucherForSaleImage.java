@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucherforsale;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.ImageEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,25 +10,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class VoucherForSaleImage extends BaseTimeEntity {
+public class VoucherForSaleImage extends ImageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String imageKey;
-
-    @Column(nullable = false, unique = true)
-    private String imageUrl;
-
-    @Column(nullable = false)
-    private String originalName;
-
     @Builder
     public VoucherForSaleImage(String imageKey, String imageUrl, String originalName) {
-        this.imageKey = imageKey;
-        this.imageUrl = imageUrl;
-        this.originalName = originalName;
+        super(imageKey, imageUrl, originalName);
     }
 }
