@@ -5,9 +5,9 @@ import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 @RequiredArgsConstructor
 @Component
@@ -18,13 +18,12 @@ public class AwsS3Service {
 
     private final S3Template s3Template;
 
-    public String upload(String imageKey, InputStream imageInputStream) {
-        S3Resource imageResource = s3Template.upload(bucketName, imageKey, imageInputStream);
-
+    public String upload(String imageKey, MultipartFile imageFile) {
         try {
+            S3Resource imageResource = s3Template.upload(bucketName, imageKey, imageFile.getInputStream());
             return imageResource.getURL().toString();
         } catch (IOException e) {
-            throw new RuntimeException(); // TODO: 예외 처리
+            throw new RuntimeException(e);
         }
     }
 

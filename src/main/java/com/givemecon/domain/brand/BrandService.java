@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.givemecon.util.error.ErrorCode.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,24 +34,21 @@ public class BrandService {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        Brand brand = brandRepository.save(requestDto.toEntity());
         MultipartFile iconFile = requestDto.getIconFile();
+        String originalName = iconFile.getOriginalFilename();
+        String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
+        String imageUrl = awsS3Service.upload(imageKey, iconFile);
 
-        try {
-            String originalName = iconFile.getOriginalFilename();
-            String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
-            String imageUrl = awsS3Service.upload(imageKey, iconFile.getInputStream());
-            BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
-                    .imageKey(imageKey)
-                    .originalName(originalName)
-                    .imageUrl(imageUrl)
-                    .build());
+        BrandIcon brandIcon = brandIconRepository.save(
+                BrandIcon.builder()
+                        .imageKey(imageKey)
+                        .originalName(originalName)
+                        .imageUrl(imageUrl)
+                        .build());
 
-            brand.updateCategory(category);
-            brand.updateBrandIcon(brandIcon);
-        } catch (IOException e) {
-            throw new RuntimeException("브랜드 아이콘 업로드 실패"); // TODO: 예외 처리
-        }
+        Brand brand = brandRepository.save(requestDto.toEntity());
+        brand.updateCategory(category);
+        brand.updateBrandIcon(brandIcon);
 
         return new BrandResponse(brand);
     }
@@ -96,14 +92,10 @@ public class BrandService {
 
         if (newIconFile != null && !newIconFile.isEmpty()) {
             BrandIcon brandIcon = brand.getBrandIcon();
-
-            try {
-                String newImageUrl = awsS3Service.upload(brandIcon.getImageKey(), newIconFile.getInputStream());
-                String newOriginalName = newIconFile.getOriginalFilename();
-                brandIcon.update(newImageUrl, newOriginalName);
-            } catch (IOException e) {
-                throw new RuntimeException("브랜드 아이콘 업로드 실패"); // TODO: 예외 처리
-            }
+            String imageKey = brandIcon.getImageKey();
+            String newImageUrl = awsS3Service.upload(imageKey, newIconFile);
+            String newOriginalName = newIconFile.getOriginalFilename();
+            brandIcon.update(newImageUrl, newOriginalName);
         }
 
         return new BrandResponse(brand);

@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,41 +46,22 @@ public class VoucherService {
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
         String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
+        String imageUrl = awsS3Service.upload(imageKey, imageFile);
 
-        try {
-            String imageUrl = awsS3Service.upload(imageKey, imageFile.getInputStream());
-            VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
-                    .imageKey(imageKey)
-                    .imageUrl(imageUrl)
-                    .originalName(originalName)
-                    .build());
+        VoucherImage voucherImage = voucherImageRepository.save(
+                VoucherImage.builder()
+                        .imageKey(imageKey)
+                        .imageUrl(imageUrl)
+                        .originalName(originalName)
+                        .build());
 
-            Voucher voucher = voucherRepository.save(requestDto.toEntity());
-            voucher.updateVoucherImage(voucherImage);
-            category.addVoucher(voucher);
-            brand.addVoucher(voucher);
+        Voucher voucher = voucherRepository.save(requestDto.toEntity());
+        voucher.updateVoucherImage(voucherImage);
+        category.addVoucher(voucher);
+        brand.addVoucher(voucher);
 
-            return new VoucherResponse(voucher);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new VoucherResponse(voucher);
     }
-
-//    /**
-//     * VoucherForSale 생성 시, 해당 VoucherForSale의 title과 일치하는 Voucher entity가 없다면, Voucher 새로
-//     * 저장 후 VoucherForSale 등록
-//     * @param voucherForSale 생성된 VoucherForSale entity
-//     */
-//    public void saveIfNotExist(VoucherForSale voucherForSale) {
-//        Voucher voucher = voucherRepository.findByTitle(voucherForSale.getTitle())
-//                .orElse(Voucher.builder()
-//                        .title(voucherForSale.getTitle())
-//                        .price(voucherForSale.getPrice())
-//                        .build());
-//
-//        Voucher voucherSaved = voucherRepository.save(voucher);
-//        voucherSaved.addVoucherForSale(voucherForSale);
-//    }
 
     @Transactional(readOnly = true)
     public VoucherResponse find(Long id) {
@@ -141,14 +121,10 @@ public class VoucherService {
 
         if (newImageFile != null && !newImageFile.isEmpty()) {
             VoucherImage voucherImage = voucher.getVoucherImage();
-
-            try {
-                String newImageUrl = awsS3Service.upload(voucherImage.getImageKey(), newImageFile.getInputStream());
-                String newOriginalName = newImageFile.getOriginalFilename();
-                voucherImage.update(newImageUrl, newOriginalName);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            String imageKey = voucherImage.getImageKey();
+            String newImageUrl = awsS3Service.upload(imageKey, newImageFile);
+            String newOriginalName = newImageFile.getOriginalFilename();
+            voucherImage.update(newImageUrl, newOriginalName);
         }
 
         return new VoucherResponse(voucher);

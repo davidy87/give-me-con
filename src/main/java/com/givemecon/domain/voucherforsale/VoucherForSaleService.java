@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import static com.givemecon.util.error.ErrorCode.*;
@@ -40,26 +39,22 @@ public class VoucherForSaleService {
         Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
-
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
         String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
+        String imageUrl = awsS3Service.upload(imageKey, imageFile);
 
-        try {
-            String imageUrl = awsS3Service.upload(imageKey, imageFile.getInputStream());
-            VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
-                    .imageKey(imageKey)
-                    .imageUrl(imageUrl)
-                    .originalName(originalName)
-                    .build());
+        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
+                VoucherForSaleImage.builder()
+                        .imageKey(imageKey)
+                        .imageUrl(imageUrl)
+                        .originalName(originalName)
+                        .build());
 
-            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucherForSale.updateSeller(seller);
-            voucher.addVoucherForSale(voucherForSale);
-        } catch (IOException e) {
-            throw new RuntimeException("판매할 기프티콘 이미지 업로드 실패.");
-        }
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
+        voucherForSale.updateSeller(seller);
+        voucher.addVoucherForSale(voucherForSale);
 
         return new VoucherForSaleResponse(voucherForSale);
     }
