@@ -8,13 +8,11 @@ import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.givemecon.util.error.ErrorCode.*;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.givemecon.web.dto.BrandDto.*;
 
@@ -37,7 +35,7 @@ public class BrandService {
 
         MultipartFile iconFile = requestDto.getIconFile();
         String originalName = iconFile.getOriginalFilename();
-        String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
+        String imageKey = FileUtils.convertFilenameToKey(originalName);
         String imageUrl = awsS3Service.upload(imageKey, iconFile);
 
         BrandIcon brandIcon = brandIconRepository.save(

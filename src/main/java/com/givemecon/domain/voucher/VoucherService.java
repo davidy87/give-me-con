@@ -11,11 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.VoucherDto.*;
@@ -46,7 +44,7 @@ public class VoucherService {
 
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
-        String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
+        String imageKey = FileUtils.convertFilenameToKey(originalName);
         String imageUrl = awsS3Service.upload(imageKey, imageFile);
 
         VoucherImage voucherImage = voucherImageRepository.save(

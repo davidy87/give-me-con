@@ -5,14 +5,12 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.UUID;
 
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.web.dto.VoucherForSaleDto.*;
@@ -41,7 +39,7 @@ public class VoucherForSaleService {
 
         MultipartFile imageFile = requestDto.getImageFile();
         String originalName = imageFile.getOriginalFilename();
-        String imageKey = UUID.randomUUID() + "." + StringUtils.getFilenameExtension(originalName);
+        String imageKey = FileUtils.convertFilenameToKey(originalName);
         String imageUrl = awsS3Service.upload(imageKey, imageFile);
 
         VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
