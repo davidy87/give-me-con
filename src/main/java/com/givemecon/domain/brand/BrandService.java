@@ -1,6 +1,7 @@
 package com.givemecon.domain.brand;
 
 import com.givemecon.domain.AwsS3Service;
+import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.EntityNotFoundException;
@@ -47,8 +48,8 @@ public class BrandService {
                         .build());
 
         Brand brand = brandRepository.save(requestDto.toEntity());
-        brand.updateCategory(category);
         brand.updateBrandIcon(brandIcon);
+        brand.updateCategory(category);
 
         return new BrandResponse(brand);
     }
@@ -90,7 +91,7 @@ public class BrandService {
             brand.updateName(newBrandName);
         }
 
-        if (newIconFile != null && !newIconFile.isEmpty()) {
+        if (FileUtils.isValidFile(newIconFile)) {
             BrandIcon brandIcon = brand.getBrandIcon();
             String imageKey = brandIcon.getImageKey();
             String newImageUrl = awsS3Service.upload(imageKey, newIconFile);

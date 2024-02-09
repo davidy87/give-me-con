@@ -1,6 +1,7 @@
 package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.AwsS3Service;
+import com.givemecon.util.FileUtils;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
@@ -119,7 +120,7 @@ public class VoucherService {
             voucher.updateCaution(newCaution);
         }
 
-        if (newImageFile != null && !newImageFile.isEmpty()) {
+        if (FileUtils.isValidFile(newImageFile)) {
             VoucherImage voucherImage = voucher.getVoucherImage();
             String imageKey = voucherImage.getImageKey();
             String newImageUrl = awsS3Service.upload(imageKey, newImageFile);

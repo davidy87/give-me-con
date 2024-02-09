@@ -1,6 +1,7 @@
 package com.givemecon.domain.category;
 
 import com.givemecon.domain.AwsS3Service;
+import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +67,7 @@ public class CategoryService {
             category.updateName(newCategoryName);
         }
 
-        if (newIconFile != null && !newIconFile.isEmpty()) {
+        if (FileUtils.isValidFile(newIconFile)) {
             CategoryIcon categoryIcon = category.getCategoryIcon();
             String imageKey = categoryIcon.getImageKey();
             String newImageUrl = awsS3Service.upload(imageKey, newIconFile);
