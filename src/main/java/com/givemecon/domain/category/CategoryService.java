@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.givemecon.util.error.ErrorCode.*;
@@ -61,7 +62,7 @@ public class CategoryService {
         String newCategoryName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
 
-        if (newCategoryName != null) {
+        if (StringUtils.hasText(newCategoryName)) {
             category.updateName(newCategoryName);
         }
 

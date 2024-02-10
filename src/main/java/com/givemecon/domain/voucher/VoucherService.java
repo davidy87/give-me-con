@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -106,15 +107,15 @@ public class VoucherService {
         String newCaution = requestDto.getCaution();
         MultipartFile newImageFile = requestDto.getImageFile();
 
-        if (newTitle != null) {
+        if (StringUtils.hasText(newTitle)) {
             voucher.updateTitle(newTitle);
         }
 
-        if (newDescription != null) {
+        if (StringUtils.hasText(newDescription)) {
             voucher.updateDescription(newDescription);
         }
 
-        if (newCaution != null) {
+        if (StringUtils.hasText(newCaution)) {
             voucher.updateCaution(newCaution);
         }
 
