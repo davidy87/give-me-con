@@ -16,7 +16,7 @@ public class ValidationErrorResponse extends ErrorResponse {
         super(errorCode);
     }
 
-    public void addFieldMessage(String field, String message) {
+    public void addFieldErrorResponse(String field, String message) {
         fieldErrors.add(new FieldErrorResponse(field, message));
     }
 

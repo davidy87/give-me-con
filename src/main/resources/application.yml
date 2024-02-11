@@ -14,3 +14,6 @@ spring:
 
   profiles:
     include: oauth,jwt,aws
+
+  messages:
+    basename: errors

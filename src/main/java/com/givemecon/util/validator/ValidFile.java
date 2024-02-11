@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidFile {
 
-    String message() default "File must be in correct format";
+    String message() default "{ValidFile}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

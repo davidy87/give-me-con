@@ -11,3 +11,6 @@ spring:
         static: ap-northeast-2
       stack:
         auto: false
+
+  messages:
+    basename: errors

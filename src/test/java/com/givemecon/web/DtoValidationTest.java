@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.givemecon.util.error.ErrorCode.*;
@@ -80,6 +81,10 @@ public class DtoValidationTest {
         );
 
         // then
+        log.info(saveResult.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
         saveResult
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
@@ -92,7 +97,7 @@ public class DtoValidationTest {
     @DisplayName("Brand Request DTO 검증 실패 테스트")
     void brandDtoFailed() throws Exception {
         // given
-        MockPart invalidCategoryId = new MockPart("categoryId", Long.valueOf(0).toString().getBytes());
+        MockPart invalidCategoryId = new MockPart("categoryId", "aaa".getBytes());
         MockPart name = new MockPart("name", null);
         MockMultipartFile iconFile = new MockMultipartFile("iconFile", (byte[]) null);
 
@@ -105,6 +110,10 @@ public class DtoValidationTest {
         );
 
         // then
+        log.info(saveResult.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
         saveResult
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
@@ -130,6 +139,10 @@ public class DtoValidationTest {
         );
 
         // then
+        log.info(saveResult.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
         saveResult
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
@@ -159,6 +172,10 @@ public class DtoValidationTest {
         );
 
         // then
+        log.info(saveResult.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
         saveResult
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
@@ -180,6 +197,10 @@ public class DtoValidationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDtoList))
         );
+
+        log.info(response.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
 
         response.andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
