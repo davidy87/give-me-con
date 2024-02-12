@@ -1,11 +1,10 @@
 package com.givemecon.domain.voucherforsale;
 
-import com.givemecon.domain.AwsS3Service;
+import com.givemecon.domain.ImageEntityUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class VoucherForSaleService {
 
     private final VoucherForSaleImageRepository voucherForSaleImageRepository;
 
-    private final AwsS3Service awsS3Service;
+    private final ImageEntityUtils imageEntityUtils;
 
     public VoucherForSaleResponse save(String username, VoucherForSaleRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
@@ -38,18 +37,11 @@ public class VoucherForSaleService {
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         MultipartFile imageFile = requestDto.getImageFile();
-        String originalName = imageFile.getOriginalFilename();
-        String imageKey = FileUtils.convertFilenameToKey(originalName);
-        String imageUrl = awsS3Service.upload(imageKey, imageFile);
-
-        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
-                VoucherForSaleImage.builder()
-                        .imageKey(imageKey)
-                        .imageUrl(imageUrl)
-                        .originalName(originalName)
-                        .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
+        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
+                (VoucherForSaleImage) imageEntityUtils.createImageEntity(voucherForSale.getClass().getSimpleName(), imageFile));
+
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucherForSale.updateSeller(seller);
         voucher.addVoucherForSale(voucherForSale);

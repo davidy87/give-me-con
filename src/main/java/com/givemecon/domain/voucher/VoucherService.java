@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucher;
 
-import com.givemecon.domain.AwsS3Service;
+import com.givemecon.domain.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
@@ -34,7 +34,7 @@ public class VoucherService {
 
     private final VoucherImageRepository voucherImageRepository;
 
-    private final AwsS3Service awsS3Service;
+    private final ImageEntityUtils imageEntityUtils;
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
@@ -44,18 +44,11 @@ public class VoucherService {
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         MultipartFile imageFile = requestDto.getImageFile();
-        String originalName = imageFile.getOriginalFilename();
-        String imageKey = FileUtils.convertFilenameToKey(originalName);
-        String imageUrl = awsS3Service.upload(imageKey, imageFile);
-
-        VoucherImage voucherImage = voucherImageRepository.save(
-                VoucherImage.builder()
-                        .imageKey(imageKey)
-                        .imageUrl(imageUrl)
-                        .originalName(originalName)
-                        .build());
 
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
+        VoucherImage voucherImage = voucherImageRepository.save(
+                (VoucherImage) imageEntityUtils.createImageEntity(voucher.getClass().getSimpleName(), imageFile));
+
         voucher.updateVoucherImage(voucherImage);
         category.addVoucher(voucher);
         brand.addVoucher(voucher);
@@ -121,10 +114,7 @@ public class VoucherService {
 
         if (FileUtils.isValidFile(newImageFile)) {
             VoucherImage voucherImage = voucher.getVoucherImage();
-            String imageKey = voucherImage.getImageKey();
-            String newImageUrl = awsS3Service.upload(imageKey, newImageFile);
-            String newOriginalName = newImageFile.getOriginalFilename();
-            voucherImage.update(newImageUrl, newOriginalName);
+            imageEntityUtils.updateImageEntity(voucherImage, newImageFile);
         }
 
         return new VoucherResponse(voucher);

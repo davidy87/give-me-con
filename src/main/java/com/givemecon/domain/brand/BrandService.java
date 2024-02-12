@@ -1,6 +1,6 @@
 package com.givemecon.domain.brand;
 
-import com.givemecon.domain.AwsS3Service;
+import com.givemecon.domain.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
@@ -28,25 +28,18 @@ public class BrandService {
 
     private final BrandIconRepository brandIconRepository;
 
-    private final AwsS3Service awsS3Service;
+    private final ImageEntityUtils imageEntityUtils;
 
     public BrandResponse save(BrandSaveRequest requestDto) {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
 
         MultipartFile iconFile = requestDto.getIconFile();
-        String originalName = iconFile.getOriginalFilename();
-        String imageKey = FileUtils.convertFilenameToKey(originalName);
-        String imageUrl = awsS3Service.upload(imageKey, iconFile);
-
-        BrandIcon brandIcon = brandIconRepository.save(
-                BrandIcon.builder()
-                        .imageKey(imageKey)
-                        .originalName(originalName)
-                        .imageUrl(imageUrl)
-                        .build());
 
         Brand brand = brandRepository.save(requestDto.toEntity());
+        BrandIcon brandIcon = brandIconRepository.save(
+                (BrandIcon) imageEntityUtils.createImageEntity(brand.getClass().getSimpleName(), iconFile));
+
         brand.updateBrandIcon(brandIcon);
         brand.updateCategory(category);
 
@@ -92,10 +85,7 @@ public class BrandService {
 
         if (FileUtils.isValidFile(newIconFile)) {
             BrandIcon brandIcon = brand.getBrandIcon();
-            String imageKey = brandIcon.getImageKey();
-            String newImageUrl = awsS3Service.upload(imageKey, newIconFile);
-            String newOriginalName = newIconFile.getOriginalFilename();
-            brandIcon.update(newImageUrl, newOriginalName);
+            imageEntityUtils.updateImageEntity(brandIcon, newIconFile);
         }
 
         return new BrandResponse(brand);

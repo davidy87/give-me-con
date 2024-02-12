@@ -1,6 +1,6 @@
 package com.givemecon.domain.category;
 
-import com.givemecon.domain.AwsS3Service;
+import com.givemecon.domain.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -26,22 +26,15 @@ public class CategoryService {
 
     private final CategoryIconRepository categoryIconRepository;
 
-    private final AwsS3Service awsS3Service;
+    private final ImageEntityUtils imageEntityUtils;
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
         MultipartFile iconFile = requestDto.getIconFile();
-        String originalName = iconFile.getOriginalFilename();
-        String imageKey = FileUtils.convertFilenameToKey(originalName);
-        String imageUrl = awsS3Service.upload(imageKey, iconFile);
-
-        CategoryIcon categoryIcon = categoryIconRepository.save(
-                CategoryIcon.builder()
-                        .imageKey(imageKey)
-                        .imageUrl(imageUrl)
-                        .originalName(originalName)
-                        .build());
 
         Category category = categoryRepository.save(requestDto.toEntity());
+        CategoryIcon categoryIcon = categoryIconRepository.save(
+                (CategoryIcon) imageEntityUtils.createImageEntity(category.getClass().getSimpleName(), iconFile));
+
         category.updateCategoryIcon(categoryIcon);
 
         return new CategoryResponse(category);
@@ -68,10 +61,7 @@ public class CategoryService {
 
         if (FileUtils.isValidFile(newIconFile)) {
             CategoryIcon categoryIcon = category.getCategoryIcon();
-            String imageKey = categoryIcon.getImageKey();
-            String newImageUrl = awsS3Service.upload(imageKey, newIconFile);
-            String newOriginalName = newIconFile.getOriginalFilename();
-            categoryIcon.update(newImageUrl, newOriginalName);
+            imageEntityUtils.updateImageEntity(categoryIcon, newIconFile);
         }
 
         return new CategoryResponse(category);
