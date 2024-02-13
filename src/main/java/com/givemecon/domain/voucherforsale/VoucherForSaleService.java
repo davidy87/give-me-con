@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucherforsale;
 
-import com.givemecon.domain.ImageEntityUtils;
+import com.givemecon.domain.image_entity_util.ImageEntityUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;

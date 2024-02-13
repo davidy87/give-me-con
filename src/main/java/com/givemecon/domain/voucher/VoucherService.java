@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucher;
 
-import com.givemecon.domain.ImageEntityUtils;
+import com.givemecon.domain.image_entity_util.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
