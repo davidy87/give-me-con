@@ -20,7 +20,7 @@ public class ImageEntityUtils {
         String imageKey = FileUtils.convertFilenameToKey(originalName);
         String imageUrl = awsS3Service.upload(imageKey, imageFile);
 
-        return (ImageEntity) imageEntityBuilderFactory.findBy(baseEntityName)
+        return imageEntityBuilderFactory.findBy(baseEntityName)
                 .build(imageKey, imageUrl, originalName);
     }
 

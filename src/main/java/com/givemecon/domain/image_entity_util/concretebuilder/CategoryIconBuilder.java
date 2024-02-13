@@ -5,7 +5,7 @@ import com.givemecon.domain.image_entity_util.ImageEntityBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoryIconBuilder extends ImageEntityBuilder<CategoryIcon> {
+public class CategoryIconBuilder extends ImageEntityBuilder {
 
     @Override
     public String getOwnerEntityName() {

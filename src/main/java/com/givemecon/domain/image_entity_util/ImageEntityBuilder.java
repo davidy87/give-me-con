@@ -1,6 +1,8 @@
 package com.givemecon.domain.image_entity_util;
 
-public abstract class ImageEntityBuilder<T> {
+import com.givemecon.domain.ImageEntity;
+
+public abstract class ImageEntityBuilder {
 
     /**
      * Image entity의 주인인 (연관 관계 상에서) entity의 클래스 이름을 반환한다.
@@ -9,5 +11,5 @@ public abstract class ImageEntityBuilder<T> {
      */
     public abstract String getOwnerEntityName();
 
-    public abstract T build(String imageKey, String imageUrl, String originalName);
+    public abstract ImageEntity build(String imageKey, String imageUrl, String originalName);
 }

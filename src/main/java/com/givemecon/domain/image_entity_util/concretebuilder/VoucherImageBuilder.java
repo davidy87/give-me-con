@@ -5,7 +5,7 @@ import com.givemecon.domain.voucher.VoucherImage;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VoucherImageBuilder extends ImageEntityBuilder<VoucherImage> {
+public class VoucherImageBuilder extends ImageEntityBuilder {
 
     @Override
     public String getOwnerEntityName() {
