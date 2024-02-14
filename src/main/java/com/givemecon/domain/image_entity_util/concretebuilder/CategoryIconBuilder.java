@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class CategoryIconBuilder extends ImageEntityBuilder {
 
     @Override
-    public String getOwnerEntityName() {
-        return "Category"; // TODO: 수정 필요
+    public Class<CategoryIcon> getEntityType() {
+        return CategoryIcon.class;
     }
 
     @Override

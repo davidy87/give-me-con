@@ -14,7 +14,7 @@ public class ImageEntityBuilderFactory {
 
     private final Set<ImageEntityBuilder> imageEntityBuilderSet;
 
-    private Map<String, ImageEntityBuilder> imageEntityMap;
+    private Map<String, ImageEntityBuilder> imageEntityBuilderMap;
 
     @PostConstruct
     public void init() {
@@ -22,13 +22,13 @@ public class ImageEntityBuilderFactory {
     }
 
     private void createImageEntityMap(Set<ImageEntityBuilder> imageEntityBuilderSet) {
-        imageEntityMap = new HashMap<>();
+        imageEntityBuilderMap = new HashMap<>();
         imageEntityBuilderSet.forEach(imageEntityBuilder ->
-            imageEntityMap.put(imageEntityBuilder.getOwnerEntityName(), imageEntityBuilder)
+                imageEntityBuilderMap.put(imageEntityBuilder.getEntityName(), imageEntityBuilder)
         );
     }
 
-    public ImageEntityBuilder findBy(String baseEntityName) {
-        return imageEntityMap.get(baseEntityName);
+    public ImageEntityBuilder findBy(String entityName) {
+        return imageEntityBuilderMap.get(entityName);
     }
 }

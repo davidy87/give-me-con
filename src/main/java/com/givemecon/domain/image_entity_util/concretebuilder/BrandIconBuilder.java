@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class BrandIconBuilder extends ImageEntityBuilder {
 
     @Override
-    public String getOwnerEntityName() {
-        return "Brand"; // TODO: 수정 필요
+    public Class<BrandIcon> getEntityType() {
+        return BrandIcon.class;
     }
 
     @Override

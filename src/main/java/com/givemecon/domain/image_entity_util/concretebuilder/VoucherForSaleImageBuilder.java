@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 public class VoucherForSaleImageBuilder extends ImageEntityBuilder {
 
     @Override
-    public String getOwnerEntityName() {
-        return "VoucherForSale"; // TODO: 수정 필요
+    public Class<VoucherForSaleImage> getEntityType() {
+        return VoucherForSaleImage.class;
     }
 
     @Override
