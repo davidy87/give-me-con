@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.util.error.ErrorCode.*;
-import static com.givemecon.web.dto.PurchasedVoucherDto.*;
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 
 @RequiredArgsConstructor
 @Service

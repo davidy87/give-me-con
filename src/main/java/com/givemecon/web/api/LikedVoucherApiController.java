@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.web.dto.VoucherDto.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/liked-vouchers")

@@ -10,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.givemecon.web.dto.VoucherDto.*;
-import static com.givemecon.web.dto.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/vouchers")

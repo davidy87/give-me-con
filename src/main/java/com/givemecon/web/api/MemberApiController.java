@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.web.dto.MemberDto.*;
+import static com.givemecon.domain.member.MemberDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")

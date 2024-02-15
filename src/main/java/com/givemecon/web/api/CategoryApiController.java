@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.givemecon.web.dto.CategoryDto.*;
+import static com.givemecon.domain.category.CategoryDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")

@@ -14,7 +14,7 @@ import static com.givemecon.util.error.ErrorCode.*;
 
 import java.util.List;
 
-import static com.givemecon.web.dto.CategoryDto.*;
+import static com.givemecon.domain.category.CategoryDto.*;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -1,6 +1,5 @@
-package com.givemecon.web.dto;
+package com.givemecon.domain.voucher;
 
-import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.Builder;

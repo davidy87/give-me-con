@@ -1,7 +1,5 @@
-package com.givemecon.web.dto;
+package com.givemecon.domain.member;
 
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
 

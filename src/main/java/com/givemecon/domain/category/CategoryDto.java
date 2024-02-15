@@ -1,23 +1,16 @@
-package com.givemecon.web.dto;
+package com.givemecon.domain.category;
 
-import com.givemecon.domain.brand.Brand;
 import com.givemecon.util.validator.ValidFile;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-public class BrandDto {
+public class CategoryDto {
 
     @Getter
     @Builder
-    public static class BrandSaveRequest {
-
-        @NotNull
-        @Min(1)
-        private final Long categoryId;
+    public static class CategorySaveRequest {
 
         @NotBlank
         private final String name;
@@ -25,8 +18,8 @@ public class BrandDto {
         @ValidFile
         private final MultipartFile iconFile;
 
-        public Brand toEntity() {
-            return Brand.builder()
+        public Category toEntity() {
+            return Category.builder()
                     .name(name)
                     .build();
         }
@@ -34,9 +27,7 @@ public class BrandDto {
 
     @Getter
     @Builder
-    public static class BrandUpdateRequest {
-
-        private final Long categoryId;
+    public static class CategoryUpdateRequest {
 
         private final String name;
 
@@ -44,7 +35,7 @@ public class BrandDto {
     }
 
     @Getter
-    public static class BrandResponse {
+    public static class CategoryResponse {
 
         private final Long id;
 
@@ -52,10 +43,10 @@ public class BrandDto {
 
         private final String iconUrl;
 
-        public BrandResponse(Brand brand) {
-            this.id = brand.getId();
-            this.name = brand.getName();
-            this.iconUrl = brand.getImageUrl();
+        public CategoryResponse(Category category) {
+            this.id = category.getId();
+            this.name = category.getName();
+            this.iconUrl = category.getImageUrl();
         }
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.web.dto.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
 @Slf4j
 @RequiredArgsConstructor

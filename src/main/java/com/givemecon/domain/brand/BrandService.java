@@ -15,7 +15,7 @@ import static com.givemecon.util.error.ErrorCode.*;
 
 import java.util.List;
 
-import static com.givemecon.web.dto.BrandDto.*;
+import static com.givemecon.domain.brand.BrandDto.*;
 
 @RequiredArgsConstructor
 @Service

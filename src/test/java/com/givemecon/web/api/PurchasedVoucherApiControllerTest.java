@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.web.ApiDocumentUtils.*;
-import static com.givemecon.web.dto.PurchasedVoucherDto.*;
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;

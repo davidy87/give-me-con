@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.util.error.ErrorCode.*;
-import static com.givemecon.web.dto.MemberDto.*;
+import static com.givemecon.domain.member.MemberDto.*;
 
 @RequiredArgsConstructor
 @Service

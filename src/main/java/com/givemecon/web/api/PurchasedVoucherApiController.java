@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.web.dto.PurchasedVoucherDto.*;
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/purchased-vouchers")

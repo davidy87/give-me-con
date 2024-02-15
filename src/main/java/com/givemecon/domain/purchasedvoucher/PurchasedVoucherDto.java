@@ -1,6 +1,5 @@
-package com.givemecon.web.dto;
+package com.givemecon.domain.purchasedvoucher;
 
-import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

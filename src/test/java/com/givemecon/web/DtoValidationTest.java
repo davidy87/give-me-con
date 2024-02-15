@@ -25,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.givemecon.util.error.ErrorCode.*;
-import static com.givemecon.web.dto.PurchasedVoucherDto.*;
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
