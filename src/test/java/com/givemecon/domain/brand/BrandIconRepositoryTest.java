@@ -1,5 +1,7 @@
 package com.givemecon.domain.brand;
 
+import com.givemecon.domain.image.brand.BrandIcon;
+import com.givemecon.domain.image.brand.BrandIconRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

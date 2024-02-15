@@ -1,12 +1,12 @@
 package com.givemecon.domain;
 
 import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandIcon;
-import com.givemecon.domain.brand.BrandIconRepository;
+import com.givemecon.domain.image.brand.BrandIcon;
+import com.givemecon.domain.image.brand.BrandIconRepository;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
-import com.givemecon.domain.category.CategoryIcon;
-import com.givemecon.domain.category.CategoryIconRepository;
+import com.givemecon.domain.image.category.CategoryIcon;
+import com.givemecon.domain.image.category.CategoryIconRepository;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;

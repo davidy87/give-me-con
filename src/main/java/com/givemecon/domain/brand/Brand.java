@@ -2,6 +2,7 @@ package com.givemecon.domain.brand;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.category.Category;
+import com.givemecon.domain.image.brand.BrandIcon;
 import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

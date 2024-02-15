@@ -1,5 +1,7 @@
 package com.givemecon.domain.voucher;
 
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherImageRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

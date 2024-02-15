@@ -1,6 +1,8 @@
 package com.givemecon.domain.category;
 
-import com.givemecon.domain.image_entity_util.ImageEntityUtils;
+import com.givemecon.domain.image.category.CategoryIcon;
+import com.givemecon.domain.image.category.CategoryIconRepository;
+import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

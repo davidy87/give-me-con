@@ -1,6 +1,7 @@
 package com.givemecon.domain.voucherforsale;
 
 import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;

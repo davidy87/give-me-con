@@ -1,5 +1,7 @@
 package com.givemecon.domain.category;
 
+import com.givemecon.domain.image.category.CategoryIcon;
+import com.givemecon.domain.image.category.CategoryIconRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

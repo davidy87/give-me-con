@@ -1,6 +1,8 @@
 package com.givemecon.domain.brand;
 
-import com.givemecon.domain.image_entity_util.ImageEntityUtils;
+import com.givemecon.domain.image.brand.BrandIcon;
+import com.givemecon.domain.image.brand.BrandIconRepository;
+import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;

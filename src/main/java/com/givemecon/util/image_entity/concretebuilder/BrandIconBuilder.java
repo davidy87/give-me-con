@@ -1,0 +1,23 @@
+package com.givemecon.util.image_entity.concretebuilder;
+
+import com.givemecon.domain.image.brand.BrandIcon;
+import com.givemecon.util.image_entity.ImageEntityBuilder;
+import org.springframework.stereotype.Component;
+
+@Component
+public class BrandIconBuilder extends ImageEntityBuilder {
+
+    @Override
+    public Class<BrandIcon> getEntityType() {
+        return BrandIcon.class;
+    }
+
+    @Override
+    public BrandIcon build(String imageKey, String imageUrl, String originalName) {
+        return BrandIcon.builder()
+                .imageKey(imageKey)
+                .imageUrl(imageUrl)
+                .originalName(originalName)
+                .build();
+    }
+}
