@@ -3,6 +3,7 @@ package com.givemecon.util.exception.controlleradvice;
 import com.givemecon.util.error.response.ErrorResponse;
 import com.givemecon.util.error.response.ValidationErrorResponse;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.ExpiredTokenException;
 import com.givemecon.util.exception.concrete.FileProcessException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,14 @@ public class ApiExceptionController {
 
     @ExceptionHandler(FileProcessException.class)
     public ResponseEntity<?> fileProcessExceptionHandler(FileProcessException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
+
+        return ResponseEntity.status(errorResponse.getStatus())
+                .body(Map.of("error", errorResponse));
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<?> expiredTokenExceptionHandler(ExpiredTokenException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
 
         return ResponseEntity.status(errorResponse.getStatus())

@@ -33,10 +33,10 @@ public class VoucherForSaleService {
 
     public VoucherForSaleResponse save(String username, VoucherForSaleRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
 
         Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
 
         MultipartFile imageFile = requestDto.getImageFile();
 
@@ -53,7 +53,7 @@ public class VoucherForSaleService {
 
     public Long delete(Long id) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, VoucherForSale.class));
 
         voucherForSaleRepository.delete(voucherForSale);
         voucherForSale.getVoucher().removeVoucherForSale(voucherForSale);

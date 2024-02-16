@@ -41,7 +41,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         log.info("principal name = {}", principal.getAttributes());
 
         Member member = memberRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 

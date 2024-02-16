@@ -27,10 +27,10 @@ public class LikedVoucherService {
 
     public VoucherResponse save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
 
         Voucher voucher = voucherRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
 
         LikedVoucher likedVoucher = likedVoucherRepository.save(LikedVoucher.builder()
                 .voucher(voucher)
@@ -44,7 +44,7 @@ public class LikedVoucherService {
     @Transactional(readOnly = true)
     public List<VoucherResponse> findAllByUsername(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
 
         return member.getLikedVoucherList().stream()
                 .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()))

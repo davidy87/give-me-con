@@ -52,7 +52,7 @@ public class CategoryService {
 
     public CategoryResponse update(Long id, CategoryUpdateRequest requestDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
 
         String newCategoryName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
@@ -71,7 +71,7 @@ public class CategoryService {
 
     public Long delete(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
 
         categoryRepository.delete(category);
 

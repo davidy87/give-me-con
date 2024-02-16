@@ -37,14 +37,14 @@ public class MemberService {
         Member loginMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .filter(member -> passwordEncoder.matches(loginRequest.getPassword(), member.getPassword()))
                 .filter(member -> member.getRole() == Role.ADMIN)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
 
         return jwtTokenProvider.getTokenInfo(loginMember);
     }
 
     public Long delete(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
 
         memberRepository.delete(member);
 
