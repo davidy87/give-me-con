@@ -4,7 +4,7 @@ import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -4,11 +4,11 @@ import com.givemecon.util.error.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class EntityNotFoundException extends RuntimeException {
+public abstract class GivemeconException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
-    public EntityNotFoundException(ErrorCode errorCode) {
+    protected GivemeconException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 }

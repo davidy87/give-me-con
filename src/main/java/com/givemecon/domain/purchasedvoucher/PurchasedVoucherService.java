@@ -4,7 +4,7 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,5 +1,6 @@
 package com.givemecon.util.s3;
 
+import com.givemecon.util.exception.concrete.FileProcessException;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+
+import static com.givemecon.util.error.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Component
@@ -23,7 +26,7 @@ public class AwsS3Utils {
             S3Resource imageResource = s3Template.upload(bucketName, imageKey, imageFile.getInputStream());
             return imageResource.getURL().toString();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileProcessException(IMAGE_PROCESS_FAILED);
         }
     }
 
@@ -31,7 +34,7 @@ public class AwsS3Utils {
         try {
             return s3Template.download(bucketName, imageKey).getURL().toString();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileProcessException(IMAGE_PROCESS_FAILED);
         }
     }
 

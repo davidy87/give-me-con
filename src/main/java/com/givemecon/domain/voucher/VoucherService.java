@@ -8,7 +8,7 @@ import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

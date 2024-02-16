@@ -3,7 +3,7 @@ package com.givemecon.config.auth.jwt;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.error.ErrorCode;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

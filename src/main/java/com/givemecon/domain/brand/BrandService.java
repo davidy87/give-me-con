@@ -6,7 +6,7 @@ import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

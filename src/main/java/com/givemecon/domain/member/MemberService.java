@@ -2,7 +2,7 @@ package com.givemecon.domain.member;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

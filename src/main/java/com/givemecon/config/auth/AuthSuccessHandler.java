@@ -4,7 +4,7 @@ import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.util.exception.EntityNotFoundException;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
