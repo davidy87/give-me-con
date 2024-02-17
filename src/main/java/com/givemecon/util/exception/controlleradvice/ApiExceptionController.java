@@ -2,10 +2,7 @@ package com.givemecon.util.exception.controlleradvice;
 
 import com.givemecon.util.error.response.ErrorResponse;
 import com.givemecon.util.error.response.ValidationErrorResponse;
-import com.givemecon.util.exception.concrete.EntityNotFoundException;
-import com.givemecon.util.exception.concrete.ExpiredTokenException;
-import com.givemecon.util.exception.concrete.FileProcessException;
-import jakarta.servlet.http.HttpServletRequest;
+import com.givemecon.util.exception.GivemeconException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -28,36 +25,22 @@ public class ApiExceptionController {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<?> entityNotFoundExceptionHandler(EntityNotFoundException e) {
+    @ExceptionHandler
+    public ResponseEntity<?> givemeconExceptionHandler(GivemeconException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
-
-        return ResponseEntity.status(errorResponse.getStatus())
-                .body(Map.of("error", errorResponse));
+        return createResponseEntity(errorResponse);
     }
 
-    @ExceptionHandler(FileProcessException.class)
-    public ResponseEntity<?> fileProcessExceptionHandler(FileProcessException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
-
-        return ResponseEntity.status(errorResponse.getStatus())
-                .body(Map.of("error", errorResponse));
-    }
-
-    @ExceptionHandler(ExpiredTokenException.class)
-    public ResponseEntity<?> expiredTokenExceptionHandler(ExpiredTokenException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
-
-        return ResponseEntity.status(errorResponse.getStatus())
-                .body(Map.of("error", errorResponse));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler
     public ResponseEntity<?> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e,
-                                                                    HttpServletRequest request) {
+                                                                    Locale locale) {
 
-        ErrorResponse errorResponse = makeErrorResponse(e.getBindingResult(), request.getLocale());
-        return ResponseEntity.status(e.getStatusCode())
+        ErrorResponse errorResponse = makeErrorResponse(e.getBindingResult(), locale);
+        return createResponseEntity(errorResponse);
+    }
+
+    private ResponseEntity<?> createResponseEntity(ErrorResponse errorResponse) {
+        return ResponseEntity.status(errorResponse.getStatus())
                 .body(Map.of("error", errorResponse));
     }
 
