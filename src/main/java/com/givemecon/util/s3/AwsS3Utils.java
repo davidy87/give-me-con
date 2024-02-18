@@ -26,7 +26,7 @@ public class AwsS3Utils {
             S3Resource imageResource = s3Template.upload(bucketName, imageKey, imageFile.getInputStream());
             return imageResource.getURL().toString();
         } catch (IOException e) {
-            throw new FileProcessException(IMAGE_PROCESS_FAILED);
+            throw new FileProcessException(IMAGE_PROCESS_FAILED, imageFile.getOriginalFilename());
         }
     }
 
@@ -34,7 +34,7 @@ public class AwsS3Utils {
         try {
             return s3Template.download(bucketName, imageKey).getURL().toString();
         } catch (IOException e) {
-            throw new FileProcessException(IMAGE_PROCESS_FAILED);
+            throw new FileProcessException(IMAGE_PROCESS_FAILED, null);
         }
     }
 

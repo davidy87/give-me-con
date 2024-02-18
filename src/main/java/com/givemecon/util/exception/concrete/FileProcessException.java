@@ -5,7 +5,10 @@ import com.givemecon.util.exception.GivemeconException;
 
 public class FileProcessException extends GivemeconException {
 
-    public FileProcessException(ErrorCode errorCode) {
+    private final String rejectedFilename;
+
+    public FileProcessException(ErrorCode errorCode, String rejectedFilename) {
         super(errorCode);
+        this.rejectedFilename = rejectedFilename;
     }
 }

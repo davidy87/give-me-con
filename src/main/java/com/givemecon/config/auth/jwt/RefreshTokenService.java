@@ -24,7 +24,7 @@ public class RefreshTokenService {
 
     public String reissueAccessToken(String refreshToken) {
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new ExpiredTokenException(REFRESH_TOKEN_EXPIRED));
+                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, RefreshToken.class));
 
         Member member = memberRepository.findById(tokenEntity.getMemberId())
                 .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
