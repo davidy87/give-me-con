@@ -1,4 +1,4 @@
-package com.givemecon.util.image_entity;
+package com.givemecon.util.image_entity.builder;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.givemecon.util.image_entity;
 
+import com.givemecon.util.image_entity.builder.ImageEntityBuilderFactory;
 import com.givemecon.util.s3.AwsS3Utils;
 import com.givemecon.domain.image.ImageEntity;
 import com.givemecon.util.FileUtils;
