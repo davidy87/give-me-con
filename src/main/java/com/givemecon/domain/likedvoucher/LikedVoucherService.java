@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.domain.voucher.VoucherDto.*;
 
 @RequiredArgsConstructor
@@ -27,10 +26,10 @@ public class LikedVoucherService {
 
     public VoucherResponse save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         Voucher voucher = voucherRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         LikedVoucher likedVoucher = likedVoucherRepository.save(LikedVoucher.builder()
                 .voucher(voucher)
@@ -44,7 +43,7 @@ public class LikedVoucherService {
     @Transactional(readOnly = true)
     public List<VoucherResponse> findAllByUsername(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         return member.getLikedVoucherList().stream()
                 .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()))

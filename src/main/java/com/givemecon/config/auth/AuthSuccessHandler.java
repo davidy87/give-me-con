@@ -18,8 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static com.givemecon.util.error.ErrorCode.*;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -41,7 +39,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         log.info("principal name = {}", principal.getAttributes());
 
         Member member = memberRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 

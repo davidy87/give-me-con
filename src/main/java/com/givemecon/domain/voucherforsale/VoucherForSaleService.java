@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
 @RequiredArgsConstructor
@@ -33,10 +32,10 @@ public class VoucherForSaleService {
 
     public VoucherForSaleResponse save(String username, VoucherForSaleRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         MultipartFile imageFile = requestDto.getImageFile();
 
@@ -53,7 +52,7 @@ public class VoucherForSaleService {
 
     public Long delete(Long id) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, VoucherForSale.class));
+                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
         voucherForSaleRepository.delete(voucherForSale);
         voucherForSale.getVoucher().removeVoucherForSale(voucherForSale);

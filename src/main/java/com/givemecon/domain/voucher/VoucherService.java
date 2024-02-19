@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.domain.voucher.VoucherDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
@@ -40,10 +39,10 @@ public class VoucherService {
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
+                .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         Brand brand = brandRepository.findById(requestDto.getBrandId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Brand.class));
+                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         MultipartFile imageFile = requestDto.getImageFile();
 
@@ -61,7 +60,7 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public VoucherResponse find(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         return new VoucherResponse(voucher);
     }
@@ -76,7 +75,7 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public List<VoucherResponse> findAllByBrandName(String brandName) {
         Brand brand = brandRepository.findByName(brandName)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Brand.class));
+                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         return brand.getVoucherList().stream()
                 .map(VoucherResponse::new)
@@ -86,7 +85,7 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         return voucher.getVoucherForSaleList().stream()
                 .map(VoucherForSaleResponse::new)
@@ -95,7 +94,7 @@ public class VoucherService {
 
     public VoucherResponse update(Long id, VoucherUpdateRequest requestDto) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         String newTitle = requestDto.getTitle();
         String newDescription = requestDto.getDescription();
@@ -124,7 +123,7 @@ public class VoucherService {
 
     public Long delete(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Voucher.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         voucherRepository.delete(voucher);
 

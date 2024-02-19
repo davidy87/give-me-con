@@ -1,6 +1,6 @@
 package com.givemecon.util.s3;
 
-import com.givemecon.util.exception.concrete.FileProcessException;
+import com.givemecon.util.exception.concrete.FileNotProcessedException;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AwsS3Utils {
             S3Resource imageResource = s3Template.upload(bucketName, imageKey, imageFile.getInputStream());
             return imageResource.getURL().toString();
         } catch (IOException e) {
-            throw new FileProcessException(IMAGE_PROCESS_FAILED, imageFile.getOriginalFilename());
+            throw new FileNotProcessedException(IMAGE_PROCESS_FAILED, imageFile.getOriginalFilename());
         }
     }
 
@@ -34,7 +34,7 @@ public class AwsS3Utils {
         try {
             return s3Template.download(bucketName, imageKey).getURL().toString();
         } catch (IOException e) {
-            throw new FileProcessException(IMAGE_PROCESS_FAILED, null);
+            throw new FileNotProcessedException(IMAGE_PROCESS_FAILED);
         }
     }
 

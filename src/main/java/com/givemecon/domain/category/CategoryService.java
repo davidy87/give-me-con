@@ -12,8 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.givemecon.util.error.ErrorCode.*;
-
 import java.util.List;
 
 import static com.givemecon.domain.category.CategoryDto.*;
@@ -52,7 +50,7 @@ public class CategoryService {
 
     public CategoryResponse update(Long id, CategoryUpdateRequest requestDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
+                .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         String newCategoryName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
@@ -71,7 +69,7 @@ public class CategoryService {
 
     public Long delete(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
+                .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         categoryRepository.delete(category);
 

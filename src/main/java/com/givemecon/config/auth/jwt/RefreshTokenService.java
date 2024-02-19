@@ -24,10 +24,10 @@ public class RefreshTokenService {
 
     public String reissueAccessToken(String refreshToken) {
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, RefreshToken.class));
+                .orElseThrow(() -> new EntityNotFoundException(RefreshToken.class));
 
         Member member = memberRepository.findById(tokenEntity.getMemberId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Member.class));
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         try {
             jwtTokenProvider.getClaims(tokenEntity.getRefreshToken());

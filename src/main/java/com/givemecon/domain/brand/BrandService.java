@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import static com.givemecon.util.error.ErrorCode.*;
-
 import java.util.List;
 
 import static com.givemecon.domain.brand.BrandDto.*;
@@ -34,7 +32,7 @@ public class BrandService {
 
     public BrandResponse save(BrandSaveRequest requestDto) {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
+                .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         MultipartFile iconFile = requestDto.getIconFile();
 
@@ -59,7 +57,7 @@ public class BrandService {
     @Transactional(readOnly = true)
     public List<BrandResponse> findAllByCategoryId(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
+                .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         return category.getBrandList().stream()
                 .map(BrandResponse::new)
@@ -68,7 +66,7 @@ public class BrandService {
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Brand.class));
+                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         Long categoryId = requestDto.getCategoryId();
         String newBrandName = requestDto.getName();
@@ -76,7 +74,7 @@ public class BrandService {
 
         if (categoryId != null) {
             Category newCategory = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Category.class));
+                    .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
             newCategory.addBrand(brand);
         }
@@ -95,7 +93,7 @@ public class BrandService {
 
     public Long delete(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(ENTITY_NOT_FOUND, Brand.class));
+                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         brandRepository.delete(brand);
 
