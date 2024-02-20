@@ -3,7 +3,7 @@ package com.givemecon.config.auth.jwt;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
-import com.givemecon.util.exception.concrete.ExpiredTokenException;
+import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,7 @@ public class RefreshTokenService {
             jwtTokenProvider.getClaims(tokenEntity.getRefreshToken());
         } catch (JwtException e) {
             refreshTokenRepository.delete(tokenEntity);
-            throw new ExpiredTokenException(REFRESH_TOKEN_EXPIRED);
+            throw new InvalidTokenException(REFRESH_TOKEN_EXPIRED);
         }
 
         return jwtTokenProvider.generateAccessToken(member);

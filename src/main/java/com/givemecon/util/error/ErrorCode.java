@@ -13,7 +13,9 @@ public enum ErrorCode {
     IMAGE_PROCESS_FAILED(HttpStatus.BAD_REQUEST.value(), "003", "Image Uploading Failed (이미지 파일 업로드에 실패하였습니다. 나중에 다시 시도해주세요.)"),
 
     ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "004", "Access Token Expired (Access Token의 유효기간이 만료되었습니다)."),
-    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "005", "Refresh Token Expired (Refresh Token의 유효기간이 만료되었습니다).");
+    REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "005", "Refresh Token Expired (Refresh Token의 유효기간이 만료되었습니다)."),
+    TOKEN_NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED.value(), "006", "Token Not Authenticated (인증되지 않은 토큰입니다).");
+
 
     private final int status;
     private final String code;

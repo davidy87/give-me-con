@@ -3,9 +3,9 @@ package com.givemecon.util.exception.concrete;
 import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.exception.GivemeconException;
 
-public class ExpiredTokenException extends GivemeconException {
+public class InvalidTokenException extends GivemeconException {
 
-    public ExpiredTokenException(ErrorCode errorCode) {
+    public InvalidTokenException(ErrorCode errorCode) {
         super(errorCode);
     }
 }

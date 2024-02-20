@@ -2,6 +2,7 @@ package com.givemecon.config.auth.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.domain.member.Member;
+import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -24,6 +25,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
 @Service
@@ -88,17 +91,16 @@ public class JwtTokenProvider {
     }
 
     /**
-     *
      * @param accessToken 사용자의 access token
      * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token
      * @throws JwtException getClaims 호출 시, accessToken이 올바르지 않다면, JwtException을 던짐
      */
-    public Authentication getAuthentication(String accessToken) throws JwtException {
+    public Authentication getAuthentication(String accessToken) {
         Claims claims = getClaims(accessToken);
         Object auth = claims.get("auth");
 
         if (auth == null) {
-            throw new RuntimeException("Unauthorized Token"); // TODO: 예외 처리
+            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
 
         log.info("--- In JwtTokenProvider ---");
