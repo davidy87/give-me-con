@@ -9,13 +9,13 @@ public class FileNotProcessedException extends GivemeconException {
 
     private final String rejectedFilename;
 
-    public FileNotProcessedException(ErrorCode errorCode) {
-        super(errorCode);
-        rejectedFilename = null;
+    public FileNotProcessedException(ErrorCode errorCode, Throwable cause) {
+        super(errorCode, cause);
+        this.rejectedFilename = null;
     }
 
-    public FileNotProcessedException(ErrorCode errorCode, String rejectedFilename) {
-        super(errorCode);
+    public FileNotProcessedException(ErrorCode errorCode, String rejectedFilename, Throwable cause) {
+        super(errorCode, cause);
         this.rejectedFilename = rejectedFilename;
     }
 }

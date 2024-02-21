@@ -11,4 +11,9 @@ public class GivemeconException extends RuntimeException {
     protected GivemeconException(ErrorCode errorCode) {
         this.errorCode = errorCode;
     }
+
+    protected GivemeconException(ErrorCode errorCode, Throwable cause) {
+        super(cause);
+        this.errorCode = errorCode;
+    }
 }
