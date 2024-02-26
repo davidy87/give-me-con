@@ -31,8 +31,10 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             log.info("--- In JwtExceptionFilter ---");
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
+            log.info("Caught JwtException", e);
             errorResponse = new ErrorResponse(ACCESS_TOKEN_EXPIRED);
         } catch (InvalidTokenException e) {
+            log.info("Caught InvalidTokenException", e);
             errorResponse = new ErrorResponse(e.getErrorCode());
         } finally {
             if (errorResponse != null) {

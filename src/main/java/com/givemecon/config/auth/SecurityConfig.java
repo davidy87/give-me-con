@@ -52,17 +52,20 @@ public class SecurityConfig {
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers/**"),
                                 AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/vouchers-for-sale/**"),
                                 AntPathRequestMatcher.antMatcher("/api/auth/refresh"),
-                                AntPathRequestMatcher.antMatcher("/api/members/admin/**")
+                                AntPathRequestMatcher.antMatcher("/api/members/admin/signup"),
+                                AntPathRequestMatcher.antMatcher("/api/members/admin/login")
                         ).permitAll()
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/categories/**"),
                                 AntPathRequestMatcher.antMatcher("/api/brands/**"),
                                 AntPathRequestMatcher.antMatcher("/api/vouchers/**"),
-                                AntPathRequestMatcher.antMatcher("/api/vouchers-for-sale/**")
+                                AntPathRequestMatcher.antMatcher("/api/members/**")
                         ).hasRole(Role.ADMIN.name())
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/**")
-                        ).authenticated()
+                                AntPathRequestMatcher.antMatcher("/api/vouchers-for-sale/**"),
+                                AntPathRequestMatcher.antMatcher("/api/liked-vouchers/**"),
+                                AntPathRequestMatcher.antMatcher("/api/purchased-vouchers/**")
+                        ).hasAnyRole(Role.ADMIN.name(), Role.USER.name())
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

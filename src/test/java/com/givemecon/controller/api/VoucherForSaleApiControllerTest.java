@@ -113,7 +113,7 @@ class VoucherForSaleApiControllerTest {
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.ADMIN)
+                .role(Role.USER)
                 .build());
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
@@ -181,7 +181,7 @@ class VoucherForSaleApiControllerTest {
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.ADMIN)
+                .role(Role.USER)
                 .build());
 
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
