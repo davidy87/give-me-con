@@ -42,7 +42,7 @@ public class VoucherForSaleService {
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
         VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
-                (VoucherForSaleImage) imageEntityUtils.createImageEntity(VoucherForSaleImage.class, imageFile));
+                imageEntityUtils.createImageEntity(VoucherForSaleImage.class, imageFile));
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucherForSale.updateSeller(seller);

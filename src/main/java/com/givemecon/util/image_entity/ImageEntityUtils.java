@@ -15,13 +15,14 @@ public class ImageEntityUtils {
 
     private final ImageEntityBuilderFactory imageEntityBuilderFactory;
 
-    public ImageEntity createImageEntity(Class<? extends ImageEntity> imageEntityType, MultipartFile imageFile) {
+    public <T extends ImageEntity> T createImageEntity(Class<T> imageEntityType, MultipartFile imageFile) {
         String originalName = imageFile.getOriginalFilename();
         String imageKey = FileUtils.convertFilenameToKey(originalName);
         String imageUrl = awsS3Utils.upload(imageKey, imageFile);
-
-        return imageEntityBuilderFactory.findBy(imageEntityType.getSimpleName())
+        ImageEntity imageEntity = imageEntityBuilderFactory.findBy(imageEntityType.getSimpleName())
                 .build(imageKey, imageUrl, originalName);
+
+        return imageEntityType.cast(imageEntity);
     }
 
     public void updateImageEntity(ImageEntity imageEntity, MultipartFile newImageFile) {
