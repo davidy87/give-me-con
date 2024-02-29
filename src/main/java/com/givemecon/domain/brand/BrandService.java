@@ -38,7 +38,7 @@ public class BrandService {
 
         Brand brand = brandRepository.save(requestDto.toEntity());
         BrandIcon brandIcon = brandIconRepository.save(
-                (BrandIcon) imageEntityUtils.createImageEntity(BrandIcon.class, iconFile));
+                imageEntityUtils.createImageEntity(BrandIcon.class, iconFile));
 
         brand.updateBrandIcon(brandIcon);
         brand.updateCategory(category);

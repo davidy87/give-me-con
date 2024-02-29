@@ -33,7 +33,7 @@ public class CategoryService {
 
         Category category = categoryRepository.save(requestDto.toEntity());
         CategoryIcon categoryIcon = categoryIconRepository.save(
-                (CategoryIcon) imageEntityUtils.createImageEntity(CategoryIcon.class, iconFile));
+                imageEntityUtils.createImageEntity(CategoryIcon.class, iconFile));
 
         category.updateCategoryIcon(categoryIcon);
 
