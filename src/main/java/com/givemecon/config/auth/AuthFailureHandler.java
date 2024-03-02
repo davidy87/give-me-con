@@ -12,18 +12,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static com.givemecon.config.auth.enums.ClientUrl.LOGIN_URL;
+
 @Slf4j
 @Component
 public class AuthFailureHandler implements AuthenticationFailureHandler {
-
-    private static final String LOGIN_URI = "http://localhost:8081/login";
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(LOGIN_URI)
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(LOGIN_URL.getUrl())
                 .encode(StandardCharsets.UTF_8)
                 .queryParam("error", true);
 

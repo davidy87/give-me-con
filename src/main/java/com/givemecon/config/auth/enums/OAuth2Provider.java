@@ -1,4 +1,4 @@
-package com.givemecon.config.auth;
+package com.givemecon.config.auth.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

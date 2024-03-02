@@ -10,13 +10,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import static com.givemecon.config.auth.enums.ClientUrl.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,21 +34,18 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                                         Authentication authentication) throws IOException {
 
         log.info("--- In AuthSuccessHandler ---");
-        OAuth2User principal = (OAuth2User) authentication.getPrincipal();
-
-        log.info("principal name = {}", principal.getName());
-        log.info("principal name = {}", principal.getAttributes());
-
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
+        log.info("Login username = {}", member.getUsername());
+
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
-        String url = UriComponentsBuilder.fromUriString("http://localhost:8081/login")
+        String url = UriComponentsBuilder.fromUriString(LOGIN_URL.getUrl())
                 .queryParam("grantType", tokenInfo.getGrantType())
                 .queryParam("accessToken", tokenInfo.getAccessToken())
                 .queryParam("refreshToken", tokenInfo.getRefreshToken())
-                .queryParam("username", principal.getName())
+                .queryParam("username", member.getUsername())
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();

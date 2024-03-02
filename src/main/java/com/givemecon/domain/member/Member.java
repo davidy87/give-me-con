@@ -1,6 +1,6 @@
 package com.givemecon.domain.member;
 
-import com.givemecon.config.auth.OAuth2Provider;
+import com.givemecon.config.auth.enums.OAuth2Provider;
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.likedvoucher.LikedVoucher;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;

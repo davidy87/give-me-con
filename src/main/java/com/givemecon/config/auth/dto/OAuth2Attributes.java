@@ -1,6 +1,6 @@
 package com.givemecon.config.auth.dto;
 
-import com.givemecon.config.auth.OAuth2Provider;
+import com.givemecon.config.auth.enums.OAuth2Provider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.Role;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-import static com.givemecon.config.auth.OAuth2Provider.*;
+import static com.givemecon.config.auth.enums.OAuth2Provider.*;
 
 @Slf4j
 @Getter
