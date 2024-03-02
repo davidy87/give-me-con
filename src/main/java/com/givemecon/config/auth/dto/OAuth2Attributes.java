@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
-import static com.givemecon.config.auth.NameAttributeKey.*;
 import static com.givemecon.config.auth.OAuth2Provider.*;
 
 @Slf4j
@@ -37,10 +36,12 @@ public class OAuth2Attributes {
 
     public static OAuth2Attributes of(String registrationId, Map<String, Object> attributes) {
         OAuth2Provider oAuth2Provider = OAuth2Provider.valueOf(registrationId);
+        String usernameAttributeKey = oAuth2Provider.getUsernameAttributeKey();
+
         return switch (oAuth2Provider) {
-            case GOOGLE -> ofGoogle(GOOGLE_USERNAME_KEY.getKey(), attributes);
-            case NAVER -> ofNaver(NAVER_USERNAME_KEY.getKey(), attributes);
-            case KAKAO -> ofKakao(KAKAO_USERNAME_KEY.getKey(), attributes);
+            case GOOGLE -> ofGoogle(usernameAttributeKey, attributes);
+            case NAVER -> ofNaver(usernameAttributeKey, attributes);
+            case KAKAO -> ofKakao(usernameAttributeKey, attributes);
         };
     }
 
