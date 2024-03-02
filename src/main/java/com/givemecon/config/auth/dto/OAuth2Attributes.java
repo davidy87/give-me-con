@@ -9,21 +9,22 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+import static com.givemecon.config.auth.NameAttributeKey.*;
 import static com.givemecon.config.auth.OAuth2Provider.*;
 
 @Slf4j
 @Getter
 public class OAuth2Attributes {
 
-    private Map<String, Object> attributes;
+    private final Map<String, Object> attributes;
 
-    private String nameAttributeKey;
+    private final String nameAttributeKey;
 
-    private String username;
+    private final String username;
 
-    private String email;
+    private final String email;
 
-    private OAuth2Provider provider;
+    private final OAuth2Provider provider;
 
     @Builder
     public OAuth2Attributes(Map<String, Object> attributes, String nameAttributeKey, String username, String email, OAuth2Provider provider) {
@@ -34,16 +35,13 @@ public class OAuth2Attributes {
         this.provider = provider;
     }
 
-    public static OAuth2Attributes of(String registrationId, String userNameAttributeKey, Map<String, Object> attributes) {
-        registrationId = registrationId.toUpperCase();
-
-        if (registrationId.equals(NAVER.name())) {
-            return ofNaver("nickname", attributes);
-        } else if (registrationId.equals(KAKAO.name())) {
-            return ofKakao("nickname", attributes);
-        }
-
-        return ofGoogle("given_name", attributes);
+    public static OAuth2Attributes of(String registrationId, Map<String, Object> attributes) {
+        OAuth2Provider oAuth2Provider = OAuth2Provider.valueOf(registrationId);
+        return switch (oAuth2Provider) {
+            case GOOGLE -> ofGoogle(GOOGLE_USERNAME_KEY.getKey(), attributes);
+            case NAVER -> ofNaver(NAVER_USERNAME_KEY.getKey(), attributes);
+            case KAKAO -> ofKakao(KAKAO_USERNAME_KEY.getKey(), attributes);
+        };
     }
 
     private static OAuth2Attributes ofGoogle(String userNameAttributeKey, Map<String, Object> attributes) {

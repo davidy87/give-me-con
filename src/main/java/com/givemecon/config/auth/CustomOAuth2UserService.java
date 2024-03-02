@@ -26,18 +26,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
+        String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
 
-        String registrationId = userRequest.getClientRegistration()
-                .getRegistrationId()
-                .toUpperCase();
-
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
-
-        OAuth2Attributes attributes = OAuth2Attributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
-        Member member = saveOrUpdate(attributes, registrationId);
+        OAuth2Attributes attributes = OAuth2Attributes.of(registrationId, oAuth2User.getAttributes());
+        Member member = saveNewOrUpdate(attributes, registrationId);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
@@ -45,7 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 attributes.getNameAttributeKey());
     }
 
-    private Member saveOrUpdate(OAuth2Attributes attributes, String registrationId) {
+    private Member saveNewOrUpdate(OAuth2Attributes attributes, String registrationId) {
         Member member = memberRepository.findByEmail(attributes.getEmail())
                 .filter(entity -> checkMemberExistence(entity, registrationId))
                 .map(entity -> entity.update(attributes.getEmail(), attributes.getUsername()))
@@ -57,10 +49,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private boolean checkMemberExistence(Member member, String registrationId) {
         if (member == null) {
             return false;
-        } else if (!member.getProvider().name().equals(registrationId)) {
-            throw new OAuth2AuthenticationException("이미 해당 이메일로 가입된 계정이 존재합니다."); // TODO: 예외 처리
+        } else if (member.getProvider().name().equals(registrationId)) {
+            return true;
         }
 
-        return true;
+        throw new OAuth2AuthenticationException("이미 해당 이메일로 가입된 계정이 존재합니다.");
     }
 }
