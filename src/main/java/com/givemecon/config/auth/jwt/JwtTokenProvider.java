@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.givemecon.config.auth.enums.GrantType.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
@@ -65,7 +66,7 @@ public class JwtTokenProvider {
                 );
 
         return TokenInfo.builder()
-                .grantType("Bearer")
+                .grantType(BEARER.getType())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(member.getRole())
@@ -105,9 +106,6 @@ public class JwtTokenProvider {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
 
-        log.info("--- In JwtTokenProvider ---");
-        log.info("username = {}", claims.getSubject());
-
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(auth.toString().split(","))
                         .map(SimpleGrantedAuthority::new)
@@ -120,15 +118,16 @@ public class JwtTokenProvider {
 
     /**
      * 요청으로 전달된 토큰을 추출
-     * @param request API 요청
+     * @param request HTTP 요청
      * @return Access token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
      */
     public String retrieveToken(HttpServletRequest request) {
-        String grantType = "Bearer ";
-        String bearerToken = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader("Authorization");
 
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(grantType)) {
-            return bearerToken.substring(grantType.length());
+        if (StringUtils.hasText(authorizationHeader)
+                && StringUtils.startsWithIgnoreCase(authorizationHeader, BEARER.getType())) {
+            String[] headerSplit = authorizationHeader.split(" ");
+            return headerSplit.length == 2 ? headerSplit[1] : null;
         }
 
         return null;
