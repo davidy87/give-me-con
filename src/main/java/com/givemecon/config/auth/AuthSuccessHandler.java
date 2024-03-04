@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static com.givemecon.config.auth.enums.ClientUrl.*;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,10 +43,10 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         String url = UriComponentsBuilder.fromUriString(LOGIN_URL.getUrl())
-                .queryParam("grantType", tokenInfo.getGrantType())
-                .queryParam("accessToken", tokenInfo.getAccessToken())
-                .queryParam("refreshToken", tokenInfo.getRefreshToken())
-                .queryParam("username", member.getUsername())
+                .queryParam(GRANT_TYPE, tokenInfo.getGrantType())
+                .queryParam(ACCESS_TOKEN, tokenInfo.getAccessToken())
+                .queryParam(REFRESH_TOKEN, tokenInfo.getRefreshToken())
+                .queryParam(USERNAME, member.getUsername())
                 .build()
                 .encode(StandardCharsets.UTF_8)
                 .toUriString();

@@ -6,7 +6,6 @@ import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,6 +25,7 @@ import java.util.List;
 import static com.givemecon.config.auth.enums.ApiPathPattern.*;
 import static com.givemecon.config.auth.enums.ClientUrl.BASE_URL;
 import static com.givemecon.domain.member.Role.*;
+import static org.springframework.http.HttpMethod.*;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -51,10 +51,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher(ADMIN_LOGIN_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, CATEGORY_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, BRAND_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, VOUCHER_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(HttpMethod.GET, VOUCHER_FOR_SALE_API_PATH.getPattern())
+                                AntPathRequestMatcher.antMatcher(GET, CATEGORY_API_PATH.getPattern()),
+                                AntPathRequestMatcher.antMatcher(GET, BRAND_API_PATH.getPattern()),
+                                AntPathRequestMatcher.antMatcher(GET, VOUCHER_API_PATH.getPattern()),
+                                AntPathRequestMatcher.antMatcher(GET, VOUCHER_FOR_SALE_API_PATH.getPattern())
                         ).permitAll()
                         .requestMatchers(
                                 AntPathRequestMatcher.antMatcher(MEMBER_API_PATH.getPattern()),
@@ -94,7 +94,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.setAllowedOrigins(List.of(BASE_URL.getUrl()));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedMethods(List.of(GET.name(), POST.name(), PUT.name(), DELETE.name()));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
 

@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 import static com.givemecon.config.auth.enums.GrantType.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
@@ -122,7 +123,7 @@ public class JwtTokenProvider {
      * @return Access token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
      */
     public String retrieveToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
+        String authorizationHeader = request.getHeader(AUTHORIZATION.getKey());
 
         if (StringUtils.hasText(authorizationHeader)
                 && StringUtils.startsWithIgnoreCase(authorizationHeader, BEARER.getType())) {

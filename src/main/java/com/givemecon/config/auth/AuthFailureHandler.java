@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static com.givemecon.config.auth.enums.ClientUrl.LOGIN_URL;
+import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 @Slf4j
 @Component
@@ -29,7 +30,7 @@ public class AuthFailureHandler implements AuthenticationFailureHandler {
 
         if (exception instanceof OAuth2AuthenticationException) {
             log.info("--- In AuthFailureHandler ---");
-            uriBuilder.queryParam("state", "duplicate-email");
+            uriBuilder.queryParam(STATE, "duplicate-email");
         }
 
         response.sendRedirect(uriBuilder.toUriString());

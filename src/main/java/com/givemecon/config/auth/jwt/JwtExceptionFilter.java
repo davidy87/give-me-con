@@ -9,13 +9,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Map;
 
 import static com.givemecon.util.error.ErrorCode.*;
+import static java.nio.charset.StandardCharsets.*;
+import static org.springframework.http.MediaType.*;
 
 @Slf4j
 public class JwtExceptionFilter extends OncePerRequestFilter {
@@ -39,8 +40,8 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         } finally {
             if (errorResponse != null) {
                 response.setStatus(errorResponse.getStatus());
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding("UTF-8");
+                response.setContentType(APPLICATION_JSON_VALUE);
+                response.setCharacterEncoding(UTF_8.name());
                 response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("error", errorResponse)));
             }
         }
