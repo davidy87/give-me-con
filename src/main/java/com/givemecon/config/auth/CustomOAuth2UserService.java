@@ -2,7 +2,6 @@ package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.OAuth2Attributes;
 import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -18,7 +17,7 @@ import java.util.Collections;
 @Component
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final MemberService memberService;
+    private final OAuth2MemberUtils oAuth2MemberUtils;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -27,7 +26,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
 
         OAuth2Attributes attributes = OAuth2Attributes.of(registrationId, oAuth2User.getAttributes());
-        Member member = memberService.saveNewOrUpdate(attributes, registrationId);
+        Member member = oAuth2MemberUtils.saveNewOrUpdate(attributes, registrationId);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
