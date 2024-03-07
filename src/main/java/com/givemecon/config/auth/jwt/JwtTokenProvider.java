@@ -35,7 +35,7 @@ import static com.givemecon.util.error.ErrorCode.*;
 @Service
 public class JwtTokenProvider {
 
-    private final SecretKey key;
+    private final SecretKey secretKey;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -43,10 +43,10 @@ public class JwtTokenProvider {
 
     private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret,
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
                             RefreshTokenRepository refreshTokenRepository) {
 
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
@@ -58,7 +58,7 @@ public class JwtTokenProvider {
     @Transactional
     public TokenInfo getTokenInfo(Member member) {
         String accessToken = generateAccessToken(member);
-        String refreshToken = generateRefreshToken();
+        String refreshToken = generateRefreshToken(member);
 
         refreshTokenRepository.findByMemberId(member.getId())
                 .ifPresentOrElse(
@@ -83,24 +83,30 @@ public class JwtTokenProvider {
                 .setSubject(member.getUsername())
                 .claim("auth", authorities)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken() {
+    public String generateRefreshToken(Member member) {
+        String authorities = Stream.of(new SimpleGrantedAuthority(member.getRoleKey()))
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
         return Jwts.builder()
+                .setSubject(member.getUsername())
+                .claim("auth", authorities)
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION))
-                .signWith(key, SignatureAlgorithm.HS256)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
     /**
-     * @param accessToken 사용자의 access token
+     * @param token 사용자의 token
      * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token
-     * @throws JwtException getClaims 호출 시, accessToken이 올바르지 않다면, JwtException을 던짐
+     * @throws JwtException getClaims 호출 시, token이 올바르지 않다면, JwtException을 던짐
      */
-    public Authentication getAuthentication(String accessToken) {
-        Claims claims = getClaims(accessToken);
+    public Authentication getAuthentication(String token) throws JwtException {
+        Claims claims = getClaims(token);
         Object auth = claims.get("auth");
 
         if (auth == null) {
@@ -134,11 +140,11 @@ public class JwtTokenProvider {
         return null;
     }
 
-    public Claims getClaims(String accessToken) throws JwtException {
+    public Claims getClaims(String token) throws JwtException {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(secretKey)
                 .build()
-                .parseClaimsJws(accessToken)
+                .parseClaimsJws(token)
                 .getBody();
     }
 }

@@ -1,6 +1,7 @@
 package com.givemecon.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.config.auth.enums.GrantType;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -66,7 +68,7 @@ public class RefreshTokenControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get(url)
-                .header("Refresh-Token", tokenInfo.getRefreshToken()));
+                .header(AUTHORIZATION.getKey(), GrantType.BEARER.getType() + " " + tokenInfo.getRefreshToken()));
 
         // then
         String newAccessToken = response.andExpect(status().isOk())
