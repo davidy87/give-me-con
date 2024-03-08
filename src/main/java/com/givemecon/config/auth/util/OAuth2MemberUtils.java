@@ -1,5 +1,6 @@
-package com.givemecon.config.auth;
+package com.givemecon.config.auth.util;
 
+import com.givemecon.config.auth.CustomOAuth2UserService;
 import com.givemecon.config.auth.dto.OAuth2Attributes;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;

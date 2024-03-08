@@ -20,12 +20,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static com.givemecon.config.auth.enums.ApiPathPattern.*;
+import static com.givemecon.config.auth.util.RequestMatcherList.*;
 import static com.givemecon.config.auth.enums.ClientUrl.BASE_URL;
 import static com.givemecon.domain.member.Role.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
-import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.*;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -49,25 +48,9 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(
-                                antMatcher(ADMIN_LOGIN_API.pattern()),
-                                antMatcher(GET, CATEGORY_API.pattern()),
-                                antMatcher(GET, BRAND_API.pattern()),
-                                antMatcher(GET, VOUCHER_API.pattern()),
-                                antMatcher(GET, VOUCHER_FOR_SALE_API.pattern())
-                        ).permitAll()
-                        .requestMatchers(
-                                antMatcher(MEMBER_API.pattern()),
-                                antMatcher(CATEGORY_API.pattern()),
-                                antMatcher(BRAND_API.pattern()),
-                                antMatcher(VOUCHER_API.pattern())
-                        ).hasRole(ADMIN.name())
-                        .requestMatchers(
-                                antMatcher(AUTH_API.pattern()),
-                                antMatcher(VOUCHER_FOR_SALE_API.pattern()),
-                                antMatcher(LIKED_VOUCHER_API.pattern()),
-                                antMatcher(PURCHASED_VOUCHER_API.pattern())
-                        ).hasAnyRole(ADMIN.name(), USER.name())
+                        .requestMatchers(ofPermitAll()).permitAll()
+                        .requestMatchers(ofRoleAdmin()).hasRole(ADMIN.name())
+                        .requestMatchers(ofAnyRole()).hasAnyRole(ADMIN.name(), USER.name())
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(STATELESS)
