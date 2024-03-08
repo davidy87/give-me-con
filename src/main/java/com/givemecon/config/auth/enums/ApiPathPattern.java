@@ -1,21 +1,30 @@
 package com.givemecon.config.auth.enums;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@Getter
 @RequiredArgsConstructor
 public enum ApiPathPattern {
 
-    MEMBER_API_PATH("/api/members/**"),
-    ADMIN_LOGIN_API_PATH("/api/members/admin/login"),
-    AUTH_API_PATH("/api/auth/**"),
-    CATEGORY_API_PATH("/api/categories/**"),
-    BRAND_API_PATH("/api/brands/**"),
-    VOUCHER_API_PATH("/api/vouchers/**"),
-    VOUCHER_FOR_SALE_API_PATH("/api/vouchers-for-sale/**"),
-    LIKED_VOUCHER_API_PATH("/api/liked-vouchers/**"),
-    PURCHASED_VOUCHER_API_PATH("/api/purchased-vouchers/**");
+    MEMBER_API("/members/**"),
+    ADMIN_LOGIN_API("/members/admin/login"),
+    AUTH_API("/auth/**"),
+    CATEGORY_API("/categories/**"),
+    BRAND_API("/brands/**"),
+    VOUCHER_API("/vouchers/**"),
+    VOUCHER_FOR_SALE_API("/vouchers-for-sale/**"),
+    LIKED_VOUCHER_API("/liked-vouchers/**"),
+    PURCHASED_VOUCHER_API("/purchased-vouchers/**");
 
     private final String pattern;
+
+    @RequiredArgsConstructor
+    private enum BaseApiPattern {
+        BASE_API("/api");
+
+        private final String pattern;
+    }
+
+    public String pattern() {
+        return BaseApiPattern.BASE_API.pattern + this.pattern;
+    }
 }

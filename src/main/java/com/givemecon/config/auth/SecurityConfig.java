@@ -10,12 +10,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -26,6 +24,8 @@ import static com.givemecon.config.auth.enums.ApiPathPattern.*;
 import static com.givemecon.config.auth.enums.ClientUrl.BASE_URL;
 import static com.givemecon.domain.member.Role.*;
 import static org.springframework.http.HttpMethod.*;
+import static org.springframework.security.config.http.SessionCreationPolicy.*;
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.*;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -50,27 +50,27 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher(ADMIN_LOGIN_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(GET, CATEGORY_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(GET, BRAND_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(GET, VOUCHER_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(GET, VOUCHER_FOR_SALE_API_PATH.getPattern())
+                                antMatcher(ADMIN_LOGIN_API.pattern()),
+                                antMatcher(GET, CATEGORY_API.pattern()),
+                                antMatcher(GET, BRAND_API.pattern()),
+                                antMatcher(GET, VOUCHER_API.pattern()),
+                                antMatcher(GET, VOUCHER_FOR_SALE_API.pattern())
                         ).permitAll()
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher(MEMBER_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(CATEGORY_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(BRAND_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(VOUCHER_API_PATH.getPattern())
+                                antMatcher(MEMBER_API.pattern()),
+                                antMatcher(CATEGORY_API.pattern()),
+                                antMatcher(BRAND_API.pattern()),
+                                antMatcher(VOUCHER_API.pattern())
                         ).hasRole(ADMIN.name())
                         .requestMatchers(
-                                AntPathRequestMatcher.antMatcher(AUTH_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(VOUCHER_FOR_SALE_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(LIKED_VOUCHER_API_PATH.getPattern()),
-                                AntPathRequestMatcher.antMatcher(PURCHASED_VOUCHER_API_PATH.getPattern())
+                                antMatcher(AUTH_API.pattern()),
+                                antMatcher(VOUCHER_FOR_SALE_API.pattern()),
+                                antMatcher(LIKED_VOUCHER_API.pattern()),
+                                antMatcher(PURCHASED_VOUCHER_API.pattern())
                         ).hasAnyRole(ADMIN.name(), USER.name())
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(STATELESS)
                 )
                 .oauth2Login(login -> login
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
