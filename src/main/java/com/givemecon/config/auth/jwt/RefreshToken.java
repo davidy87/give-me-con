@@ -1,5 +1,6 @@
 package com.givemecon.config.auth.jwt;
 
+import com.givemecon.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +15,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class RefreshToken {
+public class RefreshToken extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)

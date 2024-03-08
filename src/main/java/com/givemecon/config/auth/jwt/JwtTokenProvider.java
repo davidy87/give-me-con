@@ -104,8 +104,9 @@ public class JwtTokenProvider {
      * @param token 사용자의 token
      * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token
      * @throws JwtException getClaims 호출 시, token이 올바르지 않다면, JwtException을 던짐
+     * @throws InvalidTokenException token에 claim이 존재하지 않을 경우 던짐
      */
-    public Authentication getAuthentication(String token) throws JwtException {
+    public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
         Object auth = claims.get("auth");
 
@@ -126,7 +127,7 @@ public class JwtTokenProvider {
     /**
      * 요청으로 전달된 토큰을 추출
      * @param request HTTP 요청
-     * @return Access token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
+     * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
      */
     public String retrieveToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION.getKey());
