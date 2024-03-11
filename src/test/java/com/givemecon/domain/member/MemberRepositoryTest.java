@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.givemecon.domain.member.Role.*;
+import static com.givemecon.config.auth.enums.Role.USER;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j

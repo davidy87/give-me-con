@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.config.auth.enums.Role.*;
 import static com.givemecon.domain.member.MemberDto.*;
 
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class MemberService {
     public TokenInfo login(LoginRequest loginRequest) {
         Member loginMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .filter(member -> passwordEncoder.matches(loginRequest.getPassword(), member.getPassword()))
-                .filter(member -> member.getRole() == Role.ADMIN)
+                .filter(member -> member.getRole() == ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         return jwtTokenProvider.getTokenInfo(loginMember);

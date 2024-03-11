@@ -1,8 +1,8 @@
 package com.givemecon.config.auth.dto;
 
 import com.givemecon.config.auth.enums.OAuth2Provider;
+import com.givemecon.config.auth.enums.Role;
 import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

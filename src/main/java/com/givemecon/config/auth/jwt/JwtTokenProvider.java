@@ -6,7 +6,6 @@ import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +26,6 @@ import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 import static com.givemecon.config.auth.enums.GrantType.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
@@ -39,7 +37,7 @@ public class JwtTokenProvider {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
+    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(1).toMillis(); // 30 mins
 
     private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
@@ -58,7 +56,7 @@ public class JwtTokenProvider {
     @Transactional
     public TokenInfo getTokenInfo(Member member) {
         String accessToken = generateAccessToken(member);
-        String refreshToken = generateRefreshToken(member);
+        String refreshToken = generateRefreshToken();
 
         refreshTokenRepository.findByMemberId(member.getId())
                 .ifPresentOrElse(
@@ -87,14 +85,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String generateRefreshToken(Member member) {
-        String authorities = Stream.of(new SimpleGrantedAuthority(member.getRoleKey()))
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    private String generateRefreshToken() {
         return Jwts.builder()
-                .setSubject(member.getUsername())
-                .claim("auth", authorities)
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
@@ -102,9 +94,9 @@ public class JwtTokenProvider {
 
     /**
      * @param token 사용자의 token
-     * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token
+     * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token.
      * @throws JwtException getClaims 호출 시, token이 올바르지 않다면, JwtException을 던짐
-     * @throws InvalidTokenException token에 claim이 존재하지 않을 경우 던짐
+     * @throws InvalidTokenException token에 claim에 권한 정보가 존재하지 않을 경우 던짐
      */
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
@@ -126,15 +118,12 @@ public class JwtTokenProvider {
 
     /**
      * 요청으로 전달된 토큰을 추출
-     * @param request HTTP 요청
+     * @param tokenHeader Token 정보가 들어있는 HTTP Header
      * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
      */
-    public String retrieveToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION.getKey());
-
-        if (StringUtils.hasText(authorizationHeader)
-                && StringUtils.startsWithIgnoreCase(authorizationHeader, BEARER.getType())) {
-            String[] headerSplit = authorizationHeader.split(" ");
+    public String retrieveToken(String tokenHeader) {
+        if (StringUtils.hasText(tokenHeader) && StringUtils.startsWithIgnoreCase(tokenHeader, BEARER.getType())) {
+            String[] headerSplit = tokenHeader.split(" ");
             return headerSplit.length == 2 ? headerSplit[1] : null;
         }
 

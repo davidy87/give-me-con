@@ -22,8 +22,7 @@ public class OAuth2MemberUtils {
      * {@link OAuth2AuthenticationException}을 던진다. 그렇지 않은 경우에는 해당하는 entity의 email과 username을 OAuth2Attributes에
      * 담긴 email과 username로 변경한다. 만약 해당하는 entity를 찾지 못한 경우, 새로운 entity를 생성해 {@link MemberRepository}에 저장한다.
      *
-     * @param attributes {@link OAuth2Attributes} 클래스로, OAuth2 로그인 시도 후 전달되는 사용사의 email, username, OAuth2
-     *                                           provider 등의 정보가 담긴 객체
+     * @param attributes {@link OAuth2Attributes} 클래스로, OAuth2 로그인 시도 후 전달되는 사용사의 email, username, OAuth2 provider 등의 정보가 담긴 객체
      * @param registrationId OAuth2의 제공자 id. 모두 대문자로 된 상태로 전달된다(e.g. Google OAuth2 -> GOOGLE).
      * @return {@link Member} - 새로 생성되거나 변경된 Member entity를 반환한다.
      * @throws OAuth2AuthenticationException 이미 생성된 Member가 존재할 경우 던진다.

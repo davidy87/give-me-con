@@ -20,9 +20,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.givemecon.config.auth.enums.Role.ADMIN;
+import static com.givemecon.config.auth.enums.Role.USER;
 import static com.givemecon.config.auth.util.RequestMatcherList.*;
 import static com.givemecon.config.auth.enums.ClientUrl.BASE_URL;
-import static com.givemecon.domain.member.Role.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 

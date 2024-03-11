@@ -1,6 +1,6 @@
 package com.givemecon.config.auth.dto;
 
-import com.givemecon.domain.member.Role;
+import com.givemecon.config.auth.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

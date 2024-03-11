@@ -13,6 +13,8 @@ import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
@@ -21,14 +23,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = jwtTokenProvider.retrieveToken((HttpServletRequest) request);
+        String accessTokenHeader = ((HttpServletRequest) request).getHeader(AUTHORIZATION.getKey());
+        String accessToken = jwtTokenProvider.retrieveToken(accessTokenHeader);
 
         log.info("--- In JwtAuthenticationFilter ---");
-        log.info("token = {}", token);
+        log.info("token = {}", accessToken);
         log.info("url = {}", ((HttpServletRequest) request).getRequestURL());
 
-        if (token != null) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+        if (accessToken != null) {
+            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
             log.info("Authenticated User = {}", authentication.getName());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

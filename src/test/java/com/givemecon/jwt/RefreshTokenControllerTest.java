@@ -2,10 +2,10 @@ package com.givemecon.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.enums.GrantType;
+import com.givemecon.config.auth.enums.Role;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.member.Role;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public class RefreshTokenControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get(url)
-                .header(AUTHORIZATION.getKey(), GrantType.BEARER.getType() + " " + tokenInfo.getRefreshToken()));
+                .header(REFRESH_TOKEN.getKey(), GrantType.BEARER.getType() + " " + tokenInfo.getRefreshToken()));
 
         // then
         String newAccessToken = response.andExpect(status().isOk())

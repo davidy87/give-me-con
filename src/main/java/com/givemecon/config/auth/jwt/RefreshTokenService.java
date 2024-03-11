@@ -22,7 +22,9 @@ public class RefreshTokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    public String reissueAccessToken(String refreshToken) {
+    public String reissueAccessToken(String tokenHeader) {
+        String refreshToken = jwtTokenProvider.retrieveToken(tokenHeader);
+
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new EntityNotFoundException(RefreshToken.class));
 

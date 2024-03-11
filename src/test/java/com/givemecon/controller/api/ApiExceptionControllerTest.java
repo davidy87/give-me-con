@@ -1,10 +1,10 @@
 package com.givemecon.controller.api;
 
 import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.config.auth.enums.Role;
 import com.givemecon.config.auth.jwt.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.member.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

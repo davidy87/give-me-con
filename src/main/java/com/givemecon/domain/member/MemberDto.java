@@ -1,5 +1,6 @@
 package com.givemecon.domain.member;
 
+import com.givemecon.config.auth.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 
