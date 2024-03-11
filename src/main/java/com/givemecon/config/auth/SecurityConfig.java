@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsFilter()))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(ofPermitAll()).permitAll()
+                        .requestMatchers(ofAuthenticated()).authenticated()
                         .requestMatchers(ofRoleAdmin()).hasRole(ADMIN.name())
                         .requestMatchers(ofAnyRole()).hasAnyRole(ADMIN.name(), USER.name())
                 )

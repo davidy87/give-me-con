@@ -3,7 +3,6 @@ package com.givemecon.config.auth.jwt;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,9 +16,8 @@ public class RefreshTokenController {
     private final RefreshTokenService refreshTokenService;
 
     @GetMapping("/api/auth/refresh")
-    public String reissueAccessToken(Authentication authentication, HttpServletRequest request) {
+    public String reissueAccessToken(HttpServletRequest request) {
         log.info("--- In RefreshTokenController ---");
-        log.info("Current authentication = {}", authentication);
         String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getKey());
         return refreshTokenService.reissueAccessToken(refreshTokenHeader);
     }

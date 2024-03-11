@@ -19,6 +19,12 @@ public abstract class RequestMatcherList {
         };
     }
 
+    public static RequestMatcher[] ofAuthenticated() {
+        return new AntPathRequestMatcher[] {
+                antMatcher(AUTH_API.pattern())
+        };
+    }
+
     public static RequestMatcher[] ofRoleAdmin() {
         return new AntPathRequestMatcher[] {
                 antMatcher(MEMBER_API.pattern()),
