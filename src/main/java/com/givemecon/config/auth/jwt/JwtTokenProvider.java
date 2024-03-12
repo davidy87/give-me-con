@@ -73,13 +73,13 @@ public class JwtTokenProvider {
     }
 
     public String generateAccessToken(Member member) {
-        String authorities = Stream.of(new SimpleGrantedAuthority(member.getRoleKey()))
+        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(member.getRoleKey()))
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(member.getUsername())
-                .claim("auth", authorities)
+                .claim("username", member.getUsername())
+                .claim("authorities", authoritiesInString)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
@@ -100,18 +100,19 @@ public class JwtTokenProvider {
      */
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
-        Object auth = claims.get("auth");
+        String username = (String) claims.get("username");
+        String authoritiesInString = (String) claims.get("authorities");
 
-        if (auth == null) {
+        if (authoritiesInString == null) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
 
         Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(auth.toString().split(","))
+                Arrays.stream(authoritiesInString.split(","))
                         .map(SimpleGrantedAuthority::new)
                         .toList();
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new User(username, "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }

@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     /**
      * 매개변수로 전달받은 access token을 사용해 {@link Authentication}을 생성하고 {@link SecurityContextHolder}에 등록한다. 도중에
-     * {@link ExpiredJwtException}이 발생할 경우, 예외를 잡고, refresh token이 담긴 헤더가 요쳥 시에 같이 전달되었는지 확인한다. 해당 헤더가
+     * {@link ExpiredJwtException}이 발생할 경우, 예외를 잡고 refresh token이 담긴 헤더가 요쳥 시에 같이 전달되었는지 확인한다. 해당 헤더가
      * 있다면 access token 재요청 전용 {@link Authentication} 객체를 생성 및 등록하고, 없다면 잡았던 예외를 그대로 던진다.
      * @param request HTTP 요청
      * @param accessToken 요청 시 전달받은 access token
