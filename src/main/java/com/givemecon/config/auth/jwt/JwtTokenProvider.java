@@ -33,13 +33,14 @@ import static com.givemecon.util.error.ErrorCode.*;
 @Service
 public class JwtTokenProvider {
 
+    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
+
+    private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
+
     private final SecretKey secretKey;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
-
-    private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
                             RefreshTokenRepository refreshTokenRepository) {
@@ -96,7 +97,7 @@ public class JwtTokenProvider {
      * @param token 사용자의 token
      * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token.
      * @throws JwtException getClaims 호출 시, token이 올바르지 않다면, JwtException을 던짐
-     * @throws InvalidTokenException token에 claim에 권한 정보가 존재하지 않을 경우 던짐
+     * @throws InvalidTokenException token의 claim에 권한 정보가 존재하지 않을 경우 던짐
      */
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
@@ -138,4 +139,5 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
 }

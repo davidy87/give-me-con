@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -34,9 +36,9 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
 
-    private final AuthSuccessHandler authSuccessHandler;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    private final AuthFailureHandler authFailureHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -59,8 +61,8 @@ public class SecurityConfig {
                 )
                 .oauth2Login(login -> login
                         .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-                        .successHandler(authSuccessHandler)
-                        .failureHandler(authFailureHandler)
+                        .successHandler(authenticationSuccessHandler)
+                        .failureHandler(authenticationFailureHandler)
                 )
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider),

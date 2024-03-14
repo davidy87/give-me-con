@@ -15,15 +15,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import static com.givemecon.config.auth.enums.ClientUrl.*;
+import static java.nio.charset.StandardCharsets.*;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -34,12 +34,11 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        log.info("--- In AuthSuccessHandler ---");
+        log.info("--- In CustomAuthenticationSuccessHandler ---");
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         log.info("Login username = {}", member.getUsername());
-
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         String url = UriComponentsBuilder.fromUriString(LOGIN_URL.getUrl())
@@ -47,10 +46,11 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .queryParam(ACCESS_TOKEN, tokenInfo.getAccessToken())
                 .queryParam(REFRESH_TOKEN, tokenInfo.getRefreshToken())
                 .queryParam(USERNAME, member.getUsername())
+                .encode(UTF_8)
                 .build()
-                .encode(StandardCharsets.UTF_8)
                 .toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, url);
     }
+
 }
