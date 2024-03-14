@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -23,7 +23,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -41,7 +41,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         log.info("Login username = {}", member.getUsername());
         TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
-        String url = UriComponentsBuilder.fromUriString(LOGIN_URL.getUrl())
+        String url = UriComponentsBuilder.fromHttpUrl(LOGIN_URL.getUrl())
                 .queryParam(GRANT_TYPE, tokenInfo.getGrantType())
                 .queryParam(ACCESS_TOKEN, tokenInfo.getAccessToken())
                 .queryParam(REFRESH_TOKEN, tokenInfo.getRefreshToken())

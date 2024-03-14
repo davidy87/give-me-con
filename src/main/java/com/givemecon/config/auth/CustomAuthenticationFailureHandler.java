@@ -7,7 +7,6 @@ import org.springframework.security.web.authentication.ExceptionMappingAuthentic
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.givemecon.config.auth.enums.ClientUrl.LOGIN_URL;
@@ -20,7 +19,6 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
 
     @PostConstruct
     public void init() {
-        Map<String, String> failureUrlMap = new HashMap<>();
         String exceptionName = OAuth2AuthenticationException.class.getName();
         String url = UriComponentsBuilder.fromHttpUrl(LOGIN_URL.getUrl())
                 .queryParam(ERROR, true)
@@ -28,8 +26,7 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
                 .encode(UTF_8)
                 .toUriString();
 
-        failureUrlMap.put(exceptionName, url);
-        super.setExceptionMappings(failureUrlMap);
+        super.setExceptionMappings(Map.of(exceptionName, url));
     }
 
 }
