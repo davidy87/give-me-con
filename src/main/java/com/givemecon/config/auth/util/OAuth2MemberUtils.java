@@ -6,12 +6,11 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Service
-@Transactional
+@Component
 public class OAuth2MemberUtils {
 
     private final MemberRepository memberRepository;
@@ -28,6 +27,7 @@ public class OAuth2MemberUtils {
      * @return {@link Member} - 새로 생성되거나 변경된 Member entity를 반환한다.
      * @throws OAuth2AuthenticationException 이미 생성된 Member가 존재할 경우 던진다.
      */
+    @Transactional
     public Member saveNewOrUpdate(OAuth2Attributes attributes, String registrationId) throws OAuth2AuthenticationException {
         Member member = memberRepository.findByEmail(attributes.getEmail())
                 .filter(entity -> checkMemberExistence(entity, registrationId))
