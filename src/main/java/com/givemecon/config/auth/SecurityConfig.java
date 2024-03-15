@@ -12,7 +12,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -34,7 +37,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.*;
 @Configuration
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService;
 
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
@@ -60,7 +63,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(STATELESS)
                 )
                 .oauth2Login(login -> login
-                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .userInfoEndpoint(userInfo -> userInfo.userService(oauth2UserService))
                         .successHandler(authenticationSuccessHandler)
                         .failureHandler(authenticationFailureHandler)
                 )
