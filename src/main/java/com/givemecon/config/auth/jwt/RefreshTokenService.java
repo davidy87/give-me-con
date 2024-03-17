@@ -25,6 +25,10 @@ public class RefreshTokenService {
     public String reissueAccessToken(String tokenHeader) {
         String refreshToken = jwtTokenProvider.retrieveToken(tokenHeader);
 
+        if (refreshToken == null) {
+            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
+        }
+
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new EntityNotFoundException(RefreshToken.class));
 

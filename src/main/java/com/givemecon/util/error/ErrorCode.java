@@ -16,7 +16,6 @@ public enum ErrorCode {
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED.value(), "005", "Refresh Token Expired (Refresh Token의 유효기간이 만료되었습니다)."),
     TOKEN_NOT_AUTHENTICATED(HttpStatus.UNAUTHORIZED.value(), "006", "Token Not Authenticated (인증되지 않은 토큰입니다).");
 
-
     private final int status;
     private final String code;
     private final String message;

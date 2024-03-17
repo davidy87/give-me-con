@@ -24,6 +24,6 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
                 .encode(UTF_8)
                 .toUriString();
 
-        super.setExceptionMappings(Map.of(exceptionName, url));
+        setExceptionMappings(Map.of(exceptionName, url));
     }
 }
