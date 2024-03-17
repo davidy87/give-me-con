@@ -33,6 +33,10 @@ import static com.givemecon.util.error.ErrorCode.*;
 @Component
 public class JwtTokenProvider {
 
+    private static final String CLAIM_NAME_USERNAME = "username";
+
+    private static final String CLAIM_NAME_AUTHORITIES = "authorities";
+
     private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
 
     private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
@@ -79,8 +83,8 @@ public class JwtTokenProvider {
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .claim("username", member.getUsername())
-                .claim("authorities", authoritiesInString)
+                .claim(CLAIM_NAME_USERNAME, member.getUsername())
+                .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
@@ -101,8 +105,8 @@ public class JwtTokenProvider {
      */
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
-        String username = (String) claims.get("username");
-        String authoritiesInString = (String) claims.get("authorities");
+        String username = (String) claims.get(CLAIM_NAME_USERNAME);
+        String authoritiesInString = (String) claims.get(CLAIM_NAME_AUTHORITIES);
 
         if (authoritiesInString == null) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);

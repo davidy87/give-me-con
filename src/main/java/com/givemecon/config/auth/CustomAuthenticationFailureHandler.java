@@ -15,12 +15,14 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @Component
 public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenticationFailureHandler {
 
+    private static final String DUPLICATE_EMAIL_ERROR = "duplicate-email";
+
     @PostConstruct
     public void init() {
         String exceptionName = OAuth2AuthenticationException.class.getName();
         String url = UriComponentsBuilder.fromHttpUrl(LOGIN_URL.getUrl())
                 .queryParam(ERROR, true)
-                .queryParam(ERROR_DESCRIPTION, "duplicate-email")
+                .queryParam(ERROR_DESCRIPTION, DUPLICATE_EMAIL_ERROR)
                 .encode(UTF_8)
                 .toUriString();
 

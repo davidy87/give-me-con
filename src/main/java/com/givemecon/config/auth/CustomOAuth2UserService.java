@@ -18,7 +18,7 @@ import java.util.Collections;
 @Component
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final OAuth2MemberUtils oAuth2MemberUtils;
+    private final OAuth2MemberUtils oauth2MemberUtils;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -27,7 +27,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
 
         OAuth2Attributes attributes = OAuth2Attributes.of(registrationId, oAuth2User.getAttributes());
-        Member member = oAuth2MemberUtils.saveNewOrUpdate(attributes, registrationId);
+        Member member = oauth2MemberUtils.saveNewOrUpdate(attributes, registrationId);
 
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
