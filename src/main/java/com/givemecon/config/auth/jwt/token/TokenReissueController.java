@@ -1,4 +1,4 @@
-package com.givemecon.config.auth.jwt;
+package com.givemecon.config.auth.jwt.token;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

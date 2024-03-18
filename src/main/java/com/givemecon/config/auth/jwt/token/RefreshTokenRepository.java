@@ -1,4 +1,4 @@
-package com.givemecon.config.auth.jwt;
+package com.givemecon.config.auth.jwt.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

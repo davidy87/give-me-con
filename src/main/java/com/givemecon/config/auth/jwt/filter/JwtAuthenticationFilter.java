@@ -1,5 +1,6 @@
-package com.givemecon.config.auth.jwt;
+package com.givemecon.config.auth.jwt.filter;
 
+import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

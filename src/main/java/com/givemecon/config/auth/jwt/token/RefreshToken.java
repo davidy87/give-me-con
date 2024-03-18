@@ -1,4 +1,4 @@
-package com.givemecon.config.auth.jwt;
+package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.domain.BaseTimeEntity;
 import jakarta.persistence.Column;

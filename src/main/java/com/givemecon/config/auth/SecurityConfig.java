@@ -1,8 +1,8 @@
 package com.givemecon.config.auth;
 
-import com.givemecon.config.auth.jwt.JwtAuthenticationFilter;
-import com.givemecon.config.auth.jwt.JwtExceptionFilter;
-import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.filter.JwtAuthenticationFilter;
+import com.givemecon.config.auth.jwt.filter.JwtExceptionFilter;
+import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

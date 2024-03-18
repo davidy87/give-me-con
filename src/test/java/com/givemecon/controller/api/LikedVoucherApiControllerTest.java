@@ -3,7 +3,7 @@ package com.givemecon.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.enums.Role;
-import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;

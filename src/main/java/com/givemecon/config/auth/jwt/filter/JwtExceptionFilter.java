@@ -1,4 +1,4 @@
-package com.givemecon.config.auth.jwt;
+package com.givemecon.config.auth.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.util.error.response.ErrorResponse;

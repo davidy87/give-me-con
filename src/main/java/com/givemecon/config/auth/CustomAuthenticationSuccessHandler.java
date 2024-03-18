@@ -1,7 +1,7 @@
 package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;

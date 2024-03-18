@@ -3,7 +3,7 @@ package com.givemecon.jwt;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.enums.GrantType;
 import com.givemecon.config.auth.enums.Role;
-import com.givemecon.config.auth.jwt.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import io.jsonwebtoken.Claims;
