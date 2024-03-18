@@ -27,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        String accessTokenHeader = request.getHeader(AUTHORIZATION.getKey());
+        String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
         String accessToken = jwtTokenProvider.retrieveToken(accessTokenHeader);
 
         log.info("--- In JwtAuthenticationFilter ---");
@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Authenticated User = {}", authentication.getName());
         } catch (ExpiredJwtException e) {
-            String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getKey());
+            String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
             String refreshToken = jwtTokenProvider.retrieveToken(refreshTokenHeader);
             log.info("Refresh Token = {}", refreshToken);
 

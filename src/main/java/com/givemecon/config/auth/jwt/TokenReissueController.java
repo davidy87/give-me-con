@@ -11,14 +11,14 @@ import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-public class RefreshTokenController {
+public class TokenReissueController {
 
-    private final RefreshTokenService refreshTokenService;
+    private final TokenReissueService tokenReissueService;
 
     @GetMapping("/api/auth/refresh")
     public String reissueAccessToken(HttpServletRequest request) {
-        log.info("--- In RefreshTokenController ---");
-        String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getKey());
-        return refreshTokenService.reissueAccessToken(refreshTokenHeader);
+        log.info("--- In TokenReissueController ---");
+        String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
+        return tokenReissueService.reissueAccessToken(refreshTokenHeader);
     }
 }

@@ -10,5 +10,5 @@ public enum JwtAuthHeader {
     AUTHORIZATION("Authorization"),
     REFRESH_TOKEN("Refresh-Token");
 
-    private final String key;
+    private final String name;
 }

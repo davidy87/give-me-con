@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @WithMockUser(authorities = "ROLE_USER", username = "tester")
-public class RefreshTokenControllerTest {
+public class TokenReissueControllerTest {
 
     @LocalServerPort
     int port;
@@ -68,7 +68,7 @@ public class RefreshTokenControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get(url)
-                .header(REFRESH_TOKEN.getKey(), GrantType.BEARER.getType() + " " + tokenInfo.getRefreshToken()));
+                .header(REFRESH_TOKEN.getName(), GrantType.BEARER.getType() + " " + tokenInfo.getRefreshToken()));
 
         // then
         String newAccessToken = response.andExpect(status().isOk())

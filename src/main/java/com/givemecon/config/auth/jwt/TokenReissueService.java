@@ -14,7 +14,7 @@ import static com.givemecon.util.error.ErrorCode.*;
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class RefreshTokenService {
+public class TokenReissueService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
