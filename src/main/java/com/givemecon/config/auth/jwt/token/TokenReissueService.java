@@ -21,10 +21,10 @@ public class TokenReissueService {
 
     private final MemberRepository memberRepository;
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtils jwtUtils;
 
     public String reissueAccessToken(String tokenHeader) {
-        String refreshToken = jwtTokenProvider.retrieveToken(tokenHeader);
+        String refreshToken = jwtUtils.retrieveToken(tokenHeader);
 
         if (refreshToken == null) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
@@ -37,13 +37,13 @@ public class TokenReissueService {
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         try {
-            jwtTokenProvider.getClaims(tokenEntity.getRefreshToken());
+            jwtUtils.getClaims(tokenEntity.getRefreshToken());
         } catch (JwtException e) {
             refreshTokenRepository.delete(tokenEntity);
             throw new InvalidTokenException(REFRESH_TOKEN_EXPIRED);
         }
 
-        return jwtTokenProvider.generateAccessToken(new TokenRequest(member));
+        return jwtUtils.generateAccessToken(new TokenRequest(member));
     }
 
     public void save(Long memberId, String refreshToken) {

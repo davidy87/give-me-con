@@ -2,7 +2,7 @@ package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class DtoValidationTest {
     MockMvc mockMvc;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtUtils jwtUtils;
 
     @Autowired
     MemberRepository memberRepository;
@@ -68,7 +68,7 @@ public class DtoValidationTest {
                 .role(ADMIN)
                 .build());
 
-        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
+        tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
     }
 
     @Test

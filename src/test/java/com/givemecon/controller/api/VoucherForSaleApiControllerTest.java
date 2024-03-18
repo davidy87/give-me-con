@@ -1,7 +1,7 @@
 package com.givemecon.controller.api;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
@@ -79,7 +79,7 @@ class VoucherForSaleApiControllerTest {
     VoucherForSaleImageRepository voucherForSaleImageRepository;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtUtils jwtUtils;
 
     @Autowired
     S3Mock s3Mock;
@@ -114,7 +114,7 @@ class VoucherForSaleApiControllerTest {
                 .role(USER)
                 .build());
 
-        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
+        tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
     }
 
     @AfterEach

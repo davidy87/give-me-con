@@ -1,7 +1,7 @@
 package com.givemecon.controller.api;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ public class ApiExceptionControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtUtils jwtUtils;
 
     @Autowired
     MemberRepository memberRepository;
@@ -66,7 +66,7 @@ public class ApiExceptionControllerTest {
                 .role(ADMIN)
                 .build());
 
-        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
+        tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
     }
 
     @Test

@@ -1,7 +1,7 @@
 package com.givemecon.domain.member;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,7 +20,7 @@ public class MemberService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtils jwtUtils;
 
     public SignupResponse signup(SignupRequest signupRequest) {
         if (!signupRequest.getPassword().equals(signupRequest.getPasswordConfirm())) {
@@ -39,7 +39,7 @@ public class MemberService {
                 .filter(member -> member.getRole() == ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        return jwtTokenProvider.getTokenInfo(new TokenRequest(loginMember));
+        return jwtUtils.getTokenInfo(new TokenRequest(loginMember));
     }
 
     public Long delete(Long id) {

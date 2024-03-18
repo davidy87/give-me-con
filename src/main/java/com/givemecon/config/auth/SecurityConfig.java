@@ -2,7 +2,7 @@ package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.jwt.filter.JwtAuthenticationFilter;
 import com.givemecon.config.auth.jwt.filter.JwtExceptionFilter;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,7 +43,7 @@ public class SecurityConfig {
 
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtils jwtUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -68,7 +68,7 @@ public class SecurityConfig {
                         .failureHandler(authenticationFailureHandler)
                 )
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtTokenProvider),
+                        new JwtAuthenticationFilter(jwtUtils),
                         OAuth2LoginAuthenticationFilter.class
                 )
                 .addFilterBefore(

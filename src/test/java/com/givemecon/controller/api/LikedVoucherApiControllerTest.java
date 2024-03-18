@@ -2,7 +2,7 @@ package com.givemecon.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
@@ -56,7 +56,7 @@ class LikedVoucherApiControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtUtils jwtUtils;
 
     @Autowired
     VoucherRepository voucherRepository;
@@ -89,7 +89,7 @@ class LikedVoucherApiControllerTest {
                 .role(USER)
                 .build());
 
-        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
+        tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
     }
 
     @Test

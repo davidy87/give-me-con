@@ -1,7 +1,7 @@
 package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -27,7 +27,7 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtils jwtUtils;
 
     private final MemberRepository memberRepository;
 
@@ -42,7 +42,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         log.info("Login username = {}", member.getUsername());
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
+        TokenInfo tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
 
         String url = UriComponentsBuilder.fromHttpUrl(LOGIN_URL.getUrl())
                 .queryParam(GRANT_TYPE, tokenInfo.getGrantType())

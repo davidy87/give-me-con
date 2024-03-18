@@ -1,7 +1,7 @@
 package com.givemecon.controller.jwt;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import io.jsonwebtoken.Claims;
@@ -39,7 +39,7 @@ public class TokenReissueControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    JwtTokenProvider jwtTokenProvider;
+    JwtUtils jwtUtils;
 
     @Autowired
     MemberRepository memberRepository;
@@ -61,14 +61,14 @@ public class TokenReissueControllerTest {
                 .role(USER)
                 .build());
 
-        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
+        tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
     void reissueAccessToken() throws Exception {
         // given
         String url = "http://localhost:" + port + "/api/auth/refresh";
-        Claims oldClaims = jwtTokenProvider.getClaims(tokenInfo.getAccessToken());
+        Claims oldClaims = jwtUtils.getClaims(tokenInfo.getAccessToken());
 
         // when
         ResultActions response = mockMvc.perform(get(url)
@@ -81,7 +81,7 @@ public class TokenReissueControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        Claims newClaims = jwtTokenProvider.getClaims(newAccessToken);
+        Claims newClaims = jwtUtils.getClaims(newAccessToken);
         assertThat(newClaims.getSubject()).isEqualTo(oldClaims.getSubject());
     }
 }

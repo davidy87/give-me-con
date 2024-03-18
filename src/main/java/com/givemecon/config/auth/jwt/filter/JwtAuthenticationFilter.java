@@ -1,6 +1,6 @@
 package com.givemecon.config.auth.jwt.filter;
 
-import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
+import com.givemecon.config.auth.jwt.token.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ import static org.springframework.security.authentication.UsernamePasswordAuthen
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
-        String accessToken = jwtTokenProvider.retrieveToken(accessTokenHeader);
+        String accessToken = jwtUtils.retrieveToken(accessTokenHeader);
 
         log.info("--- In JwtAuthenticationFilter ---");
         log.info("Request URL = {}", request.getRequestURL());
@@ -51,12 +51,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private void proceedAuthentication(String accessToken, HttpServletRequest request) {
         try {
-            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
+            Authentication authentication = jwtUtils.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Authenticated User = {}", authentication.getName());
         } catch (ExpiredJwtException e) {
             String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
-            String refreshToken = jwtTokenProvider.retrieveToken(refreshTokenHeader);
+            String refreshToken = jwtUtils.retrieveToken(refreshTokenHeader);
             log.info("Refresh Token = {}", refreshToken);
 
             // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.

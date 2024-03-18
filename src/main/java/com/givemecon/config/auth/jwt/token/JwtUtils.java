@@ -31,7 +31,7 @@ import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
 @Component
-public class JwtTokenProvider {
+public class JwtUtils {
 
     private static final String CLAIM_NAME_USERNAME = "username";
 
@@ -46,8 +46,8 @@ public class JwtTokenProvider {
     private final RefreshTokenRepository refreshTokenRepository;
 
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
-                            RefreshTokenRepository refreshTokenRepository) {
+    public JwtUtils(@Value("${jwt.secret}") String secretKey,
+                    RefreshTokenRepository refreshTokenRepository) {
 
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         this.refreshTokenRepository = refreshTokenRepository;
