@@ -1,7 +1,6 @@
 package com.givemecon.controller.api;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.enums.Role;
 import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -39,7 +38,11 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.config.auth.enums.Role.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.controller.TokenUtils.getAccessTokenHeader;
+import static com.givemecon.domain.member.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -87,6 +90,10 @@ class VoucherForSaleApiControllerTest {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
 
+    Member member;
+
+    TokenInfo tokenInfo;
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -100,6 +107,14 @@ class VoucherForSaleApiControllerTest {
         s3Client.createBucket(CreateBucketRequest.builder()
                 .bucket(bucketName)
                 .build());
+
+        member = memberRepository.save(Member.builder()
+                .email("test@gmail.com")
+                .username("tester")
+                .role(USER)
+                .build());
+
+        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
     }
 
     @AfterEach
@@ -110,14 +125,6 @@ class VoucherForSaleApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        Member seller = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
-
         String title = "Americano T";
         Long price = 4_000L;
         LocalDate expDate = LocalDate.now().plusDays(1);
@@ -140,7 +147,7 @@ class VoucherForSaleApiControllerTest {
                 .part(new MockPart("price", price.toString().getBytes()))
                 .part(new MockPart("expDate", expDate.toString().getBytes()))
                 .part(new MockPart("barcode", barcode.getBytes()))
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
@@ -178,14 +185,6 @@ class VoucherForSaleApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        Member seller = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(seller);
-
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
@@ -208,7 +207,7 @@ class VoucherForSaleApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         assertThat(voucher.getPrice()).isEqualTo(0L);

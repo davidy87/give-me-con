@@ -1,9 +1,7 @@
 package com.givemecon.controller.api;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.enums.Role;
 import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -24,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,7 +33,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.config.auth.enums.Role.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.controller.TokenUtils.getAccessTokenHeader;
+import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -53,7 +54,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @SpringBootTest
-@WithMockUser(roles = "USER", username = "tester")
 class PurchasedVoucherApiControllerTest {
 
     @Autowired
@@ -79,6 +79,9 @@ class PurchasedVoucherApiControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
+    Member member;
+
+    TokenInfo tokenInfo;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -88,6 +91,14 @@ class PurchasedVoucherApiControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        member = memberRepository.save(Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(USER)
+                .build());
+
+        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
@@ -97,14 +108,6 @@ class PurchasedVoucherApiControllerTest {
                 .title("voucher")
                 .price(4_000L)
                 .build());
-
-        Member member = memberRepository.save(Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
 
@@ -130,7 +133,7 @@ class PurchasedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDtoList)));
 
@@ -160,14 +163,6 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void findAllByUsername() throws Exception {
         // given
-        Member owner = memberRepository.save(Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
@@ -191,12 +186,12 @@ class PurchasedVoucherApiControllerTest {
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucher.addVoucherForSale(voucherForSale);
             purchasedVoucher.updateVoucherForSale(voucherForSale);
-            owner.addPurchasedVoucher(purchasedVoucher);
+            member.addPurchasedVoucher(purchasedVoucher);
         }
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())
@@ -215,18 +210,12 @@ class PurchasedVoucherApiControllerTest {
                 );
 
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-        purchasedVoucherList.forEach(purchasedVoucher -> assertThat(purchasedVoucher.getOwner()).isEqualTo(owner));
+        purchasedVoucherList.forEach(purchasedVoucher -> assertThat(purchasedVoucher.getOwner()).isEqualTo(member));
     }
 
     @Test
     void findOne() throws Exception {
         // given
-        Member owner = memberRepository.save(Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
@@ -246,16 +235,14 @@ class PurchasedVoucherApiControllerTest {
 
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        owner.addPurchasedVoucher(purchasedVoucher);
+        member.addPurchasedVoucher(purchasedVoucher);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())
@@ -287,14 +274,6 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void updateValidity() throws Exception {
         // given
-        Member owner = memberRepository.save(Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(owner);
-
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
@@ -317,11 +296,11 @@ class PurchasedVoucherApiControllerTest {
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        owner.addPurchasedVoucher(purchasedVoucher);
+        member.addPurchasedVoucher(purchasedVoucher);
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())

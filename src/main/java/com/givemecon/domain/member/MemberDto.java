@@ -47,4 +47,23 @@ public class MemberDto {
         private final String password;
     }
 
+    @Getter
+    public static class TokenRequest {
+
+        private final Long id;
+
+        private final String username;
+
+        private final Role role;
+
+        public TokenRequest(Member member) {
+            this.id = member.getId();
+            this.username = member.getUsername();
+            this.role = member.getRole();
+        }
+
+        public String getRoleKey() {
+            return role.getKey();
+        }
+    }
 }

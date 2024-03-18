@@ -1,7 +1,6 @@
 package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.domain.member.Member;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.givemecon.config.auth.enums.GrantType.*;
+import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
@@ -55,35 +55,35 @@ public class JwtTokenProvider {
 
     /**
      * 로그인 성공 시, 응답으로 전달하는 토큰 정보
-     * @param member 로그인 성공 후 생성된 사용자 entity
+     * @param memberDto 사용자의 정보가 담긴 DTO
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
     @Transactional
-    public TokenInfo getTokenInfo(Member member) {
-        String accessToken = generateAccessToken(member);
+    public TokenInfo getTokenInfo(TokenRequest memberDto) {
+        String accessToken = generateAccessToken(memberDto);
         String refreshToken = generateRefreshToken();
 
-        refreshTokenRepository.findByMemberId(member.getId())
+        refreshTokenRepository.findByMemberId(memberDto.getId())
                 .ifPresentOrElse(
                         entity -> entity.setRefreshToken(refreshToken),
-                        () -> refreshTokenRepository.save(new RefreshToken(member.getId(), refreshToken))
+                        () -> refreshTokenRepository.save(new RefreshToken(memberDto.getId(), refreshToken))
                 );
 
         return TokenInfo.builder()
                 .grantType(BEARER.getType())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .role(member.getRole())
+                .role(memberDto.getRole())
                 .build();
     }
 
-    public String generateAccessToken(Member member) {
-        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(member.getRoleKey()))
+    public String generateAccessToken(TokenRequest memberDto) {
+        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(memberDto.getRoleKey()))
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .claim(CLAIM_NAME_USERNAME, member.getUsername())
+                .claim(CLAIM_NAME_USERNAME, memberDto.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -95,6 +95,20 @@ public class JwtTokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    /**
+     * 요청으로 전달된 토큰을 추출
+     * @param tokenHeader Token 정보가 들어있는 HTTP Header
+     * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
+     */
+    public String retrieveToken(String tokenHeader) {
+        if (StringUtils.hasText(tokenHeader) && StringUtils.startsWithIgnoreCase(tokenHeader, BEARER.getType())) {
+            String[] headerSplit = tokenHeader.split(" ");
+            return headerSplit.length == 2 ? headerSplit[1] : null;
+        }
+
+        return null;
     }
 
     /**
@@ -120,20 +134,6 @@ public class JwtTokenProvider {
         UserDetails principal = new User(username, "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
-    }
-
-    /**
-     * 요청으로 전달된 토큰을 추출
-     * @param tokenHeader Token 정보가 들어있는 HTTP Header
-     * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
-     */
-    public String retrieveToken(String tokenHeader) {
-        if (StringUtils.hasText(tokenHeader) && StringUtils.startsWithIgnoreCase(tokenHeader, BEARER.getType())) {
-            String[] headerSplit = tokenHeader.split(" ");
-            return headerSplit.length == 2 ? headerSplit[1] : null;
-        }
-
-        return null;
     }
 
     public Claims getClaims(String token) throws JwtException {

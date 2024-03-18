@@ -2,7 +2,6 @@ package com.givemecon.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.enums.Role;
 import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -30,7 +29,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.config.auth.enums.Role.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.controller.TokenUtils.getAccessTokenHeader;
+import static com.givemecon.domain.member.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -67,6 +70,10 @@ class LikedVoucherApiControllerTest {
     @Autowired
     LikedVoucherRepository likedVoucherRepository;
 
+    Member member;
+
+    TokenInfo tokenInfo;
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -75,6 +82,14 @@ class LikedVoucherApiControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        member = memberRepository.save(Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(USER)
+                .build());
+
+        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
@@ -91,18 +106,11 @@ class LikedVoucherApiControllerTest {
                 .originalName("voucherImage.png")
                 .build());
 
-        Member member = memberRepository.save(Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build());
-
         voucher.updateVoucherImage(voucherImage);
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(voucher.getId())));
 
@@ -129,14 +137,6 @@ class LikedVoucherApiControllerTest {
     @Test
     void findAllByUsername() throws Exception {
         // given
-        Member member = Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build();
-
-        Member memberSaved = memberRepository.save(member);
-
         for (int i = 1; i <= 5; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .title("voucher" + i)
@@ -150,14 +150,12 @@ class LikedVoucherApiControllerTest {
                     .build());
 
             voucher.updateVoucherImage(voucherImage);
-            memberSaved.addLikedVoucher(new LikedVoucher(voucher));
+            member.addLikedVoucher(new LikedVoucher(voucher));
         }
-
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/liked-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())
@@ -182,21 +180,13 @@ class LikedVoucherApiControllerTest {
                 .price(4_000L)
                 .build();
 
-        Member member = Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
-                .role(Role.USER)
-                .build();
-
         Voucher voucherSaved = voucherRepository.save(voucher);
-        Member memberSaved = memberRepository.save(member);
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(LikedVoucher.builder().voucher(voucherSaved).build());
         likedVoucherSaved.updateMember(member);
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(memberSaved);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherSaved.getId())
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken()));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isNoContent())

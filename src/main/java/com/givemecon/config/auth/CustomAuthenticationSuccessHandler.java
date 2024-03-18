@@ -18,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 import static com.givemecon.config.auth.enums.ClientUrl.*;
+import static com.givemecon.domain.member.MemberDto.*;
 import static java.nio.charset.StandardCharsets.*;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
@@ -41,7 +42,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         log.info("Login username = {}", member.getUsername());
-        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(member);
+        TokenInfo tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
 
         String url = UriComponentsBuilder.fromHttpUrl(LOGIN_URL.getUrl())
                 .queryParam(GRANT_TYPE, tokenInfo.getGrantType())

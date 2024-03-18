@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class TokenReissueService {
             throw new InvalidTokenException(REFRESH_TOKEN_EXPIRED);
         }
 
-        return jwtTokenProvider.generateAccessToken(member);
+        return jwtTokenProvider.generateAccessToken(new TokenRequest(member));
     }
 
     public void save(Long memberId, String refreshToken) {

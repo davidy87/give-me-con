@@ -39,7 +39,7 @@ public class MemberService {
                 .filter(member -> member.getRole() == ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        return jwtTokenProvider.getTokenInfo(loginMember);
+        return jwtTokenProvider.getTokenInfo(new TokenRequest(loginMember));
     }
 
     public Long delete(Long id) {

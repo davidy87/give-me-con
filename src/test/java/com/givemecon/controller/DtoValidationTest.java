@@ -2,7 +2,6 @@ package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.enums.Role;
 import com.givemecon.config.auth.jwt.token.JwtTokenProvider;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -24,6 +23,10 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.config.auth.enums.Role.*;
+import static com.givemecon.controller.TokenUtils.*;
+import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
@@ -48,6 +51,8 @@ public class DtoValidationTest {
     @Autowired
     MemberRepository memberRepository;
 
+    Member member;
+
     TokenInfo tokenInfo;
 
     @BeforeEach
@@ -57,13 +62,13 @@ public class DtoValidationTest {
                 .apply(springSecurity())
                 .build();
 
-        Member seller = memberRepository.save(Member.builder()
+        member = memberRepository.save(Member.builder()
                 .username("tester")
                 .email("test@gmail.com")
-                .role(Role.ADMIN)
+                .role(ADMIN)
                 .build());
 
-        tokenInfo = jwtTokenProvider.getTokenInfo(seller);
+        tokenInfo = jwtTokenProvider.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
@@ -77,7 +82,7 @@ public class DtoValidationTest {
         ResultActions saveResult = mockMvc.perform(multipart("/api/categories")
                 .file(iconFile)
                 .part(name)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
         );
 
         // then
@@ -106,7 +111,7 @@ public class DtoValidationTest {
                 .file(iconFile)
                 .part(invalidCategoryId)
                 .part(name)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
         );
 
         // then
@@ -135,7 +140,7 @@ public class DtoValidationTest {
                 .file(imageFile)
                 .part(price)
                 .part(title)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
         );
 
         // then
@@ -168,7 +173,7 @@ public class DtoValidationTest {
                 .part(price)
                 .part(expDate)
                 .part(barcode)
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
         );
 
         // then
@@ -193,7 +198,7 @@ public class DtoValidationTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
-                .header("Authorization", tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestDtoList))
         );
