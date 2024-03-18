@@ -41,7 +41,7 @@ import java.util.List;
 import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 import static com.givemecon.config.auth.enums.Role.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
-import static com.givemecon.controller.TokenUtils.getAccessTokenHeader;
+import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;

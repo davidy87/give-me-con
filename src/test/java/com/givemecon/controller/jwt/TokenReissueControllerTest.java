@@ -18,7 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 import static com.givemecon.config.auth.enums.Role.*;
-import static com.givemecon.controller.TokenUtils.*;
+import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
