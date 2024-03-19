@@ -14,3 +14,8 @@ spring:
 
   messages:
     basename: errors
+
+client:
+  base-url: http://localhost:8081
+  paths:
+    login: /login

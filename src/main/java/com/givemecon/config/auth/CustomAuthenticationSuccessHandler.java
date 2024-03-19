@@ -2,6 +2,7 @@ package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtUtils;
+import com.givemecon.config.auth.util.ClientUrlUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-import static com.givemecon.config.auth.enums.ClientUrl.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static java.nio.charset.StandardCharsets.*;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
@@ -27,9 +27,11 @@ import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterN
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
+    private final MemberRepository memberRepository;
+
     private final JwtUtils jwtUtils;
 
-    private final MemberRepository memberRepository;
+    private final ClientUrlUtils clientUrlUtils;
 
     @Transactional
     @Override
@@ -44,7 +46,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         log.info("Login username = {}", member.getUsername());
         TokenInfo tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
 
-        String url = UriComponentsBuilder.fromHttpUrl(LOGIN_URL.getUrl())
+        String url = UriComponentsBuilder.fromHttpUrl(clientUrlUtils.getLoginUrl())
                 .queryParam(GRANT_TYPE, tokenInfo.getGrantType())
                 .queryParam(ACCESS_TOKEN, tokenInfo.getAccessToken())
                 .queryParam(REFRESH_TOKEN, tokenInfo.getRefreshToken())

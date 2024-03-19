@@ -3,6 +3,7 @@ package com.givemecon.config.auth;
 import com.givemecon.config.auth.jwt.filter.JwtAuthenticationFilter;
 import com.givemecon.config.auth.jwt.filter.JwtExceptionFilter;
 import com.givemecon.config.auth.jwt.token.JwtUtils;
+import com.givemecon.config.auth.util.ClientUrlUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,6 @@ import java.util.List;
 import static com.givemecon.config.auth.enums.Role.ADMIN;
 import static com.givemecon.config.auth.enums.Role.USER;
 import static com.givemecon.config.auth.util.RequestMatcherList.*;
-import static com.givemecon.config.auth.enums.ClientUrl.BASE_URL;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
@@ -44,6 +44,8 @@ public class SecurityConfig {
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
     private final JwtUtils jwtUtils;
+
+    private final ClientUrlUtils clientUrlUtils;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -83,7 +85,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(BASE_URL.getUrl()));
+        config.setAllowedOrigins(List.of(clientUrlUtils.getLoginUrl()));
         config.setAllowedMethods(List.of(GET.name(), POST.name(), PUT.name(), DELETE.name()));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
