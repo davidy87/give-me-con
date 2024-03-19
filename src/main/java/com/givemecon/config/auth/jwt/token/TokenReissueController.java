@@ -15,7 +15,7 @@ public class TokenReissueController {
 
     private final TokenReissueService tokenReissueService;
 
-    @GetMapping("/api/auth/refresh")
+    @GetMapping("/api/auth/reissue")
     public String reissueAccessToken(HttpServletRequest request) {
         log.info("--- In TokenReissueController ---");
         String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());

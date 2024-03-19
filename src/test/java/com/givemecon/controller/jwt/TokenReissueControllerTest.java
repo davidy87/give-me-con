@@ -7,9 +7,13 @@ import com.givemecon.domain.member.MemberRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,11 +26,14 @@ import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class TokenReissueControllerTest {
 
@@ -49,10 +56,12 @@ public class TokenReissueControllerTest {
     TokenInfo tokenInfo;
 
     @BeforeEach
-    void setup() {
+    void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
+                .apply(documentationConfiguration(restDoc))
+                .alwaysDo(print())
                 .build();
 
         member = memberRepository.save(Member.builder()
@@ -67,7 +76,7 @@ public class TokenReissueControllerTest {
     @Test
     void reissueAccessToken() throws Exception {
         // given
-        String url = "http://localhost:" + port + "/api/auth/refresh";
+        String url = "http://localhost:" + port + "/api/auth/reissue";
         Claims oldClaims = jwtUtils.getClaims(tokenInfo.getAccessToken());
 
         // when
@@ -82,6 +91,6 @@ public class TokenReissueControllerTest {
                 .getContentAsString();
 
         Claims newClaims = jwtUtils.getClaims(newAccessToken);
-        assertThat(newClaims.getSubject()).isEqualTo(oldClaims.getSubject());
+        assertThat(newClaims.get("username")).isEqualTo(oldClaims.get("username"));
     }
 }
