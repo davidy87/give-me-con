@@ -6,5 +6,5 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties(ClientUrlUtils.class)
-public class PropertiesConfig {
+public class ClientConfig {
 }
