@@ -1,21 +1,21 @@
 package com.givemecon.config.auth.util;
 
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Setter
+@RequiredArgsConstructor
 @ConfigurationProperties(prefix = "client")
-@Component
 public class ClientUrlUtils {
 
-    private String baseUrl;
+    private static final String LOGIN_PATH_NAME = "login";
 
-    private Map<String, String> paths;
+    private final String baseUrl;
+
+    private final Map<String, String> paths;
 
     public String getLoginUrl() {
-        return baseUrl + paths.get("login");
+        return baseUrl + paths.get(LOGIN_PATH_NAME);
     }
 }

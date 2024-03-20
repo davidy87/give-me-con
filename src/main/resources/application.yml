@@ -13,12 +13,7 @@ spring:
           auto: update
 
   profiles:
-    include: oauth,jwt,aws
+    include: client,oauth,jwt,aws
 
   messages:
     basename: errors
-
-client:
-  base-url: http://localhost:8081
-  paths:
-    login: /login
