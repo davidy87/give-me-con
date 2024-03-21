@@ -65,7 +65,7 @@ public class JwtUtils {
 
         refreshTokenRepository.findByMemberId(memberDto.getId())
                 .ifPresentOrElse(
-                        entity -> entity.setRefreshToken(refreshToken),
+                        entity -> entity.updateRefreshToken(refreshToken),
                         () -> refreshTokenRepository.save(new RefreshToken(memberDto.getId(), refreshToken))
                 );
 
@@ -82,17 +82,23 @@ public class JwtUtils {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
+        long currentTime = System.currentTimeMillis();
+
         return Jwts.builder()
                 .claim(CLAIM_NAME_USERNAME, memberDto.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_DURATION))
+                .setIssuedAt(new Date(currentTime))
+                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private String generateRefreshToken() {
+    public String generateRefreshToken() {
+        long currentTime = System.currentTimeMillis();
+
         return Jwts.builder()
-                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_DURATION))
+                .setIssuedAt(new Date(currentTime))
+                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }

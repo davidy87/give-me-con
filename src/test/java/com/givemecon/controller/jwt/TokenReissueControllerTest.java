@@ -1,5 +1,6 @@
 package com.givemecon.controller.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtUtils;
 import com.givemecon.domain.member.Member;
@@ -85,12 +86,13 @@ public class TokenReissueControllerTest {
                 .header(REFRESH_TOKEN.getName(), getRefreshTokenHeader(tokenInfo)));
 
         // then
-        String newAccessToken = response.andExpect(status().isOk())
+        String responseString = response.andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        Claims newClaims = jwtUtils.getClaims(newAccessToken);
+        TokenInfo newTokenInfo = new ObjectMapper().readValue(responseString, TokenInfo.class);
+        Claims newClaims = jwtUtils.getClaims(newTokenInfo.getAccessToken());
         assertThat(newClaims.get("username")).isEqualTo(oldClaims.get("username"));
     }
 }

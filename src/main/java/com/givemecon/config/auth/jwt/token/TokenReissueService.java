@@ -1,5 +1,6 @@
 package com.givemecon.config.auth.jwt.token;
 
+import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.givemecon.config.auth.enums.GrantType.BEARER;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
@@ -23,7 +25,7 @@ public class TokenReissueService {
 
     private final JwtUtils jwtUtils;
 
-    public String reissueAccessToken(String tokenHeader) {
+    public TokenInfo reissueAccessToken(String tokenHeader) {
         String refreshToken = jwtUtils.retrieveToken(tokenHeader);
 
         if (refreshToken == null) {
@@ -43,7 +45,17 @@ public class TokenReissueService {
             throw new InvalidTokenException(REFRESH_TOKEN_EXPIRED);
         }
 
-        return jwtUtils.generateAccessToken(new TokenRequest(member));
+        // Access Token 재발급 후, Refresh Token도 같이 재발급한다.
+        String newAccessToken = jwtUtils.generateAccessToken(new TokenRequest(member));
+        String newRefreshToken = jwtUtils.generateRefreshToken();
+        tokenEntity.updateRefreshToken(newRefreshToken);
+
+        return TokenInfo.builder()
+                .grantType(BEARER.getType())
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .role(member.getRole())
+                .build();
     }
 
     public void save(Long memberId, String refreshToken) {

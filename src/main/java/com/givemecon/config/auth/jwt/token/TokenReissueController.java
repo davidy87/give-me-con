@@ -1,5 +1,6 @@
 package com.givemecon.config.auth.jwt.token;
 
+import com.givemecon.config.auth.dto.TokenInfo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ public class TokenReissueController {
     private final TokenReissueService tokenReissueService;
 
     @GetMapping("/api/auth/reissue")
-    public String reissueAccessToken(HttpServletRequest request) {
+    public TokenInfo reissueAccessToken(HttpServletRequest request) {
         log.info("--- In TokenReissueController ---");
         String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
         return tokenReissueService.reissueAccessToken(refreshTokenHeader);
