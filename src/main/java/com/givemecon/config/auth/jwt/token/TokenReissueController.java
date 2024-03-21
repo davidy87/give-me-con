@@ -17,9 +17,9 @@ public class TokenReissueController {
     private final TokenReissueService tokenReissueService;
 
     @GetMapping("/api/auth/reissue")
-    public TokenInfo reissueAccessToken(HttpServletRequest request) {
+    public TokenInfo reissueToken(HttpServletRequest request) {
         log.info("--- In TokenReissueController ---");
         String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
-        return tokenReissueService.reissueAccessToken(refreshTokenHeader);
+        return tokenReissueService.reissueToken(refreshTokenHeader);
     }
 }
