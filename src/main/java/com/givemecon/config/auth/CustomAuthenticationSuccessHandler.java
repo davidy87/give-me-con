@@ -39,7 +39,6 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        log.info("--- In CustomAuthenticationSuccessHandler ---");
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
