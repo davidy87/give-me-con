@@ -5,28 +5,30 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
 
 @Slf4j
 @Aspect
+@Component
 public class LogAspect {
 
     @Pointcut("execution(* com.givemecon.config.auth.*Authentication*Handler.*(..))")
-    private void allAuthenticationHandler() {}
+    private void allAuthenticationHandlers() {}
 
-    @Pointcut("execution(* com.givemecon..*Controller.*(..))")
-    private void allController() {}
+    @Pointcut("within(com.givemecon..*Controller)")
+    private void allControllers() {}
 
-    @Pointcut("execution(* com.givemecon..*Service.*(..))")
-    private void allService() {}
+    @Pointcut("within(com.givemecon..*Service)")
+    private void allServices() {}
 
-    @Pointcut("execution(* com.givemecon..*Repository.*(..))")
-    private void allRepository() {}
+    @Pointcut("within(com.givemecon..*Repository)")
+    private void allRepositories() {}
 
-    @Around("allAuthenticationHandler() || allController() || allService() || allRepository()")
+    @Around("allAuthenticationHandlers() || allControllers() || allServices() || allRepositories()")
     public Object doTraceLog(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("[Log] Begin {}", joinPoint.getSignature().getDeclaringTypeName());
+        log.info("[Log] --- Begin {} ---", joinPoint.getSignature().getDeclaringTypeName());
         Object result = joinPoint.proceed();
-        log.info("[Log] End {}", joinPoint.getSignature().getDeclaringTypeName());
+        log.info("[Log] --- End {} ---", joinPoint.getSignature().getDeclaringTypeName());
         return result;
     }
 }

@@ -37,7 +37,7 @@ public class JwtUtils {
 
     private static final String CLAIM_NAME_AUTHORITIES = "authorities";
 
-    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(30).toMillis(); // 30 mins
+    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(1).toMillis(); // 30 mins
 
     private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
