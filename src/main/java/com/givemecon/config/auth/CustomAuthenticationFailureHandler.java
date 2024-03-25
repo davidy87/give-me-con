@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
@@ -18,6 +19,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.*;
 import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenticationFailureHandler {
@@ -43,6 +45,7 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
 
+//        log.info("[Log] Authentication failed due to the AuthenticationException", exception);
         super.onAuthenticationFailure(request, response, exception);
     }
 }

@@ -27,6 +27,7 @@ public class ApiExceptionController {
 
     @ExceptionHandler
     public ResponseEntity<?> givemeconExceptionHandler(GivemeconException e) {
+        log.info("[Log] Caught {}", e.getClass().getSimpleName(), e);
         ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
         return createResponseEntity(errorResponse);
     }
@@ -35,6 +36,7 @@ public class ApiExceptionController {
     public ResponseEntity<?> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e,
                                                                     Locale locale) {
 
+        log.info("[Log] Caught {}", e.getClass().getSimpleName(), e);
         ErrorResponse errorResponse = makeErrorResponse(e.getBindingResult(), locale);
         return createResponseEntity(errorResponse);
     }

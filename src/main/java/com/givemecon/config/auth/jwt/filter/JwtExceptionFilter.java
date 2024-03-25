@@ -29,13 +29,13 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         ErrorResponse errorResponse = null;
 
         try {
-            log.info("--- In JwtExceptionFilter ---");
+            log.info("[Log] --- Begin JwtExceptionFilter ---");
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
-            log.info("Caught JwtException", e);
+            log.info("[Log] Caught JwtException", e);
             errorResponse = new ErrorResponse(ACCESS_TOKEN_EXPIRED);
         } catch (InvalidTokenException e) {
-            log.info("Caught InvalidTokenException", e);
+            log.info("[Log] Caught InvalidTokenException", e);
             errorResponse = new ErrorResponse(e.getErrorCode());
         } finally {
             if (errorResponse != null) {
@@ -44,6 +44,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
                 response.setCharacterEncoding(UTF_8.name());
                 response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("error", errorResponse)));
             }
+            log.info("[Log] --- End JwtExceptionFilter ---");
         }
     }
 }

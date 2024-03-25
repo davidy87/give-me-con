@@ -28,18 +28,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        log.info("[Log] --- Begin JwtAuthenticationFilter ---");
         String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
         String accessToken = jwtUtils.retrieveToken(accessTokenHeader);
 
-        log.info("--- In JwtAuthenticationFilter ---");
-        log.info("Request URL = {}", request.getRequestURL());
-        log.info("Access Token = {}", accessToken);
+        log.info("[Log] Request URL = {}", request.getRequestURL());
+        log.info("[Log] Access Token = {}", accessToken);
 
         if (accessToken != null) {
             proceedAuthentication(accessToken, request);
         }
 
         filterChain.doFilter(request, response);
+        log.info("[Log] --- End JwtAuthenticationFilter ---");
     }
 
     /**
@@ -53,14 +54,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             Authentication authentication = jwtUtils.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("Authenticated User = {}", authentication.getName());
+            log.info("[Log] Authenticated User = {}", authentication.getName());
         } catch (ExpiredJwtException e) {
             String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
             String refreshToken = jwtUtils.retrieveToken(refreshTokenHeader);
-            log.info("Refresh Token = {}", refreshToken);
 
             // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
             if (refreshToken != null) {
+                log.info("[Log] Token reissue request");
+                log.info("[Log] Refresh Token = {}", refreshToken);
                 Authentication refreshAuthentication = authenticated(null, null, null);
                 SecurityContextHolder.getContext().setAuthentication(refreshAuthentication);
             } else {

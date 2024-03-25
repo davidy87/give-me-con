@@ -42,7 +42,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        log.info("Login username = {}", member.getUsername());
+//        log.info("[Log] Login Username = {}", member.getUsername());
         TokenInfo tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
 
         String url = UriComponentsBuilder.fromHttpUrl(clientUrlUtils.getLoginUrl())
