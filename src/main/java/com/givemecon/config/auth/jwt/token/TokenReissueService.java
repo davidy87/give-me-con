@@ -34,7 +34,7 @@ public class TokenReissueService {
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new EntityNotFoundException(RefreshToken.class));
 
-        Member member = memberRepository.findById(tokenEntity.getMemberId())
+        Member member = memberRepository.findById(Long.parseLong(tokenEntity.getMemberId()))
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         try {
@@ -49,6 +49,6 @@ public class TokenReissueService {
     }
 
     public void save(Long memberId, String refreshToken) {
-        refreshTokenRepository.save(new RefreshToken(memberId, refreshToken));
+        refreshTokenRepository.save(new RefreshToken(String.valueOf(memberId), refreshToken));
     }
 }

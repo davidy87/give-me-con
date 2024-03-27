@@ -1,39 +1,42 @@
 package com.givemecon.config.auth.jwt.token;
 
-import com.givemecon.domain.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
-import static jakarta.persistence.GenerationType.IDENTITY;
+import static com.givemecon.config.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Entity
-public class RefreshToken extends BaseTimeEntity {
+@RedisHash(value = "refresh_token")
+public class RefreshToken {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false, unique = true)
-    private Long memberId;
+    @Indexed
+    private String memberId;
 
-    @Column(nullable = false, unique = true)
+    @Indexed
     private String refreshToken;
 
+    @TimeToLive
+    private Long expiration;
+
     @Builder
-    public RefreshToken(Long memberId, String refreshToken) {
+    public RefreshToken(String memberId, String refreshToken) {
         this.memberId = memberId;
         this.refreshToken = refreshToken;
+        this.expiration = REFRESH_TOKEN_DURATION.duration();
     }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+        this.expiration = REFRESH_TOKEN_DURATION.duration();
     }
 }

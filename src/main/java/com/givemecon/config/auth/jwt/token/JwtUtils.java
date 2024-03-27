@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +25,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.givemecon.config.auth.enums.GrantType.*;
+import static com.givemecon.config.auth.enums.TokenDuration.ACCESS_TOKEN_DURATION;
+import static com.givemecon.config.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
@@ -36,10 +37,6 @@ public class JwtUtils {
     private static final String CLAIM_NAME_USERNAME = "username";
 
     private static final String CLAIM_NAME_AUTHORITIES = "authorities";
-
-    private static final long ACCESS_TOKEN_DURATION = Duration.ofMinutes(1).toMillis(); // 30 mins
-
-    private static final long REFRESH_TOKEN_DURATION = Duration.ofDays(14).toMillis(); // 14 days
 
     private final SecretKey secretKey;
 
@@ -63,11 +60,12 @@ public class JwtUtils {
         String accessToken = generateAccessToken(memberDto);
         String refreshToken = generateRefreshToken();
 
-        refreshTokenRepository.findByMemberId(memberDto.getId())
+        refreshTokenRepository.findByMemberId(String.valueOf(memberDto.getId()))
                 .ifPresentOrElse(
                         entity -> entity.updateRefreshToken(refreshToken),
-                        () -> refreshTokenRepository.save(new RefreshToken(memberDto.getId(), refreshToken))
-                );
+                        () -> refreshTokenRepository.save(
+                                new RefreshToken(String.valueOf(memberDto.getId()), refreshToken)
+                        ));
 
         return TokenInfo.builder()
                 .grantType(BEARER.getType())
@@ -88,7 +86,7 @@ public class JwtUtils {
                 .claim(CLAIM_NAME_USERNAME, memberDto.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION))
+                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.duration()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -98,7 +96,7 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION))
+                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.duration()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }

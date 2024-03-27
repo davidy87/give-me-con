@@ -53,10 +53,6 @@ public class TokenReissueControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
-    Member member;
-
-    TokenInfo tokenInfo;
-
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -65,19 +61,18 @@ public class TokenReissueControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
-
-        member = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .role(USER)
-                .build());
-
-        tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
     void reissueToken() throws Exception {
         // given
+        Member member = memberRepository.save(Member.builder()
+                .email("test@gmail.com")
+                .username("tester")
+                .role(USER)
+                .build());
+
+        TokenInfo tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
         Claims oldClaims = jwtUtils.getClaims(tokenInfo.getAccessToken());
 
         // when

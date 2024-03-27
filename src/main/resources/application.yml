@@ -12,6 +12,11 @@ spring:
         hbm2ddl:
           auto: update
 
+  data:
+    redis:
+      repositories:
+        enabled: false
+
   profiles:
     include: client,oauth,jwt,aws
 
