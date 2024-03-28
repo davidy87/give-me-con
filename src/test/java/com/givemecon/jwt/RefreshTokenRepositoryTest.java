@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
+import static com.givemecon.config.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
@@ -51,6 +52,6 @@ class RefreshTokenRepositoryTest {
 
         // then
         assertThat(found).isNotEmpty();
-//        assertThat(found.get().getExpiration()).isLessThanOrEqualTo(REFRESH_TOKEN_DURATION.duration());
+        assertThat(found.get().getExpiration()).isLessThanOrEqualTo(REFRESH_TOKEN_DURATION.duration());
     }
 }

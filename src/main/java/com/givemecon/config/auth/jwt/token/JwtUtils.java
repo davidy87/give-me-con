@@ -62,7 +62,10 @@ public class JwtUtils {
 
         refreshTokenRepository.findByMemberId(String.valueOf(memberDto.getId()))
                 .ifPresentOrElse(
-                        entity -> entity.updateRefreshToken(refreshToken),
+                        entity -> {
+                            entity.updateRefreshToken(refreshToken);
+                            refreshTokenRepository.save(entity);
+                        },
                         () -> refreshTokenRepository.save(
                                 new RefreshToken(String.valueOf(memberDto.getId()), refreshToken)
                         ));
