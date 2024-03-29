@@ -6,6 +6,6 @@ import com.givemecon.util.exception.GivemeconException;
 public class InvalidTokenException extends GivemeconException {
 
     public InvalidTokenException(ErrorCode errorCode) {
-        super(errorCode);
+        super(errorCode, errorCode.getMessage());
     }
 }

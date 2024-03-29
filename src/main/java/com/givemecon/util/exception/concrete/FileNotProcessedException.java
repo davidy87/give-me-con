@@ -7,15 +7,11 @@ import lombok.Getter;
 @Getter
 public class FileNotProcessedException extends GivemeconException {
 
-    private final String rejectedFilename;
-
     public FileNotProcessedException(ErrorCode errorCode, Throwable cause) {
         super(errorCode, cause);
-        this.rejectedFilename = null;
     }
 
     public FileNotProcessedException(ErrorCode errorCode, String rejectedFilename, Throwable cause) {
-        super(errorCode, cause);
-        this.rejectedFilename = rejectedFilename;
+        super(errorCode, errorCode.getMessage() + " Filename: " + rejectedFilename, cause);
     }
 }
