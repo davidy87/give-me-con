@@ -7,12 +7,14 @@ import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -34,7 +36,7 @@ public class TokenReissueService {
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new EntityNotFoundException(RefreshToken.class));
 
-        Member member = memberRepository.findById(Long.parseLong(tokenEntity.getMemberId()))
+        Member member = memberRepository.findById(Long.valueOf(tokenEntity.getMemberId()))
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         try {

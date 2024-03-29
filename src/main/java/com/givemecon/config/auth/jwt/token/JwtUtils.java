@@ -21,6 +21,7 @@ import javax.crypto.SecretKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -94,10 +95,11 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateRefreshToken() {
+    private String generateRefreshToken() {
         long currentTime = System.currentTimeMillis();
 
         return Jwts.builder()
+                .setSubject(UUID.randomUUID().toString())
                 .setIssuedAt(new Date(currentTime))
                 .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.duration()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
