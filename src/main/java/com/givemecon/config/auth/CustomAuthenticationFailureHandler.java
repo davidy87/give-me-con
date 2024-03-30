@@ -45,7 +45,6 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
 
-//        log.info("[Log] Authentication failed due to the AuthenticationException", exception);
         super.onAuthenticationFailure(request, response, exception);
     }
 }
