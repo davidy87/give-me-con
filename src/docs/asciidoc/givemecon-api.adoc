@@ -1,9 +1,9 @@
-= AImage API Documentation
+= Give-me-con API Documentation
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
-:toclevels: 3
+:toclevels: 2
 :sectlinks:
 :docinfo: shared-head
 
@@ -25,15 +25,22 @@ Content-Type: application/json
 
 :sectnums:
 == Member APIs
-:sectnums!:
 
 === 회원 계정 삭제
 operation::member-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+
+
+:sectnums:
+== Refresh Token Reissue APIs
+
+=== Refresh Token 재발급 요청
+operation::token-reissue-controller-test/reissue-token[snippets='http-request,response-fields,http-response']
+:sectnums!:
 
 
 :sectnums:
 == Category APIs
-:sectnums!:
 
 === 새 카테고리 생성
 operation::category-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
@@ -46,11 +53,11 @@ operation::category-api-controller-test/update[snippets='path-parameters,request
 
 === 카테고리 삭제
 operation::category-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
 
 
 :sectnums:
 == Brand APIs
-:sectnums!:
 
 === 새 브랜드 생성
 operation::brand-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
@@ -66,11 +73,11 @@ operation::brand-api-controller-test/update[snippets='path-parameters,request-pa
 
 === 브랜드 삭제
 operation::brand-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
 
 
 :sectnums:
 == Voucher APIs
-:sectnums!:
 
 === 새 기프티콘 생성
 operation::voucher-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
@@ -92,22 +99,22 @@ operation::voucher-api-controller-test/update[snippets='path-parameters,request-
 
 === 기프티콘 삭제
 operation::voucher-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
 
 
 :sectnums:
 == VoucherForSale APIs
-:sectnums!:
 
 === 기프티콘 판매 등록
 operation::voucher-for-sale-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 
 === 판매중인 기프티콘 삭제
 operation::voucher-for-sale-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
 
 
 :sectnums:
 == PurchasedVoucher APIs
-:sectnums!:
 
 === 기프티콘 구매 등록
 operation::purchased-voucher-api-controller-test/save-all[snippets='request-fields,http-request,response-fields,http-response']
@@ -120,11 +127,11 @@ operation::purchased-voucher-api-controller-test/find-all-by-username[snippets='
 
 === 구매한 기프티콘 사용 유효 여부 수정
 operation::purchased-voucher-api-controller-test/update-validity[snippets='path-parameters,http-request,response-fields,http-response']
+:sectnums!:
 
 
 :sectnums:
 == LikedVoucher APIs
-:sectnums!:
 
 === 기프티콘 찜하기 등록
 operation::liked-voucher-api-controller-test/save[snippets='http-request,response-fields,http-response']
@@ -134,3 +141,4 @@ operation::liked-voucher-api-controller-test/find-all-by-username[snippets='http
 
 === 기프티콘 찜하기 취소
 operation::liked-voucher-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
