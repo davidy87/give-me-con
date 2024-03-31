@@ -14,6 +14,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -29,11 +30,13 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
 class MemberApiControllerTest {
@@ -53,6 +56,7 @@ class MemberApiControllerTest {
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
+                .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
@@ -148,7 +152,7 @@ class MemberApiControllerTest {
         // then
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("회원 id")

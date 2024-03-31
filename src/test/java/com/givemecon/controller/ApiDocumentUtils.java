@@ -17,7 +17,16 @@ public interface ApiDocumentUtils {
         return preprocessRequest(
                 modifyHeaders()
                         .remove("Host")
-                        .set("Authorization", "{ACCESS-TOKEN}"),
+                        .set("Authorization", "Bearer {ACCESS-TOKEN}"),
+                prettyPrint());
+    }
+
+    static OperationRequestPreprocessor getDocumentRequestWithRefreshToken() {
+        return preprocessRequest(
+                modifyHeaders()
+                        .remove("Host")
+                        .set("Authorization", "Bearer {ACCESS-TOKEN}")
+                        .set("Refresh-Token", "Bearer {REFRESH-TOKEN}"),
                 prettyPrint());
     }
 

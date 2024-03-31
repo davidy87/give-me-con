@@ -152,7 +152,7 @@ class VoucherApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestParts(
                                 partWithName("categoryId").description("저장할 기프티콘의 카테고리 id"),
@@ -383,7 +383,7 @@ class VoucherApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("기프티콘 id")
@@ -422,7 +422,7 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()))
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("기프티콘 id")

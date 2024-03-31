@@ -23,8 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
 import static com.givemecon.config.auth.enums.Role.*;
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequest;
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
@@ -92,7 +91,7 @@ public class TokenReissueControllerTest {
 
         // API Documentation
         response.andDo(document("{class-name}/{method-name}",
-                    getDocumentRequest(),
+                    getDocumentRequestWithRefreshToken(),
                     getDocumentResponse(),
                     responseFields(
                             fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),

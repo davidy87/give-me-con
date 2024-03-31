@@ -39,14 +39,15 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Import(S3MockConfig.class)
-@Transactional
 @WithMockUser(roles = "ADMIN")
+@Transactional
 @SpringBootTest
 class CategoryApiControllerTest {
 
@@ -74,6 +75,7 @@ class CategoryApiControllerTest {
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
+                .apply(springSecurity())
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
@@ -112,7 +114,7 @@ class CategoryApiControllerTest {
                 .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
                 .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestParts(
                                 partWithName("name").description("저장할 카테고리 이름"),
@@ -199,7 +201,7 @@ class CategoryApiControllerTest {
                 .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
                 .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("카테고리 id")
@@ -242,7 +244,7 @@ class CategoryApiControllerTest {
         // then
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
+                        getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
                                 parameterWithName("id").description("카테고리 id")
