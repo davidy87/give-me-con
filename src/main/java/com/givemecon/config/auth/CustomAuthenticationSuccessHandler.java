@@ -1,7 +1,7 @@
 package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtUtils;
+import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.config.auth.util.ClientUrlProperties;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
@@ -29,7 +29,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private final MemberRepository memberRepository;
 
-    private final JwtUtils jwtUtils;
+    private final JwtTokenService jwtTokenService;
 
     private final ClientUrlProperties clientUrlProperties;
 
@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
 //        log.info("[Log] Login Username = {}", member.getUsername());
-        TokenInfo tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
+        TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
 
         String url = UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
                 .queryParam(GRANT_TYPE, tokenInfo.getGrantType())

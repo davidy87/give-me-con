@@ -1,6 +1,6 @@
 package com.givemecon.config.auth.jwt.filter;
 
-import com.givemecon.config.auth.jwt.token.JwtUtils;
+import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ import static org.springframework.security.authentication.UsernamePasswordAuthen
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtils jwtUtils;
+    private final JwtTokenService jwtTokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -30,7 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         log.info("[Log] --- Begin JwtAuthenticationFilter ---");
         String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
-        String accessToken = jwtUtils.retrieveToken(accessTokenHeader);
+        String accessToken = jwtTokenService.retrieveToken(accessTokenHeader);
 
         log.info("[Log] Request URL = {}", request.getRequestURL());
         log.info("[Log] Access Token = {}", accessToken);
@@ -52,12 +52,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private void proceedAuthentication(String accessToken, HttpServletRequest request) {
         try {
-            Authentication authentication = jwtUtils.getAuthentication(accessToken);
+            Authentication authentication = jwtTokenService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("[Log] Authenticated User = {}", authentication.getName());
         } catch (ExpiredJwtException e) {
             String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
-            String refreshToken = jwtUtils.retrieveToken(refreshTokenHeader);
+            String refreshToken = jwtTokenService.retrieveToken(refreshTokenHeader);
 
             // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
             if (refreshToken != null) {
