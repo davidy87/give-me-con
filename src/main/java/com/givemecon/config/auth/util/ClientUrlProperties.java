@@ -7,7 +7,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "client")
-public class ClientUrlUtils {
+public class ClientUrlProperties {
 
     private static final String LOGIN_PATH_NAME = "login";
 

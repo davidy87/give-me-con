@@ -1,6 +1,6 @@
 package com.givemecon.config.auth;
 
-import com.givemecon.config.auth.util.ClientUrlUtils;
+import com.givemecon.config.auth.util.ClientUrlProperties;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,12 +26,12 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
 
     private static final String DUPLICATE_EMAIL_ERROR = "duplicate-email";
 
-    private final ClientUrlUtils clientUrlUtils;
+    private final ClientUrlProperties clientUrlProperties;
 
     @PostConstruct
     public void init() {
         String exceptionName = OAuth2AuthenticationException.class.getName();
-        String url = UriComponentsBuilder.fromHttpUrl(clientUrlUtils.getLoginUrl())
+        String url = UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
                 .queryParam(ERROR, true)
                 .queryParam(ERROR_DESCRIPTION, DUPLICATE_EMAIL_ERROR)
                 .encode(UTF_8)

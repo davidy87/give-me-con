@@ -2,8 +2,8 @@ package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.jwt.filter.JwtAuthenticationFilter;
 import com.givemecon.config.auth.jwt.filter.JwtExceptionFilter;
-import com.givemecon.config.auth.jwt.token.JwtUtils;
-import com.givemecon.config.auth.util.ClientUrlUtils;
+import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.config.auth.util.ClientUrlProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,9 +43,9 @@ public class SecurityConfig {
 
     private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    private final JwtUtils jwtUtils;
+    private final JwtTokenService jwtTokenService;
 
-    private final ClientUrlUtils clientUrlUtils;
+    private final ClientUrlProperties clientUrlProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -70,7 +70,7 @@ public class SecurityConfig {
                         .failureHandler(authenticationFailureHandler)
                 )
                 .addFilterBefore(
-                        new JwtAuthenticationFilter(jwtUtils),
+                        new JwtAuthenticationFilter(jwtTokenService),
                         OAuth2LoginAuthenticationFilter.class
                 )
                 .addFilterBefore(
@@ -85,7 +85,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(clientUrlUtils.getBaseUrl()));
+        config.setAllowedOrigins(List.of(clientUrlProperties.getBaseUrl()));
         config.setAllowedMethods(List.of(GET.name(), POST.name(), PUT.name(), DELETE.name()));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));

@@ -2,7 +2,7 @@ package com.givemecon.controller.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtUtils;
+import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import io.jsonwebtoken.Claims;
@@ -47,7 +47,7 @@ public class TokenReissueControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    JwtUtils jwtUtils;
+    JwtTokenService jwtTokenService;
 
     @Autowired
     MemberRepository memberRepository;
@@ -71,8 +71,8 @@ public class TokenReissueControllerTest {
                 .role(USER)
                 .build());
 
-        TokenInfo tokenInfo = jwtUtils.getTokenInfo(new TokenRequest(member));
-        Claims oldClaims = jwtUtils.getClaims(tokenInfo.getAccessToken());
+        TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
+        Claims oldClaims = jwtTokenService.getClaims(tokenInfo.getAccessToken());
 
         // when
         ResultActions response = mockMvc.perform(get("/api/auth/reissue")
@@ -86,7 +86,7 @@ public class TokenReissueControllerTest {
                 .getContentAsString();
 
         TokenInfo newTokenInfo = new ObjectMapper().readValue(responseString, TokenInfo.class);
-        Claims newClaims = jwtUtils.getClaims(newTokenInfo.getAccessToken());
+        Claims newClaims = jwtTokenService.getClaims(newTokenInfo.getAccessToken());
         assertThat(newClaims.get("username")).isEqualTo(oldClaims.get("username"));
 
         // API Documentation
