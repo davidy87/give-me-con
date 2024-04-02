@@ -223,6 +223,51 @@ class BrandApiControllerTest {
     }
 
     @Test
+    void findAllPagedSortBy() throws Exception {
+        // given
+        Category category = categoryRepository.save(Category.builder()
+                .name("category")
+                .build());
+
+        for (int i = 1; i <= 20; i++) {
+            Brand brand = brandRepository.save(Brand.builder()
+                    .name("Brand " + i)
+                    .build());
+
+            BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
+                    .imageKey("imageKey" + i)
+                    .imageUrl("imageUrl" + i)
+                    .originalName("brandIcon" + i + ".jpg")
+                    .build());
+
+            brand.updateBrandIcon(brandIcon);
+            category.addBrand(brand);
+        }
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/brands/paged?page={page}&sortBy={sortBy}", 0, "name"));
+
+        response.andExpect(status().isOk())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("sortBy").description("정렬 기준")
+                        ),
+                        responseFields(
+                                fieldWithPath("currentPage").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 브랜드 목록 길이"),
+                                fieldWithPath("brands").type(JsonFieldType.ARRAY).description("페이징된 브랜드 목록"),
+                                fieldWithPath("brands.[].id").type(JsonFieldType.NUMBER).description("페이징된 브랜드 id"),
+                                fieldWithPath("brands.[].name").type(JsonFieldType.STRING).description("페이징된 브랜드 name"),
+                                fieldWithPath("brands.[].iconUrl").type(JsonFieldType.STRING).description("페이징된 브랜드 iconUrl")
+                        ))
+                );
+    }
+
+    @Test
     void update() throws Exception {
         // given
         Category oldCategory = categoryRepository.save(Category.builder()

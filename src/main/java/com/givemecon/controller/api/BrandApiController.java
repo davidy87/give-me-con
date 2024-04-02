@@ -34,6 +34,13 @@ public class BrandApiController {
         return brandService.findAll();
     }
 
+    @GetMapping("/paged")
+    public PagedBrandResponse findAllPagedSortBy(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "id") String sortBy) {
+
+        return brandService.findAllPagedSortBy(page, sortBy);
+    }
+
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BrandResponse update(@PathVariable Long id,
                                 @RequestParam(required = false) Long categoryId,
