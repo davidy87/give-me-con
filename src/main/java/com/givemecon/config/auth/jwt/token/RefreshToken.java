@@ -9,7 +9,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
-import static com.givemecon.config.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
+import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

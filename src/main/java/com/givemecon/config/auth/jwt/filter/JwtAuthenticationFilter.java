@@ -14,7 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
 @Slf4j

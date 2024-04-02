@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static com.givemecon.config.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
+import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j

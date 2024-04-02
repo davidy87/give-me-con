@@ -25,9 +25,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.givemecon.config.auth.enums.GrantType.*;
-import static com.givemecon.config.auth.enums.TokenDuration.ACCESS_TOKEN_DURATION;
-import static com.givemecon.config.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
+import static com.givemecon.config.enums.GrantType.*;
+import static com.givemecon.config.enums.TokenDuration.ACCESS_TOKEN_DURATION;
+import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 

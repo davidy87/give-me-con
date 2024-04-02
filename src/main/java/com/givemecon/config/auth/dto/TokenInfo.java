@@ -1,6 +1,6 @@
 package com.givemecon.config.auth.dto;
 
-import com.givemecon.config.auth.enums.Role;
+import com.givemecon.config.enums.Role;
 import lombok.*;
 
 @ToString

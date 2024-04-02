@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.config.enums.JwtAuthHeader.*;
 
 @Slf4j
 @RequiredArgsConstructor

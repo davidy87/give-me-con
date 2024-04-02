@@ -1,6 +1,6 @@
 package com.givemecon.domain;
 
-import com.givemecon.config.auth.enums.Role;
+import com.givemecon.config.enums.Role;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.brand.BrandIcon;
 import com.givemecon.domain.image.brand.BrandIconRepository;

@@ -29,8 +29,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
-import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
-import static com.givemecon.config.auth.enums.Role.*;
+import static com.givemecon.config.enums.JwtAuthHeader.*;
+import static com.givemecon.config.enums.Role.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;

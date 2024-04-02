@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.givemecon.config.auth.enums.Role.*;
+import static com.givemecon.config.enums.Role.*;
 import static com.givemecon.domain.member.MemberDto.*;
 
 @RequiredArgsConstructor

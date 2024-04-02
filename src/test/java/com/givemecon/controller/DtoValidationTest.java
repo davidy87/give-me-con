@@ -23,8 +23,8 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.givemecon.config.auth.enums.JwtAuthHeader.*;
-import static com.givemecon.config.auth.enums.Role.*;
+import static com.givemecon.config.enums.JwtAuthHeader.*;
+import static com.givemecon.config.enums.Role.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;

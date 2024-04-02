@@ -1,7 +1,7 @@
 package com.givemecon.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.auth.enums.Role;
+import com.givemecon.config.enums.Role;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
