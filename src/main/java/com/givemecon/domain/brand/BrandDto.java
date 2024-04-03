@@ -64,7 +64,7 @@ public class BrandDto {
     @Getter
     public static class PagedBrandResponse {
 
-        private final int currentPage;
+        private final int number;
 
         private final int totalPages;
 
@@ -73,7 +73,7 @@ public class BrandDto {
         private final List<BrandResponse> brands;
 
         public PagedBrandResponse(Page<BrandResponse> brands) {
-            this.currentPage = brands.getNumber();
+            this.number = brands.getNumber();
             this.totalPages = brands.getTotalPages();
             this.size = brands.getSize();
             this.brands = brands.getContent();
