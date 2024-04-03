@@ -58,10 +58,10 @@ public class BrandService {
 
     @Transactional(readOnly = true)
     public PagedBrandResponse findPage(Pageable pageable) {
-        Page<BrandResponse> result = brandRepository.findAll(pageable)
+        Page<BrandResponse> pageResult = brandRepository.findAll(pageable)
                 .map(BrandResponse::new);
 
-        return new PagedBrandResponse(result);
+        return new PagedBrandResponse(pageResult);
     }
 
     @Transactional(readOnly = true)
@@ -69,10 +69,10 @@ public class BrandService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-        Page<BrandResponse> result = brandRepository.findPageByCategory(category, pageable)
+        Page<BrandResponse> pageResult = brandRepository.findPageByCategory(category, pageable)
                 .map(BrandResponse::new);
 
-        return new PagedBrandResponse(result);
+        return new PagedBrandResponse(pageResult);
     }
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {

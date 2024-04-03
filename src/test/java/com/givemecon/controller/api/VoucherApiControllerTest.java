@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriComponentsBuilder;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
@@ -213,7 +214,7 @@ class VoucherApiControllerTest {
     @Test
     void findAll() throws Exception {
         // given
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .price(10_000L)
                     .title("Voucher " + i)
@@ -229,7 +230,14 @@ class VoucherApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers"));
+        String uri = UriComponentsBuilder.fromPath("/api/vouchers")
+                .queryParam("page", "1")
+                .queryParam("size", "10")
+                .queryParam("sort", "title")
+                .build()
+                .toString();
+
+        ResultActions response = mockMvc.perform(get(uri));
 
         // then
         response.andExpect(status().isOk())
@@ -237,11 +245,20 @@ class VoucherApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("page").optional().description("페이지 번호 (기본값 = 0)"),
+                                parameterWithName("size").optional().description("페이지 크기 (기본값 = 10)"),
+                                parameterWithName("sort").optional().description("정렬 기준 (기본값 = id)")
+                        ),
                         responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
-                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
+                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 목록 길이"),
+                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("페이징된 기프티콘 종류 목록"),
+                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 id"),
+                                fieldWithPath("vouchers.[].price").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 name"),
+                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 name"),
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 imageUrl")
                         ))
                 );
     }
@@ -255,7 +272,7 @@ class VoucherApiControllerTest {
 
         Brand brandSaved = brandRepository.save(brand);
 
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .price(10_000L)
                     .title("Voucher " + i)
@@ -272,7 +289,15 @@ class VoucherApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers?brandName={brandName}", brandSaved.getName()));
+        String uri = UriComponentsBuilder.fromPath("/api/vouchers")
+                .queryParam("brandName", brandSaved.getName())
+                .queryParam("page", "1")
+                .queryParam("size", "10")
+                .queryParam("sort", "title")
+                .build()
+                .toString();
+
+        ResultActions response = mockMvc.perform(get(uri));
 
         // then
         response.andExpect(status().isOk())
@@ -281,13 +306,20 @@ class VoucherApiControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         queryParameters(
-                                parameterWithName("brandName").description("브랜드 이름")
+                                parameterWithName("brandName").description("브랜드 이름"),
+                                parameterWithName("page").optional().description("페이지 번호 (기본값 = 0)"),
+                                parameterWithName("size").optional().description("페이지 크기 (기본값 = 10)"),
+                                parameterWithName("sort").optional().description("정렬 기준 (기본값 = id)")
                         ),
                         responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
-                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
+                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 목록 길이"),
+                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("페이징된 기프티콘 종류 목록"),
+                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 id"),
+                                fieldWithPath("vouchers.[].price").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 name"),
+                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 name"),
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 imageUrl")
                         ))
                 );
     }

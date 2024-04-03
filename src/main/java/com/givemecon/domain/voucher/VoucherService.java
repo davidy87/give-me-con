@@ -11,6 +11,8 @@ import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -73,14 +75,24 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllByBrandName(String brandName) {
+    public PagedVoucherResponse findPage(Pageable pageable) {
+        Page<VoucherResponse> pageResult = voucherRepository.findAll(pageable)
+                .map(VoucherResponse::new);
+
+        return new PagedVoucherResponse(pageResult);
+    }
+
+    @Transactional(readOnly = true)
+    public PagedVoucherResponse findPageByBrandName(String brandName, Pageable pageable) {
         Brand brand = brandRepository.findByName(brandName)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
-        return brand.getVoucherList().stream()
-                .map(VoucherResponse::new)
-                .toList();
+        Page<VoucherResponse> pageResult = voucherRepository.findPageByBrand(brand, pageable)
+                .map(VoucherResponse::new);
+
+        return new PagedVoucherResponse(pageResult);
     }
+
 
     @Transactional(readOnly = true)
     public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {

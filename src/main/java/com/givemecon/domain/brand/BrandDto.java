@@ -72,11 +72,11 @@ public class BrandDto {
 
         private final List<BrandResponse> brands;
 
-        public PagedBrandResponse(Page<BrandResponse> brands) {
-            this.number = brands.getNumber();
-            this.totalPages = brands.getTotalPages();
-            this.size = brands.getSize();
-            this.brands = brands.getContent();
+        public PagedBrandResponse(Page<BrandResponse> pageResult) {
+            this.number = pageResult.getNumber();
+            this.totalPages = pageResult.getTotalPages();
+            this.size = pageResult.getSize();
+            this.brands = pageResult.getContent();
         }
     }
 }

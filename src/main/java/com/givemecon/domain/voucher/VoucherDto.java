@@ -4,7 +4,10 @@ import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class VoucherDto {
 
@@ -67,6 +70,25 @@ public class VoucherDto {
             this.price = voucher.getPrice();
             this.title = voucher.getTitle();
             this.imageUrl = voucher.getImageUrl();
+        }
+    }
+
+    @Getter
+    public static class PagedVoucherResponse {
+
+        private final int number;
+
+        private final int totalPages;
+
+        private final int size;
+
+        private final List<VoucherResponse> vouchers;
+
+        public PagedVoucherResponse(Page<VoucherResponse> pageResult) {
+            this.number = pageResult.getNumber();
+            this.totalPages = pageResult.getTotalPages();
+            this.size = pageResult.getSize();
+            this.vouchers = pageResult.getContent();
         }
     }
 }
