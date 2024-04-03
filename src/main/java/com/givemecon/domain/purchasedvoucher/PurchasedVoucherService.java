@@ -6,6 +6,8 @@ import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +67,18 @@ public class PurchasedVoucherService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public PagedPurchasedVoucherResponse findPageByUsername(String username, Pageable pageable) {
+        Member owner = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+
+        Page<PurchasedVoucherResponse> pageResult = purchasedVoucherRepository.findPageByOwner(owner, pageable)
+                .map(PurchasedVoucherResponse::new);
+
+        return new PagedPurchasedVoucherResponse(pageResult);
+    }
+
+    @Transactional(readOnly = true)
     public PurchasedVoucherResponse find(Long id, String username) {
         return purchasedVoucherRepository.findByIdAndUsername(id, username)
                 .map(PurchasedVoucherResponse::new)

@@ -1,5 +1,8 @@
 package com.givemecon.domain.purchasedvoucher;
 
+import com.givemecon.domain.member.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -10,4 +13,6 @@ public interface PurchasedVoucherRepository extends JpaRepository<PurchasedVouch
     @Query("select pv from PurchasedVoucher pv " +
             "where pv.id = :id and pv.owner.username = :username")
     Optional<PurchasedVoucher> findByIdAndUsername(Long id, String username);
+
+    Page<PurchasedVoucher> findPageByOwner(Member owner, Pageable pageable);
 }

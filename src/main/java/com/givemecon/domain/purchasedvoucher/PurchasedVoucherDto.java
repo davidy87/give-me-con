@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -68,6 +69,25 @@ public class PurchasedVoucherDto {
             this.barcode = voucherForSale.getBarcode();
             this.imageUrl = voucherForSale.getImageUrl();
             this.isValid = purchasedVoucher.getIsValid();
+        }
+    }
+
+    @Getter
+    public static class PagedPurchasedVoucherResponse {
+
+        private final int number;
+
+        private final int totalPages;
+
+        private final int size;
+
+        private final List<PurchasedVoucherResponse> purchasedVouchers;
+
+        public PagedPurchasedVoucherResponse(Page<PurchasedVoucherResponse> pageResult) {
+            this.number = pageResult.getNumber();
+            this.totalPages = pageResult.getTotalPages();
+            this.size = pageResult.getSize();
+            this.purchasedVouchers = pageResult.getContent();
         }
     }
 }
