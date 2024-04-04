@@ -122,9 +122,9 @@ class LikedVoucherApiControllerTest {
                         requestBody(),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지")
+                                fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
 
@@ -170,12 +170,12 @@ class LikedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 목록 길이"),
-                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("페이징된 기프티콘 종류 목록"),
-                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 id"),
-                                fieldWithPath("vouchers.[].price").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 name"),
-                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 name"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 imageUrl")
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
+                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 종류 목록"),
+                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
+                                fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
     }
@@ -202,7 +202,7 @@ class LikedVoucherApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("voucherId").description("기프티콘 id")
+                                parameterWithName("voucherId").description("기프티콘 종류의 id")
                         ))
                 );
 

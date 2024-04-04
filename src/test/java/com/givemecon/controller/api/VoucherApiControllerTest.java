@@ -150,7 +150,7 @@ class VoucherApiControllerTest {
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -165,7 +165,7 @@ class VoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("저장된 기프티콘 타이틀"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("저장된 기프티콘 가격"),
+                                fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("저장된 기프티콘 가격"),
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지")
                         ))
                 );
@@ -194,7 +194,7 @@ class VoucherApiControllerTest {
         response
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("price").value(voucher.getPrice()))
+                .andExpect(jsonPath("minPrice").value(voucher.getPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherImage.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
@@ -205,7 +205,7 @@ class VoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("기프티콘 최소 가격"),
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
                         ))
                 );
@@ -253,12 +253,12 @@ class VoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 목록 길이"),
-                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("페이징된 기프티콘 종류 목록"),
-                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 id"),
-                                fieldWithPath("vouchers.[].price").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 name"),
-                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 name"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 imageUrl")
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
+                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 종류 목록"),
+                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
+                                fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
     }
@@ -289,15 +289,11 @@ class VoucherApiControllerTest {
         }
 
         // when
-        String uri = UriComponentsBuilder.fromPath("/api/vouchers")
+        ResultActions response = mockMvc.perform(get("/api/vouchers")
                 .queryParam("brandName", brandSaved.getName())
                 .queryParam("page", "1")
                 .queryParam("size", "10")
-                .queryParam("sort", "title")
-                .build()
-                .toString();
-
-        ResultActions response = mockMvc.perform(get(uri));
+                .queryParam("sort", "title"));
 
         // then
         response.andExpect(status().isOk())
@@ -314,12 +310,12 @@ class VoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 목록 길이"),
-                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("페이징된 기프티콘 종류 목록"),
-                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 id"),
-                                fieldWithPath("vouchers.[].price").type(JsonFieldType.NUMBER).description("페이징된 기프티콘 종류 name"),
-                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 name"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("페이징된 기프티콘 종류 imageUrl")
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
+                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 종류 목록"),
+                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
+                                fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
     }
@@ -371,8 +367,8 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기한"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
                                 fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
                         ))
                 );
@@ -412,7 +408,7 @@ class VoucherApiControllerTest {
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("price").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -421,16 +417,16 @@ class VoucherApiControllerTest {
                                 parameterWithName("id").description("기프티콘 id")
                         ),
                         requestParts(
-                                partWithName("title").optional().description("수정할 기프티콘 타이틀"),
-                                partWithName("description").optional().description("수정할 기프티콘 상세설명"),
-                                partWithName("caution").optional().description("수정할 기프티콘 주의사항"),
-                                partWithName("imageFile").optional().description("수정할 기프티콘 이미지 파일")
+                                partWithName("title").optional().description("수정할 기프티콘 종류의 타이틀"),
+                                partWithName("description").optional().description("수정할 기프티콘 종류의 상세설명"),
+                                partWithName("caution").optional().description("수정할 기프티콘 종류의 주의사항"),
+                                partWithName("imageFile").optional().description("수정할 기프티콘 종류의 이미지 파일")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 id"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 기프티콘 타이틀"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("수정된 기프티콘 가격"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("수정된 기프티콘 이미지")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류의 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 타이틀"),
+                                fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류의 최소 가격"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 이미지")
                         ))
                 );
     }
@@ -457,7 +453,7 @@ class VoucherApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("기프티콘 id")
+                                parameterWithName("id").description("기프티콘 종류의 id")
                         ))
                 );
 

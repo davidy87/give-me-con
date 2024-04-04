@@ -59,7 +59,7 @@ public class VoucherDto {
 
         private final Long id;
 
-        private final Long price;
+        private final Long minPrice;
 
         private final String title;
 
@@ -67,7 +67,7 @@ public class VoucherDto {
 
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
-            this.price = voucher.getPrice();
+            this.minPrice = voucher.getPrice();
             this.title = voucher.getTitle();
             this.imageUrl = voucher.getImageUrl();
         }

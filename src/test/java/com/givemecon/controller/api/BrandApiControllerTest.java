@@ -161,14 +161,10 @@ class BrandApiControllerTest {
         }
 
         // when
-        String uri = UriComponentsBuilder.fromPath("/api/brands")
+        ResultActions response = mockMvc.perform(get("/api/brands")
                 .queryParam("page", "1")
                 .queryParam("size", "10")
-                .queryParam("sort", "name")
-                .build()
-                .toString();
-
-        ResultActions response = mockMvc.perform(get(uri));
+                .queryParam("sort", "name"));
 
         // then
         response.andExpect(status().isOk())
@@ -183,11 +179,11 @@ class BrandApiControllerTest {
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 브랜드 목록 길이"),
-                                fieldWithPath("brands").type(JsonFieldType.ARRAY).description("페이징된 브랜드 목록"),
-                                fieldWithPath("brands.[].id").type(JsonFieldType.NUMBER).description("페이징된 브랜드 id"),
-                                fieldWithPath("brands.[].name").type(JsonFieldType.STRING).description("페이징된 브랜드 name"),
-                                fieldWithPath("brands.[].iconUrl").type(JsonFieldType.STRING).description("페이징된 브랜드 iconUrl")
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
+                                fieldWithPath("brands").type(JsonFieldType.ARRAY).description("현재 페이지의 브랜드 목록"),
+                                fieldWithPath("brands.[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
+                                fieldWithPath("brands.[].name").type(JsonFieldType.STRING).description("브랜드 이름"),
+                                fieldWithPath("brands.[].iconUrl").type(JsonFieldType.STRING).description("브랜드 이미지")
                         ))
                 );
     }
