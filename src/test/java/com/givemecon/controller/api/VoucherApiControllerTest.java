@@ -245,11 +245,7 @@ class VoucherApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        queryParameters(
-                                parameterWithName("page").optional().description("페이지 번호 (기본값 = 0)"),
-                                parameterWithName("size").optional().description("페이지 크기 (기본값 = 10)"),
-                                parameterWithName("sort").optional().description("정렬 기준 (기본값 = id)")
-                        ),
+                        pagingQueryParameters(),
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
@@ -301,11 +297,8 @@ class VoucherApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        queryParameters(
-                                parameterWithName("brandName").description("브랜드 이름"),
-                                parameterWithName("page").optional().description("페이지 번호 (기본값 = 0)"),
-                                parameterWithName("size").optional().description("페이지 크기 (기본값 = 10)"),
-                                parameterWithName("sort").optional().description("정렬 기준 (기본값 = id)")
+                        pagingQueryParameters(
+                                parameterWithName("brandName").description("브랜드 이름")
                         ),
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),

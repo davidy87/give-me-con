@@ -50,7 +50,7 @@ public interface ApiDocumentUtils {
                 prettyPrint());
     }
 
-    static QueryParametersSnippet getPagingQueryParameters(ParameterDescriptor... parameterDescriptors) {
+    static QueryParametersSnippet pagingQueryParameters(ParameterDescriptor... parameterDescriptors) {
         List<ParameterDescriptor> params = new ArrayList<>(
                 Arrays.asList(
                         parameterWithName("page").optional().description("페이지 번호 (기본값 = 0)"),

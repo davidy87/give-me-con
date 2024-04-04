@@ -167,6 +167,7 @@ class LikedVoucherApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
+                        pagingQueryParameters(),
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
