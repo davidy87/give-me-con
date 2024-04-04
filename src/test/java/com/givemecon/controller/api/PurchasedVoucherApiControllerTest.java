@@ -191,9 +191,9 @@ class PurchasedVoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers")
-                .queryParam("username", member.getUsername())
                 .queryParam("page", "1")
                 .queryParam("size", "10")
+                .queryParam("sort", "id")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
@@ -201,9 +201,7 @@ class PurchasedVoucherApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
-                        getPagingQueryParameters(
-                                parameterWithName("username").description("기프티콘 구매자 이름")
-                        ),
+                        getPagingQueryParameters(),
                         responseFields(
                                 fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
                                 fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),

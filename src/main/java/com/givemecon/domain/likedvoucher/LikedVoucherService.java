@@ -6,10 +6,10 @@ import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.givemecon.domain.voucher.VoucherDto.*;
 
@@ -41,13 +41,14 @@ public class LikedVoucherService {
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllByUsername(String username) {
+    public PagedVoucherResponse findPageByUsername(String username, Pageable pageable) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        return member.getLikedVoucherList().stream()
-                .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()))
-                .toList();
+        Page<VoucherResponse> pageResult = likedVoucherRepository.findPageByMember(member, pageable)
+                .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()));
+
+        return new PagedVoucherResponse(pageResult);
     }
 
     public void deleteByUsernameAndVoucherId(String username, Long voucherId) {
