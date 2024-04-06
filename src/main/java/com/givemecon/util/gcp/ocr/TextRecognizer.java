@@ -4,7 +4,6 @@ import com.google.cloud.spring.vision.CloudVisionTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
