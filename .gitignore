@@ -2,6 +2,10 @@
 application-jwt.properties
 application-oauth.properties
 application-*.yml
+gcp_credential.json
+
+### images ###
+*.png
 
 HELP.md
 .gradle

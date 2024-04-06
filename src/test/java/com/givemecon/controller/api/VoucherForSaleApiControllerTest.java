@@ -10,7 +10,7 @@ import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
-import com.givemecon.s3.S3MockConfig;
+import com.givemecon.util.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

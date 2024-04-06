@@ -1,6 +1,6 @@
 package com.givemecon.controller.api;
 
-import com.givemecon.s3.S3MockConfig;
+import com.givemecon.util.s3.S3MockConfig;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;

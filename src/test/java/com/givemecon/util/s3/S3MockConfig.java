@@ -1,4 +1,4 @@
-package com.givemecon.s3;
+package com.givemecon.util.s3;
 
 import io.findify.s3mock.S3Mock;
 import org.springframework.boot.test.context.TestConfiguration;

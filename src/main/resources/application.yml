@@ -18,7 +18,7 @@ spring:
         enabled: false
 
   profiles:
-    include: client,oauth,jwt,aws
+    include: client,oauth,jwt,aws,gcp
 
   messages:
     basename: errors
