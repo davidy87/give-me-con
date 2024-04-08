@@ -6,6 +6,7 @@ gcp_credential.json
 
 ### images ###
 *.png
+*.jpg
 
 HELP.md
 .gradle

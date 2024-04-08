@@ -175,8 +175,8 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
+                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL")
                         ))
                 );

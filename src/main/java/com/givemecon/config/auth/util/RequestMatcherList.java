@@ -39,7 +39,8 @@ public abstract class RequestMatcherList {
                 antMatcher(AUTH_API.pattern()),
                 antMatcher(VOUCHER_FOR_SALE_API.pattern()),
                 antMatcher(LIKED_VOUCHER_API.pattern()),
-                antMatcher(PURCHASED_VOUCHER_API.pattern())
+                antMatcher(PURCHASED_VOUCHER_API.pattern()),
+                antMatcher(IMAGE_TEXT_EXTRACTION_API.pattern())
         };
     }
 }
