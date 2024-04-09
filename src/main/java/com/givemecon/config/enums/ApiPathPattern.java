@@ -14,7 +14,6 @@ public enum ApiPathPattern {
     VOUCHER_FOR_SALE_API("/vouchers-for-sale/**"),
     LIKED_VOUCHER_API("/liked-vouchers/**"),
     PURCHASED_VOUCHER_API("/purchased-vouchers/**"),
-
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts");
 
     private final String pattern;

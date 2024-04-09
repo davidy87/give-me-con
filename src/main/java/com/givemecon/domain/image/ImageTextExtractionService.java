@@ -38,7 +38,10 @@ public class ImageTextExtractionService {
         if (extractedImageInfo.getBrandName() == null) {
             brandRepository.findByName(text)
                     .ifPresent(brand -> extractedImageInfo.setBrandName(brand.getName()));
-            return;
+
+            if (extractedImageInfo.getBrandName() != null) {
+                return;
+            }
         }
 
         // 아직 바코드가 추출되지 않았을 경우, 추출된 단어가 바코드인지 확인 후 저장
@@ -63,6 +66,7 @@ public class ImageTextExtractionService {
         DateTimeFormatter[] dateTimeFormatters = {
                 DateTimeFormatter.ISO_LOCAL_DATE,
                 DateTimeFormatter.ofPattern("yyyy/MM/dd"),
+                DateTimeFormatter.ofPattern("yyyy.MM.dd"),
                 DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
         };
 
