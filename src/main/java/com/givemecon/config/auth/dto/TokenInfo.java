@@ -3,8 +3,8 @@ package com.givemecon.config.auth.dto;
 import com.givemecon.config.enums.Role;
 import lombok.*;
 
-@ToString
 @Getter
+@NoArgsConstructor
 public class TokenInfo {
 
     private String grantType;
@@ -14,9 +14,6 @@ public class TokenInfo {
     private String refreshToken;
 
     private Role role;
-
-    public TokenInfo() {
-    }
 
     @Builder
     public TokenInfo(String grantType, String accessToken, String refreshToken, Role role) {

@@ -3,6 +3,7 @@ package com.givemecon.domain.purchasedvoucher;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PurchasedVoucherDto {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PurchasedVoucherDto {
 
     @Getter
     @NoArgsConstructor

@@ -5,13 +5,11 @@ import com.givemecon.config.enums.Role;
 import com.givemecon.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
 import static com.givemecon.config.enums.OAuth2Provider.*;
 
-@Slf4j
 @Getter
 public class OAuth2Attributes {
 
