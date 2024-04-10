@@ -1,11 +1,14 @@
 package com.givemecon.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
-public abstract class FileUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class FileUtils {
 
     public static boolean isValidFile(MultipartFile file) {
         return file != null && !file.isEmpty();

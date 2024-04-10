@@ -1,5 +1,7 @@
 package com.givemecon.config.auth.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -7,7 +9,8 @@ import static com.givemecon.config.enums.ApiPathPattern.*;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-public abstract class RequestMatcherList {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class RequestMatcherList {
 
     public static RequestMatcher[] ofPermitAll() {
         return new AntPathRequestMatcher[] {
