@@ -3,7 +3,6 @@ package com.givemecon.config.auth.jwt.token;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +33,10 @@ public class TokenReissueService {
         }
 
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new EntityNotFoundException(RefreshToken.class));
+                .orElseThrow(() -> new InvalidTokenException(REFRESH_TOKEN_EXPIRED));
 
         Member member = memberRepository.findById(Long.valueOf(tokenEntity.getMemberId()))
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
 
         try {
             jwtTokenService.getClaims(tokenEntity.getRefreshToken());

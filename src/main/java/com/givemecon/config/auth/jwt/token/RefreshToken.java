@@ -9,6 +9,8 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 
 @Getter
@@ -25,7 +27,7 @@ public class RefreshToken {
     @Indexed
     private String refreshToken;
 
-    @TimeToLive
+    @TimeToLive(unit = TimeUnit.MILLISECONDS)
     private Long expiration;
 
     @Builder
