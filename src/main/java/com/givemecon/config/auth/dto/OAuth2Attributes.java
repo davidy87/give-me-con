@@ -11,7 +11,7 @@ import java.util.Map;
 import static com.givemecon.config.enums.OAuth2Provider.*;
 
 @Getter
-public class OAuth2Attributes {
+public final class OAuth2Attributes {
 
     private final Map<String, Object> attributes;
 
