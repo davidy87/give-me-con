@@ -68,11 +68,17 @@ public final class VoucherDto {
 
         private final String imageUrl;
 
+        private final String description;
+
+        private final String caution;
+
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
             this.minPrice = voucher.getPrice();
             this.title = voucher.getTitle();
             this.imageUrl = voucher.getImageUrl();
+            this.description = voucher.getDescription();
+            this.caution = voucher.getCaution();
         }
     }
 

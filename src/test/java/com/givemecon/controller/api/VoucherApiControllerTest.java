@@ -120,6 +120,7 @@ class VoucherApiControllerTest {
         Long price = 4_000L;
         String title = "Americano T";
         String image = "tall_americano.png";
+
         MockMultipartFile imageFile = new MockMultipartFile(
                 "imageFile",
                 image,
@@ -166,7 +167,9 @@ class VoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("저장된 기프티콘 타이틀"),
                                 fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("저장된 기프티콘 가격"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지"),
+                                fieldWithPath("description").type(JsonFieldType.STRING).description("상품 설명").optional(),
+                                fieldWithPath("caution").type(JsonFieldType.STRING).description("사용 시 유의사항").optional()
                         ))
                 );
     }
@@ -177,6 +180,8 @@ class VoucherApiControllerTest {
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(20_000L)
                 .title("Ice Cream Cake")
+                .description("This is Ice Cream Cake.")
+                .caution("This Ice Cream Cake is extremely cold.")
                 .build());
 
         VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
@@ -206,7 +211,9 @@ class VoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
                                 fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("기프티콘 최소 가격"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지 URL"),
+                                fieldWithPath("description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }
@@ -217,7 +224,9 @@ class VoucherApiControllerTest {
         for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .price(10_000L)
-                    .title("Voucher " + i)
+                    .title("Voucher" + i)
+                    .description("This is Voucher" + i + ".")
+                    .caution("This voucher is awesome.")
                     .build());
 
             VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
@@ -254,7 +263,9 @@ class VoucherApiControllerTest {
                                 fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("vouchers.[].description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("vouchers.[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }
@@ -272,6 +283,8 @@ class VoucherApiControllerTest {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .price(10_000L)
                     .title("Voucher " + i)
+                    .description("This is Voucher" + i + ".")
+                    .caution("This voucher is awesome.")
                     .build());
 
             VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
@@ -308,7 +321,9 @@ class VoucherApiControllerTest {
                                 fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("vouchers.[].description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("vouchers.[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }
@@ -321,6 +336,8 @@ class VoucherApiControllerTest {
         Voucher voucher = Voucher.builder()
                 .price(price)
                 .title(title)
+                .description("This is Americano T")
+                .caution("This voucher is from Starbucks.")
                 .build();
 
         Voucher voucherSaved = voucherRepository.save(voucher);
@@ -373,6 +390,8 @@ class VoucherApiControllerTest {
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(3_000L)
                 .title("oldTitle")
+                .description("This is an old voucher.")
+                .caution("This voucher will be updated.")
                 .build());
 
         VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
@@ -419,7 +438,9 @@ class VoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류의 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 타이틀"),
                                 fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류의 최소 가격"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 이미지")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 이미지"),
+                                fieldWithPath("description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }

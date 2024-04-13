@@ -98,6 +98,8 @@ class LikedVoucherApiControllerTest {
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .price(4_000L)
+                .description("voucher description")
+                .caution("voucher caution")
                 .build());
 
         VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
@@ -124,7 +126,9 @@ class LikedVoucherApiControllerTest {
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
 
@@ -141,6 +145,8 @@ class LikedVoucherApiControllerTest {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .title("voucher" + i)
                     .price(4_000L)
+                    .description("voucher" + i + " description")
+                    .caution("voucher" + i + " caution")
                     .build());
 
             VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
@@ -176,7 +182,9 @@ class LikedVoucherApiControllerTest {
                                 fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
+                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("vouchers.[].description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("vouchers.[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }
