@@ -146,12 +146,16 @@ class VoucherApiControllerTest {
 
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).isNotEmpty();
         assertThat(voucherList.get(0).getCategory()).isEqualTo(category);
         assertThat(voucherList.get(0).getBrand()).isEqualTo(brand);
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
                 .andExpect(jsonPath("minPrice").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("title").value(voucherList.get(0).getTitle()))
+                .andExpect(jsonPath("description").value(voucherList.get(0).getDescription()))
+                .andExpect(jsonPath("caution").value(voucherList.get(0).getCaution()))
                 .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -161,6 +165,8 @@ class VoucherApiControllerTest {
                                 partWithName("brandId").description("저장할 기프티콘의 브랜드 id"),
                                 partWithName("price").description("저장할 기프티콘 최소 가격"),
                                 partWithName("title").description("저장할 기프티콘 타이틀"),
+                                partWithName("description").optional().description("저장할 기프티콘 최소 가격 (생략 가능)"),
+                                partWithName("caution").optional().description("저장할 기프티콘 타이틀 (생략 가능)"),
                                 partWithName("imageFile").description("저장할 기프티콘 이미지 파일")
                         ),
                         responseFields(

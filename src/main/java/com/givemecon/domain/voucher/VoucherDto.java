@@ -33,6 +33,10 @@ public final class VoucherDto {
         @NotBlank
         private final String title;
 
+        private final String description;
+
+        private final String caution;
+
         @ValidFile
         private final MultipartFile imageFile;
 
@@ -40,6 +44,8 @@ public final class VoucherDto {
             return Voucher.builder()
                     .price(price)
                     .title(title)
+                    .description(description)
+                    .caution(caution)
                     .build();
         }
     }
