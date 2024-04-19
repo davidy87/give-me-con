@@ -4,6 +4,9 @@ application-oauth.properties
 application-*.yml
 gcp_credential.json
 
+### env ###
+.env
+
 ### images ###
 *.png
 *.jpg
