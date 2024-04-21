@@ -1,0 +1,50 @@
+services:
+  mysql:
+    container_name: mysql-container
+    image: mysql:latest
+    volumes:
+        - mysql_volume:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+  redis:
+    container_name: redis-container
+    image: redis:latest
+    volumes:
+      - redis_volume:/var/lib/redis
+    command: redis-server --port 6379
+    restart: always
+    ports:
+      - "6379:6379"
+
+  app:
+    depends_on:
+      - mysql
+      - redis
+    container_name: give-me-con
+    image: give-me-con:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - app_volume:/var/lib/give-me-con
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-container:3306/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATA_REDIS_HOST: redis
+
+volumes:
+  mysql_volume:
+    driver: local
+  redis_volume:
+    driver: local
+  app_volume:
+    driver: local
