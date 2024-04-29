@@ -57,7 +57,7 @@ public class JwtTokenService {
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
     @Transactional
-    public TokenInfo getTokenInfo(TokenRequest memberDto) {
+    public TokenInfo getTokenInfo(final TokenRequest memberDto) {
         String accessToken = generateAccessToken(memberDto);
         String refreshToken = generateRefreshToken();
 
@@ -75,6 +75,7 @@ public class JwtTokenService {
                 .grantType(BEARER.getType())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .username(memberDto.getUsername())
                 .role(memberDto.getRole())
                 .build();
     }

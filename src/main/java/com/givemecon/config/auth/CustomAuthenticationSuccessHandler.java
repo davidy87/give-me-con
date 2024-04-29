@@ -8,6 +8,7 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -19,13 +20,15 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 import static com.givemecon.domain.member.MemberDto.*;
-import static java.nio.charset.StandardCharsets.*;
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+
+    private static final String SUCCESS_PARAM = "success";
+
+    private static final int SESSION_DURATION = 10;
 
     private final MemberRepository memberRepository;
 
@@ -44,15 +47,19 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
 
-        String url = UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
-                .queryParam(GRANT_TYPE, tokenInfo.getGrantType())
-                .queryParam(ACCESS_TOKEN, tokenInfo.getAccessToken())
-                .queryParam(REFRESH_TOKEN, tokenInfo.getRefreshToken())
-                .queryParam(USERNAME, member.getUsername())
-                .encode(UTF_8)
-                .build()
-                .toUriString();
+        HttpSession session = request.getSession(true);
 
-        getRedirectStrategy().sendRedirect(request, response, url);
+        if (session != null) {
+            session.setAttribute("tokenInfo", tokenInfo);
+            session.setMaxInactiveInterval(SESSION_DURATION);
+        }
+
+        String redirectUrl =
+                UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
+                        .queryParam(SUCCESS_PARAM)
+                        .build()
+                        .toString();
+
+        getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }

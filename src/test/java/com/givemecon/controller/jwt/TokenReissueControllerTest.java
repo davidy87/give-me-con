@@ -91,14 +91,15 @@ public class TokenReissueControllerTest {
 
         // API Documentation
         response.andDo(document("{class-name}/{method-name}",
-                    getDocumentRequestWithRefreshToken(),
-                    getDocumentResponse(),
-                    responseFields(
+                        getDocumentRequestWithRefreshToken(),
+                        getDocumentResponse(),
+                        responseFields(
                             fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),
                             fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                             fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                            fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
                             fieldWithPath("role").type(JsonFieldType.STRING).description("Member의 role")
-                    ))
-                );
+                        ))
+        );
     }
 }
