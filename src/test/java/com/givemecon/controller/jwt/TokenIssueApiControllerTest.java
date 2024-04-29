@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @SpringBootTest
-public class TokenReissueControllerTest {
+public class TokenIssueApiControllerTest {
 
     @Autowired
     WebApplicationContext context;
