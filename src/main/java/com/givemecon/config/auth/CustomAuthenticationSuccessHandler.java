@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
+import static com.givemecon.config.enums.SessionAttributeName.*;
 import static com.givemecon.domain.member.MemberDto.*;
 
 @Slf4j
@@ -50,7 +51,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         HttpSession session = request.getSession(true);
 
         if (session != null) {
-            session.setAttribute("tokenInfo", tokenInfo);
+            session.setAttribute(TOKEN_INFO.name(), tokenInfo);
             session.setMaxInactiveInterval(SESSION_DURATION);
         }
 

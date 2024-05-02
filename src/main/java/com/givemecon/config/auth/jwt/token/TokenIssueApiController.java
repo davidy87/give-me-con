@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
+import static com.givemecon.config.enums.SessionAttributeName.*;
 import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
@@ -26,7 +27,7 @@ public class TokenIssueApiController {
         TokenInfo tokenInfo = null;
 
         if (session != null) {
-            tokenInfo = (TokenInfo) session.getAttribute("tokenInfo");
+            tokenInfo = (TokenInfo) session.getAttribute(TOKEN_INFO.name());
             session.invalidate();
         }
 
