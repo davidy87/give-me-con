@@ -8,6 +8,7 @@ public enum ApiPathPattern {
     MEMBER_API("/members/**"),
     ADMIN_LOGIN_API("/members/admin/login"),
     AUTH_API("/auth/**"),
+    AUTH_SUCCESS_API("/auth/success"),
     CATEGORY_API("/categories/**"),
     BRAND_API("/brands/**"),
     VOUCHER_API("/vouchers/**"),

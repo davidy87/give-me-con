@@ -75,6 +75,7 @@ public class JwtTokenService {
                 .grantType(BEARER.getType())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .username(memberDto.getUsername())
                 .role(memberDto.getRole())
                 .build();
     }

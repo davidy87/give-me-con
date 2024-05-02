@@ -130,6 +130,7 @@ class MemberApiControllerTest {
                                 fieldWithPath("grantType").type(JsonFieldType.STRING).description("인증 타입"),
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                                 fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                                fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
                                 fieldWithPath("role").type(JsonFieldType.STRING).description("권한 타입")
                         ))
                 );

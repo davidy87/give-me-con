@@ -1,19 +1,23 @@
 package com.givemecon.config.auth.jwt.filter;
 
+import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
@@ -29,11 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         log.info("[Log] --- Begin JwtAuthenticationFilter ---");
-        String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
-        String accessToken = jwtTokenService.retrieveToken(accessTokenHeader);
-
-        log.info("[Log] Request URL = {}", request.getRequestURL());
-        log.info("[Log] Access Token = {}", accessToken);
+        String accessToken = getAccessTokenFromRequest(request);
 
         if (accessToken != null) {
             proceedAuthentication(accessToken, request);
@@ -41,6 +41,29 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
         log.info("[Log] --- End JwtAuthenticationFilter ---");
+    }
+
+    private String getAccessTokenFromRequest(HttpServletRequest request) {
+        String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
+        String accessToken = jwtTokenService.retrieveToken(accessTokenHeader);
+
+        // 로그인 성공 요청일 경우
+        if (StringUtils.pathEquals(request.getRequestURI(), AUTH_SUCCESS_API.pattern())) {
+            HttpSession session = request.getSession(false);
+
+            if (session != null) {
+                TokenInfo tokenInfo = (TokenInfo) session.getAttribute("tokenInfo");
+
+                if (tokenInfo != null) {
+                    accessToken = tokenInfo.getAccessToken();
+                }
+            }
+        }
+
+        log.info("[Log] Request URL = {}", request.getRequestURL());
+        log.info("[Log] Access Token = {}", accessToken);
+
+        return accessToken;
     }
 
     /**
