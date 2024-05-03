@@ -52,6 +52,6 @@ class RefreshTokenRepositoryTest {
 
         // then
         assertThat(found).isNotEmpty();
-        assertThat(found.get().getExpiration()).isLessThanOrEqualTo(REFRESH_TOKEN_DURATION.duration());
+        assertThat(found.get().getExpiration()).isLessThanOrEqualTo(REFRESH_TOKEN_DURATION.toMillis());
     }
 }

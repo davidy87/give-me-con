@@ -34,11 +34,11 @@ public class RefreshToken {
     public RefreshToken(String memberId, String refreshToken) {
         this.memberId = memberId;
         this.refreshToken = refreshToken;
-        this.expiration = REFRESH_TOKEN_DURATION.duration();
+        this.expiration = REFRESH_TOKEN_DURATION.toMillis();
     }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-        this.expiration = REFRESH_TOKEN_DURATION.duration();
+        this.expiration = REFRESH_TOKEN_DURATION.toMillis();
     }
 }

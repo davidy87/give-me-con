@@ -7,12 +7,12 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public enum TokenDuration {
 
-    ACCESS_TOKEN_DURATION(Duration.ofMinutes(30).toMillis()),
-    REFRESH_TOKEN_DURATION(Duration.ofDays(14).toMillis());
+    ACCESS_TOKEN_DURATION(Duration.ofMinutes(30)),
+    REFRESH_TOKEN_DURATION(Duration.ofDays(14));
 
-    private final Long duration;
+    private final Duration duration;
 
-    public Long duration() {
-        return duration;
+    public Long toMillis() {
+        return this.duration.toMillis();
     }
 }

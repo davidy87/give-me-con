@@ -91,7 +91,7 @@ public class JwtTokenService {
                 .claim(CLAIM_NAME_USERNAME, memberDto.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.duration()))
+                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -102,7 +102,7 @@ public class JwtTokenService {
         return Jwts.builder()
                 .setSubject(UUID.randomUUID().toString())
                 .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.duration()))
+                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
