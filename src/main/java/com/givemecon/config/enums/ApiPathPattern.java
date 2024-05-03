@@ -18,16 +18,11 @@ public enum ApiPathPattern {
     PURCHASED_VOUCHER_API("/purchased-vouchers/**"),
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts");
 
+    private static final String BASE_PATH = "/api";
+
     private final String pattern;
 
-    @RequiredArgsConstructor
-    private enum BaseApiPattern {
-        BASE_API("/api");
-
-        private final String pattern;
-    }
-
     public String getPattern() {
-        return BaseApiPattern.BASE_API.pattern + this.pattern;
+        return BASE_PATH + this.pattern;
     }
 }
