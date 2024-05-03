@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Role.*;
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
@@ -63,7 +63,7 @@ public class ApiExceptionControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(ADMIN)
+                .authority(ADMIN)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));

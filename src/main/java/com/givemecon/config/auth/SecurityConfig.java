@@ -26,8 +26,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-import static com.givemecon.config.enums.Role.ADMIN;
-import static com.givemecon.config.enums.Role.USER;
+import static com.givemecon.config.enums.Authority.ADMIN;
+import static com.givemecon.config.enums.Authority.USER;
 import static com.givemecon.config.auth.util.RequestMatcherList.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.*;

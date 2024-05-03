@@ -30,7 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = oauth2MemberUtils.saveNewOrUpdate(attributes, registrationId);
 
         return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(member.getRoleKey())),
+                Collections.singleton(new SimpleGrantedAuthority(member.getRole())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
     }

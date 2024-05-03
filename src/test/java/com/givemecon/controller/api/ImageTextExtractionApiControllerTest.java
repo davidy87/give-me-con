@@ -29,7 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.FileInputStream;
 
 import static com.givemecon.config.enums.JwtAuthHeader.AUTHORIZATION;
-import static com.givemecon.config.enums.Role.USER;
+import static com.givemecon.config.enums.Authority.USER;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
@@ -79,7 +79,7 @@ class ImageTextExtractionApiControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(USER)
+                .authority(USER)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(member));

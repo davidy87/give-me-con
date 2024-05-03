@@ -76,12 +76,12 @@ public class JwtTokenService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .username(memberDto.getUsername())
-                .role(memberDto.getRole())
+                .authority(memberDto.getAuthority())
                 .build();
     }
 
     public String generateAccessToken(TokenRequest memberDto) {
-        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(memberDto.getRoleKey()))
+        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(memberDto.getRole()))
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 

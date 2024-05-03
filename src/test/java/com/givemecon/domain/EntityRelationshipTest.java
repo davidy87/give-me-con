@@ -1,6 +1,6 @@
 package com.givemecon.domain;
 
-import com.givemecon.config.enums.Role;
+import com.givemecon.config.enums.Authority;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.brand.BrandIcon;
 import com.givemecon.domain.image.brand.BrandIconRepository;
@@ -165,7 +165,7 @@ public class EntityRelationshipTest {
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.USER)
+                .authority(Authority.USER)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
@@ -195,7 +195,7 @@ public class EntityRelationshipTest {
         Member memberSaved = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.USER)
+                .authority(Authority.USER)
                 .build());
 
         Voucher voucherSaved = voucherRepository.save(Voucher.builder()
@@ -233,7 +233,7 @@ public class EntityRelationshipTest {
         Member owner = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(Role.USER)
+                .authority(Authority.USER)
                 .build());
 
         Voucher voucher = voucherRepository.save(Voucher.builder()
