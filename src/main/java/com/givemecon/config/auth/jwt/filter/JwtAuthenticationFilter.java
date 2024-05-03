@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = jwtTokenService.retrieveToken(accessTokenHeader);
 
         // 로그인 성공 요청일 경우
-        if (StringUtils.pathEquals(request.getRequestURI(), AUTH_SUCCESS_API.pattern())) {
+        if (StringUtils.pathEquals(request.getRequestURI(), AUTH_SUCCESS_API.getPattern())) {
             HttpSession session = request.getSession(false);
 
             if (session != null) {

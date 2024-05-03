@@ -9,6 +9,7 @@ public enum ApiPathPattern {
     ADMIN_LOGIN_API("/members/admin/login"),
     AUTH_API("/auth/**"),
     AUTH_SUCCESS_API("/auth/success"),
+
     CATEGORY_API("/categories/**"),
     BRAND_API("/brands/**"),
     VOUCHER_API("/vouchers/**"),
@@ -26,7 +27,7 @@ public enum ApiPathPattern {
         private final String pattern;
     }
 
-    public String pattern() {
+    public String getPattern() {
         return BaseApiPattern.BASE_API.pattern + this.pattern;
     }
 }
