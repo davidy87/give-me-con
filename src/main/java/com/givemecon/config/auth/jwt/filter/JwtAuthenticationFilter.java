@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
+import static com.givemecon.config.enums.SessionAttributeName.TOKEN_INFO;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
 @Slf4j
@@ -52,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpSession session = request.getSession(false);
 
             if (session != null) {
-                TokenInfo tokenInfo = (TokenInfo) session.getAttribute("tokenInfo");
+                TokenInfo tokenInfo = (TokenInfo) session.getAttribute(TOKEN_INFO.name());
 
                 if (tokenInfo != null) {
                     accessToken = tokenInfo.getAccessToken();
