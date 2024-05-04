@@ -24,7 +24,7 @@ import static org.springframework.security.authentication.UsernamePasswordAuthen
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public final class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenService jwtTokenService;
 

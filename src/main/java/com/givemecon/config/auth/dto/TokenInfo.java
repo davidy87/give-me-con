@@ -5,7 +5,7 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor
-public class TokenInfo {
+public final class TokenInfo {
 
     private String grantType;
 
