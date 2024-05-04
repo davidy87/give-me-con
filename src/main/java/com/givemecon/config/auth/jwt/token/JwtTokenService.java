@@ -52,41 +52,41 @@ public class JwtTokenService {
 
     /**
      * 로그인 성공 시, 응답으로 전달하는 토큰 정보
-     * @param memberDto 사용자의 정보가 담긴 DTO
+     * @param tokenRequest 토큰을 요청하는 사용자의 정보가 담긴 DTO
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
-    public TokenInfo getTokenInfo(TokenRequest memberDto) {
-        String accessToken = generateAccessToken(memberDto);
+    public TokenInfo getTokenInfo(TokenRequest tokenRequest) {
+        String accessToken = generateAccessToken(tokenRequest);
         String refreshToken = generateRefreshToken();
 
-        refreshTokenRepository.findByMemberId(String.valueOf(memberDto.getId()))
+        refreshTokenRepository.findByMemberId(String.valueOf(tokenRequest.getMemberId()))
                 .ifPresentOrElse(
                         entity -> {
                             entity.updateRefreshToken(refreshToken);
                             refreshTokenRepository.save(entity);
                         },
                         () -> refreshTokenRepository.save(
-                                new RefreshToken(String.valueOf(memberDto.getId()), refreshToken)
+                                new RefreshToken(String.valueOf(tokenRequest.getMemberId()), refreshToken)
                         ));
 
         return TokenInfo.builder()
                 .grantType(BEARER.getType())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .username(memberDto.getUsername())
-                .authority(memberDto.getAuthority())
+                .username(tokenRequest.getUsername())
+                .authority(tokenRequest.getAuthority())
                 .build();
     }
 
-    public String generateAccessToken(TokenRequest memberDto) {
-        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(memberDto.getRole()))
+    private String generateAccessToken(TokenRequest tokenRequest) {
+        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(tokenRequest.getRole()))
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long currentTime = System.currentTimeMillis();
 
         return Jwts.builder()
-                .claim(CLAIM_NAME_USERNAME, memberDto.getUsername())
+                .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setIssuedAt(new Date(currentTime))
                 .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.toMillis()))
@@ -111,7 +111,7 @@ public class JwtTokenService {
      * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
      */
     public String retrieveToken(String tokenHeader) {
-        if (StringUtils.hasText(tokenHeader) && StringUtils.startsWithIgnoreCase(tokenHeader, BEARER.getType())) {
+        if (StringUtils.hasText(tokenHeader) && StringUtils.substringMatch(tokenHeader, 0, BEARER.getType())) {
             String[] headerSplit = tokenHeader.split(" ");
             return headerSplit.length == 2 ? headerSplit[1] : null;
         }

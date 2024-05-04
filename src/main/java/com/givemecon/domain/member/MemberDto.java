@@ -55,14 +55,14 @@ public final class MemberDto {
     @Getter
     public static class TokenRequest {
 
-        private final Long id;
+        private final Long memberId;
 
         private final String username;
 
         private final Authority authority;
 
         public TokenRequest(Member member) {
-            this.id = member.getId();
+            this.memberId = member.getId();
             this.username = member.getUsername();
             this.authority = member.getAuthority();
         }
