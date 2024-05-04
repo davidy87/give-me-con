@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
@@ -37,7 +36,6 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private final ClientUrlProperties clientUrlProperties;
 
-    @Transactional
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -47,7 +45,6 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
-
         HttpSession session = request.getSession(true);
 
         if (session != null) {

@@ -14,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
@@ -56,7 +55,6 @@ public class JwtTokenService {
      * @param memberDto 사용자의 정보가 담긴 DTO
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
-    @Transactional
     public TokenInfo getTokenInfo(TokenRequest memberDto) {
         String accessToken = generateAccessToken(memberDto);
         String refreshToken = generateRefreshToken();
