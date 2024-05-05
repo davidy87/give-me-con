@@ -2,17 +2,14 @@ package com.givemecon.domain.category;
 
 import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CategoryDto {
 
     @Getter
-    @Builder
+    @RequiredArgsConstructor
     public static class CategorySaveRequest {
 
         @NotBlank
@@ -29,7 +26,7 @@ public final class CategoryDto {
     }
 
     @Getter
-    @Builder
+    @RequiredArgsConstructor
     public static class CategoryUpdateRequest {
 
         private final String name;
