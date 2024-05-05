@@ -88,6 +88,7 @@ public class JwtTokenService {
         long currentTime = System.currentTimeMillis();
 
         return Jwts.builder()
+                .setId(UUID.randomUUID().toString())
                 .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setIssuedAt(new Date(currentTime))
@@ -100,7 +101,7 @@ public class JwtTokenService {
         long currentTime = System.currentTimeMillis();
 
         return Jwts.builder()
-                .setSubject(UUID.randomUUID().toString())
+                .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date(currentTime))
                 .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
