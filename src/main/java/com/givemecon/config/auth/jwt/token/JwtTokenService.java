@@ -111,8 +111,14 @@ public class JwtTokenService {
     /**
      * 요청으로 전달된 토큰을 추출
      * @param tokenHeader Token 정보가 들어있는 HTTP Header
-     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우,
-     *         <code>null</code>)
+     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우, <code>null</code>)
+     * <br>
+     * <p>
+     *     올바른 형태의 header 예:
+     * </p>
+     * <pre>
+     *     (GrantType)(sp)(공백없는 문자열) => "Bearer foobar"
+     * </pre>
      */
     public String retrieveToken(String tokenHeader) {
         String[] headerSplit = StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER);
