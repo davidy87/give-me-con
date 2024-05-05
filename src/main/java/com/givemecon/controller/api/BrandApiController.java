@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import static com.givemecon.domain.brand.BrandDto.*;
 
@@ -38,15 +37,7 @@ public class BrandApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BrandResponse update(@PathVariable Long id,
-                                @RequestParam(required = false) Long categoryId,
-                                @RequestParam(required = false) String name,
-                                @RequestPart(required = false) MultipartFile iconFile) {
-
-        BrandUpdateRequest requestDto = BrandUpdateRequest.builder()
-                .categoryId(categoryId)
-                .name(name)
-                .iconFile(iconFile)
-                .build();
+                                @ModelAttribute BrandUpdateRequest requestDto) {
 
         return brandService.update(id, requestDto);
     }
