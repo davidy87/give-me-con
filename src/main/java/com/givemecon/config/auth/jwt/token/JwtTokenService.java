@@ -38,6 +38,8 @@ public class JwtTokenService {
 
     private static final String CLAIM_NAME_AUTHORITIES = "authorities";
 
+    private static final String TOKEN_HEADER_DELIMITER = " ";
+
     private final SecretKey secretKey;
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -108,15 +110,21 @@ public class JwtTokenService {
     /**
      * 요청으로 전달된 토큰을 추출
      * @param tokenHeader Token 정보가 들어있는 HTTP Header
-     * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
+     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우,
+     *         <code>null</code>)
      */
     public String retrieveToken(String tokenHeader) {
-        if (StringUtils.hasText(tokenHeader) && StringUtils.substringMatch(tokenHeader, 0, BEARER.getType())) {
-            String[] headerSplit = tokenHeader.split(" ");
-            return headerSplit.length == 2 ? headerSplit[1] : null;
+        String[] headerSplit = StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER);
+
+        if (headerSplit == null) {
+            return null;
         }
 
-        return null;
+        boolean isHeaderValid = headerSplit[0].equals(BEARER.getType())
+                        && StringUtils.hasText(headerSplit[1])
+                        && !StringUtils.containsWhitespace(headerSplit[1]);
+
+        return isHeaderValid ? headerSplit[1] : null;
     }
 
     /**
