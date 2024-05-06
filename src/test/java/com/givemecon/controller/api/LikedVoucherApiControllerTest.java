@@ -97,7 +97,6 @@ class LikedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .description("voucher description")
                 .caution("voucher caution")
                 .build());
@@ -144,7 +143,6 @@ class LikedVoucherApiControllerTest {
         for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .title("voucher" + i)
-                    .price(4_000L)
                     .description("voucher" + i + " description")
                     .caution("voucher" + i + " caution")
                     .build());
@@ -194,7 +192,6 @@ class LikedVoucherApiControllerTest {
         // given
         Voucher voucher = Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build();
 
         Voucher voucherSaved = voucherRepository.save(voucher);

@@ -23,12 +23,13 @@ class VoucherRepositoryTest {
     void saveAndFindAll() {
         // given
         String title = "Americano T";
-        Long price = 15_000L;
-        String image = "americano.jpg";
+        String description = "This is Americano T";
+        String caution = "This is hot, not iced";
 
         Voucher voucher = Voucher.builder()
                 .title(title)
-                .price(price)
+                .description(description)
+                .caution(caution)
                 .build();
 
         // when
@@ -38,7 +39,9 @@ class VoucherRepositoryTest {
         // then
         Voucher found = voucherList.get(0);
         assertThat(found.getTitle()).isEqualTo(title);
-        assertThat(found.getPrice()).isEqualTo(price);
+        assertThat(found.getMinPrice()).isEqualTo(0L);
+        assertThat(found.getDescription()).isEqualTo(description);
+        assertThat(found.getCaution()).isEqualTo(caution);
     }
 
     @Test
@@ -47,7 +50,6 @@ class VoucherRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         voucherRepository.save(Voucher.builder()
                 .title("Cake")
-                .price(10_000L)
                 .build());
 
         // when

@@ -106,7 +106,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
@@ -165,7 +164,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         for (int i = 1; i <= 20; i++) {
@@ -226,7 +224,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
@@ -284,7 +281,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()

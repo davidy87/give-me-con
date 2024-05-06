@@ -140,7 +140,6 @@ public class EntityRelationshipTest {
 
         Voucher voucher = Voucher.builder()
                 .title("Starbucks Americano T")
-                .price(15_000L)
                 .build();
 
         Category categorySaved = categoryRepository.save(category);
@@ -176,7 +175,6 @@ public class EntityRelationshipTest {
 
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("Americano T")
-                .price(15_000L)
                 .build());
 
         // when
@@ -200,7 +198,6 @@ public class EntityRelationshipTest {
 
         Voucher voucherSaved = voucherRepository.save(Voucher.builder()
                 .title("Americano T")
-                .price(15_000L)
                 .build());
 
         LikedVoucher likedVoucher = LikedVoucher.builder()
@@ -238,7 +235,6 @@ public class EntityRelationshipTest {
 
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
