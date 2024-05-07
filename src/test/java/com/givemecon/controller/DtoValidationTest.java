@@ -190,11 +190,35 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("PurchasedVoucher Request DTO 검증 실패 테스트")
-    void purchasedVoucherDtoFailed() throws Exception {
+    @DisplayName("PurchasedVoucher Request DTO 검증 테스트 1")
+    void invalidPurchasedVoucherRequest() throws Exception {
         // given
         PurchasedVoucherRequest requestDto = new PurchasedVoucherRequest(0L);
         PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(List.of(requestDto));
+
+        // when
+        ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestDtoList))
+        );
+
+        log.info(response.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
+        response.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("PurchasedVoucher Request DTO 검증 테스트 2")
+    void invalidPurchasedVoucherRequestList() throws Exception {
+        // given
+        PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(List.of());
 
         // when
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")

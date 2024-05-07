@@ -3,9 +3,7 @@ package com.givemecon.domain.purchasedvoucher;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -17,18 +15,16 @@ public final class PurchasedVoucherDto {
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class PurchasedVoucherRequest {
 
         @NotNull
         @Min(1L)
         private Long voucherForSaleId;
-
-        public PurchasedVoucherRequest(Long voucherForSaleId) {
-            this.voucherForSaleId = voucherForSaleId;
-        }
     }
 
     @Getter
+    @RequiredArgsConstructor
     public static class PurchasedVoucherRequestList {
 
         @NotEmpty
@@ -37,10 +33,6 @@ public final class PurchasedVoucherDto {
 
         public PurchasedVoucherRequestList() {
             requests = new ArrayList<>();
-        }
-
-        public PurchasedVoucherRequestList(List<PurchasedVoucherRequest> requests) {
-            this.requests = requests;
         }
     }
 
