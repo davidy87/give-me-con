@@ -14,15 +14,13 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.GenerationType.*;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Member extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -41,10 +39,10 @@ public class Member extends BaseTimeEntity {
     @Column(length = 10)
     private OAuth2Provider provider;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member")
     List<LikedVoucher> likedVoucherList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner")
     List<PurchasedVoucher> purchasedVoucherList = new ArrayList<>();
 
     @Builder
@@ -66,7 +64,6 @@ public class Member extends BaseTimeEntity {
     public Member update(String email, String username) {
         this.email = email;
         this.username = username;
-
         return this;
     }
 

@@ -6,14 +6,12 @@ import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import static jakarta.persistence.GenerationType.*;
-
 @Getter
 @Entity
 public class PurchasedVoucher extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

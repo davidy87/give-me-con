@@ -1,5 +1,7 @@
 package com.givemecon.controller.api;
 
+import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.util.s3.S3MockConfig;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.category.CategoryIcon;
@@ -70,6 +72,8 @@ class CategoryApiControllerTest {
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
+    @Autowired
+    private BrandRepository brandRepository;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -236,7 +240,12 @@ class CategoryApiControllerTest {
                 .imageUrl(imageUrl)
                 .build());
 
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("brand")
+                .build());
+
         category.updateCategoryIcon(categoryIcon);
+        category.addBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));
@@ -252,6 +261,8 @@ class CategoryApiControllerTest {
                 );
 
         List<Category> categoryList = categoryRepository.findAll();
+        List<Brand> brandList = brandRepository.findAll();
         assertThat(categoryList).isEmpty();
+        assertThat(brandList).isEmpty();
     }
 }

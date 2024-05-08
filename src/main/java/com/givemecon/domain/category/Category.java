@@ -31,7 +31,6 @@ public class Category extends BaseTimeEntity {
 
     @OneToMany(
             mappedBy = "category",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
@@ -39,7 +38,6 @@ public class Category extends BaseTimeEntity {
 
     @OneToMany(
             mappedBy = "category",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
