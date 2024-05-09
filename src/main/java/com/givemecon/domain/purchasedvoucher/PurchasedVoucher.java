@@ -18,11 +18,11 @@ public class PurchasedVoucher extends BaseTimeEntity {
     private Boolean isValid;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_for_sale_id")
+    @JoinColumn
     private VoucherForSale voucherForSale;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     private Member owner;
 
     public PurchasedVoucher() {

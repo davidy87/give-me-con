@@ -26,7 +26,7 @@ public class Category extends BaseTimeEntity {
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_icon_id")
+    @JoinColumn
     private CategoryIcon categoryIcon;
 
     @OneToMany(

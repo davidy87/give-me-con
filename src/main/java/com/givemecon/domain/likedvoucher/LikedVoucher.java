@@ -19,11 +19,11 @@ public class LikedVoucher extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_id")
+    @JoinColumn
     private Voucher voucher;
 
     @Builder

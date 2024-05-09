@@ -36,15 +36,15 @@ public class Voucher extends BaseTimeEntity {
     private String caution;
 
     @OneToOne
-    @JoinColumn(name = "voucher_image_id")
+    @JoinColumn
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id")
+    @JoinColumn
     private Brand brand;
 
     @OneToMany(

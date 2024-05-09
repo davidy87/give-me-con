@@ -26,11 +26,11 @@ public class Brand extends BaseTimeEntity {
     private String name;
 
     @OneToOne
-    @JoinColumn(name = "brand_icon_id")
+    @JoinColumn
     private BrandIcon brandIcon;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn
     private Category category;
 
     @OneToMany(
