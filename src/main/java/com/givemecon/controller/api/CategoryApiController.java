@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,13 +31,7 @@ public class CategoryApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public CategoryResponse update(@PathVariable Long id,
-                                   @RequestParam(required = false) String name,
-                                   @RequestPart(required = false) MultipartFile iconFile) {
-
-        CategoryUpdateRequest requestDto = CategoryUpdateRequest.builder()
-                .name(name)
-                .iconFile(iconFile)
-                .build();
+                                   @ModelAttribute CategoryUpdateRequest requestDto) {
 
         return categoryService.update(id, requestDto);
     }

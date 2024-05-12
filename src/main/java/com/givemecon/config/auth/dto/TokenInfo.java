@@ -1,11 +1,11 @@
 package com.givemecon.config.auth.dto;
 
-import com.givemecon.config.enums.Role;
+import com.givemecon.config.enums.Authority;
 import lombok.*;
 
 @Getter
 @NoArgsConstructor
-public class TokenInfo {
+public final class TokenInfo {
 
     private String grantType;
 
@@ -15,14 +15,14 @@ public class TokenInfo {
 
     private String username;
 
-    private Role role;
+    private Authority authority;
 
     @Builder
-    public TokenInfo(String grantType, String accessToken, String refreshToken, String username, Role role) {
+    public TokenInfo(String grantType, String accessToken, String refreshToken, String username, Authority authority) {
         this.grantType = grantType;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.username = username;
-        this.role = role;
+        this.authority = authority;
     }
 }

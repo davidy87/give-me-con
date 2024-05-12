@@ -9,6 +9,7 @@ public enum ApiPathPattern {
     ADMIN_LOGIN_API("/members/admin/login"),
     AUTH_API("/auth/**"),
     AUTH_SUCCESS_API("/auth/success"),
+
     CATEGORY_API("/categories/**"),
     BRAND_API("/brands/**"),
     VOUCHER_API("/vouchers/**"),
@@ -17,16 +18,11 @@ public enum ApiPathPattern {
     PURCHASED_VOUCHER_API("/purchased-vouchers/**"),
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts");
 
+    private static final String BASE_PATH = "/api";
+
     private final String pattern;
 
-    @RequiredArgsConstructor
-    private enum BaseApiPattern {
-        BASE_API("/api");
-
-        private final String pattern;
-    }
-
-    public String pattern() {
-        return BaseApiPattern.BASE_API.pattern + this.pattern;
+    public String getPattern() {
+        return BASE_PATH + this.pattern;
     }
 }

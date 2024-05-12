@@ -14,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
@@ -39,6 +38,8 @@ public class JwtTokenService {
 
     private static final String CLAIM_NAME_AUTHORITIES = "authorities";
 
+    private static final String TOKEN_HEADER_DELIMITER = " ";
+
     private final SecretKey secretKey;
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -53,45 +54,45 @@ public class JwtTokenService {
 
     /**
      * 로그인 성공 시, 응답으로 전달하는 토큰 정보
-     * @param memberDto 사용자의 정보가 담긴 DTO
+     * @param tokenRequest 토큰을 요청하는 사용자의 정보가 담긴 DTO
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
-    @Transactional
-    public TokenInfo getTokenInfo(TokenRequest memberDto) {
-        String accessToken = generateAccessToken(memberDto);
+    public TokenInfo getTokenInfo(TokenRequest tokenRequest) {
+        String accessToken = generateAccessToken(tokenRequest);
         String refreshToken = generateRefreshToken();
 
-        refreshTokenRepository.findByMemberId(String.valueOf(memberDto.getId()))
+        refreshTokenRepository.findByMemberId(String.valueOf(tokenRequest.getMemberId()))
                 .ifPresentOrElse(
                         entity -> {
                             entity.updateRefreshToken(refreshToken);
                             refreshTokenRepository.save(entity);
                         },
                         () -> refreshTokenRepository.save(
-                                new RefreshToken(String.valueOf(memberDto.getId()), refreshToken)
+                                new RefreshToken(String.valueOf(tokenRequest.getMemberId()), refreshToken)
                         ));
 
         return TokenInfo.builder()
                 .grantType(BEARER.getType())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .username(memberDto.getUsername())
-                .role(memberDto.getRole())
+                .username(tokenRequest.getUsername())
+                .authority(tokenRequest.getAuthority())
                 .build();
     }
 
-    public String generateAccessToken(TokenRequest memberDto) {
-        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(memberDto.getRoleKey()))
+    private String generateAccessToken(TokenRequest tokenRequest) {
+        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(tokenRequest.getRole()))
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long currentTime = System.currentTimeMillis();
 
         return Jwts.builder()
-                .claim(CLAIM_NAME_USERNAME, memberDto.getUsername())
+                .setId(UUID.randomUUID().toString())
+                .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
                 .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
                 .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.duration()))
+                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -100,9 +101,9 @@ public class JwtTokenService {
         long currentTime = System.currentTimeMillis();
 
         return Jwts.builder()
-                .setSubject(UUID.randomUUID().toString())
+                .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.duration()))
+                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -110,15 +111,27 @@ public class JwtTokenService {
     /**
      * 요청으로 전달된 토큰을 추출
      * @param tokenHeader Token 정보가 들어있는 HTTP Header
-     * @return Access token 혹은 Refresh token (만약 Authorization header가 없는 요청이거나 올바르지 않은 요청일 경우, <code>null</code>)
+     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우, <code>null</code>)
+     * <br>
+     * <p>
+     *     올바른 형태의 header 예:
+     * </p>
+     * <pre>
+     *     (GrantType)(sp)(공백없는 문자열) => "Bearer foobar"
+     * </pre>
      */
     public String retrieveToken(String tokenHeader) {
-        if (StringUtils.hasText(tokenHeader) && StringUtils.startsWithIgnoreCase(tokenHeader, BEARER.getType())) {
-            String[] headerSplit = tokenHeader.split(" ");
-            return headerSplit.length == 2 ? headerSplit[1] : null;
+        String[] headerSplit = StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER);
+
+        if (headerSplit == null) {
+            return null;
         }
 
-        return null;
+        boolean isHeaderValid = headerSplit[0].equals(BEARER.getType())
+                        && StringUtils.hasText(headerSplit[1])
+                        && !StringUtils.containsWhitespace(headerSplit[1]);
+
+        return isHeaderValid ? headerSplit[1] : null;
     }
 
     /**

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -50,17 +49,7 @@ public class VoucherApiController {
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VoucherResponse update(@PathVariable Long id,
-                                  @RequestParam(required = false) String title,
-                                  @RequestParam(required = false) String description,
-                                  @RequestParam(required = false) String caution,
-                                  @RequestPart(required = false) MultipartFile imageFile) {
-
-        VoucherUpdateRequest requestDto = VoucherUpdateRequest.builder()
-                .title(title)
-                .description(description)
-                .caution(caution)
-                .imageFile(imageFile)
-                .build();
+                                  @ModelAttribute VoucherUpdateRequest requestDto) {
 
         return voucherService.update(id, requestDto);
     }

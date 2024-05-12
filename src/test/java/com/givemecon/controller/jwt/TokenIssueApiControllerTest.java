@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Role.*;
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
@@ -68,7 +68,7 @@ public class TokenIssueApiControllerTest {
         Member member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(USER)
+                .authority(USER)
                 .build());
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
@@ -98,7 +98,7 @@ public class TokenIssueApiControllerTest {
                             fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                             fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
                             fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                            fieldWithPath("role").type(JsonFieldType.STRING).description("Member의 role")
+                            fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
                         ))
         );
     }

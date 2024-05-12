@@ -13,31 +13,28 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.GenerationType.*;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Brand extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String name;
 
     @OneToOne
-    @JoinColumn(name = "brand_icon_id")
+    @JoinColumn
     private BrandIcon brandIcon;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn
     private Category category;
 
     @OneToMany(
             mappedBy = "brand",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

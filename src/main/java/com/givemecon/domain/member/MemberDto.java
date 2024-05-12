@@ -1,10 +1,12 @@
 package com.givemecon.domain.member;
 
-import com.givemecon.config.enums.Role;
+import com.givemecon.config.enums.Authority;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.givemecon.config.enums.Authority.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MemberDto {
@@ -26,7 +28,7 @@ public final class MemberDto {
                     .email(email)
                     .username(username)
                     .password(encodedPassword)
-                    .role(Role.ADMIN)
+                    .authority(ADMIN)
                     .build();
         }
     }
@@ -53,20 +55,20 @@ public final class MemberDto {
     @Getter
     public static class TokenRequest {
 
-        private final Long id;
+        private final Long memberId;
 
         private final String username;
 
-        private final Role role;
+        private final Authority authority;
 
         public TokenRequest(Member member) {
-            this.id = member.getId();
+            this.memberId = member.getId();
             this.username = member.getUsername();
-            this.role = member.getRole();
+            this.authority = member.getAuthority();
         }
 
-        public String getRoleKey() {
-            return role.getKey();
+        public String getRole() {
+            return authority.getRole();
         }
     }
 }

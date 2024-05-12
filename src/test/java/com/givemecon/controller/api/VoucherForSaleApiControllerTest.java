@@ -39,7 +39,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Role.*;
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
@@ -111,7 +111,7 @@ class VoucherForSaleApiControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(USER)
+                .authority(USER)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
@@ -137,7 +137,6 @@ class VoucherForSaleApiControllerTest {
 
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title(title)
-                .price(0L)
                 .build());
 
         // when
@@ -151,7 +150,7 @@ class VoucherForSaleApiControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        assertThat(voucher.getPrice()).isEqualTo(price);
+        assertThat(voucher.getMinPrice()).isEqualTo(price);
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
 
         response.andExpect(status().isCreated())
@@ -187,7 +186,6 @@ class VoucherForSaleApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
@@ -210,7 +208,7 @@ class VoucherForSaleApiControllerTest {
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
-        assertThat(voucher.getPrice()).isEqualTo(0L);
+        assertThat(voucher.getMinPrice()).isEqualTo(0L);
 
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",

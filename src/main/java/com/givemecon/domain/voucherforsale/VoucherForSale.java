@@ -31,15 +31,15 @@ public class VoucherForSale extends BaseTimeEntity {
     private String barcode;
 
     @OneToOne
-    @JoinColumn(name = "voucher_for_sale_image_id")
+    @JoinColumn
     private VoucherForSaleImage voucherForSaleImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_id")
+    @JoinColumn
     private Voucher voucher;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     private Member seller;
 
     @Builder

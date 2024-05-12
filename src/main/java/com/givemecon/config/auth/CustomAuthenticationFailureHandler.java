@@ -32,7 +32,7 @@ public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenti
     public void init() {
         String exceptionName = OAuth2AuthenticationException.class.getName();
         String url = UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
-                .queryParam(ERROR, true)
+                .queryParam(ERROR)
                 .queryParam(ERROR_DESCRIPTION, DUPLICATE_EMAIL_ERROR)
                 .encode(UTF_8)
                 .toUriString();

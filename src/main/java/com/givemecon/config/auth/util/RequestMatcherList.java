@@ -14,36 +14,36 @@ public final class RequestMatcherList {
 
     public static RequestMatcher[] ofPermitAll() {
         return new AntPathRequestMatcher[] {
-                antMatcher(ADMIN_LOGIN_API.pattern()),
-                antMatcher(GET, CATEGORY_API.pattern()),
-                antMatcher(GET, BRAND_API.pattern()),
-                antMatcher(GET, VOUCHER_API.pattern()),
-                antMatcher(GET, VOUCHER_FOR_SALE_API.pattern())
+                antMatcher(ADMIN_LOGIN_API.getPattern()),
+                antMatcher(GET, CATEGORY_API.getPattern()),
+                antMatcher(GET, BRAND_API.getPattern()),
+                antMatcher(GET, VOUCHER_API.getPattern()),
+                antMatcher(GET, VOUCHER_FOR_SALE_API.getPattern())
         };
     }
 
     public static RequestMatcher[] ofAuthenticated() {
         return new AntPathRequestMatcher[] {
-                antMatcher(AUTH_API.pattern())
+                antMatcher(AUTH_API.getPattern())
         };
     }
 
     public static RequestMatcher[] ofRoleAdmin() {
         return new AntPathRequestMatcher[] {
-                antMatcher(MEMBER_API.pattern()),
-                antMatcher(CATEGORY_API.pattern()),
-                antMatcher(BRAND_API.pattern()),
-                antMatcher(VOUCHER_API.pattern())
+                antMatcher(MEMBER_API.getPattern()),
+                antMatcher(CATEGORY_API.getPattern()),
+                antMatcher(BRAND_API.getPattern()),
+                antMatcher(VOUCHER_API.getPattern())
         };
     }
 
     public static RequestMatcher[] ofAnyRole() {
         return new AntPathRequestMatcher[] {
-                antMatcher(AUTH_API.pattern()),
-                antMatcher(VOUCHER_FOR_SALE_API.pattern()),
-                antMatcher(LIKED_VOUCHER_API.pattern()),
-                antMatcher(PURCHASED_VOUCHER_API.pattern()),
-                antMatcher(IMAGE_TEXT_EXTRACTION_API.pattern())
+                antMatcher(AUTH_API.getPattern()),
+                antMatcher(VOUCHER_FOR_SALE_API.getPattern()),
+                antMatcher(LIKED_VOUCHER_API.getPattern()),
+                antMatcher(PURCHASED_VOUCHER_API.getPattern()),
+                antMatcher(IMAGE_TEXT_EXTRACTION_API.getPattern())
         };
     }
 }

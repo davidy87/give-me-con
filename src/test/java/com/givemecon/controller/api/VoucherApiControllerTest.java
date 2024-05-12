@@ -117,7 +117,6 @@ class VoucherApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        Long price = 4_000L;
         String title = "Americano T";
         String image = "tall_americano.png";
 
@@ -140,7 +139,6 @@ class VoucherApiControllerTest {
                 .file(imageFile)
                 .part(new MockPart("categoryId", category.getId().toString().getBytes()))
                 .part(new MockPart("brandId", brand.getId().toString().getBytes()))
-                .part(new MockPart("price", price.toString().getBytes()))
                 .part(new MockPart("title", title.getBytes()))
         );
 
@@ -152,7 +150,7 @@ class VoucherApiControllerTest {
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getMinPrice()))
                 .andExpect(jsonPath("title").value(voucherList.get(0).getTitle()))
                 .andExpect(jsonPath("description").value(voucherList.get(0).getDescription()))
                 .andExpect(jsonPath("caution").value(voucherList.get(0).getCaution()))
@@ -163,7 +161,6 @@ class VoucherApiControllerTest {
                         requestParts(
                                 partWithName("categoryId").description("저장할 기프티콘의 카테고리 id"),
                                 partWithName("brandId").description("저장할 기프티콘의 브랜드 id"),
-                                partWithName("price").description("저장할 기프티콘 최소 가격"),
                                 partWithName("title").description("저장할 기프티콘 타이틀"),
                                 partWithName("description").optional().description("저장할 기프티콘 최소 가격 (생략 가능)"),
                                 partWithName("caution").optional().description("저장할 기프티콘 타이틀 (생략 가능)"),
@@ -184,7 +181,6 @@ class VoucherApiControllerTest {
     void findOne() throws Exception {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
-                .price(20_000L)
                 .title("Ice Cream Cake")
                 .description("This is Ice Cream Cake.")
                 .caution("This Ice Cream Cake is extremely cold.")
@@ -205,7 +201,7 @@ class VoucherApiControllerTest {
         response
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("minPrice").value(voucher.getPrice()))
+                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherImage.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
@@ -229,7 +225,6 @@ class VoucherApiControllerTest {
         // given
         for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
-                    .price(10_000L)
                     .title("Voucher" + i)
                     .description("This is Voucher" + i + ".")
                     .caution("This voucher is awesome.")
@@ -287,7 +282,6 @@ class VoucherApiControllerTest {
 
         for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
-                    .price(10_000L)
                     .title("Voucher " + i)
                     .description("This is Voucher" + i + ".")
                     .caution("This voucher is awesome.")
@@ -337,10 +331,8 @@ class VoucherApiControllerTest {
     @Test
     void findSellingListByVoucherId() throws Exception {
         // given
-        Long price = 4_000L;
         String title = "Americano T";
         Voucher voucher = Voucher.builder()
-                .price(price)
                 .title(title)
                 .description("This is Americano T")
                 .caution("This voucher is from Starbucks.")
@@ -394,7 +386,6 @@ class VoucherApiControllerTest {
     void update() throws Exception {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
-                .price(3_000L)
                 .title("oldTitle")
                 .description("This is an old voucher.")
                 .caution("This voucher will be updated.")
@@ -426,7 +417,7 @@ class VoucherApiControllerTest {
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getPrice()))
+                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getMinPrice()))
                 .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -455,7 +446,6 @@ class VoucherApiControllerTest {
     void deleteOne() throws Exception {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
-                .price(4_000L)
                 .title("voucher")
                 .build());
 

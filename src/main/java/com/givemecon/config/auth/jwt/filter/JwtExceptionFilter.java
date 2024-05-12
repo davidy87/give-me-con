@@ -19,7 +19,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static org.springframework.http.MediaType.*;
 
 @Slf4j
-public class JwtExceptionFilter extends OncePerRequestFilter {
+public final class JwtExceptionFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

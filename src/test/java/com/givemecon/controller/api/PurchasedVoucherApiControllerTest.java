@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Role.*;
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
@@ -95,7 +95,7 @@ class PurchasedVoucherApiControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
-                .role(USER)
+                .authority(USER)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
@@ -106,7 +106,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
@@ -165,7 +164,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         for (int i = 1; i <= 20; i++) {
@@ -226,7 +224,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
@@ -284,7 +281,6 @@ class PurchasedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build());
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()

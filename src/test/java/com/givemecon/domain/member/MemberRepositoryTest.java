@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.givemecon.config.enums.Role.USER;
+import static com.givemecon.config.enums.Authority.USER;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
@@ -29,7 +29,7 @@ class MemberRepositoryTest {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
-                .role(USER)
+                .authority(USER)
                 .build();
 
         // when
@@ -40,7 +40,7 @@ class MemberRepositoryTest {
         Member found = memberList.get(0);
         assertThat(found.getEmail()).isEqualTo(email);
         assertThat(found.getUsername()).isEqualTo(username);
-        assertThat(found.getRole()).isEqualTo(USER);
+        assertThat(found.getAuthority()).isEqualTo(USER);
     }
 
     @Test
@@ -50,7 +50,7 @@ class MemberRepositoryTest {
         memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .role(USER)
+                .authority(USER)
                 .build());
 
         // when

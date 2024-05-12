@@ -6,25 +6,23 @@ import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import static jakarta.persistence.GenerationType.*;
-
 @Getter
 @Entity
 public class PurchasedVoucher extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private Boolean isValid;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "voucher_for_sale_id")
+    @JoinColumn
     private VoucherForSale voucherForSale;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn
     private Member owner;
 
     public PurchasedVoucher() {

@@ -1,7 +1,6 @@
 package com.givemecon.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.enums.Role;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -104,7 +104,7 @@ class MemberApiControllerTest {
                 .email("test@gmail.com")
                 .username("tester")
                 .password(passwordEncoder.encode(password))
-                .role(Role.ADMIN)
+                .authority(ADMIN)
                 .build());
 
         LoginRequest loginRequest = LoginRequest.builder()
@@ -131,7 +131,7 @@ class MemberApiControllerTest {
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                                 fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
                                 fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                                fieldWithPath("role").type(JsonFieldType.STRING).description("권한 타입")
+                                fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
                         ))
                 );
     }
@@ -142,7 +142,7 @@ class MemberApiControllerTest {
         Member member = Member.builder()
                 .username("tester")
                 .email("test@gmail.com")
-                .role(Role.USER)
+                .authority(USER)
                 .build();
 
         Member memberSaved = memberRepository.save(member);

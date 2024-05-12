@@ -14,22 +14,20 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.GenerationType.*;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Voucher extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
     private String title;
 
-    @Column(nullable = false, name = "min_price")
-    private Long price;
+    @Column(nullable = false)
+    private Long minPrice;
 
     @Column(length = 500)
     private String description;
@@ -38,29 +36,28 @@ public class Voucher extends BaseTimeEntity {
     private String caution;
 
     @OneToOne
-    @JoinColumn(name = "voucher_image_id")
+    @JoinColumn
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id")
+    @JoinColumn
     private Brand brand;
 
     @OneToMany(
             mappedBy = "voucher",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     List<VoucherForSale> voucherForSaleList = new ArrayList<>();
 
     @Builder
-    public Voucher(String title, Long price, String description, String caution) {
+    public Voucher(String title, String description, String caution) {
         this.title = title;
-        this.price = price;
+        this.minPrice = 0L;
         this.description = description;
         this.caution = caution;
     }
@@ -97,10 +94,10 @@ public class Voucher extends BaseTimeEntity {
         voucherForSaleList.add(voucherForSale);
         voucherForSale.updateVoucher(this);
 
-        if (this.price == 0L) {
-            this.price = voucherForSale.getPrice();
+        if (this.minPrice == 0L) {
+            this.minPrice = voucherForSale.getPrice();
         } else {
-            this.price = Math.min(this.price, voucherForSale.getPrice());
+            this.minPrice = Math.min(this.minPrice, voucherForSale.getPrice());
         }
     }
 
@@ -108,7 +105,7 @@ public class Voucher extends BaseTimeEntity {
         voucherForSaleList.remove(voucherForSale);
         voucherForSale.updateVoucher(null);
 
-        this.price = voucherForSaleList.stream()
+        this.minPrice = voucherForSaleList.stream()
                 .map(VoucherForSale::getPrice)
                 .mapToLong(Long::longValue)
                 .min()

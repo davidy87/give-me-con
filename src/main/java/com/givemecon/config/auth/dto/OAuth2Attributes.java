@@ -1,13 +1,13 @@
 package com.givemecon.config.auth.dto;
 
 import com.givemecon.config.enums.OAuth2Provider;
-import com.givemecon.config.enums.Role;
 import com.givemecon.domain.member.Member;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Map;
 
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.config.enums.OAuth2Provider.*;
 
 @Getter
@@ -84,7 +84,7 @@ public final class OAuth2Attributes {
         return Member.oauthBuilder()
                 .email(email)
                 .username(username)
-                .role(Role.USER)
+                .authority(USER)
                 .provider(provider)
                 .build();
     }

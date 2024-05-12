@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Role.*;
+import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
@@ -86,7 +86,7 @@ class LikedVoucherApiControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
-                .role(USER)
+                .authority(USER)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
@@ -97,7 +97,6 @@ class LikedVoucherApiControllerTest {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .description("voucher description")
                 .caution("voucher caution")
                 .build());
@@ -144,7 +143,6 @@ class LikedVoucherApiControllerTest {
         for (int i = 1; i <= 20; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .title("voucher" + i)
-                    .price(4_000L)
                     .description("voucher" + i + " description")
                     .caution("voucher" + i + " caution")
                     .build());
@@ -194,7 +192,6 @@ class LikedVoucherApiControllerTest {
         // given
         Voucher voucher = Voucher.builder()
                 .title("voucher")
-                .price(4_000L)
                 .build();
 
         Voucher voucherSaved = voucherRepository.save(voucher);

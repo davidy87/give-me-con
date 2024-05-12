@@ -26,12 +26,11 @@ public class Category extends BaseTimeEntity {
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_icon_id")
+    @JoinColumn
     private CategoryIcon categoryIcon;
 
     @OneToMany(
             mappedBy = "category",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
@@ -39,7 +38,6 @@ public class Category extends BaseTimeEntity {
 
     @OneToMany(
             mappedBy = "category",
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
