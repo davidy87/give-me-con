@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
-import static com.givemecon.config.enums.SessionAttributeName.*;
+import static com.givemecon.config.enums.SessionAttribute.*;
 import static com.givemecon.domain.member.MemberDto.*;
 
 @Slf4j
@@ -27,8 +27,6 @@ import static com.givemecon.domain.member.MemberDto.*;
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private static final String SUCCESS_PARAM = "success";
-
-    private static final int SESSION_DURATION = 10;
 
     private final MemberRepository memberRepository;
 
@@ -48,8 +46,8 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         HttpSession session = request.getSession(true);
 
         if (session != null) {
-            session.setAttribute(TOKEN_INFO.name(), tokenInfo);
-            session.setMaxInactiveInterval(SESSION_DURATION);
+            session.setAttribute(TOKEN_INFO.getName(), tokenInfo);
+            session.setMaxInactiveInterval(TOKEN_INFO.getDuration());
         }
 
         String redirectUrl =

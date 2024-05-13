@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.SessionAttributeName.TOKEN_INFO;
+import static com.givemecon.config.enums.SessionAttribute.TOKEN_INFO;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
 @Slf4j
