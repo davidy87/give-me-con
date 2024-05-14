@@ -4,7 +4,9 @@ import com.givemecon.config.enums.Authority;
 import lombok.*;
 
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public final class TokenInfo {
 
     private String grantType;
@@ -16,13 +18,4 @@ public final class TokenInfo {
     private String username;
 
     private Authority authority;
-
-    @Builder
-    public TokenInfo(String grantType, String accessToken, String refreshToken, String username, Authority authority) {
-        this.grantType = grantType;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.username = username;
-        this.authority = authority;
-    }
 }
