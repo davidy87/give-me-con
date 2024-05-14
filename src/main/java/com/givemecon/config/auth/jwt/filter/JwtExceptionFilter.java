@@ -1,6 +1,7 @@
 package com.givemecon.config.auth.jwt.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.error.response.ErrorResponse;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.JwtException;
@@ -26,25 +27,25 @@ public final class JwtExceptionFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        ErrorResponse errorResponse = null;
-
         try {
             log.info("[Log] --- Begin JwtExceptionFilter ---");
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
             log.info("[Log] Caught JwtException", e);
-            errorResponse = new ErrorResponse(ACCESS_TOKEN_EXPIRED);
+            respondWithError(response, ACCESS_TOKEN_EXPIRED);
         } catch (InvalidTokenException e) {
             log.info("[Log] Caught InvalidTokenException", e);
-            errorResponse = new ErrorResponse(e.getErrorCode());
+            respondWithError(response, e.getErrorCode());
         } finally {
-            if (errorResponse != null) {
-                response.setStatus(errorResponse.getStatus());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding(UTF_8.name());
-                response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("error", errorResponse)));
-            }
             log.info("[Log] --- End JwtExceptionFilter ---");
         }
+    }
+
+    private void respondWithError(HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(errorCode);
+        response.setStatus(errorResponse.getStatus());
+        response.setContentType(APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(UTF_8.name());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(Map.of("error", errorResponse)));
     }
 }
