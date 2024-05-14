@@ -17,10 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -111,7 +108,7 @@ public class JwtTokenService {
     /**
      * 요청으로 전달된 토큰을 추출
      * @param tokenHeader Token 정보가 들어있는 HTTP Header
-     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우, <code>null</code>)
+     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우, 빈 문자열 반환)
      * <br>
      * <p>
      *     올바른 형태의 header 예:
@@ -124,14 +121,14 @@ public class JwtTokenService {
         String[] headerSplit = StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER);
 
         if (headerSplit == null) {
-            return null;
+            return "";
         }
 
         boolean isHeaderValid = headerSplit[0].equals(BEARER.getType())
                         && StringUtils.hasText(headerSplit[1])
                         && !StringUtils.containsWhitespace(headerSplit[1]);
 
-        return isHeaderValid ? headerSplit[1] : null;
+        return isHeaderValid ? headerSplit[1] : "";
     }
 
     /**
