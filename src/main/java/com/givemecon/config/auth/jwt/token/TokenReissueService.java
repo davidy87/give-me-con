@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
@@ -27,26 +28,34 @@ public class TokenReissueService {
 
     public TokenInfo reissueToken(String tokenHeader) {
         String refreshToken = jwtTokenService.retrieveToken(tokenHeader);
+        Member member = validateRefreshToken(refreshToken);
 
-        if (refreshToken == null) {
+        // Access token과 refresh token을 같이 재발급한다.
+        return jwtTokenService.getTokenInfo(new TokenRequest(member));
+    }
+
+    /**
+     * Refresh token 검증에 성공하면 token 재발급 요청자(Member)를 찾아 반환
+     * @param refreshToken 검증할 refresh token
+     * @return {@link Member} (token 재발급 요청자에 해당하는 Member entity)
+     */
+    private Member validateRefreshToken(String refreshToken) {
+        if (!StringUtils.hasText(refreshToken)) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
 
         RefreshToken tokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new InvalidTokenException(REFRESH_TOKEN_EXPIRED));
 
-        Member member = memberRepository.findById(Long.valueOf(tokenEntity.getMemberId()))
-                .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
-
         try {
-            jwtTokenService.getClaims(tokenEntity.getRefreshToken());
+            jwtTokenService.getClaims(refreshToken);
         } catch (JwtException e) {
             refreshTokenRepository.delete(tokenEntity);
             throw new InvalidTokenException(REFRESH_TOKEN_EXPIRED);
         }
 
-        // Access Token 재발급 후, Refresh Token도 같이 재발급한다.
-        return jwtTokenService.getTokenInfo(new TokenRequest(member));
+        return memberRepository.findById(Long.valueOf(tokenEntity.getMemberId()))
+                .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
     }
 
     public void save(Long memberId, String refreshToken) {
