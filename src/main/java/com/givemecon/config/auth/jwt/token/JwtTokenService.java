@@ -61,15 +61,7 @@ public class JwtTokenService {
         String accessToken = generateAccessToken(tokenRequest, issuedAt);
         String refreshToken = generateRefreshToken(issuedAt);
 
-        refreshTokenRepository.findByMemberId(String.valueOf(tokenRequest.getMemberId()))
-                .ifPresentOrElse(
-                        entity -> {
-                            entity.updateRefreshToken(refreshToken);
-                            refreshTokenRepository.save(entity);
-                        },
-                        () -> refreshTokenRepository.save(
-                                new RefreshToken(String.valueOf(tokenRequest.getMemberId()), refreshToken)
-                        ));
+        saveOrUpdateRefreshToken(String.valueOf(tokenRequest.getMemberId()), refreshToken);
 
         return TokenInfo.builder()
                 .grantType(BEARER.getType())
@@ -80,15 +72,16 @@ public class JwtTokenService {
                 .build();
     }
 
-    private String generateAccessToken(TokenRequest tokenRequest, long issuedAt) {
-        return Jwts.builder()
-                .setId(UUID.randomUUID().toString())
-                .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
-                .claim(CLAIM_NAME_AUTHORITY, tokenRequest.getRole())
-                .setIssuedAt(new Date(issuedAt))
-                .setExpiration(new Date(issuedAt + ACCESS_TOKEN_DURATION.toMillis()))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
-                .compact();
+    private void saveOrUpdateRefreshToken(String memberId, String refreshToken) {
+        refreshTokenRepository.findByMemberId(memberId)
+                .ifPresentOrElse(
+                        entity -> {
+                            entity.updateRefreshToken(refreshToken);
+                            refreshTokenRepository.save(entity);
+                        },
+                        () -> refreshTokenRepository.save(
+                                new RefreshToken(memberId, refreshToken)
+                        ));
     }
 
     private String generateRefreshToken(long issuedAt) {
@@ -96,6 +89,17 @@ public class JwtTokenService {
                 .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date(issuedAt))
                 .setExpiration(new Date(issuedAt + REFRESH_TOKEN_DURATION.toMillis()))
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private String generateAccessToken(TokenRequest tokenRequest, long issuedAt) {
+        return Jwts.builder()
+                .setId(UUID.randomUUID().toString())
+                .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
+                .claim(CLAIM_NAME_AUTHORITY, tokenRequest.getRole())
+                .setIssuedAt(new Date(issuedAt))
+                .setExpiration(new Date(issuedAt + ACCESS_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -120,26 +124,29 @@ public class JwtTokenService {
         }
 
         String grantType = headerSplit[0];
-        String accessToken = headerSplit[1];
-        boolean isHeaderValid = grantType.equals(BEARER.getType())
-                && StringUtils.hasText(accessToken)
-                && !StringUtils.containsWhitespace(accessToken);
+        String token = headerSplit[1];
 
-        return isHeaderValid ? accessToken : "";
+        return isTokenFormatValid(grantType, token) ? token : "";
+    }
+
+    private boolean isTokenFormatValid(String grantType, String token) {
+        return grantType.equals(BEARER.getType())
+                && StringUtils.hasText(token)
+                && !StringUtils.containsWhitespace(token);
     }
 
     /**
      * @param token 사용자의 token
      * @return {@link Authentication} claim에 담겨있는 정보를 바탕으로 만든 authentication token.
      * @throws JwtException getClaims 호출 시, token이 올바르지 않다면, JwtException을 던짐
-     * @throws InvalidTokenException token의 claim에 권한 정보가 존재하지 않을 경우 던짐
+     * @throws InvalidTokenException token의 claim에 권한 정보가 올바르지 않을 경우 던짐
      */
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
         String username = (String) claims.get(CLAIM_NAME_USERNAME);
         String authority = (String) claims.get(CLAIM_NAME_AUTHORITY);
 
-        // Claim에 있는 정보가 올바른지 확인
+        // Claim에 있는 username과 authority가 올바른지 확인
         checkClaimsValidity(username, authority);
 
         Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
