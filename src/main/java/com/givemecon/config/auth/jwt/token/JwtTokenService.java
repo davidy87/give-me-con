@@ -1,6 +1,7 @@
 package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -18,8 +19,6 @@ import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.givemecon.config.enums.GrantType.*;
 import static com.givemecon.config.enums.TokenDuration.ACCESS_TOKEN_DURATION;
@@ -33,7 +32,7 @@ public class JwtTokenService {
 
     private static final String CLAIM_NAME_USERNAME = "username";
 
-    private static final String CLAIM_NAME_AUTHORITIES = "authorities";
+    private static final String CLAIM_NAME_AUTHORITY = "authority";
 
     private static final String TOKEN_HEADER_DELIMITER = " ";
 
@@ -41,12 +40,15 @@ public class JwtTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final MemberRepository memberRepository;
 
     public JwtTokenService(@Value("${jwt.secret}") String secretKey,
-                           RefreshTokenRepository refreshTokenRepository) {
+                           RefreshTokenRepository refreshTokenRepository,
+                           MemberRepository memberRepository) {
 
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
         this.refreshTokenRepository = refreshTokenRepository;
+        this.memberRepository = memberRepository;
     }
 
     /**
@@ -55,8 +57,9 @@ public class JwtTokenService {
      * @return {@link TokenInfo} (Grant type, access token, refresh token이 담겨있는 DTO)
      */
     public TokenInfo getTokenInfo(TokenRequest tokenRequest) {
-        String accessToken = generateAccessToken(tokenRequest);
-        String refreshToken = generateRefreshToken();
+        long issuedAt = System.currentTimeMillis();
+        String accessToken = generateAccessToken(tokenRequest, issuedAt);
+        String refreshToken = generateRefreshToken(issuedAt);
 
         refreshTokenRepository.findByMemberId(String.valueOf(tokenRequest.getMemberId()))
                 .ifPresentOrElse(
@@ -77,30 +80,22 @@ public class JwtTokenService {
                 .build();
     }
 
-    private String generateAccessToken(TokenRequest tokenRequest) {
-        String authoritiesInString = Stream.of(new SimpleGrantedAuthority(tokenRequest.getRole()))
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        long currentTime = System.currentTimeMillis();
-
+    private String generateAccessToken(TokenRequest tokenRequest, long issuedAt) {
         return Jwts.builder()
                 .setId(UUID.randomUUID().toString())
                 .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
-                .claim(CLAIM_NAME_AUTHORITIES, authoritiesInString)
-                .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + ACCESS_TOKEN_DURATION.toMillis()))
+                .claim(CLAIM_NAME_AUTHORITY, tokenRequest.getRole())
+                .setIssuedAt(new Date(issuedAt))
+                .setExpiration(new Date(issuedAt + ACCESS_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private String generateRefreshToken() {
-        long currentTime = System.currentTimeMillis();
-
+    private String generateRefreshToken(long issuedAt) {
         return Jwts.builder()
                 .setId(UUID.randomUUID().toString())
-                .setIssuedAt(new Date(currentTime))
-                .setExpiration(new Date(currentTime + REFRESH_TOKEN_DURATION.toMillis()))
+                .setIssuedAt(new Date(issuedAt))
+                .setExpiration(new Date(issuedAt + REFRESH_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -124,11 +119,13 @@ public class JwtTokenService {
             return "";
         }
 
-        boolean isHeaderValid = headerSplit[0].equals(BEARER.getType())
-                        && StringUtils.hasText(headerSplit[1])
-                        && !StringUtils.containsWhitespace(headerSplit[1]);
+        String grantType = headerSplit[0];
+        String accessToken = headerSplit[1];
+        boolean isHeaderValid = grantType.equals(BEARER.getType())
+                && StringUtils.hasText(accessToken)
+                && !StringUtils.containsWhitespace(accessToken);
 
-        return isHeaderValid ? headerSplit[1] : "";
+        return isHeaderValid ? accessToken : "";
     }
 
     /**
@@ -140,20 +137,25 @@ public class JwtTokenService {
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
         String username = (String) claims.get(CLAIM_NAME_USERNAME);
-        String authoritiesInString = (String) claims.get(CLAIM_NAME_AUTHORITIES);
+        String authority = (String) claims.get(CLAIM_NAME_AUTHORITY);
 
-        if (authoritiesInString == null) {
-            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
-        }
+        // Claim에 있는 정보가 올바른지 확인
+        checkClaimsValidity(username, authority);
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(authoritiesInString.split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .toList();
-
+        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
         UserDetails principal = new User(username, "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+    }
+
+    private void checkClaimsValidity(String username, String authority) {
+        if (username == null || authority == null) {
+            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
+        }
+
+        memberRepository.findByUsername(username)
+                .filter(member -> authority.equals(member.getRole()))
+                .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
     }
 
     public Claims getClaims(String token) throws JwtException {

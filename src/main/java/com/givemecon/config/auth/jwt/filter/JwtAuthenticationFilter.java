@@ -3,6 +3,7 @@ package com.givemecon.config.auth.jwt.filter;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = jwtTokenService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("[Log] Authenticated User = {}", authentication.getName());
-        } catch (ExpiredJwtException e) {
+        } catch (JwtException e) {
             // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
             String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
             String refreshToken = jwtTokenService.retrieveToken(refreshTokenHeader);
