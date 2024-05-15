@@ -147,7 +147,7 @@ public class JwtTokenService {
         String role = (String) claims.get(CLAIM_NAME_ROLE);
 
         // Claim에 있는 username과 authority가 올바른지 확인
-        checkClaimsValidity(username, role);
+        validateClaims(username, role);
 
         Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
         UserDetails principal = new User(username, "", authorities);
@@ -155,7 +155,7 @@ public class JwtTokenService {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    private void checkClaimsValidity(String username, String role) {
+    private void validateClaims(String username, String role) {
         if (username == null || role == null) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
