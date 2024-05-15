@@ -32,7 +32,7 @@ public class JwtTokenService {
 
     private static final String CLAIM_NAME_USERNAME = "username";
 
-    private static final String CLAIM_NAME_AUTHORITY = "authority";
+    private static final String CLAIM_NAME_ROLE = "role";
 
     private static final String TOKEN_HEADER_DELIMITER = " ";
 
@@ -97,7 +97,7 @@ public class JwtTokenService {
         return Jwts.builder()
                 .setId(UUID.randomUUID().toString())
                 .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
-                .claim(CLAIM_NAME_AUTHORITY, tokenRequest.getRole())
+                .claim(CLAIM_NAME_ROLE, tokenRequest.getRole())
                 .setIssuedAt(new Date(issuedAt))
                 .setExpiration(new Date(issuedAt + ACCESS_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -144,24 +144,24 @@ public class JwtTokenService {
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
         String username = (String) claims.get(CLAIM_NAME_USERNAME);
-        String authority = (String) claims.get(CLAIM_NAME_AUTHORITY);
+        String role = (String) claims.get(CLAIM_NAME_ROLE);
 
         // Claim에 있는 username과 authority가 올바른지 확인
-        checkClaimsValidity(username, authority);
+        checkClaimsValidity(username, role);
 
-        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
+        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
         UserDetails principal = new User(username, "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    private void checkClaimsValidity(String username, String authority) {
-        if (username == null || authority == null) {
+    private void checkClaimsValidity(String username, String role) {
+        if (username == null || role == null) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
 
         memberRepository.findByUsername(username)
-                .filter(member -> authority.equals(member.getRole()))
+                .filter(member -> role.equals(member.getRole()))
                 .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
     }
 
