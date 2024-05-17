@@ -284,6 +284,7 @@ class BrandApiControllerTest {
         // then
         List<Brand> brandList = brandRepository.findAll();
         assertThat(brandList.get(0).getCategory()).isSameAs(newCategory);
+        assertThat(oldCategory.getBrandList()).isEmpty();
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))

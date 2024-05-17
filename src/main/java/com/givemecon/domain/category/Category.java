@@ -65,6 +65,11 @@ public class Category extends BaseTimeEntity {
         brand.updateCategory(this);
     }
 
+    public void deleteBrand(Brand brand) {
+        brandList.remove(brand);
+        brand.updateCategory(null);
+    }
+
     public void addVoucher(Voucher voucher) {
         voucherList.add(voucher);
         voucher.updateCategory(this);

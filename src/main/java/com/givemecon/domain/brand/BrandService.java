@@ -36,14 +36,12 @@ public class BrandService {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-        MultipartFile iconFile = requestDto.getIconFile();
+        BrandIcon brandIcon = brandIconRepository.save(
+                imageEntityUtils.createImageEntity(BrandIcon.class, requestDto.getIconFile()));
 
         Brand brand = brandRepository.save(requestDto.toEntity());
-        BrandIcon brandIcon = brandIconRepository.save(
-                imageEntityUtils.createImageEntity(BrandIcon.class, iconFile));
-
-        brand.updateBrandIcon(brandIcon);
         brand.updateCategory(category);
+        brand.updateBrandIcon(brandIcon);
 
         return new BrandResponse(brand);
     }
@@ -87,6 +85,7 @@ public class BrandService {
             Category newCategory = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
+            brand.getCategory().deleteBrand(brand);
             newCategory.addBrand(brand);
         }
 
@@ -95,8 +94,7 @@ public class BrandService {
         }
 
         if (FileUtils.isValidFile(newIconFile)) {
-            BrandIcon brandIcon = brand.getBrandIcon();
-            imageEntityUtils.updateImageEntity(brandIcon, newIconFile);
+            imageEntityUtils.updateImageEntity(brand.getBrandIcon(), newIconFile);
         }
 
         return new BrandResponse(brand);
