@@ -102,12 +102,10 @@ public class BrandService {
         return new BrandResponse(brand);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         brandRepository.delete(brand);
-
-        return id;
     }
 }

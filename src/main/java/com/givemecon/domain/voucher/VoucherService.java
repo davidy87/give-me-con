@@ -133,12 +133,10 @@ public class VoucherService {
         return new VoucherResponse(voucher);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         voucherRepository.delete(voucher);
-
-        return id;
     }
 }

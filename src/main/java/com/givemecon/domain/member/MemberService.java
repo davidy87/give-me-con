@@ -42,12 +42,10 @@ public class MemberService {
         return jwtTokenService.getTokenInfo(new TokenRequest(loginMember));
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         memberRepository.delete(member);
-
-        return id;
     }
 }

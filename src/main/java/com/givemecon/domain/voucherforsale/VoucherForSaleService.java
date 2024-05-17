@@ -32,7 +32,6 @@ public class VoucherForSaleService {
 
     private final ImageEntityUtils imageEntityUtils;
 
-
     public VoucherForSaleResponse save(String username, VoucherForSaleRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
@@ -53,13 +52,11 @@ public class VoucherForSaleService {
         return new VoucherForSaleResponse(voucherForSale);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
         voucherForSaleRepository.delete(voucherForSale);
         voucherForSale.getVoucher().removeVoucherForSale(voucherForSale);
-
-        return id;
     }
 }

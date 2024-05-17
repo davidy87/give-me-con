@@ -67,12 +67,10 @@ public class CategoryService {
         return new CategoryResponse(category);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         categoryRepository.delete(category);
-
-        return id;
     }
 }
