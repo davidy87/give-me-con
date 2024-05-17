@@ -4,6 +4,7 @@ import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,9 +50,12 @@ public class TokenReissueService {
 
         try {
             jwtTokenService.getClaims(refreshToken);
-        } catch (JwtException e) {
-            refreshTokenRepository.delete(tokenEntity);
+        } catch (ExpiredJwtException e) {
             throw new InvalidTokenException(REFRESH_TOKEN_EXPIRED);
+        } catch (JwtException e) {
+            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
+        } finally {
+            refreshTokenRepository.delete(tokenEntity);
         }
 
         return memberRepository.findById(Long.valueOf(tokenEntity.getMemberId()))

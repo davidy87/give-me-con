@@ -155,7 +155,7 @@ public class ApiExceptionControllerTest {
     }
 
     @Test
-    void jwtException() throws Exception {
+    void invalidJwtException() throws Exception {
         // given
         String invalidAccessToken = tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken() + "a";
         String url = "http://localhost:" + port + "/api/liked-vouchers/" + 1;
@@ -166,8 +166,8 @@ public class ApiExceptionControllerTest {
 
         // then
         response.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.code").value(ACCESS_TOKEN_EXPIRED.getCode()))
-                .andExpect(jsonPath("error.status").value(ACCESS_TOKEN_EXPIRED.getStatus()))
-                .andExpect(jsonPath("error.message").value(ACCESS_TOKEN_EXPIRED.getMessage()));
+                .andExpect(jsonPath("error.code").value(TOKEN_NOT_AUTHENTICATED.getCode()))
+                .andExpect(jsonPath("error.status").value(TOKEN_NOT_AUTHENTICATED.getStatus()))
+                .andExpect(jsonPath("error.message").value(TOKEN_NOT_AUTHENTICATED.getMessage()));
     }
 }

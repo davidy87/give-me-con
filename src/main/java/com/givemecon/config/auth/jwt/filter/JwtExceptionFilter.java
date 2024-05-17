@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.error.response.ErrorResponse;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,9 +31,12 @@ public final class JwtExceptionFilter extends OncePerRequestFilter {
         try {
             log.info("[Log] --- Begin JwtExceptionFilter ---");
             filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            log.info("[Log] Caught ExpiredJwtException", e);
+            respondWithError(response, ACCESS_TOKEN_EXPIRED);
         } catch (JwtException e) {
             log.info("[Log] Caught JwtException", e);
-            respondWithError(response, ACCESS_TOKEN_EXPIRED);
+            respondWithError(response, TOKEN_NOT_AUTHENTICATED);
         } catch (InvalidTokenException e) {
             log.info("[Log] Caught InvalidTokenException", e);
             respondWithError(response, e.getErrorCode());
