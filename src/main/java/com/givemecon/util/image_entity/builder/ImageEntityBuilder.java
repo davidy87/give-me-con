@@ -8,7 +8,7 @@ public abstract class ImageEntityBuilder {
      * 구현체가 생성하는 image entity의 이름을 반환하는 메서드 (E.g. XxxBuilder -> Xxx).
      * @return Image entity의 이름
      */
-    public String getEntityName() {
+    public final String getEntityName() {
         return getEntityType().getSimpleName();
     }
 
