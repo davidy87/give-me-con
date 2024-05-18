@@ -46,12 +46,10 @@ public class VoucherService {
         Brand brand = brandRepository.findById(requestDto.getBrandId())
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
-        MultipartFile imageFile = requestDto.getImageFile();
+        VoucherImage voucherImage = voucherImageRepository.save(
+                imageEntityUtils.createImageEntity(VoucherImage.class, requestDto.getImageFile()));
 
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
-        VoucherImage voucherImage = voucherImageRepository.save(
-                imageEntityUtils.createImageEntity(VoucherImage.class, imageFile));
-
         voucher.updateVoucherImage(voucherImage);
         category.addVoucher(voucher);
         brand.addVoucher(voucher);
@@ -126,8 +124,7 @@ public class VoucherService {
         }
 
         if (FileUtils.isValidFile(newImageFile)) {
-            VoucherImage voucherImage = voucher.getVoucherImage();
-            imageEntityUtils.updateImageEntity(voucherImage, newImageFile);
+            imageEntityUtils.updateImageEntity(voucher.getVoucherImage(), newImageFile);
         }
 
         return new VoucherResponse(voucher);

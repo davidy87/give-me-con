@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
@@ -39,14 +38,12 @@ public class VoucherForSaleService {
         Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
-        MultipartFile imageFile = requestDto.getImageFile();
+        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
+                imageEntityUtils.createImageEntity(VoucherForSaleImage.class, requestDto.getImageFile()));
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
-        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
-                imageEntityUtils.createImageEntity(VoucherForSaleImage.class, imageFile));
-
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucherForSale.updateSeller(seller);
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
 
         return new VoucherForSaleResponse(voucherForSale);
@@ -56,7 +53,7 @@ public class VoucherForSaleService {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
-        voucherForSaleRepository.delete(voucherForSale);
         voucherForSale.getVoucher().removeVoucherForSale(voucherForSale);
+        voucherForSaleRepository.delete(voucherForSale);
     }
 }

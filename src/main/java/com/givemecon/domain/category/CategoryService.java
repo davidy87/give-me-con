@@ -29,12 +29,10 @@ public class CategoryService {
     private final ImageEntityUtils imageEntityUtils;
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
-        MultipartFile iconFile = requestDto.getIconFile();
+        CategoryIcon categoryIcon = categoryIconRepository.save(
+                imageEntityUtils.createImageEntity(CategoryIcon.class, requestDto.getIconFile()));
 
         Category category = categoryRepository.save(requestDto.toEntity());
-        CategoryIcon categoryIcon = categoryIconRepository.save(
-                imageEntityUtils.createImageEntity(CategoryIcon.class, iconFile));
-
         category.updateCategoryIcon(categoryIcon);
 
         return new CategoryResponse(category);
@@ -60,8 +58,7 @@ public class CategoryService {
         }
 
         if (FileUtils.isValidFile(newIconFile)) {
-            CategoryIcon categoryIcon = category.getCategoryIcon();
-            imageEntityUtils.updateImageEntity(categoryIcon, newIconFile);
+            imageEntityUtils.updateImageEntity(category.getCategoryIcon(), newIconFile);
         }
 
         return new CategoryResponse(category);
