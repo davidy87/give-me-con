@@ -53,7 +53,7 @@ public class VoucherForSaleService {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
-        voucherForSale.getVoucher().removeVoucherForSale(voucherForSale);
+        voucherForSale.getVoucher().deleteVoucherForSale(voucherForSale);
         voucherForSaleRepository.delete(voucherForSale);
     }
 }

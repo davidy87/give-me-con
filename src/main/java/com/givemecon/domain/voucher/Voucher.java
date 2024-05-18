@@ -101,7 +101,7 @@ public class Voucher extends BaseTimeEntity {
         }
     }
 
-    public void removeVoucherForSale(VoucherForSale voucherForSale) {
+    public void deleteVoucherForSale(VoucherForSale voucherForSale) {
         voucherForSaleList.remove(voucherForSale);
         voucherForSale.updateVoucher(null);
 
