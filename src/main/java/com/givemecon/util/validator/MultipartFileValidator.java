@@ -9,6 +9,6 @@ public class MultipartFileValidator implements ConstraintValidator<ValidFile, Mu
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context) {
-        return FileUtils.isValidFile(file);
+        return FileUtils.isFileValid(file);
     }
 }

@@ -57,7 +57,7 @@ public class CategoryService {
             category.updateName(newCategoryName);
         }
 
-        if (FileUtils.isValidFile(newIconFile)) {
+        if (FileUtils.isFileValid(newIconFile)) {
             imageEntityUtils.updateImageEntity(category.getCategoryIcon(), newIconFile);
         }
 

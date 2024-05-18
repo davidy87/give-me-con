@@ -93,7 +93,7 @@ public class BrandService {
             brand.updateName(newBrandName);
         }
 
-        if (FileUtils.isValidFile(newIconFile)) {
+        if (FileUtils.isFileValid(newIconFile)) {
             imageEntityUtils.updateImageEntity(brand.getBrandIcon(), newIconFile);
         }
 

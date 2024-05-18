@@ -123,7 +123,7 @@ public class VoucherService {
             voucher.updateCaution(newCaution);
         }
 
-        if (FileUtils.isValidFile(newImageFile)) {
+        if (FileUtils.isFileValid(newImageFile)) {
             imageEntityUtils.updateImageEntity(voucher.getVoucherImage(), newImageFile);
         }
 
