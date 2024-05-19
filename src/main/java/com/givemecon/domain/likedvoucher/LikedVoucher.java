@@ -32,6 +32,11 @@ public class LikedVoucher extends BaseTimeEntity {
     }
 
     public void updateMember(Member member) {
+        if (this.member != null) {
+            this.member.getLikedVoucherList().remove(this);
+        }
+
         this.member = member;
+        member.getLikedVoucherList().add(this);
     }
 }

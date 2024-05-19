@@ -70,27 +70,4 @@ public class Member extends BaseTimeEntity {
     public String getRole() {
         return authority.getRole();
     }
-
-    public void addLikedVoucher(LikedVoucher likedVoucher) {
-        likedVoucherList.add(likedVoucher);
-        likedVoucher.updateMember(this);
-    }
-
-    public void addPurchasedVoucher(PurchasedVoucher purchasedVoucher) {
-        if (purchasedVoucher == null) {
-            return;
-        }
-
-        if (!purchasedVoucherList.contains(purchasedVoucher)) {
-            purchasedVoucherList.add(purchasedVoucher);
-        }
-    }
-
-    public void deletePurchasedVoucher(PurchasedVoucher purchasedVoucher) {
-        if (purchasedVoucher == null) {
-            return;
-        }
-
-        purchasedVoucherList.remove(purchasedVoucher);
-    }
 }

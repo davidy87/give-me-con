@@ -300,7 +300,7 @@ class PurchasedVoucherApiControllerTest {
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucherForSale.updateVoucher(voucher);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        member.addPurchasedVoucher(purchasedVoucher);
+        purchasedVoucher.updateOwner(member);
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())

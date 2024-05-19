@@ -155,7 +155,7 @@ class LikedVoucherApiControllerTest {
 
             voucher.updateVoucherImage(voucherImage);
             LikedVoucher likedVoucher = likedVoucherRepository.save(new LikedVoucher(voucher));
-            member.addLikedVoucher(likedVoucher);
+            likedVoucher.updateMember(member);
         }
 
         // when

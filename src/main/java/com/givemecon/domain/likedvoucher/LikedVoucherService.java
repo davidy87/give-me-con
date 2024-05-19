@@ -35,7 +35,7 @@ public class LikedVoucherService {
                 .voucher(voucher)
                 .build());
 
-        member.addLikedVoucher(likedVoucher);
+        likedVoucher.updateMember(member);
 
         return new VoucherResponse(voucher);
     }
