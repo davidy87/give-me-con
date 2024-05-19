@@ -124,7 +124,7 @@ class PurchasedVoucherApiControllerTest {
                     .build());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucher.addVoucherForSale(voucherForSale);
+            voucherForSale.updateVoucher(voucher);
             dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
         }
 
@@ -182,7 +182,7 @@ class PurchasedVoucherApiControllerTest {
             PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucher.addVoucherForSale(voucherForSale);
+            voucherForSale.updateVoucher(voucher);
             purchasedVoucher.updateVoucherForSale(voucherForSale);
             member.addPurchasedVoucher(purchasedVoucher);
         }
@@ -241,7 +241,7 @@ class PurchasedVoucherApiControllerTest {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
         member.addPurchasedVoucher(purchasedVoucher);
 
@@ -298,7 +298,7 @@ class PurchasedVoucherApiControllerTest {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
         member.addPurchasedVoucher(purchasedVoucher);
 

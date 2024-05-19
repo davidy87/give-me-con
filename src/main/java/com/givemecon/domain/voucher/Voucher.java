@@ -91,8 +91,13 @@ public class Voucher extends BaseTimeEntity {
     }
 
     public void addVoucherForSale(VoucherForSale voucherForSale) {
-        voucherForSaleList.add(voucherForSale);
-        voucherForSale.updateVoucher(this);
+        if (voucherForSale == null) {
+            return;
+        }
+
+        if (!voucherForSaleList.contains(voucherForSale)) {
+            voucherForSaleList.add(voucherForSale);
+        }
 
         if (this.minPrice == 0L) {
             this.minPrice = voucherForSale.getPrice();
@@ -102,13 +107,18 @@ public class Voucher extends BaseTimeEntity {
     }
 
     public void deleteVoucherForSale(VoucherForSale voucherForSale) {
-        voucherForSaleList.remove(voucherForSale);
-        voucherForSale.updateVoucher(null);
+        if (voucherForSale == null) {
+            return;
+        }
 
-        this.minPrice = voucherForSaleList.stream()
-                .map(VoucherForSale::getPrice)
-                .mapToLong(Long::longValue)
-                .min()
-                .orElse(0L);
+        boolean removed = voucherForSaleList.remove(voucherForSale);
+
+        if (removed) {
+            this.minPrice = voucherForSaleList.stream()
+                    .map(VoucherForSale::getPrice)
+                    .mapToLong(Long::longValue)
+                    .min()
+                    .orElse(0L);
+        }
     }
 }

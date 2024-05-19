@@ -44,7 +44,7 @@ public class VoucherForSaleService {
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
         voucherForSale.updateSeller(seller);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
 
         return new VoucherForSaleResponse(voucherForSale);
     }
@@ -53,7 +53,7 @@ public class VoucherForSaleService {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
-        voucherForSale.getVoucher().deleteVoucherForSale(voucherForSale);
+        voucherForSale.delete();
         voucherForSaleRepository.delete(voucherForSale);
     }
 }

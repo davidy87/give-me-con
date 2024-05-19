@@ -179,7 +179,7 @@ public class EntityRelationshipTest {
 
         // when
         voucherForSale.updateSeller(seller);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
 
         // then
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
@@ -246,7 +246,7 @@ public class EntityRelationshipTest {
         category.addBrand(brand);
         brand.addVoucher(voucher);
         voucher.updateCategory(category);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         // when

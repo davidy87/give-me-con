@@ -62,10 +62,22 @@ public class VoucherForSale extends BaseTimeEntity {
     }
 
     public void updateVoucher(Voucher voucher) {
+        if (this.voucher != null) {
+            this.voucher.deleteVoucherForSale(this);
+        }
+
         this.voucher = voucher;
+        voucher.addVoucherForSale(this);
     }
 
     public void updateSeller(Member seller) {
         this.seller = seller;
+    }
+
+    public void delete() {
+        voucher.deleteVoucherForSale(this);
+        voucherForSaleImage = null;
+        voucher = null;
+        seller = null;
     }
 }

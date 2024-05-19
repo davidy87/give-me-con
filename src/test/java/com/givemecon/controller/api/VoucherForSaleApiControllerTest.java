@@ -200,8 +200,9 @@ class VoucherForSaleApiControllerTest {
                 .originalName("Americano_T.png")
                 .build());
 
+        voucherForSale.updateSeller(member);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())
@@ -209,6 +210,7 @@ class VoucherForSaleApiControllerTest {
 
         // then
         assertThat(voucher.getMinPrice()).isEqualTo(0L);
+        assertThat(voucherForSale.getSeller()).isNull();
 
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
