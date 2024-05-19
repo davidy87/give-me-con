@@ -251,7 +251,7 @@ public class EntityRelationshipTest {
 
         // when
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        owner.addPurchasedVoucher(purchasedVoucher);
+        purchasedVoucher.updateOwner(owner);
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then

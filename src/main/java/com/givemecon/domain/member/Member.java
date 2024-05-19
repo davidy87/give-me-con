@@ -77,7 +77,20 @@ public class Member extends BaseTimeEntity {
     }
 
     public void addPurchasedVoucher(PurchasedVoucher purchasedVoucher) {
-        purchasedVoucherList.add(purchasedVoucher);
-        purchasedVoucher.updateOwner(this);
+        if (purchasedVoucher == null) {
+            return;
+        }
+
+        if (!purchasedVoucherList.contains(purchasedVoucher)) {
+            purchasedVoucherList.add(purchasedVoucher);
+        }
+    }
+
+    public void deletePurchasedVoucher(PurchasedVoucher purchasedVoucher) {
+        if (purchasedVoucher == null) {
+            return;
+        }
+
+        purchasedVoucherList.remove(purchasedVoucher);
     }
 }

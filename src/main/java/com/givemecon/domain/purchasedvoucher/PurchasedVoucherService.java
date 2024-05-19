@@ -52,7 +52,7 @@ public class PurchasedVoucherService {
 
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        buyer.addPurchasedVoucher(purchasedVoucher);
+        purchasedVoucher.updateOwner(buyer);
 
         return purchasedVoucher;
     }
