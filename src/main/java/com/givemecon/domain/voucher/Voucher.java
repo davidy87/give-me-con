@@ -2,7 +2,6 @@ package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
@@ -41,10 +40,6 @@ public class Voucher extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Brand brand;
 
     @OneToMany(
@@ -80,10 +75,6 @@ public class Voucher extends BaseTimeEntity {
 
     public void updateVoucherImage(VoucherImage voucherImage) {
         this.voucherImage = voucherImage;
-    }
-
-    public void updateCategory(Category category) {
-        this.category = category;
     }
 
     public void updateBrand(Brand brand) {

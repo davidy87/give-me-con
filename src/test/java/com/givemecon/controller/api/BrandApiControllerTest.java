@@ -1,5 +1,7 @@
 package com.givemecon.controller.api;
 
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.s3.S3MockConfig;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.brand.BrandIcon;
@@ -69,6 +71,9 @@ class BrandApiControllerTest {
 
     @Autowired
     BrandIconRepository brandIconRepository;
+
+    @Autowired
+    VoucherRepository voucherRepository;
 
     @Autowired
     S3Mock s3Mock;
@@ -321,7 +326,14 @@ class BrandApiControllerTest {
                 .originalName("brandIcon.png")
                 .build());
 
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .description("description")
+                .caution("caution")
+                .build());
+
         brand.updateBrandIcon(brandIcon);
+        voucher.updateBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/brands/{id}", brand.getId()));
@@ -337,6 +349,8 @@ class BrandApiControllerTest {
                 );
 
         List<Brand> brandList = brandRepository.findAll();
+        List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(brandList).isEmpty();
+        assertThat(voucherList).isEmpty();
     }
 }

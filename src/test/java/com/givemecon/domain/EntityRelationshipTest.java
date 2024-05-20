@@ -147,15 +147,14 @@ public class EntityRelationshipTest {
         Brand brandSaved = brandRepository.save(brand);
 
         // when
-        voucher.updateCategory(categorySaved);
         voucher.updateBrand(brandSaved);
         voucherRepository.save(voucher);
         List<Voucher> voucherList = voucherRepository.findAll();
 
         // then
         Voucher found = voucherList.get(0);
-        assertThat(found.getCategory()).isEqualTo(categorySaved);
         assertThat(found.getBrand()).isEqualTo(brandSaved);
+        assertThat(found.getBrand().getCategory()).isEqualTo(categorySaved);
     }
 
     @Test
@@ -244,8 +243,7 @@ public class EntityRelationshipTest {
                 .build());
 
         brand.updateCategory(category);
-        brand.addVoucher(voucher);
-        voucher.updateCategory(category);
+        voucher.updateBrand(brand);
         voucherForSale.updateVoucher(voucher);
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
@@ -259,7 +257,7 @@ public class EntityRelationshipTest {
         assertThat(found.getOwner()).isEqualTo(owner);
         assertThat(found.getVoucherForSale()).isEqualTo(voucherForSale);
         assertThat(found.getVoucherForSale().getVoucher()).isEqualTo(voucher);
-        assertThat(found.getVoucherForSale().getVoucher().getCategory()).isEqualTo(category);
         assertThat(found.getVoucherForSale().getVoucher().getBrand()).isEqualTo(brand);
+        assertThat(found.getVoucherForSale().getVoucher().getBrand().getCategory()).isEqualTo(category);
     }
 }

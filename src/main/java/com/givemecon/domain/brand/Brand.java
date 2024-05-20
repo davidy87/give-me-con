@@ -3,15 +3,11 @@ package com.givemecon.domain.brand;
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.brand.BrandIcon;
-import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,13 +29,6 @@ public class Brand extends BaseTimeEntity {
     @JoinColumn
     private Category category;
 
-    @OneToMany(
-            mappedBy = "brand",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    List<Voucher> voucherList = new ArrayList<>();
-
     @Builder
     public Brand(String name) {
         this.name = name;
@@ -59,10 +48,5 @@ public class Brand extends BaseTimeEntity {
 
     public void updateCategory(Category category) {
         this.category = category;
-    }
-
-    public void addVoucher(Voucher voucher) {
-        voucherList.add(voucher);
-        voucher.updateBrand(this);
     }
 }

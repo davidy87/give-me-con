@@ -134,6 +134,8 @@ class VoucherApiControllerTest {
                 .name("Starbucks")
                 .build());
 
+        brand.updateCategory(category);
+
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
@@ -145,8 +147,8 @@ class VoucherApiControllerTest {
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(voucherList).isNotEmpty();
-        assertThat(voucherList.get(0).getCategory()).isEqualTo(category);
         assertThat(voucherList.get(0).getBrand()).isEqualTo(brand);
+        assertThat(voucherList.get(0).getBrand().getCategory()).isEqualTo(category);
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
@@ -294,7 +296,7 @@ class VoucherApiControllerTest {
                     .build());
 
             voucher.updateVoucherImage(voucherImage);
-            brandSaved.addVoucher(voucher);
+            voucher.updateBrand(brandSaved);
         }
 
         // when

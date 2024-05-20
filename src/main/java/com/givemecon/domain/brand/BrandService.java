@@ -2,6 +2,7 @@ package com.givemecon.domain.brand;
 
 import com.givemecon.domain.image.brand.BrandIcon;
 import com.givemecon.domain.image.brand.BrandIconRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
@@ -29,6 +30,8 @@ public class BrandService {
     private final BrandRepository brandRepository;
 
     private final BrandIconRepository brandIconRepository;
+
+    private final VoucherRepository voucherRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
@@ -100,6 +103,7 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
+        voucherRepository.deleteAllByBrandId(id);
         brandRepository.delete(brand);
     }
 }
