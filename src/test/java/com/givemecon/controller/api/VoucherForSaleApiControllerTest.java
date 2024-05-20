@@ -202,7 +202,7 @@ class VoucherForSaleApiControllerTest {
 
         voucherForSale.updateSeller(member);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucher.addVoucherForSale(voucherForSale);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())

@@ -44,7 +44,7 @@ public class VoucherForSaleService {
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
         voucherForSale.updateSeller(seller);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucher.addVoucherForSale(voucherForSale);
 
         return new VoucherForSaleResponse(voucherForSale);
     }

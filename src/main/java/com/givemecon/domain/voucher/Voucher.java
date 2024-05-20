@@ -99,6 +99,8 @@ public class Voucher extends BaseTimeEntity {
             voucherForSaleList.add(voucherForSale);
         }
 
+        voucherForSale.updateVoucher(this);
+
         if (this.minPrice == 0L) {
             this.minPrice = voucherForSale.getPrice();
         } else {
@@ -112,12 +114,12 @@ public class Voucher extends BaseTimeEntity {
         }
 
         boolean removed = voucherForSaleList.remove(voucherForSale);
+        voucherForSale.updateVoucher(null);
 
         if (removed) {
             this.minPrice = voucherForSaleList.stream()
                     .map(VoucherForSale::getPrice)
-                    .mapToLong(Long::longValue)
-                    .min()
+                    .reduce(Long::min)
                     .orElse(0L);
         }
     }

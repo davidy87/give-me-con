@@ -3,6 +3,12 @@ spring:
     active: test
     include: client,test,API-KEY,oauth,jwt,gcp
 
+  jpa:
+    show_sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
   cloud:
     aws:
       s3:
