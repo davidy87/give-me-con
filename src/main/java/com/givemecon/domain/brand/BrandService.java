@@ -64,10 +64,7 @@ public class BrandService {
 
     @Transactional(readOnly = true)
     public PagedBrandResponse findPageByCategoryId(Long categoryId, Pageable pageable) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
-
-        Page<BrandResponse> pageResult = brandRepository.findPageByCategory(category, pageable)
+        Page<BrandResponse> pageResult = brandRepository.findPageByCategoryId(categoryId, pageable)
                 .map(BrandResponse::new);
 
         return new PagedBrandResponse(pageResult);
@@ -85,8 +82,7 @@ public class BrandService {
             Category newCategory = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-            brand.getCategory().deleteBrand(brand);
-            newCategory.addBrand(brand);
+            brand.updateCategory(newCategory);
         }
 
         if (StringUtils.hasText(newBrandName)) {

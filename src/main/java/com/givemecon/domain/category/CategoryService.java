@@ -1,5 +1,6 @@
 package com.givemecon.domain.category;
 
+import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
@@ -25,6 +26,8 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     private final CategoryIconRepository categoryIconRepository;
+
+    private final BrandRepository brandRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
@@ -68,6 +71,7 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
+        brandRepository.deleteAllByCategoryId(id);
         categoryRepository.delete(category);
     }
 }

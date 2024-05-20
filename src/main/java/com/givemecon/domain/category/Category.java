@@ -1,7 +1,6 @@
 package com.givemecon.domain.category;
 
 import com.givemecon.domain.BaseTimeEntity;
-import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
@@ -34,13 +33,6 @@ public class Category extends BaseTimeEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    List<Brand> brandList = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "category",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
     List<Voucher> voucherList = new ArrayList<>();
 
     @Builder
@@ -58,16 +50,6 @@ public class Category extends BaseTimeEntity {
 
     public void updateCategoryIcon(CategoryIcon categoryIcon) {
         this.categoryIcon = categoryIcon;
-    }
-
-    public void addBrand(Brand brand) {
-        brandList.add(brand);
-        brand.updateCategory(this);
-    }
-
-    public void deleteBrand(Brand brand) {
-        brandList.remove(brand);
-        brand.updateCategory(null);
     }
 
     public void addVoucher(Voucher voucher) {

@@ -203,7 +203,7 @@ class BrandApiControllerTest {
                     .build());
 
             brand.updateBrandIcon(brandIcon);
-            category.addBrand(brand);
+            brand.updateCategory(category);
         }
 
         // when
@@ -264,7 +264,7 @@ class BrandApiControllerTest {
                 .originalName("brandIcon.jpg")
                 .build());
 
-        oldCategory.addBrand(brand);
+        brand.updateCategory(oldCategory);
         brand.updateBrandIcon(brandIcon);
 
         String newName = "newBrand";
@@ -284,7 +284,6 @@ class BrandApiControllerTest {
         // then
         List<Brand> brandList = brandRepository.findAll();
         assertThat(brandList.get(0).getCategory()).isSameAs(newCategory);
-        assertThat(oldCategory.getBrandList()).isEmpty();
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(brandList.get(0).getId()))

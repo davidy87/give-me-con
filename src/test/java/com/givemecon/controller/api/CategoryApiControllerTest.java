@@ -245,7 +245,8 @@ class CategoryApiControllerTest {
                 .build());
 
         category.updateCategoryIcon(categoryIcon);
-        category.addBrand(brand);
+        brand.updateCategory(category);
+//        category.addBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));

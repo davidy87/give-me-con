@@ -243,7 +243,7 @@ public class EntityRelationshipTest {
                 .expDate(LocalDate.now().plusDays(1))
                 .build());
 
-        category.addBrand(brand);
+        brand.updateCategory(category);
         brand.addVoucher(voucher);
         voucher.updateCategory(category);
         voucherForSale.updateVoucher(voucher);
