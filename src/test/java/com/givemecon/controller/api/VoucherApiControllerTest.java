@@ -460,7 +460,10 @@ class VoucherApiControllerTest {
         voucher.updateVoucherImage(voucherImage);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()))
+        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()));
+
+        // then
+        response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -469,9 +472,9 @@ class VoucherApiControllerTest {
                         ))
                 );
 
-        // then
-        response.andExpect(status().isNoContent());
         List<Voucher> voucherList = voucherRepository.findAll();
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherList).isEmpty();
+        assertThat(voucherForSaleList).isEmpty();
     }
 }

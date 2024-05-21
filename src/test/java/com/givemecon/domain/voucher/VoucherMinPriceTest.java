@@ -56,7 +56,7 @@ class VoucherMinPriceTest {
         // when
         for (VoucherForSale voucherForSale : voucherForSaleRepository.findAll()) {
             if (voucherForSale.getPrice() == 1000L) {
-                voucherForSale.delete();
+                voucherForSale.getVoucher().deleteVoucherForSale(voucherForSale);
                 break;
             }
         }

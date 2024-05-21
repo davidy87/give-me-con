@@ -7,9 +7,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE category SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 public class Category extends BaseTimeEntity {
 

@@ -209,9 +209,6 @@ class VoucherForSaleApiControllerTest {
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
-        assertThat(voucher.getMinPrice()).isEqualTo(0L);
-        assertThat(voucherForSale.getSeller()).isNull();
-
         response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -221,7 +218,10 @@ class VoucherForSaleApiControllerTest {
                         ))
                 );
 
+        List<Voucher> voucherList = voucherRepository.findAll();
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherForSaleList).isEmpty();
+        assertThat(voucherList.get(0).getVoucherForSaleList()).isEmpty();
+        assertThat(voucher.getMinPrice()).isEqualTo(0L);
     }
 }
