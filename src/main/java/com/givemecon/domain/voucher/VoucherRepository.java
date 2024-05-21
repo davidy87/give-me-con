@@ -9,5 +9,5 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     Page<Voucher> findPageByBrand(Brand brand, Pageable pageable);
 
-    void deleteAllByBrandId(Long brandId);
+    void deleteAllByBrand(Brand brand);
 }

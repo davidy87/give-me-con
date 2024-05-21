@@ -1,5 +1,6 @@
 package com.givemecon.domain.brand;
 
+import com.givemecon.domain.category.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,9 +12,9 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     Optional<Brand> findByName(String name);
 
-    List<Brand> findAllByCategoryId(Long categoryId);
+    List<Brand> findAllByCategory(Category category);
 
-    Page<Brand> findPageByCategoryId(Long categoryId, Pageable pageable);
+    Page<Brand> findPageByCategory(Category category, Pageable pageable);
 
-    void deleteAllByCategoryId(Long categoryId);
+    void deleteAllByCategory(Category category);
 }
