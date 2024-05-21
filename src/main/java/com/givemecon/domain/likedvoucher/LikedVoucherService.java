@@ -31,11 +31,10 @@ public class LikedVoucherService {
         Voucher voucher = voucherRepository.findById(voucherId)
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
-        LikedVoucher likedVoucher = likedVoucherRepository.save(LikedVoucher.builder()
+        likedVoucherRepository.save(LikedVoucher.builder()
+                .member(member)
                 .voucher(voucher)
                 .build());
-
-        likedVoucher.updateMember(member);
 
         return new VoucherResponse(voucher);
     }

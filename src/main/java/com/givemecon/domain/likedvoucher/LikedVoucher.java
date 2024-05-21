@@ -27,16 +27,8 @@ public class LikedVoucher extends BaseTimeEntity {
     private Voucher voucher;
 
     @Builder
-    public LikedVoucher(Voucher voucher) {
-        this.voucher = voucher;
-    }
-
-    public void updateMember(Member member) {
-        if (this.member != null) {
-            this.member.getLikedVoucherList().remove(this);
-        }
-
+    public LikedVoucher(Member member, Voucher voucher) {
         this.member = member;
-        member.getLikedVoucherList().add(this);
+        this.voucher = voucher;
     }
 }

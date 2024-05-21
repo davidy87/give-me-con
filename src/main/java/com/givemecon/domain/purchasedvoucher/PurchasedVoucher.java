@@ -34,12 +34,7 @@ public class PurchasedVoucher extends BaseTimeEntity {
     }
 
     public void updateOwner(Member owner) {
-        if (this.owner != null) {
-            this.owner.getPurchasedVoucherList().remove(this);
-        }
-
         this.owner = owner;
-        owner.getPurchasedVoucherList().add(this);
     }
 
     public void updateValidity() {
