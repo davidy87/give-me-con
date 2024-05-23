@@ -2,7 +2,6 @@ package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
@@ -10,12 +9,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE voucher SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 public class Voucher extends BaseTimeEntity {
 
@@ -38,10 +41,6 @@ public class Voucher extends BaseTimeEntity {
     @OneToOne
     @JoinColumn
     private VoucherImage voucherImage;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -82,16 +81,19 @@ public class Voucher extends BaseTimeEntity {
         this.voucherImage = voucherImage;
     }
 
-    public void updateCategory(Category category) {
-        this.category = category;
-    }
-
     public void updateBrand(Brand brand) {
         this.brand = brand;
     }
 
     public void addVoucherForSale(VoucherForSale voucherForSale) {
-        voucherForSaleList.add(voucherForSale);
+        if (voucherForSale == null) {
+            return;
+        }
+
+        if (!voucherForSaleList.contains(voucherForSale)) {
+            voucherForSaleList.add(voucherForSale);
+        }
+
         voucherForSale.updateVoucher(this);
 
         if (this.minPrice == 0L) {
@@ -101,14 +103,19 @@ public class Voucher extends BaseTimeEntity {
         }
     }
 
-    public void removeVoucherForSale(VoucherForSale voucherForSale) {
-        voucherForSaleList.remove(voucherForSale);
+    public void deleteVoucherForSale(VoucherForSale voucherForSale) {
+        if (voucherForSale == null) {
+            return;
+        }
+
+        boolean removed = voucherForSaleList.remove(voucherForSale);
         voucherForSale.updateVoucher(null);
 
-        this.minPrice = voucherForSaleList.stream()
-                .map(VoucherForSale::getPrice)
-                .mapToLong(Long::longValue)
-                .min()
-                .orElse(0L);
+        if (removed) {
+            this.minPrice = voucherForSaleList.stream()
+                    .map(VoucherForSale::getPrice)
+                    .reduce(Long::min)
+                    .orElse(0L);
+        }
     }
 }

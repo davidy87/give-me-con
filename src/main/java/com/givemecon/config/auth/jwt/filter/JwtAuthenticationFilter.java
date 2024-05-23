@@ -3,6 +3,7 @@ package com.givemecon.config.auth.jwt.filter;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import java.io.IOException;
 
 import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.SessionAttributeName.TOKEN_INFO;
+import static com.givemecon.config.enums.SessionAttribute.TOKEN_INFO;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
 @Slf4j
@@ -36,35 +37,15 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("[Log] --- Begin JwtAuthenticationFilter ---");
         String accessToken = getAccessTokenFromRequest(request);
 
-        if (accessToken != null) {
+        log.info("[Log] Request URL = {}", request.getRequestURL());
+        log.info("[Log] Access Token = {}", accessToken);
+
+        if (StringUtils.hasText(accessToken)) {
             proceedAuthentication(accessToken, request);
         }
 
         filterChain.doFilter(request, response);
         log.info("[Log] --- End JwtAuthenticationFilter ---");
-    }
-
-    private String getAccessTokenFromRequest(HttpServletRequest request) {
-        String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
-        String accessToken = jwtTokenService.retrieveToken(accessTokenHeader);
-
-        // 로그인 성공 요청일 경우
-        if (StringUtils.pathEquals(request.getRequestURI(), AUTH_SUCCESS_API.getPattern())) {
-            HttpSession session = request.getSession(false);
-
-            if (session != null) {
-                TokenInfo tokenInfo = (TokenInfo) session.getAttribute(TOKEN_INFO.name());
-
-                if (tokenInfo != null) {
-                    accessToken = tokenInfo.getAccessToken();
-                }
-            }
-        }
-
-        log.info("[Log] Request URL = {}", request.getRequestURL());
-        log.info("[Log] Access Token = {}", accessToken);
-
-        return accessToken;
     }
 
     /**
@@ -79,19 +60,44 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = jwtTokenService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("[Log] Authenticated User = {}", authentication.getName());
-        } catch (ExpiredJwtException e) {
+        } catch (JwtException e) {
+            // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
             String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
             String refreshToken = jwtTokenService.retrieveToken(refreshTokenHeader);
 
-            // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
-            if (refreshToken != null) {
-                log.info("[Log] Token reissue request");
-                log.info("[Log] Refresh Token = {}", refreshToken);
-                Authentication refreshAuthentication = authenticated(null, null, null);
-                SecurityContextHolder.getContext().setAuthentication(refreshAuthentication);
-            } else {
+            log.info("[Log] Token reissue request");
+            log.info("[Log] Refresh Token = {}", refreshToken);
+
+            if (!StringUtils.hasText(refreshToken)) {
                 throw e;
             }
+
+            Authentication refreshAuthentication = authenticated(null, null, null);
+            SecurityContextHolder.getContext().setAuthentication(refreshAuthentication);
         }
+    }
+
+    private String getAccessTokenFromRequest(HttpServletRequest request) {
+        if (StringUtils.pathEquals(request.getRequestURI(), AUTH_SUCCESS_API.getPattern())) {
+            return getAccessTokenFromSession(request); // 로그인 성공 요청일 경우
+        }
+
+        return getAccessTokenFromHeader(request); // 요청 인가 시
+    }
+
+    private String getAccessTokenFromHeader(HttpServletRequest request) {
+        String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
+        return jwtTokenService.retrieveToken(accessTokenHeader);
+    }
+
+    private String getAccessTokenFromSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return "";
+        }
+
+        TokenInfo tokenInfo = (TokenInfo) session.getAttribute(TOKEN_INFO.getName());
+        return tokenInfo != null ? tokenInfo.getAccessToken() : "";
     }
 }

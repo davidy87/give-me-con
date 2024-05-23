@@ -5,8 +5,12 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
+@SQLDelete(sql = "UPDATE purchased_voucher SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 public class PurchasedVoucher extends BaseTimeEntity {
 

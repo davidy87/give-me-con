@@ -16,7 +16,7 @@ public class ImageEntityUtils {
 
     private final ImageEntityBuilderFactory imageEntityBuilderFactory;
 
-    public <T extends ImageEntity> T createImageEntity(Class<T> imageEntityType, MultipartFile imageFile) {
+    public <IE extends ImageEntity> IE createImageEntity(Class<IE> imageEntityType, MultipartFile imageFile) {
         String originalName = imageFile.getOriginalFilename();
         String imageKey = FileUtils.convertFilenameToKey(originalName);
         String imageUrl = awsS3Utils.upload(imageKey, imageFile);

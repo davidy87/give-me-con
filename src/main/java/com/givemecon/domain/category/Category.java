@@ -1,20 +1,19 @@
 package com.givemecon.domain.category;
 
 import com.givemecon.domain.BaseTimeEntity;
-import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.category.CategoryIcon;
-import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE category SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 public class Category extends BaseTimeEntity {
 
@@ -28,20 +27,6 @@ public class Category extends BaseTimeEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private CategoryIcon categoryIcon;
-
-    @OneToMany(
-            mappedBy = "category",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    List<Brand> brandList = new ArrayList<>();
-
-    @OneToMany(
-            mappedBy = "category",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    List<Voucher> voucherList = new ArrayList<>();
 
     @Builder
     public Category(String name) {
@@ -58,15 +43,5 @@ public class Category extends BaseTimeEntity {
 
     public void updateCategoryIcon(CategoryIcon categoryIcon) {
         this.categoryIcon = categoryIcon;
-    }
-
-    public void addBrand(Brand brand) {
-        brandList.add(brand);
-        brand.updateCategory(this);
-    }
-
-    public void addVoucher(Voucher voucher) {
-        voucherList.add(voucher);
-        voucher.updateCategory(this);
     }
 }

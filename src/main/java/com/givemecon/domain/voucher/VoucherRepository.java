@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     Page<Voucher> findPageByBrand(Brand brand, Pageable pageable);
+
+    void deleteAllByBrand(Brand brand);
 }

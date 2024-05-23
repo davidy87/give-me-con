@@ -124,7 +124,7 @@ class PurchasedVoucherApiControllerTest {
                     .build());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucher.addVoucherForSale(voucherForSale);
+            voucherForSale.updateVoucher(voucher);
             dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
         }
 
@@ -182,9 +182,9 @@ class PurchasedVoucherApiControllerTest {
             PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucher.addVoucherForSale(voucherForSale);
+            voucherForSale.updateVoucher(voucher);
             purchasedVoucher.updateVoucherForSale(voucherForSale);
-            member.addPurchasedVoucher(purchasedVoucher);
+            purchasedVoucher.updateOwner(member);
         }
 
         // when
@@ -241,9 +241,9 @@ class PurchasedVoucherApiControllerTest {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        member.addPurchasedVoucher(purchasedVoucher);
+        purchasedVoucher.updateOwner(member);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
@@ -298,9 +298,9 @@ class PurchasedVoucherApiControllerTest {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
-        member.addPurchasedVoucher(purchasedVoucher);
+        purchasedVoucher.updateOwner(member);
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())

@@ -1,7 +1,9 @@
 package com.givemecon.domain.category;
 
+import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -26,15 +28,17 @@ public class CategoryService {
 
     private final CategoryIconRepository categoryIconRepository;
 
+    private final BrandRepository brandRepository;
+
+    private final VoucherRepository voucherRepository;
+
     private final ImageEntityUtils imageEntityUtils;
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
-        MultipartFile iconFile = requestDto.getIconFile();
+        CategoryIcon categoryIcon = categoryIconRepository.save(
+                imageEntityUtils.createImageEntity(CategoryIcon.class, requestDto.getIconFile()));
 
         Category category = categoryRepository.save(requestDto.toEntity());
-        CategoryIcon categoryIcon = categoryIconRepository.save(
-                imageEntityUtils.createImageEntity(CategoryIcon.class, iconFile));
-
         category.updateCategoryIcon(categoryIcon);
 
         return new CategoryResponse(category);
@@ -59,20 +63,20 @@ public class CategoryService {
             category.updateName(newCategoryName);
         }
 
-        if (FileUtils.isValidFile(newIconFile)) {
-            CategoryIcon categoryIcon = category.getCategoryIcon();
-            imageEntityUtils.updateImageEntity(categoryIcon, newIconFile);
+        if (FileUtils.isFileValid(newIconFile)) {
+            imageEntityUtils.updateImageEntity(category.getCategoryIcon(), newIconFile);
         }
 
         return new CategoryResponse(category);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
+        brandRepository.findAllByCategory(category)
+                .forEach(voucherRepository::deleteAllByBrand);
+        brandRepository.deleteAllByCategory(category);
         categoryRepository.delete(category);
-
-        return id;
     }
 }

@@ -9,11 +9,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE voucher_for_sale SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 public class VoucherForSale extends BaseTimeEntity {
 

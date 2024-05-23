@@ -42,8 +42,9 @@ class JwtTokenServiceTest {
                 null
         };
 
+        // when & then
         Arrays.stream(incorrectHeaders)
-                .map(header -> jwtTokenService.retrieveToken(header)) // when
-                .forEach(token -> assertThat(token).isNull());        // then
+                .map(header -> jwtTokenService.retrieveToken(header))
+                .forEach(token -> assertThat(token).isEmpty());
     }
 }

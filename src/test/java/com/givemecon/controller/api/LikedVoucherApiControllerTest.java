@@ -154,8 +154,7 @@ class LikedVoucherApiControllerTest {
                     .build());
 
             voucher.updateVoucherImage(voucherImage);
-            LikedVoucher likedVoucher = likedVoucherRepository.save(new LikedVoucher(voucher));
-            member.addLikedVoucher(likedVoucher);
+            likedVoucherRepository.save(new LikedVoucher(member, voucher));
         }
 
         // when
@@ -195,8 +194,11 @@ class LikedVoucherApiControllerTest {
                 .build();
 
         Voucher voucherSaved = voucherRepository.save(voucher);
-        LikedVoucher likedVoucherSaved = likedVoucherRepository.save(LikedVoucher.builder().voucher(voucherSaved).build());
-        likedVoucherSaved.updateMember(member);
+        LikedVoucher likedVoucherSaved = likedVoucherRepository.save(
+                LikedVoucher.builder()
+                        .member(member)
+                        .voucher(voucherSaved)
+                        .build());
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherSaved.getId())

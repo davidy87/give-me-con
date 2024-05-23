@@ -134,6 +134,8 @@ class VoucherApiControllerTest {
                 .name("Starbucks")
                 .build());
 
+        brand.updateCategory(category);
+
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
@@ -145,8 +147,8 @@ class VoucherApiControllerTest {
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(voucherList).isNotEmpty();
-        assertThat(voucherList.get(0).getCategory()).isEqualTo(category);
         assertThat(voucherList.get(0).getBrand()).isEqualTo(brand);
+        assertThat(voucherList.get(0).getBrand().getCategory()).isEqualTo(category);
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
@@ -294,7 +296,7 @@ class VoucherApiControllerTest {
                     .build());
 
             voucher.updateVoucherImage(voucherImage);
-            brandSaved.addVoucher(voucher);
+            voucher.updateBrand(brandSaved);
         }
 
         // when
@@ -356,7 +358,7 @@ class VoucherApiControllerTest {
                             .build());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucherSaved.addVoucherForSale(voucherForSale);
+            voucher.addVoucherForSale(voucherForSale);
         }
 
         // when
@@ -458,7 +460,10 @@ class VoucherApiControllerTest {
         voucher.updateVoucherImage(voucherImage);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()))
+        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId()));
+
+        // then
+        response.andExpect(status().isNoContent())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -467,9 +472,9 @@ class VoucherApiControllerTest {
                         ))
                 );
 
-        // then
-        response.andExpect(status().isNoContent());
         List<Voucher> voucherList = voucherRepository.findAll();
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherList).isEmpty();
+        assertThat(voucherForSaleList).isEmpty();
     }
 }

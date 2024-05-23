@@ -3,19 +3,18 @@ package com.givemecon.domain.member;
 import com.givemecon.config.enums.OAuth2Provider;
 import com.givemecon.config.enums.Authority;
 import com.givemecon.domain.BaseTimeEntity;
-import com.givemecon.domain.likedvoucher.LikedVoucher;
-import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE member SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 @Entity
 public class Member extends BaseTimeEntity {
 
@@ -38,12 +37,6 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private OAuth2Provider provider;
-
-    @OneToMany(mappedBy = "member")
-    List<LikedVoucher> likedVoucherList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "owner")
-    List<PurchasedVoucher> purchasedVoucherList = new ArrayList<>();
 
     @Builder
     public Member(String email, String username, String password, Authority authority) {
@@ -69,15 +62,5 @@ public class Member extends BaseTimeEntity {
 
     public String getRole() {
         return authority.getRole();
-    }
-
-    public void addLikedVoucher(LikedVoucher likedVoucher) {
-        likedVoucherList.add(likedVoucher);
-        likedVoucher.updateMember(this);
-    }
-
-    public void addPurchasedVoucher(PurchasedVoucher purchasedVoucher) {
-        purchasedVoucherList.add(purchasedVoucher);
-        purchasedVoucher.updateOwner(this);
     }
 }

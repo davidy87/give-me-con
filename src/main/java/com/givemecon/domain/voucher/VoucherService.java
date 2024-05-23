@@ -7,7 +7,6 @@ import com.givemecon.util.FileUtils;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
-import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +28,6 @@ import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 @Transactional
 public class VoucherService {
 
-    private final CategoryRepository categoryRepository;
-
     private final BrandRepository brandRepository;
 
     private final VoucherRepository voucherRepository;
@@ -40,21 +37,21 @@ public class VoucherService {
     private final ImageEntityUtils imageEntityUtils;
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
-        Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
+        // TODO: VoucherSavedRequest의 categoryId는 이제 사용 안함. 처리 필요.
 
         Brand brand = brandRepository.findById(requestDto.getBrandId())
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
-        MultipartFile imageFile = requestDto.getImageFile();
+        if (brand.getCategory() == null) {
+            throw new EntityNotFoundException(Category.class);
+        }
+
+        VoucherImage voucherImage = voucherImageRepository.save(
+                imageEntityUtils.createImageEntity(VoucherImage.class, requestDto.getImageFile()));
 
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
-        VoucherImage voucherImage = voucherImageRepository.save(
-                imageEntityUtils.createImageEntity(VoucherImage.class, imageFile));
-
         voucher.updateVoucherImage(voucherImage);
-        category.addVoucher(voucher);
-        brand.addVoucher(voucher);
+        voucher.updateBrand(brand);
 
         return new VoucherResponse(voucher);
     }
@@ -125,20 +122,17 @@ public class VoucherService {
             voucher.updateCaution(newCaution);
         }
 
-        if (FileUtils.isValidFile(newImageFile)) {
-            VoucherImage voucherImage = voucher.getVoucherImage();
-            imageEntityUtils.updateImageEntity(voucherImage, newImageFile);
+        if (FileUtils.isFileValid(newImageFile)) {
+            imageEntityUtils.updateImageEntity(voucher.getVoucherImage(), newImageFile);
         }
 
         return new VoucherResponse(voucher);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         voucherRepository.delete(voucher);
-
-        return id;
     }
 }

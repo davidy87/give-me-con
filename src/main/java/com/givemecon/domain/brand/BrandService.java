@@ -2,6 +2,7 @@ package com.givemecon.domain.brand;
 
 import com.givemecon.domain.image.brand.BrandIcon;
 import com.givemecon.domain.image.brand.BrandIconRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
@@ -30,20 +31,20 @@ public class BrandService {
 
     private final BrandIconRepository brandIconRepository;
 
+    private final VoucherRepository voucherRepository;
+
     private final ImageEntityUtils imageEntityUtils;
 
     public BrandResponse save(BrandSaveRequest requestDto) {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-        MultipartFile iconFile = requestDto.getIconFile();
+        BrandIcon brandIcon = brandIconRepository.save(
+                imageEntityUtils.createImageEntity(BrandIcon.class, requestDto.getIconFile()));
 
         Brand brand = brandRepository.save(requestDto.toEntity());
-        BrandIcon brandIcon = brandIconRepository.save(
-                imageEntityUtils.createImageEntity(BrandIcon.class, iconFile));
-
-        brand.updateBrandIcon(brandIcon);
         brand.updateCategory(category);
+        brand.updateBrandIcon(brandIcon);
 
         return new BrandResponse(brand);
     }
@@ -87,27 +88,25 @@ public class BrandService {
             Category newCategory = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-            newCategory.addBrand(brand);
+            brand.updateCategory(newCategory);
         }
 
         if (StringUtils.hasText(newBrandName)) {
             brand.updateName(newBrandName);
         }
 
-        if (FileUtils.isValidFile(newIconFile)) {
-            BrandIcon brandIcon = brand.getBrandIcon();
-            imageEntityUtils.updateImageEntity(brandIcon, newIconFile);
+        if (FileUtils.isFileValid(newIconFile)) {
+            imageEntityUtils.updateImageEntity(brand.getBrandIcon(), newIconFile);
         }
 
         return new BrandResponse(brand);
     }
 
-    public Long delete(Long id) {
+    public void delete(Long id) {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
+        voucherRepository.deleteAllByBrand(brand);
         brandRepository.delete(brand);
-
-        return id;
     }
 }

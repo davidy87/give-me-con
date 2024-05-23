@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class FileUtils {
 
-    public static boolean isValidFile(MultipartFile file) {
+    public static boolean isFileValid(MultipartFile file) {
         return file != null && !file.isEmpty();
     }
 
