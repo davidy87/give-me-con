@@ -11,7 +11,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-
 @Slf4j
 @Transactional
 @SpringBootTest
@@ -24,7 +23,6 @@ class BrandRepositoryTest {
     void saveAndFindAll() {
         // given
         String name = "Starbucks";
-        String icon = "starbucks.jpg";
 
         Brand brand = Brand.builder()
                 .name(name)

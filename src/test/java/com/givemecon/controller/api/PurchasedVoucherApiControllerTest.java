@@ -151,7 +151,7 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
-                                fieldWithPath("[].isValid").type(JsonFieldType.BOOLEAN).description("기프티콘 유효 여부")
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
 
@@ -211,7 +211,7 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("purchasedVouchers.[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("purchasedVouchers.[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("purchasedVouchers.[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
-                                fieldWithPath("purchasedVouchers.[].isValid").type(JsonFieldType.BOOLEAN).description("기프티콘 유효 여부")
+                                fieldWithPath("purchasedVouchers.[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
 
@@ -257,7 +257,7 @@ class PurchasedVoucherApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
-                .andExpect(jsonPath("isValid").value(purchasedVoucher.getIsValid()))
+                .andExpect(jsonPath("status").value(purchasedVoucher.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -271,13 +271,13 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
-                                fieldWithPath("isValid").type(JsonFieldType.BOOLEAN).description("기프티콘 유효 여부")
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
     }
 
     @Test
-    void updateValidity() throws Exception {
+    void setUsed() throws Exception {
         // given
         Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
@@ -314,7 +314,7 @@ class PurchasedVoucherApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
-                .andExpect(jsonPath("isValid").value(purchasedVoucher.getIsValid()))
+                .andExpect(jsonPath("status").value(purchasedVoucher.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -328,7 +328,7 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
-                                fieldWithPath("isValid").type(JsonFieldType.BOOLEAN).description("기프티콘 유효 여부")
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
     }

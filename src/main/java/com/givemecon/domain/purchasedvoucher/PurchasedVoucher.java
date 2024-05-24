@@ -8,9 +8,11 @@ import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
+
 @Getter
 @SQLDelete(sql = "UPDATE purchased_voucher SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
+@SQLRestriction("deleted = false and status like 'USABLE'")
 @Entity
 public class PurchasedVoucher extends BaseTimeEntity {
 
@@ -18,8 +20,9 @@ public class PurchasedVoucher extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean isValid;
+    private PurchasedVoucherStatus status;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -30,7 +33,7 @@ public class PurchasedVoucher extends BaseTimeEntity {
     private Member owner;
 
     public PurchasedVoucher() {
-        this.isValid = true;
+        this.status = USABLE;
     }
 
     public void updateVoucherForSale(VoucherForSale voucherForSale) {
@@ -41,7 +44,7 @@ public class PurchasedVoucher extends BaseTimeEntity {
         this.owner = owner;
     }
 
-    public void updateValidity() {
-        isValid = !isValid;
+    public void updateStatus(PurchasedVoucherStatus status) {
+        this.status = status;
     }
 }

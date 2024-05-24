@@ -41,7 +41,7 @@ public class PurchasedVoucherApiController {
     }
 
     @PutMapping("/{id}")
-    public PurchasedVoucherResponse updateValidity(@PathVariable Long id) {
-        return purchasedVoucherService.updateValidity(id);
+    public PurchasedVoucherResponse setUsed(@PathVariable Long id) {
+        return purchasedVoucherService.setUsed(id);
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -85,11 +86,11 @@ public class PurchasedVoucherService {
                 .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
     }
 
-    public PurchasedVoucherResponse updateValidity(Long id) {
+    public PurchasedVoucherResponse setUsed(Long id) {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
 
-        purchasedVoucher.updateValidity();
+        purchasedVoucher.updateStatus(USED);
 
         return new PurchasedVoucherResponse(purchasedVoucher);
     }
