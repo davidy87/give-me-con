@@ -81,6 +81,8 @@ class PurchasedVoucherApiControllerTest {
 
     Member member;
 
+    Voucher voucher;
+
     TokenInfo tokenInfo;
 
     @BeforeEach
@@ -98,16 +100,16 @@ class PurchasedVoucherApiControllerTest {
                 .authority(USER)
                 .build());
 
+        voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .build());
+
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
     void saveAll() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
-                .build());
-
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
@@ -138,6 +140,7 @@ class PurchasedVoucherApiControllerTest {
 
         // then
         response.andExpect(status().isCreated())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -162,10 +165,6 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void findAllByUsername() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
-                .build());
-
         for (int i = 1; i <= 20; i++) {
             VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                     .price(4_000L)
@@ -222,10 +221,6 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void findOne() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
-                .build());
-
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
@@ -279,10 +274,6 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void setUsed() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
-                .build());
-
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
