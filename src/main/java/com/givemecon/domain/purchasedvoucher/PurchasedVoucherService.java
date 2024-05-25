@@ -90,7 +90,10 @@ public class PurchasedVoucherService {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
 
-        purchasedVoucher.updateStatus(USED);
+        // purchasedVoucher의 현재 상태가 EXPIRED일 수도 있으므로, USABLE일 경우에만 변경
+        if (purchasedVoucher.getStatus() == USABLE) {
+            purchasedVoucher.updateStatus(USED);
+        }
 
         return new PurchasedVoucherResponse(purchasedVoucher);
     }

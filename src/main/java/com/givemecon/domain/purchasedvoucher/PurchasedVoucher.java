@@ -12,7 +12,7 @@ import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
 
 @Getter
 @SQLDelete(sql = "UPDATE purchased_voucher SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false and status like 'USABLE'")
+@SQLRestriction("deleted = false")
 @Entity
 public class PurchasedVoucher extends BaseTimeEntity {
 
