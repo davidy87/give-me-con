@@ -9,6 +9,10 @@ import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;
 import com.givemecon.domain.category.CategoryRepository;
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
+import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
@@ -54,7 +58,13 @@ public class EntityRelationshipTest {
     VoucherRepository voucherRepository;
 
     @Autowired
+    VoucherImageRepository voucherImageRepository;
+
+    @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
+
+    @Autowired
+    VoucherForSaleImageRepository voucherForSaleImageRepository;
 
     @Autowired
     LikedVoucherRepository likedVoucherRepository;
@@ -63,7 +73,7 @@ public class EntityRelationshipTest {
     PurchasedVoucherRepository purchasedVoucherRepository;
 
     @Test
-    void categoryAndCategoryIcon() {
+    void categoryIcon() {
         // given
         Category category = categoryRepository.save(Category.builder()
                 .name("coffee")
@@ -77,14 +87,15 @@ public class EntityRelationshipTest {
 
         // when
         category.updateCategoryIcon(icon);
+        List<Category> categoryList = categoryRepository.findAll();
 
         // then
-        CategoryIcon found = category.getCategoryIcon();
-        assertThat(found).isEqualTo(icon);
+        assertThat(categoryList).isNotEmpty();
+        assertThat(categoryList.get(0).getCategoryIcon()).isEqualTo(icon);
     }
 
     @Test
-    void brandAndBrandIcon() {
+    void brandIcon() {
         // given
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
@@ -98,67 +109,111 @@ public class EntityRelationshipTest {
 
         // when
         brand.updateBrandIcon(icon);
+        List<Brand> brandList = brandRepository.findAll();
 
         // then
-        BrandIcon found = brand.getBrandIcon();
-        assertThat(found).isEqualTo(icon);
+        assertThat(brandList).isNotEmpty();
+        assertThat(brandList.get(0).getBrandIcon()).isEqualTo(icon);
+    }
+
+    @Test
+    void voucherImage() {
+        // given
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("Americano T")
+                .description("description")
+                .caution("caution")
+                .build());
+
+        VoucherImage image = voucherImageRepository.save(VoucherImage.builder()
+                .imageKey("imageKey")
+                .originalName("testIcon.png")
+                .imageUrl("imageUrl")
+                .build());
+
+        // when
+        voucher.updateVoucherImage(image);
+        List<Voucher> voucherList = voucherRepository.findAll();
+
+        // then
+        assertThat(voucherList).isNotEmpty();
+        assertThat(voucherList.get(0).getVoucherImage()).isEqualTo(image);
+    }
+
+    @Test
+    void voucherForSaleImage() {
+        // given
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now())
+                .build());
+
+        VoucherForSaleImage image = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+                .imageKey("imageKey")
+                .originalName("testIcon.png")
+                .imageUrl("imageUrl")
+                .build());
+
+        // when
+        voucherForSale.updateVoucherForSaleImage(image);
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
+
+        // then
+        assertThat(voucherForSaleList).isNotEmpty();
+        assertThat(voucherForSaleList.get(0).getVoucherForSaleImage()).isEqualTo(image);
     }
 
     @Test
     void brand() {
         // given
-        Category category = Category.builder()
+        Category category = categoryRepository.save(Category.builder()
                 .name("coffee")
-                .build();
+                .build());
 
-        Brand brand = Brand.builder()
+        Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
-                .build();
-
-        Category categorySaved = categoryRepository.save(category);
+                .build());
 
         // when
-        brand.updateCategory(categorySaved);
-        brandRepository.save(brand);
+        brand.updateCategory(category);
         List<Brand> brandList = brandRepository.findAll();
 
         // then
-        Brand found = brandList.get(0);
-        assertThat(found.getCategory()).isEqualTo(categorySaved);
+        assertThat(brandList).isNotEmpty();
+        assertThat(brandList.get(0).getCategory()).isEqualTo(category);
     }
 
     @Test
     void voucher() {
         // given
-        Category category = Category.builder()
+        Category category = categoryRepository.save(Category.builder()
                 .name("coffee")
-                .build();
+                .build());
 
-        Brand brand = Brand.builder()
+        Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
-                .build();
+                .build());
 
-        Voucher voucher = Voucher.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .title("Starbucks Americano T")
-                .build();
-
-        Category categorySaved = categoryRepository.save(category);
-        brand.updateCategory(categorySaved);
-        Brand brandSaved = brandRepository.save(brand);
+                .build());
 
         // when
-        voucher.updateBrand(brandSaved);
-        voucherRepository.save(voucher);
+        brand.updateCategory(category);
+        voucher.updateBrand(brand);
         List<Voucher> voucherList = voucherRepository.findAll();
 
         // then
+        assertThat(voucherList).isNotEmpty();
+
         Voucher found = voucherList.get(0);
-        assertThat(found.getBrand()).isEqualTo(brandSaved);
-        assertThat(found.getBrand().getCategory()).isEqualTo(categorySaved);
+        assertThat(found.getBrand()).isEqualTo(brand);
+        assertThat(found.getBrand().getCategory()).isEqualTo(category);
     }
 
     @Test
-    void voucherSelling() {
+    void voucherForSale() {
         // given
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
@@ -179,11 +234,14 @@ public class EntityRelationshipTest {
         // when
         voucherForSale.updateSeller(seller);
         voucherForSale.updateVoucher(voucher);
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
 
         // then
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
-        assertThat(voucherForSaleList.get(0).getSeller()).isEqualTo(seller);
-        assertThat(voucherForSaleList.get(0).getVoucher()).isEqualTo(voucher);
+        assertThat(voucherForSaleList).isNotEmpty();
+
+        VoucherForSale found = voucherForSaleList.get(0);
+        assertThat(found.getSeller()).isEqualTo(seller);
+        assertThat(found.getVoucher()).isEqualTo(voucher);
     }
 
     @Test
@@ -199,17 +257,17 @@ public class EntityRelationshipTest {
                 .title("Americano T")
                 .build());
 
-        LikedVoucher likedVoucher = LikedVoucher.builder()
+        likedVoucherRepository.save(LikedVoucher.builder()
                 .member(memberSaved)
                 .voucher(voucherSaved)
-                .build();
-
-        likedVoucherRepository.save(likedVoucher);
+                .build());
 
         // when
         List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
 
         // then
+        assertThat(likedVoucherList).isNotEmpty();
+
         LikedVoucher found = likedVoucherList.get(0);
         assertThat(found.getMember()).isEqualTo(memberSaved);
         assertThat(found.getVoucher()).isEqualTo(voucherSaved);
@@ -242,17 +300,19 @@ public class EntityRelationshipTest {
                 .expDate(LocalDate.now().plusDays(1))
                 .build());
 
-        brand.updateCategory(category);
-        voucher.updateBrand(brand);
-        voucherForSale.updateVoucher(voucher);
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         // when
+        brand.updateCategory(category);
+        voucher.updateBrand(brand);
+        voucherForSale.updateVoucher(voucher);
         purchasedVoucher.updateVoucherForSale(voucherForSale);
         purchasedVoucher.updateOwner(owner);
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
+        assertThat(purchasedVoucherList).isNotEmpty();
+
         PurchasedVoucher found = purchasedVoucherList.get(0);
         assertThat(found.getOwner()).isEqualTo(owner);
         assertThat(found.getVoucherForSale()).isEqualTo(voucherForSale);
