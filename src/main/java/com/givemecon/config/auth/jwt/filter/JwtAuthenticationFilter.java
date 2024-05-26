@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.SessionAttribute.TOKEN_INFO;
+import static com.givemecon.config.enums.OAuth2ParameterName.*;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
 @Slf4j
@@ -92,12 +92,13 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String getAccessTokenFromSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+        String authorizationCode = request.getParameter(AUTHORIZATION_CODE.getName());
 
-        if (session == null) {
+        if (session == null || authorizationCode == null) {
             return "";
         }
 
-        TokenInfo tokenInfo = (TokenInfo) session.getAttribute(TOKEN_INFO.getName());
+        TokenInfo tokenInfo = (TokenInfo) session.getAttribute(authorizationCode);
         return tokenInfo != null ? tokenInfo.getAccessToken() : "";
     }
 }

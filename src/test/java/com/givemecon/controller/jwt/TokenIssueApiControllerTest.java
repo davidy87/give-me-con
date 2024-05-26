@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -21,8 +22,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.UUID;
+
+import static com.givemecon.config.enums.ApiPathPattern.*;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
+import static com.givemecon.config.enums.OAuth2ParameterName.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
@@ -52,6 +57,8 @@ public class TokenIssueApiControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
+    Member member;
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -60,17 +67,56 @@ public class TokenIssueApiControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        member = memberRepository.save(Member.builder()
+                .email("test@gmail.com")
+                .username("tester")
+                .authority(USER)
+                .build());
+    }
+
+    @Test
+    void issueToken() throws Exception {
+        // given
+        String authorizationCode = UUID.randomUUID().toString();
+        TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
+        Claims claims = jwtTokenService.getClaims(tokenInfo.getAccessToken());
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(authorizationCode, tokenInfo);
+
+        // when
+        ResultActions response = mockMvc.perform(get(AUTH_SUCCESS_API.getPattern())
+                .session(session)
+                .param(AUTHORIZATION_CODE.getName(), authorizationCode));
+
+        // then
+        String responseString = response.andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        TokenInfo newTokenInfo = new ObjectMapper().readValue(responseString, TokenInfo.class);
+        Claims foundClaims = jwtTokenService.getClaims(newTokenInfo.getAccessToken());
+        assertThat(claims).isEqualTo(foundClaims);
+        assertThat(claims.get("username")).isEqualTo(foundClaims.get("username"));
+
+        // API Documentation
+        response.andDo(document("{class-name}/{method-name}",
+                getDocumentResponse(),
+                responseFields(
+                        fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),
+                        fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
+                        fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                        fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
+                        fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
+                ))
+        );
     }
 
     @Test
     void reissueToken() throws Exception {
         // given
-        Member member = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .authority(USER)
-                .build());
-
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
         Claims oldClaims = jwtTokenService.getClaims(tokenInfo.getAccessToken());
 
@@ -87,6 +133,7 @@ public class TokenIssueApiControllerTest {
 
         TokenInfo newTokenInfo = new ObjectMapper().readValue(responseString, TokenInfo.class);
         Claims newClaims = jwtTokenService.getClaims(newTokenInfo.getAccessToken());
+        assertThat(oldClaims).isNotEqualTo(newClaims);
         assertThat(newClaims.get("username")).isEqualTo(oldClaims.get("username"));
 
         // API Documentation
