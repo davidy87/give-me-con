@@ -24,7 +24,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
-import static com.givemecon.config.enums.ApiPathPattern.*;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.config.enums.OAuth2ParameterName.*;
@@ -86,7 +85,7 @@ public class TokenIssueApiControllerTest {
         session.setAttribute(authorizationCode, tokenInfo);
 
         // when
-        ResultActions response = mockMvc.perform(get(AUTH_SUCCESS_API.getPattern())
+        ResultActions response = mockMvc.perform(get("/api/auth/success")
                 .session(session)
                 .param(AUTHORIZATION_CODE.getName(), authorizationCode));
 
@@ -138,15 +137,15 @@ public class TokenIssueApiControllerTest {
 
         // API Documentation
         response.andDo(document("{class-name}/{method-name}",
-                        getDocumentRequestWithRefreshToken(),
-                        getDocumentResponse(),
-                        responseFields(
-                            fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),
-                            fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
-                            fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
-                            fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                            fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
-                        ))
+                getDocumentRequestWithRefreshToken(),
+                getDocumentResponse(),
+                responseFields(
+                    fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),
+                    fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
+                    fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                    fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
+                    fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
+                ))
         );
     }
 }

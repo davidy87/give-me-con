@@ -1,5 +1,7 @@
 package com.givemecon.controller;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
 import org.springframework.restdocs.request.ParameterDescriptor;
@@ -13,15 +15,16 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 
-public interface ApiDocumentUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ApiDocumentUtils {
 
-    static OperationRequestPreprocessor getDocumentRequest() {
+    public static OperationRequestPreprocessor getDocumentRequest() {
         return preprocessRequest(
                 modifyHeaders().remove("Host"),
                 prettyPrint());
     }
 
-    static OperationRequestPreprocessor getDocumentRequestWithAuth() {
+    public static OperationRequestPreprocessor getDocumentRequestWithAuth() {
         return preprocessRequest(
                 modifyHeaders()
                         .remove("Host")
@@ -29,7 +32,7 @@ public interface ApiDocumentUtils {
                 prettyPrint());
     }
 
-    static OperationRequestPreprocessor getDocumentRequestWithRefreshToken() {
+    public static OperationRequestPreprocessor getDocumentRequestWithRefreshToken() {
         return preprocessRequest(
                 modifyHeaders()
                         .remove("Host")
@@ -38,7 +41,7 @@ public interface ApiDocumentUtils {
                 prettyPrint());
     }
 
-    static OperationResponsePreprocessor getDocumentResponse() {
+    public static OperationResponsePreprocessor getDocumentResponse() {
         return preprocessResponse(
                 modifyHeaders()
                         .remove("Vary")
@@ -50,7 +53,7 @@ public interface ApiDocumentUtils {
                 prettyPrint());
     }
 
-    static QueryParametersSnippet pagingQueryParameters(ParameterDescriptor... parameterDescriptors) {
+    public static QueryParametersSnippet pagingQueryParameters(ParameterDescriptor... parameterDescriptors) {
         List<ParameterDescriptor> params = new ArrayList<>(
                 Arrays.asList(
                         parameterWithName("page").optional().description("페이지 번호 (기본값 = 0)"),
