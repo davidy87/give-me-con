@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static com.givemecon.config.enums.SessionAttribute.*;
 import static com.givemecon.domain.member.MemberDto.*;
@@ -28,8 +27,6 @@ import static com.givemecon.domain.member.MemberDto.*;
 public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     private static final String SUCCESS_PARAM = "success";
-
-    private static final String AUTHORIZATION_CODE_PARAM = "authorizationCode";
 
     private final MemberRepository memberRepository;
 
@@ -46,18 +43,16 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
-        String authorizationCode = UUID.randomUUID().toString();
         HttpSession session = request.getSession(true);
 
         if (session != null) {
-            session.setAttribute(authorizationCode, tokenInfo);
+            session.setAttribute(TOKEN_INFO.getName(), tokenInfo);
             session.setMaxInactiveInterval(TOKEN_INFO.getDuration());
         }
 
         String redirectUrl =
                 UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
                         .queryParam(SUCCESS_PARAM)
-                        .queryParam(AUTHORIZATION_CODE_PARAM, authorizationCode)
                         .build()
                         .toString();
 
