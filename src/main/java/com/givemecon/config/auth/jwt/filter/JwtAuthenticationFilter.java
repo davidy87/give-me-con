@@ -8,7 +8,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
@@ -91,14 +91,12 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getAccessTokenFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String authorizationCode = request.getParameter(AUTHORIZATION_CODE.getName());
+        String authorizationCode = Optional.ofNullable(request.getParameter(AUTHORIZATION_CODE.getName()))
+                .orElse("");
 
-        if (session == null || authorizationCode == null) {
-            return "";
-        }
-
-        TokenInfo tokenInfo = (TokenInfo) session.getAttribute(authorizationCode);
-        return tokenInfo != null ? tokenInfo.getAccessToken() : "";
+        return Optional.ofNullable(request.getSession(false))
+                .map(session -> (TokenInfo) session.getAttribute(authorizationCode))
+                .map(TokenInfo::getAccessToken)
+                .orElse("");
     }
 }

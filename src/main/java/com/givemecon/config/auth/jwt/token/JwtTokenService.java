@@ -117,16 +117,10 @@ public class JwtTokenService {
      * </pre>
      */
     public String retrieveToken(String tokenHeader) {
-        String[] headerSplit = StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER);
-
-        if (headerSplit == null) {
-            return "";
-        }
-
-        String grantType = headerSplit[0];
-        String token = headerSplit[1];
-
-        return isTokenFormatValid(grantType, token) ? token : "";
+        return Optional.ofNullable(StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER))
+                .filter(headerSplit -> isTokenFormatValid(headerSplit[0], headerSplit[1]))
+                .map(headerSplit -> headerSplit[1])
+                .orElse("");
     }
 
     private boolean isTokenFormatValid(String grantType, String token) {

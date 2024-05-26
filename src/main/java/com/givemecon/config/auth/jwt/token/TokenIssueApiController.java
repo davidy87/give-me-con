@@ -6,10 +6,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.util.error.ErrorCode.*;
@@ -24,16 +27,18 @@ public class TokenIssueApiController {
 
     @GetMapping("/success")
     public TokenInfo issueToken(HttpSession session, @RequestParam String authorizationCode) {
-        TokenInfo tokenInfo = null;
+        return Optional.ofNullable(session)
+                .map(s -> getTokenInfoFromSession(s, authorizationCode))
+                .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
+    }
 
-        if (session != null) {
-            tokenInfo = (TokenInfo) session.getAttribute(authorizationCode);
-            session.invalidate();
+    private TokenInfo getTokenInfoFromSession(HttpSession session, String authorizationCode) {
+        if (!StringUtils.hasText(authorizationCode)) {
+            return null;
         }
 
-        if (tokenInfo == null) {
-            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
-        }
+        TokenInfo tokenInfo = (TokenInfo) session.getAttribute(authorizationCode);
+        session.invalidate();
 
         return tokenInfo;
     }

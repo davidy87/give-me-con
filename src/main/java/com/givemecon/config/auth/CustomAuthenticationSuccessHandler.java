@@ -8,7 +8,6 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.givemecon.config.enums.OAuth2ParameterName.*;
@@ -45,12 +45,13 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
         String authorizationCode = UUID.randomUUID().toString();
-        HttpSession session = request.getSession(true);
 
-        if (session != null) {
-            session.setAttribute(authorizationCode, tokenInfo);
-            session.setMaxInactiveInterval(SESSION_DURATION);
-        }
+        // TokenInfo를 session에 임시 보관
+        Optional.ofNullable(request.getSession())
+                .ifPresent(session -> {
+                    session.setAttribute(authorizationCode, tokenInfo);
+                    session.setMaxInactiveInterval(SESSION_DURATION);
+                });
 
         String redirectUrl =
                 UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
