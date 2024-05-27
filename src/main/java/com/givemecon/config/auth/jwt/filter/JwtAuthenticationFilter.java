@@ -3,7 +3,6 @@ package com.givemecon.config.auth.jwt.filter;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -60,17 +59,17 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = jwtTokenService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("[Log] Authenticated User = {}", authentication.getName());
-        } catch (JwtException e) {
+        } catch (ExpiredJwtException e) {
+            log.info("[Log] Caught ExpiredJwtException", e);
+
             // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
-            String refreshTokenHeader = request.getHeader(REFRESH_TOKEN.getName());
-            String refreshToken = jwtTokenService.retrieveToken(refreshTokenHeader);
+            String refreshToken = Optional.ofNullable(request.getHeader(REFRESH_TOKEN.getName()))
+                    .map(jwtTokenService::retrieveToken)
+                    .filter(StringUtils::hasText)
+                    .orElseThrow(() -> e);
 
             log.info("[Log] Token reissue request");
             log.info("[Log] Refresh Token = {}", refreshToken);
-
-            if (!StringUtils.hasText(refreshToken)) {
-                throw e;
-            }
 
             Authentication refreshAuthentication = authenticated(null, null, null);
             SecurityContextHolder.getContext().setAuthentication(refreshAuthentication);
@@ -91,8 +90,9 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getAccessTokenFromSession(HttpServletRequest request) {
-        String authorizationCode = Optional.ofNullable(request.getParameter(AUTHORIZATION_CODE.getName()))
-                .orElse("");
+        String authorizationCode =
+                Optional.ofNullable(request.getParameter(AUTHORIZATION_CODE.getName()))
+                        .orElse("");
 
         return Optional.ofNullable(request.getSession(false))
                 .map(session -> (TokenInfo) session.getAttribute(authorizationCode))

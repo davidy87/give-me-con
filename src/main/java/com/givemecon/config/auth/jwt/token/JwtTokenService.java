@@ -79,9 +79,8 @@ public class JwtTokenService {
                             entity.updateRefreshToken(refreshToken);
                             refreshTokenRepository.save(entity);
                         },
-                        () -> refreshTokenRepository.save(
-                                new RefreshToken(memberId, refreshToken)
-                        ));
+                        () -> refreshTokenRepository.save(new RefreshToken(memberId, refreshToken))
+                );
     }
 
     private String generateRefreshToken(long issuedAt) {

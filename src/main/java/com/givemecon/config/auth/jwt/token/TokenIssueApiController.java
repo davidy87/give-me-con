@@ -34,6 +34,7 @@ public class TokenIssueApiController {
 
     private TokenInfo getTokenInfoFromSession(HttpSession session, String authorizationCode) {
         if (!StringUtils.hasText(authorizationCode)) {
+            session.invalidate();
             return null;
         }
 
