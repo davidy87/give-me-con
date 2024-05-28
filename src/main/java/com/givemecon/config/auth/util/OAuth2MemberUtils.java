@@ -15,6 +15,8 @@ import java.util.Optional;
 @Component
 public class OAuth2MemberUtils {
 
+    private static final String DUPLICATE_EMAIL_ERROR_CODE = "duplicate-email";
+
     private final MemberRepository memberRepository;
 
     /**
@@ -52,6 +54,6 @@ public class OAuth2MemberUtils {
         return Optional.ofNullable(member.getProvider())
                 .filter(provider -> provider.name().equals(registrationId))
                 .map(provider -> true)
-                .orElseThrow(() -> new OAuth2AuthenticationException("이미 해당 이메일로 가입된 계정이 존재합니다."));
+                .orElseThrow(() -> new OAuth2AuthenticationException(DUPLICATE_EMAIL_ERROR_CODE));
     }
 }

@@ -1,50 +1,50 @@
 package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.util.ClientUrlProperties;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.*;
-import static org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class CustomAuthenticationFailureHandler extends ExceptionMappingAuthenticationFailureHandler {
+public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    private static final String DUPLICATE_EMAIL_ERROR = "duplicate-email";
+    private static final String ERROR = "error";
+
+    private static final String ERROR_DESCRIPTION = "errorDescription";
 
     private final ClientUrlProperties clientUrlProperties;
-
-    @PostConstruct
-    public void init() {
-        String exceptionName = OAuth2AuthenticationException.class.getName();
-        String url = UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
-                .queryParam(ERROR)
-                .queryParam(ERROR_DESCRIPTION, DUPLICATE_EMAIL_ERROR)
-                .encode(UTF_8)
-                .toUriString();
-
-        setExceptionMappings(Map.of(exceptionName, url));
-    }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
                                         HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException, ServletException {
+                                        AuthenticationException exception) throws IOException {
 
-        super.onAuthenticationFailure(request, response, exception);
+        String errorDescription = "";
+
+        if (exception instanceof OAuth2AuthenticationException) {
+            errorDescription = ((OAuth2AuthenticationException) exception).getError().getErrorCode();
+            errorDescription = StringUtils.replace(errorDescription, "_", "-");
+        }
+
+        String redirectUrl = UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())
+                .queryParam(ERROR)
+                .queryParam(ERROR_DESCRIPTION, errorDescription)
+                .encode(UTF_8)
+                .toUriString();
+
+        response.sendRedirect(redirectUrl);
     }
 }
