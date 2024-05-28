@@ -1,7 +1,7 @@
 package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.util.exception.concrete.InvalidTokenException;
+import com.givemecon.util.exception.concrete.AuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class TokenIssueApiController {
     public TokenInfo issueToken(HttpSession session, @RequestParam String authorizationCode) {
         return Optional.ofNullable(session)
                 .map(s -> getTokenInfoFromSession(s, authorizationCode))
-                .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
+                .orElseThrow(() -> new AuthenticationException(INVALID_AUTHORIZATION_CODE));
     }
 
     private TokenInfo getTokenInfoFromSession(HttpSession session, String authorizationCode) {

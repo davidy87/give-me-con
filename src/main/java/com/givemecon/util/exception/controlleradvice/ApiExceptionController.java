@@ -57,7 +57,7 @@ public class ApiExceptionController {
 
     // MethodArgumentNotValidException 발생 시 호출
     private ErrorResponse makeErrorResponse(BindingResult bindingResult, Locale locale) {
-        ValidationErrorResponse errorResponse = new ValidationErrorResponse(NOT_VALID_ARGUMENT);
+        ValidationErrorResponse errorResponse = new ValidationErrorResponse(INVALID_ARGUMENT);
 
         for (FieldError fieldError: bindingResult.getFieldErrors()) {
             String field = fieldError.getField();
