@@ -33,14 +33,12 @@ public class TokenIssueApiController {
     }
 
     private TokenInfo getTokenInfoFromSession(HttpSession session, String authorizationCode) {
-        if (!StringUtils.hasText(authorizationCode)) {
-            session.invalidate();
-            return null;
-        }
+        TokenInfo tokenInfo = Optional.ofNullable(authorizationCode)
+                .filter(StringUtils::hasText)
+                .map(authCode -> (TokenInfo) session.getAttribute(authCode))
+                .orElse(null);
 
-        TokenInfo tokenInfo = (TokenInfo) session.getAttribute(authorizationCode);
         session.invalidate();
-
         return tokenInfo;
     }
 

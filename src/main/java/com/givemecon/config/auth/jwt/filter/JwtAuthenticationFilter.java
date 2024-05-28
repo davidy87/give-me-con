@@ -1,6 +1,5 @@
 package com.givemecon.config.auth.jwt.filter;
 
-import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -17,9 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.givemecon.config.enums.ApiPathPattern.AUTH_SUCCESS_API;
+import static com.givemecon.config.enums.ApiPathPattern.TOKEN_REISSUE_API;
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.OAuth2ParameterName.*;
 import static org.springframework.security.authentication.UsernamePasswordAuthenticationToken.*;
 
 @Slf4j
@@ -61,8 +59,14 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("[Log] Authenticated User = {}", authentication.getName());
         } catch (ExpiredJwtException e) {
             log.info("[Log] Caught ExpiredJwtException", e);
+            log.info("[Log] request URI = {}", request.getRequestURI());
 
-            // Refresh Token이 header로 전달되었을 경우, 해당 요청은 Access Token 재발급을 시도하는 요청이다.
+            // 요청 URI가 토큰 재발급 API가 아닐 경우, 예외를 그대로 던짐
+            if (!request.getRequestURI().equals(TOKEN_REISSUE_API.getPattern())) {
+                throw e;
+            }
+
+            // Refresh Token이 header로 전달되었을 경우, 해당 token이 올바른지 확인
             String refreshToken = Optional.ofNullable(request.getHeader(REFRESH_TOKEN.getName()))
                     .map(jwtTokenService::retrieveToken)
                     .filter(StringUtils::hasText)
@@ -77,26 +81,7 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getAccessTokenFromRequest(HttpServletRequest request) {
-        if (StringUtils.pathEquals(request.getRequestURI(), AUTH_SUCCESS_API.getPattern())) {
-            return getAccessTokenFromSession(request); // 로그인 성공 요청일 경우
-        }
-
-        return getAccessTokenFromHeader(request); // 요청 인가 시
-    }
-
-    private String getAccessTokenFromHeader(HttpServletRequest request) {
         String accessTokenHeader = request.getHeader(AUTHORIZATION.getName());
         return jwtTokenService.retrieveToken(accessTokenHeader);
-    }
-
-    private String getAccessTokenFromSession(HttpServletRequest request) {
-        String authorizationCode =
-                Optional.ofNullable(request.getParameter(AUTHORIZATION_CODE.getName()))
-                        .orElse("");
-
-        return Optional.ofNullable(request.getSession(false))
-                .map(session -> (TokenInfo) session.getAttribute(authorizationCode))
-                .map(TokenInfo::getAccessToken)
-                .orElse("");
     }
 }

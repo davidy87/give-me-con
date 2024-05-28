@@ -3,7 +3,7 @@ package com.givemecon.config.auth.jwt.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.util.error.ErrorCode;
 import com.givemecon.util.error.response.ErrorResponse;
-import com.givemecon.util.exception.concrete.InvalidTokenException;
+import com.givemecon.util.exception.GivemeconException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -37,8 +37,8 @@ public final class JwtExceptionFilter extends OncePerRequestFilter {
         } catch (JwtException e) {
             log.info("[Log] Caught JwtException", e);
             respondWithError(response, TOKEN_NOT_AUTHENTICATED);
-        } catch (InvalidTokenException e) {
-            log.info("[Log] Caught InvalidTokenException", e);
+        } catch (GivemeconException e) {
+            log.info("[Log] Caught GivemeconException", e);
             respondWithError(response, e.getErrorCode());
         } finally {
             log.info("[Log] --- End JwtExceptionFilter ---");

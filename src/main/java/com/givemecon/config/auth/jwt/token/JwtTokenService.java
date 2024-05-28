@@ -6,6 +6,7 @@ import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -105,7 +106,7 @@ public class JwtTokenService {
 
     /**
      * 요청으로 전달된 토큰을 추출
-     * @param tokenHeader Token 정보가 들어있는 HTTP Header
+     * @param tokenHeader Token 정보가 들어있는 HTTP Header (null이 전달될 수 있음)
      * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우, 빈 문자열 반환)
      * <br>
      * <p>
@@ -115,7 +116,7 @@ public class JwtTokenService {
      *     (GrantType)(sp)(공백없는 문자열) => "Bearer foobar"
      * </pre>
      */
-    public String retrieveToken(String tokenHeader) {
+    public String retrieveToken(@Nullable String tokenHeader) {
         return Optional.ofNullable(StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER))
                 .filter(headerSplit -> isTokenFormatValid(headerSplit[0], headerSplit[1]))
                 .map(headerSplit -> headerSplit[1])

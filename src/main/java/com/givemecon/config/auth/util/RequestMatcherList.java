@@ -15,6 +15,7 @@ public final class RequestMatcherList {
     public static RequestMatcher[] ofPermitAll() {
         return new AntPathRequestMatcher[] {
                 antMatcher(ADMIN_LOGIN_API.getPattern()),
+                antMatcher(AUTH_SUCCESS_API.getPattern()),
                 antMatcher(GET, CATEGORY_API.getPattern()),
                 antMatcher(GET, BRAND_API.getPattern()),
                 antMatcher(GET, VOUCHER_API.getPattern()),
@@ -24,7 +25,7 @@ public final class RequestMatcherList {
 
     public static RequestMatcher[] ofAuthenticated() {
         return new AntPathRequestMatcher[] {
-                antMatcher(AUTH_API.getPattern())
+                antMatcher(TOKEN_REISSUE_API.getPattern())
         };
     }
 
@@ -39,7 +40,7 @@ public final class RequestMatcherList {
 
     public static RequestMatcher[] ofAnyRole() {
         return new AntPathRequestMatcher[] {
-                antMatcher(AUTH_API.getPattern()),
+                antMatcher(TOKEN_REISSUE_API.getPattern()),
                 antMatcher(VOUCHER_FOR_SALE_API.getPattern()),
                 antMatcher(LIKED_VOUCHER_API.getPattern()),
                 antMatcher(PURCHASED_VOUCHER_API.getPattern()),
