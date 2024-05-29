@@ -139,7 +139,6 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
-                .part(new MockPart("categoryId", category.getId().toString().getBytes()))
                 .part(new MockPart("brandId", brand.getId().toString().getBytes()))
                 .part(new MockPart("title", title.getBytes()))
         );
@@ -163,7 +162,6 @@ class VoucherApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestParts(
-                                partWithName("categoryId").description("저장할 기프티콘의 카테고리 id"),
                                 partWithName("brandId").description("저장할 기프티콘의 브랜드 id"),
                                 partWithName("title").description("저장할 기프티콘 타이틀"),
                                 partWithName("description").optional().description("저장할 기프티콘 최소 가격 (생략 가능)"),
