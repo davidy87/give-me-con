@@ -118,11 +118,13 @@ class CategoryApiControllerTest {
 
         // then
         List<Category> categoryList = categoryRepository.findAll();
+        assertThat(categoryList).isNotEmpty();
+        Category category = categoryList.get(0);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
-                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(category.getId()))
+                .andExpect(jsonPath("name").value(category.getName()))
+                .andExpect(jsonPath("iconUrl").value(category.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -205,11 +207,13 @@ class CategoryApiControllerTest {
 
         // then
         List<Category> categoryList = categoryRepository.findAll();
+        assertThat(categoryList).isNotEmpty();
+        Category updatedCategory = categoryList.get(0);
 
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(categoryList.get(0).getId()))
-                .andExpect(jsonPath("name").value(categoryList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(categoryList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(updatedCategory.getId()))
+                .andExpect(jsonPath("name").value(updatedCategory.getName()))
+                .andExpect(jsonPath("iconUrl").value(updatedCategory.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),

@@ -84,6 +84,8 @@ class BrandApiControllerTest {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
 
+    Category category;
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -97,6 +99,10 @@ class BrandApiControllerTest {
         s3Client.createBucket(CreateBucketRequest.builder()
                 .bucket(bucketName)
                 .build());
+
+        category = categoryRepository.save(Category.builder()
+                .name("category")
+                .build());
     }
 
     @AfterEach
@@ -107,10 +113,6 @@ class BrandApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        Category categorySaved = categoryRepository.save(Category.builder()
-                .name("category")
-                .build());
-
         String name = "Brand";
         MockMultipartFile iconFile = new MockMultipartFile(
                 "iconFile",
@@ -121,17 +123,21 @@ class BrandApiControllerTest {
         // when
         ResultActions result = mockMvc.perform(multipart("/api/brands")
                 .file(iconFile)
-                .part(new MockPart("categoryId", String.valueOf(categorySaved.getId()).getBytes(StandardCharsets.UTF_8)))
+                .part(new MockPart("categoryId", String.valueOf(category.getId()).getBytes(StandardCharsets.UTF_8)))
                 .part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8)))
         );
 
         // then
         List<Brand> brandList = brandRepository.findAll();
+        assertThat(brandList).isNotEmpty();
+
+        Brand brand = brandList.get(0);
+        assertThat(brand.getCategory()).isEqualTo(category);
 
         result.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(brandList.get(0).getId()))
-                .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(brand.getId()))
+                .andExpect(jsonPath("name").value(brand.getName()))
+                .andExpect(jsonPath("iconUrl").value(brand.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -192,10 +198,6 @@ class BrandApiControllerTest {
     @Test
     void findAllByCategoryId() throws Exception {
         // given
-        Category category = categoryRepository.save(Category.builder()
-                .name("category")
-                .build());
-
         for (int i = 1; i <= 20; i++) {
             Brand brand = brandRepository.save(Brand.builder()
                     .name("Brand " + i)
@@ -223,6 +225,12 @@ class BrandApiControllerTest {
         ResultActions response = mockMvc.perform(get(uri));
 
         // then
+        List<Brand> brandList = brandRepository.findAll();
+
+        for (Brand brand : brandList) {
+            assertThat(brand.getCategory()).isEqualTo(category);
+        }
+
         response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
@@ -240,21 +248,11 @@ class BrandApiControllerTest {
                                 fieldWithPath("brands.[].iconUrl").type(JsonFieldType.STRING).description("페이징된 브랜드 iconUrl")
                         ))
                 );
-
-        List<Brand> brandList = brandRepository.findAll();
-
-        for (Brand brand : brandList) {
-            assertThat(brand.getCategory()).isEqualTo(category);
-        }
     }
 
     @Test
     void update() throws Exception {
         // given
-        Category oldCategory = categoryRepository.save(Category.builder()
-                .name("oldCategory")
-                .build());
-
         Category newCategory = categoryRepository.save(Category.builder()
                 .name("newCategory")
                 .build());
@@ -269,7 +267,7 @@ class BrandApiControllerTest {
                 .originalName("brandIcon.jpg")
                 .build());
 
-        brand.updateCategory(oldCategory);
+        brand.updateCategory(category);
         brand.updateBrandIcon(brandIcon);
 
         String newName = "newBrand";
@@ -288,12 +286,15 @@ class BrandApiControllerTest {
 
         // then
         List<Brand> brandList = brandRepository.findAll();
-        assertThat(brandList.get(0).getCategory()).isSameAs(newCategory);
+        assertThat(brandList).isNotEmpty();
+
+        Brand updatedBrand = brandList.get(0);
+        assertThat(updatedBrand.getCategory()).isSameAs(newCategory);
 
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(brandList.get(0).getId()))
-                .andExpect(jsonPath("name").value(brandList.get(0).getName()))
-                .andExpect(jsonPath("iconUrl").value(brandList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(updatedBrand.getId()))
+                .andExpect(jsonPath("name").value(updatedBrand.getName()))
+                .andExpect(jsonPath("iconUrl").value(updatedBrand.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),

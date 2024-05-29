@@ -17,10 +17,6 @@ public final class VoucherDto {
 
         @NotNull
         @Min(1L)
-        private final Long categoryId;
-
-        @NotNull
-        @Min(1L)
         private final Long brandId;
 
         @NotBlank

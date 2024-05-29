@@ -1,8 +1,11 @@
 package com.givemecon.controller;
 
 import com.givemecon.config.auth.dto.TokenInfo;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public abstract class TokenHeaderUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class TokenHeaderUtils {
 
     public static String getAccessTokenHeader(TokenInfo tokenInfo) {
         return tokenInfo.getGrantType() + " " + tokenInfo.getAccessToken();

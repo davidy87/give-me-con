@@ -139,7 +139,6 @@ class VoucherApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
-                .part(new MockPart("categoryId", category.getId().toString().getBytes()))
                 .part(new MockPart("brandId", brand.getId().toString().getBytes()))
                 .part(new MockPart("title", title.getBytes()))
         );
@@ -147,21 +146,22 @@ class VoucherApiControllerTest {
         // then
         List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(voucherList).isNotEmpty();
-        assertThat(voucherList.get(0).getBrand()).isEqualTo(brand);
-        assertThat(voucherList.get(0).getBrand().getCategory()).isEqualTo(category);
+
+        Voucher voucher = voucherList.get(0);
+        assertThat(voucher.getBrand()).isEqualTo(brand);
+        assertThat(voucher.getBrand().getCategory()).isEqualTo(category);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getMinPrice()))
-                .andExpect(jsonPath("title").value(voucherList.get(0).getTitle()))
-                .andExpect(jsonPath("description").value(voucherList.get(0).getDescription()))
-                .andExpect(jsonPath("caution").value(voucherList.get(0).getCaution()))
-                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(voucher.getId()))
+                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucher.getTitle()))
+                .andExpect(jsonPath("description").value(voucher.getDescription()))
+                .andExpect(jsonPath("caution").value(voucher.getCaution()))
+                .andExpect(jsonPath("imageUrl").value(voucher.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestParts(
-                                partWithName("categoryId").description("저장할 기프티콘의 카테고리 id"),
                                 partWithName("brandId").description("저장할 기프티콘의 브랜드 id"),
                                 partWithName("title").description("저장할 기프티콘 타이틀"),
                                 partWithName("description").optional().description("저장할 기프티콘 최소 가격 (생략 가능)"),
@@ -333,16 +333,15 @@ class VoucherApiControllerTest {
     @Test
     void findSellingListByVoucherId() throws Exception {
         // given
-        String title = "Americano T";
         Voucher voucher = Voucher.builder()
-                .title(title)
+                .title("Americano T")
                 .description("This is Americano T")
                 .caution("This voucher is from Starbucks.")
                 .build();
 
         Voucher voucherSaved = voucherRepository.save(voucher);
 
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 10; i++) {
             VoucherForSale voucherForSale = voucherForSaleRepository.save(
                     VoucherForSale.builder()
                             .price(4_000L)
@@ -415,12 +414,10 @@ class VoucherApiControllerTest {
         );
 
         // then
-        List<Voucher> voucherList = voucherRepository.findAll();
-
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(voucherList.get(0).getId()))
-                .andExpect(jsonPath("minPrice").value(voucherList.get(0).getMinPrice()))
-                .andExpect(jsonPath("imageUrl").value(voucherList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(voucher.getId()))
+                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
+                .andExpect(jsonPath("imageUrl").value(voucher.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),

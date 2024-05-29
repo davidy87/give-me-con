@@ -37,8 +37,6 @@ public class VoucherService {
     private final ImageEntityUtils imageEntityUtils;
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
-        // TODO: VoucherSavedRequest의 categoryId는 이제 사용 안함. 처리 필요.
-
         Brand brand = brandRepository.findById(requestDto.getBrandId())
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 

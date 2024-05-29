@@ -117,6 +117,11 @@ class LikedVoucherApiControllerTest {
 
         // then
         response.andExpect(status().isCreated())
+                .andExpect(jsonPath("id").value(voucher.getId()))
+                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucher.getTitle()))
+                .andExpect(jsonPath("description").value(voucher.getDescription()))
+                .andExpect(jsonPath("caution").value(voucher.getCaution()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -189,11 +194,10 @@ class LikedVoucherApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        Voucher voucher = Voucher.builder()
+        Voucher voucherSaved = voucherRepository.save(Voucher.builder()
                 .title("voucher")
-                .build();
+                .build());
 
-        Voucher voucherSaved = voucherRepository.save(voucher);
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(
                 LikedVoucher.builder()
                         .member(member)

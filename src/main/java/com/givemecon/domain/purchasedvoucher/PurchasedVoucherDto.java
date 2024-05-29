@@ -51,7 +51,7 @@ public final class PurchasedVoucherDto {
 
         private final String imageUrl;
 
-        private final Boolean isValid;
+        private final PurchasedVoucherStatus status;
 
         public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
             VoucherForSale voucherForSale = purchasedVoucher.getVoucherForSale();
@@ -62,7 +62,7 @@ public final class PurchasedVoucherDto {
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
             this.imageUrl = voucherForSale.getImageUrl();
-            this.isValid = purchasedVoucher.getIsValid();
+            this.status = purchasedVoucher.getStatus();
         }
     }
 

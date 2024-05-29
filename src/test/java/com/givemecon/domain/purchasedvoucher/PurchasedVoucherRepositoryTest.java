@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
@@ -28,7 +29,7 @@ class PurchasedVoucherRepositoryTest {
 
         // then
         PurchasedVoucher found = purchasedVoucherList.get(0);
-        assertThat(found.getIsValid()).isTrue();
+        assertThat(found.getStatus()).isEqualTo(USABLE);
     }
 
     @Test

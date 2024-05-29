@@ -5,6 +5,7 @@ import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -169,5 +170,19 @@ public class ApiExceptionControllerTest {
                 .andExpect(jsonPath("error.code").value(TOKEN_NOT_AUTHENTICATED.getCode()))
                 .andExpect(jsonPath("error.status").value(TOKEN_NOT_AUTHENTICATED.getStatus()))
                 .andExpect(jsonPath("error.message").value(TOKEN_NOT_AUTHENTICATED.getMessage()));
+    }
+
+    @Test
+    @DisplayName("필수 요청 파라미터가 전달되지 않았을 때 요청 처리")
+    void missingParameterException() throws Exception {
+        ResultActions response = mockMvc.perform(get("/api/auth/success"));
+
+        response.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("error.code").value(MISSING_REQUEST_PARAMETER.getCode()))
+                .andExpect(jsonPath("error.status").value(MISSING_REQUEST_PARAMETER.getStatus()))
+                .andExpect(jsonPath("error.message").value(MISSING_REQUEST_PARAMETER.getMessage()))
+                .andExpect(jsonPath("error.parameterDetails.parameterName").value("authorizationCode"))
+                .andExpect(jsonPath("error.parameterDetails.parameterType").value("String"));
+
     }
 }

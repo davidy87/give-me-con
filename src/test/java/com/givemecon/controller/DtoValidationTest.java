@@ -92,9 +92,9 @@ public class DtoValidationTest {
 
         saveResult
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
                 .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
     }
 
@@ -121,9 +121,9 @@ public class DtoValidationTest {
 
         saveResult
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
                 .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
     }
 
@@ -150,9 +150,9 @@ public class DtoValidationTest {
 
         saveResult
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
                 .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
     }
 
@@ -183,9 +183,9 @@ public class DtoValidationTest {
 
         saveResult
                 .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
                 .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
     }
 
@@ -208,9 +208,9 @@ public class DtoValidationTest {
                 .getContentAsString(StandardCharsets.UTF_8));
 
         response.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
                 .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
     }
 
@@ -232,9 +232,9 @@ public class DtoValidationTest {
                 .getContentAsString(StandardCharsets.UTF_8));
 
         response.andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("error.status").value(NOT_VALID_ARGUMENT.getStatus()))
-                .andExpect(jsonPath("error.code").value(NOT_VALID_ARGUMENT.getCode()))
-                .andExpect(jsonPath("error.message").value(NOT_VALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
                 .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
     }
 }

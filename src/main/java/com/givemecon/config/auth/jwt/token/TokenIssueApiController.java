@@ -1,17 +1,20 @@
 package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.util.exception.concrete.InvalidTokenException;
+import com.givemecon.util.exception.concrete.AuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.SessionAttribute.TOKEN_INFO;
 import static com.givemecon.util.error.ErrorCode.*;
 
 @Slf4j
@@ -23,18 +26,19 @@ public class TokenIssueApiController {
     private final TokenReissueService tokenReissueService;
 
     @GetMapping("/success")
-    public TokenInfo afterAuthSuccess(HttpSession session) {
-        TokenInfo tokenInfo = null;
+    public TokenInfo issueToken(HttpSession session, @RequestParam String authorizationCode) {
+        return Optional.ofNullable(session)
+                .map(s -> getTokenInfoFromSession(s, authorizationCode))
+                .orElseThrow(() -> new AuthenticationException(INVALID_AUTHORIZATION_CODE));
+    }
 
-        if (session != null) {
-            tokenInfo = (TokenInfo) session.getAttribute(TOKEN_INFO.getName());
-            session.invalidate();
-        }
+    private TokenInfo getTokenInfoFromSession(HttpSession session, String authorizationCode) {
+        TokenInfo tokenInfo = Optional.ofNullable(authorizationCode)
+                .filter(StringUtils::hasText)
+                .map(authCode -> (TokenInfo) session.getAttribute(authCode))
+                .orElse(null);
 
-        if (tokenInfo == null) {
-            throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
-        }
-
+        session.invalidate();
         return tokenInfo;
     }
 

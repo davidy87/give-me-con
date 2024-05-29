@@ -61,7 +61,7 @@ public class JwtTokenService {
         String accessToken = generateAccessToken(tokenRequest, issuedAt);
         String refreshToken = generateRefreshToken(issuedAt);
 
-        saveOrUpdateRefreshToken(String.valueOf(tokenRequest.getMemberId()), refreshToken);
+        saveNewOrUpdateRefreshToken(String.valueOf(tokenRequest.getMemberId()), refreshToken);
 
         return TokenInfo.builder()
                 .grantType(BEARER.getType())
@@ -72,16 +72,15 @@ public class JwtTokenService {
                 .build();
     }
 
-    private void saveOrUpdateRefreshToken(String memberId, String refreshToken) {
+    private void saveNewOrUpdateRefreshToken(String memberId, String refreshToken) {
         refreshTokenRepository.findByMemberId(memberId)
                 .ifPresentOrElse(
                         entity -> {
                             entity.updateRefreshToken(refreshToken);
                             refreshTokenRepository.save(entity);
                         },
-                        () -> refreshTokenRepository.save(
-                                new RefreshToken(memberId, refreshToken)
-                        ));
+                        () -> refreshTokenRepository.save(new RefreshToken(memberId, refreshToken))
+                );
     }
 
     private String generateRefreshToken(long issuedAt) {
@@ -106,8 +105,8 @@ public class JwtTokenService {
 
     /**
      * 요청으로 전달된 토큰을 추출
-     * @param tokenHeader Token 정보가 들어있는 HTTP Header
-     * @return Access token 혹은 Refresh token (만약 올바르지 않은 형식의 Authentication(혹은 Refresh-Token) header일 경우, 빈 문자열 반환)
+     * @param tokenHeader Token 정보가 들어있는 HTTP Header (null이 전달될 수 있음)
+     * @return Access token 혹은 refresh token (만약 올바르지 않은 형식의 Authentication 혹은 Refresh-Token header일 경우, 빈 문자열 반환)
      * <br>
      * <p>
      *     올바른 형태의 header 예:
@@ -117,16 +116,10 @@ public class JwtTokenService {
      * </pre>
      */
     public String retrieveToken(String tokenHeader) {
-        String[] headerSplit = StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER);
-
-        if (headerSplit == null) {
-            return "";
-        }
-
-        String grantType = headerSplit[0];
-        String token = headerSplit[1];
-
-        return isTokenFormatValid(grantType, token) ? token : "";
+        return Optional.ofNullable(StringUtils.split(tokenHeader, TOKEN_HEADER_DELIMITER))
+                .filter(headerSplit -> isTokenFormatValid(headerSplit[0], headerSplit[1]))
+                .map(headerSplit -> headerSplit[1])
+                .orElse("");
     }
 
     private boolean isTokenFormatValid(String grantType, String token) {

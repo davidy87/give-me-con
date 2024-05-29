@@ -5,11 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum SessionAttribute {
+public enum OAuth2ParameterName {
 
-    TOKEN_INFO("tokenInfo", 10);
+    SUCCESS("success"),
+    AUTHORIZATION_CODE("authorizationCode");
 
     private final String name;
-
-    private final int duration;
 }

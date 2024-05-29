@@ -92,6 +92,8 @@ class VoucherForSaleApiControllerTest {
 
     Member member;
 
+    Voucher voucher;
+
     TokenInfo tokenInfo;
 
     @BeforeEach
@@ -114,6 +116,10 @@ class VoucherForSaleApiControllerTest {
                 .authority(USER)
                 .build());
 
+        voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .build());
+
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
 
@@ -125,7 +131,6 @@ class VoucherForSaleApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        String title = "Americano T";
         Long price = 4_000L;
         LocalDate expDate = LocalDate.now().plusDays(1);
         String barcode = "1111 1111 1111";
@@ -134,10 +139,6 @@ class VoucherForSaleApiControllerTest {
                 "Americano_T.png",
                 "image/png",
                 "Americano_T.png".getBytes());
-
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title(title)
-                .build());
 
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
@@ -150,16 +151,19 @@ class VoucherForSaleApiControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        assertThat(voucher.getMinPrice()).isEqualTo(price);
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
+        assertThat(voucherForSaleList).isNotEmpty();
+
+        VoucherForSale voucherForSale = voucherForSaleList.get(0);
+        assertThat(voucherForSale.getVoucher().getMinPrice()).isEqualTo(price);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucherForSaleList.get(0).getId()))
-                .andExpect(jsonPath("title").value(voucherForSaleList.get(0).getTitle()))
-                .andExpect(jsonPath("price").value(voucherForSaleList.get(0).getPrice()))
-                .andExpect(jsonPath("expDate").value(voucherForSaleList.get(0).getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(voucherForSaleList.get(0).getBarcode()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleList.get(0).getImageUrl()))
+                .andExpect(jsonPath("id").value(voucherForSale.getId()))
+                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
+                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
+                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
+                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
+                .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -184,10 +188,6 @@ class VoucherForSaleApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
-                .build());
-
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now().plusDays(1))
