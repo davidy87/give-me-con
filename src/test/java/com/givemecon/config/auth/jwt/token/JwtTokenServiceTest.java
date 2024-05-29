@@ -36,7 +36,8 @@ class JwtTokenServiceTest {
                 "Bearer foobar  ",
                 " Bearer foobar",
                 " Bearer foobar ",
-                " Bearer foobar  ",
+                "  Bearer foobar  ",
+                "\n Bearer foobar  ",
                 "Bearer ",
                 "Bearer \nfoobar",
                 null

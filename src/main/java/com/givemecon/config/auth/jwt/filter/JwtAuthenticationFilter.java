@@ -38,7 +38,7 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("[Log] Access Token = {}", accessToken);
 
         if (StringUtils.hasText(accessToken)) {
-            proceedAuthentication(accessToken, request);
+            proceedAuthentication(request, accessToken);
         }
 
         filterChain.doFilter(request, response);
@@ -49,10 +49,10 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
      * 매개변수로 전달받은 access token을 사용해 {@link Authentication}을 생성하고 {@link SecurityContextHolder}에 등록한다. 도중에
      * {@link ExpiredJwtException}이 발생할 경우, 예외를 잡고 refresh token이 담긴 헤더가 요쳥 시에 같이 전달되었는지 확인한다. 해당 헤더가
      * 있다면 access token 재요청 전용 {@link Authentication} 객체를 생성 및 등록하고, 없다면 잡았던 예외를 그대로 던진다.
-     * @param accessToken 요청 시 전달받은 access token
      * @param request HTTP 요청
+     * @param accessToken 요청 시 전달받은 access token
      */
-    private void proceedAuthentication(String accessToken, HttpServletRequest request) {
+    private void proceedAuthentication(HttpServletRequest request, String accessToken) {
         try {
             Authentication authentication = jwtTokenService.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -62,7 +62,7 @@ public final class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.info("[Log] request URI = {}", request.getRequestURI());
 
             // 요청 URI가 토큰 재발급 API가 아닐 경우, 예외를 그대로 던짐
-            if (!request.getRequestURI().equals(TOKEN_REISSUE_API.getPattern())) {
+            if (!StringUtils.pathEquals(request.getRequestURI(), TOKEN_REISSUE_API.getPattern())) {
                 throw e;
             }
 

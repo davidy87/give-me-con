@@ -29,18 +29,18 @@ public class TokenReissueService {
 
     public TokenInfo reissueToken(String tokenHeader) {
         String refreshToken = jwtTokenService.retrieveToken(tokenHeader);
-        Member member = validateRefreshToken(refreshToken);
+        Member member = findRefreshTokenOwner(refreshToken);
 
         // Access token과 refresh token을 같이 재발급한다.
         return jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
 
     /**
-     * Refresh token 검증에 성공하면 token 재발급 요청자(Member)를 찾아 반환
+     * Refresh token 검증에 성공하면 token 소유자(Member)를 찾아 반환
      * @param refreshToken 검증할 refresh token
-     * @return {@link Member} (token 재발급 요청자에 해당하는 Member entity)
+     * @return {@link Member} (token 소유자에 해당하는 Member entity)
      */
-    private Member validateRefreshToken(String refreshToken) {
+    private Member findRefreshTokenOwner(String refreshToken) {
         if (!StringUtils.hasText(refreshToken)) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
