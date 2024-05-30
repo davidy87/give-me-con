@@ -43,6 +43,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -358,6 +359,7 @@ class VoucherApiControllerTest {
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucher.addVoucherForSale(voucherForSale);
+            voucherForSale.updateStatus(FOR_SALE);
         }
 
         // when
@@ -378,7 +380,8 @@ class VoucherApiControllerTest {
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기한"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
                         ))
                 );
     }

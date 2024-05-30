@@ -15,6 +15,7 @@ import java.util.List;
 
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -49,6 +50,7 @@ public class PurchasedVoucherService {
      */
     private PurchasedVoucher saveOne(Member buyer, PurchasedVoucherRequest requestDto) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(requestDto.getVoucherForSaleId())
+                .filter(forSale -> forSale.getStatus() == FOR_SALE)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());

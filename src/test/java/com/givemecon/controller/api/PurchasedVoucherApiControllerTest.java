@@ -39,6 +39,7 @@ import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -127,6 +128,7 @@ class PurchasedVoucherApiControllerTest {
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherForSale.updateVoucher(voucher);
+            voucherForSale.updateStatus(FOR_SALE);
             dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
         }
 

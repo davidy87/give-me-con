@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
 @Slf4j
@@ -47,6 +49,15 @@ public class VoucherForSaleService {
         voucher.addVoucherForSale(voucherForSale);
 
         return new VoucherForSaleResponse(voucherForSale);
+    }
+
+    public List<VoucherForSaleResponse> findAllByUsername(String username) {
+        Member seller = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+
+        return voucherForSaleRepository.findAllBySeller(seller).stream()
+                .map(VoucherForSaleResponse::new)
+                .toList();
     }
 
     public void delete(Long id) {

@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
 @Slf4j
@@ -25,6 +27,11 @@ public class VoucherForSaleApiController {
                                        @Validated @ModelAttribute VoucherForSaleRequest requestDto) {
 
         return voucherForSaleService.save(authentication.getName(), requestDto);
+    }
+
+    @GetMapping
+    public List<VoucherForSaleResponse> findAllBySeller(Authentication authentication) {
+        return voucherForSaleService.findAllByUsername(authentication.getName());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

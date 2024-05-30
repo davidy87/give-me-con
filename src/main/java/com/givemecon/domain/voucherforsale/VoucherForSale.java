@@ -14,6 +14,8 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE voucher_for_sale SET deleted = true WHERE id = ?")
@@ -34,6 +36,10 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private String barcode;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VoucherForSaleStatus status;
+
     @OneToOne
     @JoinColumn
     private VoucherForSaleImage voucherForSaleImage;
@@ -51,6 +57,7 @@ public class VoucherForSale extends BaseTimeEntity {
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
+        this.status = NOT_YET_PERMITTED;
     }
 
     public String getTitle() {
@@ -59,6 +66,10 @@ public class VoucherForSale extends BaseTimeEntity {
 
     public String getImageUrl() {
         return voucherForSaleImage.getImageUrl();
+    }
+
+    public void updateStatus(VoucherForSaleStatus status) {
+        this.status = status;
     }
 
     public void updateVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

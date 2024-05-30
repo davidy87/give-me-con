@@ -59,6 +59,8 @@ public final class VoucherForSaleDto {
 
         private final String imageUrl;
 
+        private final VoucherForSaleStatus status;
+
         public VoucherForSaleResponse(VoucherForSale voucherForSale) {
             this.id = voucherForSale.getId();
             this.title = voucherForSale.getTitle();
@@ -66,6 +68,7 @@ public final class VoucherForSaleDto {
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
             this.imageUrl = voucherForSale.getImageUrl();
+            this.status = voucherForSale.getStatus();
         }
     }
 }

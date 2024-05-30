@@ -36,6 +36,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
@@ -180,7 +181,58 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL")
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                        ))
+                );
+    }
+
+    @Test
+    void findAllBySeller() throws Exception {
+        // given
+        List<VoucherForSale> toSaveList = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            VoucherForSale toSave = VoucherForSale.builder()
+                    .price(4_000L)
+                    .barcode("1111 1111 1111")
+                    .expDate(LocalDate.now())
+                    .build();
+
+            VoucherForSaleImage voucherForSaleImage =
+                    voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+                            .imageUrl("imageUrl" + i)
+                            .originalName("voucherForSaleImage" + i)
+                            .imageKey("imageKey" + i)
+                            .build());
+
+            toSave.updateVoucherForSaleImage(voucherForSaleImage);
+            toSave.updateVoucher(voucher);
+            toSave.updateSeller(member);
+            toSaveList.add(toSave);
+        }
+
+        voucherForSaleRepository.saveAll(toSaveList);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
+
+        // then
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllBySeller(member);
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
                         ))
                 );
     }
