@@ -2,8 +2,12 @@ package com.givemecon.controller.api;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.category.Category;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -93,7 +97,7 @@ public class ApiExceptionControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.message").value(new EntityNotFoundException(Category.class).getMessage()));
     }
 
     @Test
@@ -118,7 +122,7 @@ public class ApiExceptionControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.message").value(new EntityNotFoundException(Brand.class).getMessage()));
     }
 
     @Test
@@ -135,7 +139,7 @@ public class ApiExceptionControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.message").value(new EntityNotFoundException(Voucher.class).getMessage()));
     }
 
     @Test
@@ -152,7 +156,7 @@ public class ApiExceptionControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("error.message").value(ENTITY_NOT_FOUND.getMessage()));
+                .andExpect(jsonPath("error.message").value(new EntityNotFoundException(Member.class).getMessage()));
     }
 
     @Test
