@@ -8,6 +8,11 @@ public class GivemeconException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
+    protected GivemeconException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
+    }
+
     protected GivemeconException(ErrorCode errorCode, String message) {
         super(message);
         this.errorCode = errorCode;

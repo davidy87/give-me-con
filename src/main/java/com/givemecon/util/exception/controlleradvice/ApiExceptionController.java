@@ -30,7 +30,7 @@ public class ApiExceptionController {
     @ExceptionHandler
     public ResponseEntity<Map<String, ErrorResponse>> givemeconExceptionHandler(GivemeconException e) {
         log.info("[Log] Caught {}", e.getClass().getSimpleName(), e);
-        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
+        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode(), e.getMessage());
         return createResponseEntity(errorResponse);
     }
 
