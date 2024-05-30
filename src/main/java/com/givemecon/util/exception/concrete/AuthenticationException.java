@@ -6,6 +6,6 @@ import com.givemecon.util.exception.GivemeconException;
 public class AuthenticationException extends GivemeconException {
 
     public AuthenticationException(ErrorCode errorCode) {
-        super(errorCode, errorCode.getMessage());
+        super(errorCode);
     }
 }
