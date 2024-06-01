@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -62,9 +61,13 @@ public class VoucherForSaleService {
     }
 
     public List<VoucherForSaleResponse> findAllByStatus(Integer statusCode) {
-        VoucherForSaleStatus status = values()[statusCode];
+        VoucherForSaleStatus[] statuses = VoucherForSaleStatus.values();
 
-        return voucherForSaleRepository.findAllByStatus(status).stream()
+        if (statusCode < 0 || statusCode >= statuses.length) {
+            throw new EntityNotFoundException(VoucherForSale.class);
+        }
+
+        return voucherForSaleRepository.findAllByStatus(statuses[statusCode]).stream()
                 .map(VoucherForSaleResponse::new)
                 .toList();
     }

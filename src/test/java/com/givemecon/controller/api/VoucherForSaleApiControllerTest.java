@@ -193,7 +193,7 @@ class VoucherForSaleApiControllerTest {
         // given
         List<VoucherForSale> toSaveList = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             VoucherForSale toSave = VoucherForSale.builder()
                     .price(4_000L)
                     .barcode("1111 1111 1111")
@@ -242,7 +242,7 @@ class VoucherForSaleApiControllerTest {
         // given
         List<VoucherForSale> toSaveList = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             VoucherForSale toSave = VoucherForSale.builder()
                     .price(4_000L)
                     .barcode("1111 1111 1111")
@@ -256,8 +256,8 @@ class VoucherForSaleApiControllerTest {
                             .imageKey("imageKey" + i)
                             .build());
 
-            if (i < 5) {
-                toSave.updateStatus(NOT_YET_PERMITTED);
+            if (i < 2) {
+                toSave.updateStatus(FOR_SALE);
             }
 
             toSave.updateVoucherForSaleImage(voucherForSaleImage);

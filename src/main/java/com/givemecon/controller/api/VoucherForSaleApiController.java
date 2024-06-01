@@ -30,8 +30,8 @@ public class VoucherForSaleApiController {
     }
 
     @GetMapping
-    public List<VoucherForSaleResponse> findAllBySeller(Authentication authentication,
-                                                        @Validated @ModelAttribute StatusParameter paramDto) {
+    public List<VoucherForSaleResponse> findAll(Authentication authentication,
+                                                @Validated @ModelAttribute StatusParameter paramDto) {
 
         if (paramDto.getStatus() == null) {
             return voucherForSaleService.findAllByUsername(authentication.getName());
