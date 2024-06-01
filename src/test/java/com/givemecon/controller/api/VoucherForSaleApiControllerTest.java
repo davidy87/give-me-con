@@ -44,6 +44,7 @@ import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -158,7 +159,7 @@ class VoucherForSaleApiControllerTest {
         VoucherForSale voucherForSale = voucherForSaleList.get(0);
         assertThat(voucherForSale.getVoucher().getMinPrice()).isEqualTo(price);
 
-        response.andExpect(status().isCreated())
+        response.andExpect(status().isAccepted())
                 .andExpect(jsonPath("id").value(voucherForSale.getId()))
                 .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
@@ -191,6 +192,7 @@ class VoucherForSaleApiControllerTest {
     void findAllBySeller() throws Exception {
         // given
         List<VoucherForSale> toSaveList = new ArrayList<>();
+
         for (int i = 0; i < 10; i++) {
             VoucherForSale toSave = VoucherForSale.builder()
                     .price(4_000L)
@@ -218,8 +220,60 @@ class VoucherForSaleApiControllerTest {
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllBySeller(member);
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                        ))
+                );
+    }
 
+    @Test
+    void findAllByStatus() throws Exception {
+        // given
+        List<VoucherForSale> toSaveList = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            VoucherForSale toSave = VoucherForSale.builder()
+                    .price(4_000L)
+                    .barcode("1111 1111 1111")
+                    .expDate(LocalDate.now())
+                    .build();
+
+            VoucherForSaleImage voucherForSaleImage =
+                    voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+                            .imageUrl("imageUrl" + i)
+                            .originalName("voucherForSaleImage" + i)
+                            .imageKey("imageKey" + i)
+                            .build());
+
+            if (i < 5) {
+                toSave.updateStatus(NOT_YET_PERMITTED);
+            }
+
+            toSave.updateVoucherForSaleImage(voucherForSaleImage);
+            toSave.updateVoucher(voucher);
+            toSave.updateSeller(member);
+            toSaveList.add(toSave);
+        }
+
+        voucherForSaleRepository.saveAll(toSaveList);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
+                .param("status", String.valueOf(NOT_YET_PERMITTED.ordinal())));
+
+        // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",

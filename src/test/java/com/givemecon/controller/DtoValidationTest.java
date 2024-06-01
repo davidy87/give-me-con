@@ -29,8 +29,7 @@ import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -175,6 +174,30 @@ public class DtoValidationTest {
                 .part(barcode)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
         );
+
+        // then
+        log.info(saveResult.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
+        saveResult
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("status별 VoucherForSale 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 4까지만 가능하다.")
+    void statusCodeParameterFailed() throws Exception {
+        // given
+        Integer invalidStatusCode = 5;
+
+        // when
+        ResultActions saveResult = mockMvc.perform(get("/api/vouchers-for-sale")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
+                .param("status", String.valueOf(invalidStatusCode)));
 
         // then
         log.info(saveResult.andReturn()

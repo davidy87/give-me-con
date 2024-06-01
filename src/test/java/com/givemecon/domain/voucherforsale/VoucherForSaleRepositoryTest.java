@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -70,6 +71,27 @@ class VoucherForSaleRepositoryTest {
             assertThat(found).isEqualTo(voucherForSale);
             assertThat(found.getSeller()).isEqualTo(seller);
         });
+    }
+
+    @Test
+    void findAllByStatus() {
+        // given
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .build();
+
+        voucherForSaleRepository.save(voucherForSale);
+
+        // when
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllByStatus(NOT_YET_PERMITTED);
+
+        // then
+        VoucherForSale found = voucherForSaleList.get(0);
+        assertThat(voucherForSaleList).isNotEmpty();
+        assertThat(found).isEqualTo(voucherForSale);
+        assertThat(found.getStatus()).isSameAs(NOT_YET_PERMITTED);
     }
 
     @Test

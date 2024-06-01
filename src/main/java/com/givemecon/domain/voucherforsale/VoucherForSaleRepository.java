@@ -8,4 +8,6 @@ import java.util.List;
 public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, Long> {
 
     List<VoucherForSale> findAllBySeller(Member seller);
+
+    List<VoucherForSale> findAllByStatus(VoucherForSaleStatus status);
 }

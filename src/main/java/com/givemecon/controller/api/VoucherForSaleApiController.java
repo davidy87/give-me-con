@@ -21,7 +21,7 @@ public class VoucherForSaleApiController {
 
     private final VoucherForSaleService voucherForSaleService;
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public VoucherForSaleResponse save(Authentication authentication,
                                        @Validated @ModelAttribute VoucherForSaleRequest requestDto) {
@@ -30,8 +30,14 @@ public class VoucherForSaleApiController {
     }
 
     @GetMapping
-    public List<VoucherForSaleResponse> findAllBySeller(Authentication authentication) {
-        return voucherForSaleService.findAllByUsername(authentication.getName());
+    public List<VoucherForSaleResponse> findAllBySeller(Authentication authentication,
+                                                        @Validated @ModelAttribute StatusParameter paramDto) {
+
+        if (paramDto.getStatus() == null) {
+            return voucherForSaleService.findAllByUsername(authentication.getName());
+        }
+
+        return voucherForSaleService.findAllByStatus(paramDto.getStatus());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
