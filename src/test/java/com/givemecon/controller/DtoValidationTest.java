@@ -189,7 +189,7 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("status별 VoucherForSale 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 4까지만 가능하다.")
+    @DisplayName("상태별 VoucherForSale 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 4까지만 가능하다.")
     void statusCodeParameterFailed() throws Exception {
         // given
         Integer invalidStatusCode = 5;
@@ -197,7 +197,7 @@ public class DtoValidationTest {
         // when
         ResultActions saveResult = mockMvc.perform(get("/api/vouchers-for-sale")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
-                .param("status", String.valueOf(invalidStatusCode)));
+                .queryParam("statusCode", String.valueOf(invalidStatusCode)));
 
         // then
         log.info(saveResult.andReturn()

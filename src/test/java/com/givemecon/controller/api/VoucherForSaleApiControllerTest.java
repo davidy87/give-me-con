@@ -285,7 +285,7 @@ class VoucherForSaleApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
-                .param("status", String.valueOf(NOT_YET_PERMITTED.ordinal())));
+                .queryParam("statusCode", String.valueOf(NOT_YET_PERMITTED.ordinal())));
 
         // then
         response.andExpect(status().isOk())
@@ -326,8 +326,8 @@ class VoucherForSaleApiControllerTest {
         voucherForSaleRepository.save(voucherForSale);
 
         // when
-        StatusRequest requestBody = new StatusRequest();
-        requestBody.setStatus(FOR_SALE.ordinal());
+        StatusCodeBody requestBody = new StatusCodeBody();
+        requestBody.setStatusCode(FOR_SALE.ordinal());
 
         ResultActions response = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
@@ -342,12 +342,12 @@ class VoucherForSaleApiControllerTest {
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
-                .andExpect(jsonPath("status").value("FOR_SALE"))
+                .andExpect(jsonPath("status").value(FOR_SALE.name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("기프티콘 상태코드")
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),

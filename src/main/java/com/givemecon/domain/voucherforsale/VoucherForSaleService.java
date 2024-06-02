@@ -10,6 +10,7 @@ import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,8 @@ public class VoucherForSaleService {
         return new VoucherForSaleResponse(voucherForSale);
     }
 
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('USER')")
     public List<VoucherForSaleResponse> findAllByUsername(String username) {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
@@ -60,31 +63,33 @@ public class VoucherForSaleService {
                 .toList();
     }
 
-    public List<VoucherForSaleResponse> findAllByStatus(Integer statusCode) {
-        VoucherForSaleStatus[] statuses = VoucherForSaleStatus.values();
+    @Transactional(readOnly = true)
+    public List<VoucherForSaleResponse> findAllByStatus(StatusCodeParameter paramDto) {
+        VoucherForSaleStatus status = findStatus(paramDto.getStatusCode());
 
-        if (statusCode < 0 || statusCode >= statuses.length) {
-            throw new EntityNotFoundException(VoucherForSale.class);
-        }
-
-        return voucherForSaleRepository.findAllByStatus(statuses[statusCode]).stream()
+        return voucherForSaleRepository.findAllByStatus(status).stream()
                 .map(VoucherForSaleResponse::new)
                 .toList();
     }
 
-    public VoucherForSaleResponse updateStatus(Long id, StatusRequest paramDto) {
-        Integer statusCode = paramDto.getStatus();
+    public VoucherForSaleResponse updateStatus(Long id, StatusCodeBody bodyDto) {
+        VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
+
+        VoucherForSaleStatus newStatus = findStatus(bodyDto.getStatusCode());
+        voucherForSale.updateStatus(newStatus);
+
+        return new VoucherForSaleResponse(voucherForSale);
+    }
+
+    private VoucherForSaleStatus findStatus(Integer statusCode) {
         VoucherForSaleStatus[] statuses = VoucherForSaleStatus.values();
 
         if (statusCode < 0 || statusCode >= statuses.length) {
             throw new EntityNotFoundException(VoucherForSale.class);
         }
 
-        VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
-
-        voucherForSale.updateStatus(statuses[statusCode]);
-        return new VoucherForSaleResponse(voucherForSale);
+        return statuses[statusCode];
     }
 
     public void delete(Long id) {

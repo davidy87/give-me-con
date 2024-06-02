@@ -42,12 +42,22 @@ public final class VoucherForSaleDto {
     }
 
     @Getter
-    @Setter
-    public static class StatusRequest {
+    @RequiredArgsConstructor
+    public static class StatusCodeParameter {
 
         @Min(0)
         @Max(4)
-        private Integer status;
+        private final Integer statusCode;
+    }
+
+    @Getter
+    @Setter
+    public static class StatusCodeBody {
+
+        @Min(0)
+        @Max(4)
+        @NotNull
+        private Integer statusCode;
     }
 
     @Getter

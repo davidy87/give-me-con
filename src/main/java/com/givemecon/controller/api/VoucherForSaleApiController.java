@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,24 +32,26 @@ public class VoucherForSaleApiController {
 
     @GetMapping
     public List<VoucherForSaleResponse> findAll(Authentication authentication,
-                                                @Validated @ModelAttribute StatusRequest paramDto) {
+                                                @Validated @ModelAttribute StatusCodeParameter paramDto) {
 
-        if (paramDto.getStatus() == null) {
+        if (paramDto.getStatusCode() == null) {
             return voucherForSaleService.findAllByUsername(authentication.getName());
         }
 
-        return voucherForSaleService.findAllByStatus(paramDto.getStatus());
+        return voucherForSaleService.findAllByStatus(paramDto);
     }
 
     @PutMapping("/{id}")
-    public VoucherForSaleResponse permitVoucherForSale(@PathVariable Long id,
-                                                       @Validated @RequestBody StatusRequest paramDto) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public VoucherForSaleResponse updateStatus(@PathVariable Long id,
+                                               @Validated @RequestBody StatusCodeBody bodyDto) {
 
-        return voucherForSaleService.updateStatus(id, paramDto);
+        return voucherForSaleService.updateStatus(id, bodyDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         voucherForSaleService.delete(id);
     }
