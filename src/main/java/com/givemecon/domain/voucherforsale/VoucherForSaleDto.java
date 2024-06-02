@@ -42,12 +42,12 @@ public final class VoucherForSaleDto {
     }
 
     @Getter
-    @RequiredArgsConstructor
-    public static class StatusParameter {
+    @Setter
+    public static class StatusRequest {
 
         @Min(0)
         @Max(4)
-        private final Integer status;
+        private Integer status;
     }
 
     @Getter

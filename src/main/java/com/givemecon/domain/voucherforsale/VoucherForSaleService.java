@@ -72,6 +72,21 @@ public class VoucherForSaleService {
                 .toList();
     }
 
+    public VoucherForSaleResponse updateStatus(Long id, StatusRequest paramDto) {
+        Integer statusCode = paramDto.getStatus();
+        VoucherForSaleStatus[] statuses = VoucherForSaleStatus.values();
+
+        if (statusCode < 0 || statusCode >= statuses.length) {
+            throw new EntityNotFoundException(VoucherForSale.class);
+        }
+
+        VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
+
+        voucherForSale.updateStatus(statuses[statusCode]);
+        return new VoucherForSaleResponse(voucherForSale);
+    }
+
     public void delete(Long id) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));

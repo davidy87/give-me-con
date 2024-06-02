@@ -1,5 +1,6 @@
 package com.givemecon.controller.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.member.Member;
@@ -44,6 +45,7 @@ import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -92,11 +94,15 @@ class VoucherForSaleApiControllerTest {
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
 
-    Member member;
+    Member user;
+
+    Member admin;
 
     Voucher voucher;
 
-    TokenInfo tokenInfo;
+    TokenInfo userTokenInfo;
+
+    TokenInfo adminTokenInfo;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -112,17 +118,24 @@ class VoucherForSaleApiControllerTest {
                 .bucket(bucketName)
                 .build());
 
-        member = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
-                .authority(USER)
-                .build());
-
         voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .build());
 
-        tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
+        user = memberRepository.save(Member.builder()
+                .email("user@gmail.com")
+                .username("user")
+                .authority(USER)
+                .build());
+
+        admin = memberRepository.save(Member.builder()
+                .email("admin@gmail.com")
+                .username("admin")
+                .authority(ADMIN)
+                .build());
+
+        userTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
+        adminTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(admin));
     }
 
     @AfterEach
@@ -149,7 +162,7 @@ class VoucherForSaleApiControllerTest {
                 .part(new MockPart("price", price.toString().getBytes()))
                 .part(new MockPart("expDate", expDate.toString().getBytes()))
                 .part(new MockPart("barcode", barcode.getBytes()))
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo))
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
@@ -166,6 +179,7 @@ class VoucherForSaleApiControllerTest {
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
+                .andExpect(jsonPath("status").value(voucherForSale.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -209,7 +223,7 @@ class VoucherForSaleApiControllerTest {
 
             toSave.updateVoucherForSaleImage(voucherForSaleImage);
             toSave.updateVoucher(voucher);
-            toSave.updateSeller(member);
+            toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
 
@@ -217,7 +231,7 @@ class VoucherForSaleApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo)));
 
         // then
         response.andExpect(status().isOk())
@@ -262,7 +276,7 @@ class VoucherForSaleApiControllerTest {
 
             toSave.updateVoucherForSaleImage(voucherForSaleImage);
             toSave.updateVoucher(voucher);
-            toSave.updateSeller(member);
+            toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
 
@@ -270,7 +284,7 @@ class VoucherForSaleApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
                 .param("status", String.valueOf(NOT_YET_PERMITTED.ordinal())));
 
         // then
@@ -292,6 +306,62 @@ class VoucherForSaleApiControllerTest {
     }
 
     @Test
+    void permitVoucherForSale() throws Exception {
+        // given
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now())
+                .build();
+
+        VoucherForSaleImage voucherForSaleImage =
+                voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+                        .imageUrl("imageUrl")
+                        .originalName("voucherForSaleImage")
+                        .imageKey("imageKey")
+                        .build());
+
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
+        voucherForSale.updateVoucher(voucher);
+        voucherForSaleRepository.save(voucherForSale);
+
+        // when
+        StatusRequest requestBody = new StatusRequest();
+        requestBody.setStatus(FOR_SALE.ordinal());
+
+        ResultActions response = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestBody)));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("id").value(voucherForSale.getId()))
+                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
+                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
+                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
+                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
+                .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
+                .andExpect(jsonPath("status").value("FOR_SALE"))
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        requestFields(
+                                fieldWithPath("status").type(JsonFieldType.NUMBER).description("기프티콘 상태코드")
+                        ),
+                        responseFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
+                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
+                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                        ))
+                );
+    }
+
+    @Test
     void deleteOne() throws Exception {
         // given
         VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
@@ -306,13 +376,13 @@ class VoucherForSaleApiControllerTest {
                 .originalName("Americano_T.png")
                 .build());
 
-        voucherForSale.updateSeller(member);
+        voucherForSale.updateSeller(user);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucher.addVoucherForSale(voucherForSale);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo)));
 
         // then
         response.andExpect(status().isNoContent())

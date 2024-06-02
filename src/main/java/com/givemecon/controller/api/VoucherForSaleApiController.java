@@ -31,13 +31,20 @@ public class VoucherForSaleApiController {
 
     @GetMapping
     public List<VoucherForSaleResponse> findAll(Authentication authentication,
-                                                @Validated @ModelAttribute StatusParameter paramDto) {
+                                                @Validated @ModelAttribute StatusRequest paramDto) {
 
         if (paramDto.getStatus() == null) {
             return voucherForSaleService.findAllByUsername(authentication.getName());
         }
 
         return voucherForSaleService.findAllByStatus(paramDto.getStatus());
+    }
+
+    @PutMapping("/{id}")
+    public VoucherForSaleResponse permitVoucherForSale(@PathVariable Long id,
+                                                       @Validated @RequestBody StatusRequest paramDto) {
+
+        return voucherForSaleService.updateStatus(id, paramDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
