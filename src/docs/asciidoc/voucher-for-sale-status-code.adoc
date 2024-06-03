@@ -1,0 +1,24 @@
+|===
+|Status Code|Status|Description
+
+|`+0+`
+|`+NOT_YET_PERMITTED+`
+|판매가 아직 허가되지 않음
+
+|`+1+`
+|`+FOR_SALE+`
+|현재 판매 중
+
+|`+2+`
+|`+SOLD+`
+|판매 완료
+
+|`+3+`
+|`+REJECTED+`
+|판매 요청이 거절됨
+
+|`+4+`
+|`+EXPIRED+`
+|유효기간이 만료됨
+
+|===

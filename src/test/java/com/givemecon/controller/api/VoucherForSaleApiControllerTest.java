@@ -293,6 +293,9 @@ class VoucherForSaleApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("statusCode").description("기프티콘 상태코드")
+                        ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
@@ -306,7 +309,7 @@ class VoucherForSaleApiControllerTest {
     }
 
     @Test
-    void permitVoucherForSale() throws Exception {
+    void updateStatus() throws Exception {
         // given
         VoucherForSale voucherForSale = VoucherForSale.builder()
                 .price(4_000L)
@@ -346,12 +349,15 @@ class VoucherForSaleApiControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("판매중(or 판매 대기 중)인 기프티콘 id")
+                        ),
                         requestFields(
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 중인 기프티콘 id"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매 중인 기프티콘 타이틀"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
