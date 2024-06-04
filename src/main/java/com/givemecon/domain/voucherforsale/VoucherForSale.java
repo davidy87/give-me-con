@@ -40,6 +40,9 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private VoucherForSaleStatus status;
 
+    @Column(nullable = false)
+    private LocalDate saleRequestedDate;
+
     @OneToOne
     @JoinColumn
     private VoucherForSaleImage voucherForSaleImage;
@@ -58,6 +61,7 @@ public class VoucherForSale extends BaseTimeEntity {
         this.expDate = expDate;
         this.barcode = barcode;
         this.status = NOT_YET_PERMITTED;
+        this.saleRequestedDate = LocalDate.now();
     }
 
     public String getTitle() {
@@ -70,6 +74,10 @@ public class VoucherForSale extends BaseTimeEntity {
 
     public void updateStatus(VoucherForSaleStatus status) {
         this.status = status;
+    }
+
+    public void updateSaleRequestedDate(LocalDate saleRequestedDate) {
+        this.saleRequestedDate = saleRequestedDate;
     }
 
     public void updateVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

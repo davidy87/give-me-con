@@ -174,12 +174,13 @@ class VoucherForSaleApiControllerTest {
 
         response.andExpect(status().isAccepted())
                 .andExpect(jsonPath("id").value(voucherForSale.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
+                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
+                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("status").value(voucherForSale.getStatus().name()))
+                .andExpect(jsonPath("saleRequestedDate").value(voucherForSale.getSaleRequestedDate().toString()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -191,13 +192,14 @@ class VoucherForSaleApiControllerTest {
                                 partWithName("imageFile").description("판매할 기프티콘 이미지 파일")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
+                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
+                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
+                                fieldWithPath("saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
                         ))
                 );
     }
@@ -240,13 +242,14 @@ class VoucherForSaleApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
-                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
-                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
+                                fieldWithPath("[].saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
                         ))
                 );
     }
@@ -297,13 +300,14 @@ class VoucherForSaleApiControllerTest {
                                 parameterWithName("statusCode").description("기프티콘 상태코드")
                         ),
                         responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 id"),
-                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매중인 기프티콘 타이틀"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
-                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
+                                fieldWithPath("[].saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
                         ))
                 );
     }
@@ -340,12 +344,13 @@ class VoucherForSaleApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucherForSale.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
+                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
                 .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
+                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("status").value(FOR_SALE.name()))
+                .andExpect(jsonPath("saleRequestedDate").value(voucherForSale.getSaleRequestedDate().toString()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -356,13 +361,14 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 중인 기프티콘 id"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매 중인 기프티콘 타이틀"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매중인 기프티콘 가격"),
-                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매중인 기프티콘 유효기간"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매중인 기프티콘 바코드"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매중인 기프티콘 이미지 URL"),
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매중인 기프티콘 상태")
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
+                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
+                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
+                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
+                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
+                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
+                                fieldWithPath("saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
                         ))
                 );
     }
