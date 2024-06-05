@@ -216,7 +216,7 @@ public class ApiExceptionControllerTest {
                 .expDate(LocalDate.now())
                 .build());
 
-        StatusCodeBody requestBody = new StatusCodeBody();
+        StatusUpdateRequest requestBody = new StatusUpdateRequest();
         requestBody.setStatusCode(FOR_SALE.ordinal());
 
         ResultActions update = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())

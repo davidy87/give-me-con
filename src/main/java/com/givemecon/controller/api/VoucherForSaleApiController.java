@@ -44,9 +44,9 @@ public class VoucherForSaleApiController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public VoucherForSaleResponse updateStatus(@PathVariable Long id,
-                                               @Validated @RequestBody StatusCodeBody bodyDto) {
+                                               @Validated @RequestBody StatusUpdateRequest requestDto) {
 
-        return voucherForSaleService.updateStatus(id, bodyDto);
+        return voucherForSaleService.updateStatus(id, requestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

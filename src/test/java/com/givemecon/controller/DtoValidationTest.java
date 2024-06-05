@@ -27,6 +27,8 @@ import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static com.givemecon.util.error.ErrorCode.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -198,6 +200,34 @@ public class DtoValidationTest {
         ResultActions saveResult = mockMvc.perform(get("/api/vouchers-for-sale")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .queryParam("statusCode", String.valueOf(invalidStatusCode)));
+
+        // then
+        log.info(saveResult.andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8));
+
+        saveResult
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("상태 수정 요청 DTO의 statusCode가 3(REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
+    void saleRejectionRequestFailed() throws Exception {
+        // given
+        Integer statusCode = REJECTED.ordinal();
+
+        // when
+        StatusUpdateRequest requestBody = new StatusUpdateRequest();
+        requestBody.setStatusCode(statusCode);
+
+        ResultActions saveResult = mockMvc.perform(put("/api/vouchers-for-sale/{id}", 1)
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestBody)));
 
         // then
         log.info(saveResult.andReturn()

@@ -333,7 +333,7 @@ class VoucherForSaleApiControllerTest {
         voucherForSaleRepository.save(voucherForSale);
 
         // when
-        StatusCodeBody requestBody = new StatusCodeBody();
+        StatusUpdateRequest requestBody = new StatusUpdateRequest();
         requestBody.setStatusCode(FOR_SALE.ordinal());
 
         ResultActions response = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())
@@ -358,7 +358,8 @@ class VoucherForSaleApiControllerTest {
                                 parameterWithName("id").description("판매중(or 판매 대기 중)인 기프티콘 id")
                         ),
                         requestFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드")
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드"),
+                                fieldWithPath("rejectedReason").type(JsonFieldType.STRING).optional().description("기프티콘 상태코드")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),

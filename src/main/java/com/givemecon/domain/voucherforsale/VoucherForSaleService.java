@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,6 +32,8 @@ public class VoucherForSaleService {
     private final VoucherForSaleRepository voucherForSaleRepository;
 
     private final VoucherForSaleImageRepository voucherForSaleImageRepository;
+
+    private final RejectedSaleRepository rejectedSaleRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
@@ -72,12 +75,22 @@ public class VoucherForSaleService {
                 .toList();
     }
 
-    public VoucherForSaleResponse updateStatus(Long id, StatusCodeBody bodyDto) {
+    public VoucherForSaleResponse updateStatus(Long id, StatusUpdateRequest requestDto) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
-        VoucherForSaleStatus newStatus = findStatus(bodyDto.getStatusCode());
+        VoucherForSaleStatus newStatus = findStatus(requestDto.getStatusCode());
         voucherForSale.updateStatus(newStatus);
+
+        // 판매 요청 거절 시
+        if (newStatus == REJECTED) {
+            RejectedSale rejectedSale = RejectedSale.builder()
+                    .voucherForSaleId(voucherForSale.getId())
+                    .rejectedReason(requestDto.getRejectedReason())
+                    .build();
+
+            rejectedSaleRepository.save(rejectedSale);
+        }
 
         return new VoucherForSaleResponse(voucherForSale);
     }
