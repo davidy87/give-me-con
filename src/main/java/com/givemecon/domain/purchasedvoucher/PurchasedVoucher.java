@@ -32,15 +32,9 @@ public class PurchasedVoucher extends BaseTimeEntity {
     @JoinColumn
     private Member owner;
 
-    public PurchasedVoucher() {
+    public PurchasedVoucher(VoucherForSale voucherForSale, Member owner) {
         this.status = USABLE;
-    }
-
-    public void updateVoucherForSale(VoucherForSale voucherForSale) {
         this.voucherForSale = voucherForSale;
-    }
-
-    public void updateOwner(Member owner) {
         this.owner = owner;
     }
 

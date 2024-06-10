@@ -32,8 +32,8 @@ public class PurchasedVoucherService {
         Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        List<PurchasedVoucher> purchasedVouchers = purchasedVoucherRepository.saveAll(
-                requestDtoList.stream()
+        List<PurchasedVoucher> purchasedVouchers =
+                purchasedVoucherRepository.saveAll(requestDtoList.stream()
                         .map(requestDto -> saveOne(buyer, requestDto))
                         .toList());
 
@@ -53,11 +53,9 @@ public class PurchasedVoucherService {
                 .filter(forSale -> forSale.getStatus() == FOR_SALE)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
-        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
-        purchasedVoucher.updateVoucherForSale(voucherForSale);
-        purchasedVoucher.updateOwner(buyer);
+        voucherForSale.updateStatus(SOLD);
 
-        return purchasedVoucher;
+        return purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, buyer));
     }
 
     @Transactional(readOnly = true)

@@ -5,6 +5,7 @@ import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
@@ -13,6 +14,7 @@ import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +41,6 @@ import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -128,7 +129,7 @@ class PurchasedVoucherApiControllerTest {
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherForSale.updateVoucher(voucher);
-            voucherForSale.updateStatus(FOR_SALE);
+            voucherForSale.updateStatus(VoucherForSaleStatus.FOR_SALE);
             dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
         }
 
@@ -141,6 +142,15 @@ class PurchasedVoucherApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(requestDtoList)));
 
         // then
+        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
+        assertThat(purchasedVoucherList).hasSize(requestDtoList.getRequests().size());
+
+        purchasedVoucherList.forEach(purchasedVoucher -> {
+            VoucherForSale voucherForSale = purchasedVoucher.getVoucherForSale();
+            assertThat(voucherForSale.getStatus()).isEqualTo(VoucherForSaleStatus.SOLD);
+            assertThat(purchasedVoucher.getStatus()).isEqualTo(PurchasedVoucherStatus.USABLE);
+        });
+
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
@@ -159,9 +169,6 @@ class PurchasedVoucherApiControllerTest {
                                 fieldWithPath("[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
-
-        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-        assertThat(purchasedVoucherList).hasSize(requestDtoList.getRequests().size());
     }
 
     @Test
@@ -180,12 +187,10 @@ class PurchasedVoucherApiControllerTest {
                     .originalName("image" + i + ".png")
                     .build());
 
-            PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherForSale.updateVoucher(voucher);
-            purchasedVoucher.updateVoucherForSale(voucherForSale);
-            purchasedVoucher.updateOwner(member);
+            purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
         }
 
         // when
@@ -235,12 +240,10 @@ class PurchasedVoucherApiControllerTest {
                 .originalName("image.png")
                 .build());
 
-        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
-
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucherForSale.updateVoucher(voucher);
-        purchasedVoucher.updateVoucherForSale(voucherForSale);
-        purchasedVoucher.updateOwner(member);
+        PurchasedVoucher purchasedVoucher =
+                purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
@@ -288,12 +291,10 @@ class PurchasedVoucherApiControllerTest {
                 .originalName("image.png")
                 .build());
 
-        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
-
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
         voucherForSale.updateVoucher(voucher);
-        purchasedVoucher.updateVoucherForSale(voucherForSale);
-        purchasedVoucher.updateOwner(member);
+        PurchasedVoucher purchasedVoucher =
+                purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())

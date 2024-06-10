@@ -300,14 +300,13 @@ public class EntityRelationshipTest {
                 .expDate(LocalDate.now().plusDays(1))
                 .build());
 
-        PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.save(new PurchasedVoucher());
 
         // when
         brand.updateCategory(category);
         voucher.updateBrand(brand);
         voucherForSale.updateVoucher(voucher);
-        purchasedVoucher.updateVoucherForSale(voucherForSale);
-        purchasedVoucher.updateOwner(owner);
+        purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, owner));
+
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
         // then
