@@ -20,3 +20,10 @@ spring:
 
   messages:
     basename: errors
+
+gcp:
+  test-image:
+    path: classpath:test_image.png
+
+  test-voucher-image:
+    path: classpath:test_image.png

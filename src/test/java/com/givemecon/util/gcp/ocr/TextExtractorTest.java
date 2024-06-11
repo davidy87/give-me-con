@@ -23,6 +23,6 @@ class TextExtractorTest {
         log.info("imagePath = {}", imagePath);
         String textFromImage = textExtractor.extractTextFromImage(imagePath);
         log.info("textFromImage = {}", textFromImage);
-        assertThat(textFromImage).isEqualTo("Unit testing with\nmockito");
+        assertThat(textFromImage).isEqualTo("WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE");
     }
 }

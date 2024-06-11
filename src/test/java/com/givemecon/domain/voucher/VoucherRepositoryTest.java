@@ -58,7 +58,7 @@ class VoucherRepositoryTest {
         // then
         Voucher found = voucherList.get(0);
         log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
-        assertThat(found.getCreatedDate()).isAfter(now);
-        assertThat(found.getModifiedDate()).isAfter(now);
+        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }
 }

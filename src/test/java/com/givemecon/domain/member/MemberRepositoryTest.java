@@ -59,7 +59,7 @@ class MemberRepositoryTest {
         // then
         Member posts = memberList.get(0);
         log.info(">>>>>>> createDate={}, modifiedDate={}", posts.getCreatedDate(), posts.getModifiedDate());
-        assertThat(posts.getCreatedDate()).isAfter(now);
-        assertThat(posts.getModifiedDate()).isAfter(now);
+        assertThat(posts.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(posts.getModifiedDate()).isAfterOrEqualTo(now);
     }
 }

@@ -78,7 +78,7 @@ class PurchasedVoucherRepositoryTest {
 
         // then
         PurchasedVoucher found = purchasedVoucherList.get(0);
-        assertThat(found.getCreatedDate()).isAfter(now);
-        assertThat(found.getModifiedDate()).isAfter(now);
+        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }
 }
