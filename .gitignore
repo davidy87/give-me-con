@@ -8,7 +8,6 @@ gcp_credential.json
 .env
 
 ### images ###
-*.png
 *.jpg
 
 HELP.md
