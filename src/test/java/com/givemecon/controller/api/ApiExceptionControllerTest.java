@@ -1,5 +1,6 @@
 package com.givemecon.controller.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.brand.Brand;
@@ -7,6 +8,8 @@ import com.givemecon.domain.category.Category;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -23,11 +28,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
 import static com.givemecon.util.error.ErrorCode.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
@@ -188,5 +196,36 @@ public class ApiExceptionControllerTest {
                 .andExpect(jsonPath("error.parameterDetails.parameterName").value("authorizationCode"))
                 .andExpect(jsonPath("error.parameterDetails.parameterType").value("String"));
 
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("VoucherForSale API 권한 예외 처리 1 - ROLE_USER 권한만 접근 가능한 API에 다른 권한이 접근")
+    void voucherForSaleApiRoleException1() throws Exception {
+        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale"));
+        response.andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("VoucherForSale API 권한 예외 처리 2 - ROLE_ADMIN 권한만 접근 가능한 API에 다른 권한이 접근")
+    void voucherForSaleApiRoleException2(@Autowired VoucherForSaleRepository voucherForSaleRepository) throws Exception {
+        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now())
+                .build());
+
+        StatusUpdateRequest requestBody = new StatusUpdateRequest();
+        requestBody.setStatusCode(FOR_SALE.ordinal());
+
+        ResultActions update = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(requestBody)));
+
+        ResultActions delete = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId()));
+
+        update.andExpect(status().isForbidden());
+        delete.andExpect(status().isForbidden());
     }
 }

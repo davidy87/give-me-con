@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.givemecon.domain.voucher.VoucherDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -95,6 +96,7 @@ public class VoucherService {
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
         return voucher.getVoucherForSaleList().stream()
+                .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
                 .map(VoucherForSaleResponse::new)
                 .toList();
     }

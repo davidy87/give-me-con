@@ -10,10 +10,14 @@ import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +32,8 @@ public class VoucherForSaleService {
     private final VoucherForSaleRepository voucherForSaleRepository;
 
     private final VoucherForSaleImageRepository voucherForSaleImageRepository;
+
+    private final RejectedSaleRepository rejectedSaleRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
@@ -47,6 +53,60 @@ public class VoucherForSaleService {
         voucher.addVoucherForSale(voucherForSale);
 
         return new VoucherForSaleResponse(voucherForSale);
+    }
+
+    @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('USER')")
+    public List<VoucherForSaleResponse> findAllByUsername(String username) {
+        Member seller = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+
+        return voucherForSaleRepository.findAllBySeller(seller).stream()
+                .map(VoucherForSaleResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<VoucherForSaleResponse> findAllByStatus(StatusCodeParameter paramDto) {
+        VoucherForSaleStatus status = findStatus(paramDto.getStatusCode());
+
+        return voucherForSaleRepository.findAllByStatus(status).stream()
+                .map(VoucherForSaleResponse::new)
+                .toList();
+    }
+
+    public VoucherForSaleResponse updateStatus(Long id, StatusUpdateRequest requestDto) {
+        VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
+
+        VoucherForSaleStatus newStatus = findStatus(requestDto.getStatusCode());
+        voucherForSale.updateStatus(newStatus);
+
+        // 판매 요청 거절 시
+        if (newStatus == REJECTED) {
+            recordRejectedSale(voucherForSale.getId(), requestDto.getRejectedReason());
+        }
+
+        return new VoucherForSaleResponse(voucherForSale);
+    }
+
+    private void recordRejectedSale(Long voucherForSaleId, String rejectedReason) {
+        RejectedSale rejectedSale = RejectedSale.builder()
+                .voucherForSaleId(voucherForSaleId)
+                .rejectedReason(rejectedReason)
+                .build();
+
+        rejectedSaleRepository.save(rejectedSale);
+    }
+
+    private VoucherForSaleStatus findStatus(Integer statusCode) {
+        VoucherForSaleStatus[] statuses = VoucherForSaleStatus.values();
+
+        if (statusCode < 0 || statusCode >= statuses.length) {
+            throw new EntityNotFoundException(VoucherForSale.class);
+        }
+
+        return statuses[statusCode];
     }
 
     public void delete(Long id) {

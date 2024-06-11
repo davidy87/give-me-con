@@ -35,6 +35,8 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -87,7 +89,7 @@ public class TokenIssueApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(get("/api/auth/success")
                 .session(session)
-                .param(AUTHORIZATION_CODE.getName(), authorizationCode));
+                .queryParam(AUTHORIZATION_CODE.getName(), authorizationCode));
 
         // then
         String responseString = response.andExpect(status().isOk())
@@ -101,15 +103,19 @@ public class TokenIssueApiControllerTest {
         assertThat(claims.get("username")).isEqualTo(foundClaims.get("username"));
 
         // API Documentation
-        response.andDo(document("{class-name}/{method-name}",
-                getDocumentResponse(),
-                responseFields(
-                        fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),
-                        fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
-                        fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
-                        fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                        fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
-                ))
+        response.andExpect(status().isOk())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("authorizationCode").description("인가 코드")
+                        ),
+                        responseFields(
+                                fieldWithPath("grantType").type(JsonFieldType.STRING).description("Token의 grant type"),
+                                fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
+                                fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
+                                fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
+                                fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
+                        ))
         );
     }
 
