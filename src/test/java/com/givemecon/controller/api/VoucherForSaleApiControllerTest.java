@@ -297,7 +297,7 @@ class VoucherForSaleApiControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         queryParameters(
-                                parameterWithName("statusCode").description("기프티콘 상태코드")
+                                parameterWithName("statusCode").description("기프티콘 상태코드 (0 ~ 4)")
                         ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
@@ -358,8 +358,10 @@ class VoucherForSaleApiControllerTest {
                                 parameterWithName("id").description("판매중(or 판매 대기 중)인 기프티콘 id")
                         ),
                         requestFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드"),
-                                fieldWithPath("rejectedReason").type(JsonFieldType.STRING).optional().description("기프티콘 상태코드")
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드 (0 ~ 4)"),
+                                fieldWithPath("rejectedReason")
+                                        .type(JsonFieldType.STRING).optional()
+                                        .description("판매 요청 거절 사유 (statusCode가 3(REJECTED)일 경우 필수)")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),

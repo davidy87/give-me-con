@@ -84,15 +84,19 @@ public class VoucherForSaleService {
 
         // 판매 요청 거절 시
         if (newStatus == REJECTED) {
-            RejectedSale rejectedSale = RejectedSale.builder()
-                    .voucherForSaleId(voucherForSale.getId())
-                    .rejectedReason(requestDto.getRejectedReason())
-                    .build();
-
-            rejectedSaleRepository.save(rejectedSale);
+            recordRejectedSale(voucherForSale.getId(), requestDto.getRejectedReason());
         }
 
         return new VoucherForSaleResponse(voucherForSale);
+    }
+
+    private void recordRejectedSale(Long voucherForSaleId, String rejectedReason) {
+        RejectedSale rejectedSale = RejectedSale.builder()
+                .voucherForSaleId(voucherForSaleId)
+                .rejectedReason(rejectedReason)
+                .build();
+
+        rejectedSaleRepository.save(rejectedSale);
     }
 
     private VoucherForSaleStatus findStatus(Integer statusCode) {
