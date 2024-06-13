@@ -15,7 +15,7 @@ class TextExtractorTest {
     @Autowired
     TextExtractor textExtractor;
 
-    @Value("${gcp.test-image.path}")
+    @Value("${gcp.test-image.url}")
     String imagePath;
 
     @Test

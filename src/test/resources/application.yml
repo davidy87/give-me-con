@@ -23,7 +23,7 @@ spring:
 
 gcp:
   test-image:
-    path: classpath:test_image.png
+    url: https://cloud.google.com/static/vision/docs/images/sign_text.png?hl=ko
 
   test-voucher-image:
-    path: classpath:test_image.png
+    url: https://blog.kakaocdn.net/dn/cEigvN/btrMTLwk8id/s0O1K0VVZUSylzvIVmuxEk/img.jpg

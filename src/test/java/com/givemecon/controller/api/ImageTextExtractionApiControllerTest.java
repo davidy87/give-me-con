@@ -23,10 +23,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.FileInputStream;
+import java.net.URL;
 
 import static com.givemecon.config.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.config.enums.Authority.USER;
@@ -86,15 +85,13 @@ class ImageTextExtractionApiControllerTest {
     }
 
     @Test
-    void extractTextFromImage(@Value("${gcp.test-voucher-image.path}") String testImage) throws Exception {
+    void extractTextFromImage(@Value("${gcp.test-voucher-image.url}") String imageUrl) throws Exception {
         // given
         brandRepository.save(Brand.builder()
-                .name("배스킨라빈스")
+                .name("미스터피자")
                 .build());
 
-        MockMultipartFile imageFile = new MockMultipartFile(
-                "imageFile",
-                new FileInputStream(ResourceUtils.getFile(testImage)));
+        MockMultipartFile imageFile = new MockMultipartFile("imageFile", new URL(imageUrl).openStream());
 
         // when
         ResultActions response =
@@ -112,9 +109,9 @@ class ImageTextExtractionApiControllerTest {
                                 partWithName("imageFile").description("텍스트를 추출할 기프티콘 이미지 파일")
                         ),
                         responseFields(
-                                fieldWithPath("brandName").optional().type(JsonFieldType.STRING).description("추출된 기프티콘 이미지의 브랜드명"),
-                                fieldWithPath("expDate").optional().type(JsonFieldType.STRING).description("추출된 기프티콘 이미지의 유효기간"),
-                                fieldWithPath("barcode").optional().type(JsonFieldType.STRING).description("추출된 기프티콘 이미지의 바코드")
+                                fieldWithPath("brandName").type(JsonFieldType.STRING).optional().description("추출된 기프티콘 이미지의 브랜드명"),
+                                fieldWithPath("expDate").type(JsonFieldType.STRING).optional().description("추출된 기프티콘 이미지의 유효기간"),
+                                fieldWithPath("barcode").type(JsonFieldType.STRING).optional().description("추출된 기프티콘 이미지의 바코드")
                         ))
                 );
     }
