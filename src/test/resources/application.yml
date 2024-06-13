@@ -20,3 +20,10 @@ spring:
 
   messages:
     basename: errors
+
+gcp:
+  test-image:
+    url: https://cloud.google.com/static/vision/docs/images/sign_text.png?hl=ko
+
+  test-voucher-image:
+    url: https://blog.kakaocdn.net/dn/cEigvN/btrMTLwk8id/s0O1K0VVZUSylzvIVmuxEk/img.jpg
