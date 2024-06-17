@@ -3,6 +3,7 @@ package com.givemecon.domain.voucherforsale;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -92,6 +93,94 @@ class VoucherForSaleRepositoryTest {
         assertThat(voucherForSaleList).isNotEmpty();
         assertThat(found).isEqualTo(voucherForSale);
         assertThat(found.getStatus()).isSameAs(NOT_YET_PERMITTED);
+    }
+
+    @Test
+    @DisplayName("유효기간이 만료된 모든 VoucherForSale들의 state를 EXPIRED로 변경한다.")
+    void updateAllExpired() {
+        // given
+        LocalDate today = LocalDate.now();
+
+        VoucherForSale expired1 = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(today.minusDays(1))
+                .barcode("1111 1111 1111")
+                .build();
+
+        VoucherForSale expired2 = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(today.minusDays(1))
+                .barcode("2222 2222 2222")
+                .build();
+
+        List<VoucherForSale> expiredList = List.of(expired1, expired2);
+        voucherForSaleRepository.saveAll(expiredList);
+
+        // when
+        int numModified = voucherForSaleRepository.updateAllByExpDateBefore(today);
+
+        // then
+        long numExpired = voucherForSaleRepository.findAll().stream()
+                .filter(voucherForSale -> voucherForSale.getStatus().equals(EXPIRED))
+                .count();
+
+        assertThat(numModified).isEqualTo(numExpired);
+
+        voucherForSaleRepository.findAll()
+                .forEach(expired -> assertThat(expired.getStatus()).isEqualTo(EXPIRED));
+    }
+
+    @Test
+    @DisplayName("유효기간이 아직 남아있는 VoucherForSale들은 state가 변경되면 안된다.")
+    void updateAllOnlyExpired() {
+        // given
+        LocalDate today = LocalDate.now();
+
+        VoucherForSale expired = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(today.minusDays(1))
+                .barcode("1111 1111 1111")
+                .build();
+
+        VoucherForSale notExpired = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(today)
+                .barcode("2222 2222 2222")
+                .build();
+
+        voucherForSaleRepository.saveAll(List.of(expired, notExpired));
+
+        // when
+        int numModified = voucherForSaleRepository.updateAllByExpDateBefore(today);
+
+        // then
+        long numExpired = voucherForSaleRepository.findAll().stream()
+                .filter(voucherForSale -> voucherForSale.getStatus().equals(EXPIRED))
+                .count();
+
+        assertThat(numModified).isEqualTo(numExpired);
+    }
+
+    @Test
+    @DisplayName("유효기간이 지난 VoucherForSale의 state가 이미 EXPIRED라면, 해당 VoucherForSale은 변경 대상에서 제외된다.")
+    void ignoreStateAlreadyExpired() {
+        // given
+        LocalDate today = LocalDate.now();
+
+        VoucherForSale stateAlreadyExpired = VoucherForSale.builder()
+                .price(15_000L)
+                .expDate(today.minusDays(1))
+                .barcode("1111 1111 1111")
+                .build();
+
+        stateAlreadyExpired.updateStatus(EXPIRED);
+        voucherForSaleRepository.save(stateAlreadyExpired);
+
+        // when
+        int numModified = voucherForSaleRepository.updateAllByExpDateBefore(today);
+
+        // then
+        assertThat(numModified).isEqualTo(0);
     }
 
     @Test

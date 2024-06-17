@@ -1,9 +1,11 @@
 package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.member.Member;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -18,4 +20,11 @@ public interface PurchasedVoucherRepository extends JpaRepository<PurchasedVouch
     List<PurchasedVoucher> findAllByOwner(Member owner);
 
     Page<PurchasedVoucher> findPageByOwner(Member owner, Pageable pageable);
+
+    Optional<PurchasedVoucher> findByVoucherForSale(VoucherForSale voucherForSale);
+
+    @Modifying(clearAutomatically = true)
+    @Query("update PurchasedVoucher pv set pv.status = 'EXPIRED' " +
+            "where pv.voucherForSale.status = 'EXPIRED' and pv.status = 'USABLE'")
+    int updateAllStatusForExpired();
 }
