@@ -4,13 +4,16 @@ import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE purchased_voucher SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
