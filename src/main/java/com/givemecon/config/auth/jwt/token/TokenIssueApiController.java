@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.util.error.GlobalErrorCode.INVALID_AUTHORIZATION_CODE;
 
 @Slf4j
 @RequiredArgsConstructor
