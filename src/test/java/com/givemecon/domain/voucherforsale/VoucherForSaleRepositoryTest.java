@@ -2,11 +2,16 @@ package com.givemecon.domain.voucherforsale;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.order.Order;
+import com.givemecon.domain.order.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -18,12 +23,36 @@ import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 @Transactional
 @SpringBootTest
 class VoucherForSaleRepositoryTest {
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
+
+    @MockBean
+    OrderRepository orderRepository;
+
+    @Test
+    void BaseTimeEntity() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        voucherForSaleRepository.save(VoucherForSale.builder()
+                .price(10_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .build());
+
+        // when
+        List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
+
+        // then
+        VoucherForSale found = voucherList.get(0);
+        log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
+        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
+    }
 
     @Test
     void saveAndFindAll() {
@@ -184,22 +213,27 @@ class VoucherForSaleRepositoryTest {
     }
 
     @Test
-    void BaseTimeEntity() {
+    @DisplayName("주문별 VoucherForSale 조회")
+    void findAllByOrder() {
         // given
-        LocalDateTime now = LocalDateTime.now();
-        voucherForSaleRepository.save(VoucherForSale.builder()
-                .price(10_000L)
+        Order order = orderRepository.save(new Order());
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
-                .build());
+                .build();
+
+        voucherForSale.updateOrder(order);
+        voucherForSaleRepository.save(voucherForSale);
 
         // when
-        List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllByOrder(order);
 
         // then
-        VoucherForSale found = voucherList.get(0);
-        log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
-        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
-        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
+        assertThat(voucherForSaleList).isNotEmpty();
+
+        VoucherForSale found = voucherForSaleList.get(0);
+        assertThat(found).isEqualTo(voucherForSale);
+        assertThat(found.getOrder()).isEqualTo(order);
     }
 }

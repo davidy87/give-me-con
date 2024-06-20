@@ -16,6 +16,7 @@ public enum ApiPathPattern {
     VOUCHER_FOR_SALE_API("/vouchers-for-sale/**"),
     LIKED_VOUCHER_API("/liked-vouchers/**"),
     PURCHASED_VOUCHER_API("/purchased-vouchers/**"),
+    ORDER_API("/orders/**"),
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts");
 
     private static final String BASE_PATH = "/api";
