@@ -3,6 +3,8 @@ package com.givemecon.domain.order;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.exception.InvalidOrderException;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.domain.order.OrderDto.*;
+import static com.givemecon.domain.order.OrderStatus.CONFIRMED;
 import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
 import static com.givemecon.domain.order.exception.OrderErrorCode.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
@@ -29,7 +32,9 @@ public class OrderService {
 
     private final VoucherForSaleRepository voucherForSaleRepository;
 
-    public PlacedOrderResponse placeOrder(OrderRequest orderRequest) {
+    private final PurchasedVoucherRepository purchasedVoucherRepository;
+
+    public OrderNumberResponse placeOrder(OrderRequest orderRequest) {
         Member buyer = memberRepository.findById(orderRequest.getBuyerId())
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
@@ -41,7 +46,7 @@ public class OrderService {
             voucherForSale.updateOrder(order);
         });
 
-        return new PlacedOrderResponse(order.getId());
+        return new OrderNumberResponse(order.getId());
     }
 
     private VoucherForSale getValidOrderItem(Long voucherForSaleId) {
@@ -80,5 +85,34 @@ public class OrderService {
         }
 
         return new OrderSummary(order.getStatus(), quantity, totalPrice, orderItems);
+    }
+
+    public OrderNumberResponse confirmOrder(Long orderNumber, String username) {
+        Order order = orderRepository.findById(orderNumber)
+                .orElseThrow(() -> new EntityNotFoundException(Order.class));
+
+        if (order.getStatus() == CONFIRMED) {
+            throw new InvalidOrderException(ORDER_ALREADY_CONFIRMED);
+        }
+
+        Member buyer = order.getBuyer();
+
+        if (!username.equals(buyer.getUsername())) {
+            throw new InvalidOrderException(BUYER_NOT_MATCH);
+        }
+
+        List<PurchasedVoucher> purchasedVouchers =
+                voucherForSaleRepository.findAllByOrder(order).stream()
+                        .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
+                        .map(voucherForSale -> {
+                            voucherForSale.updateStatus(SOLD);
+                            return new PurchasedVoucher(voucherForSale, buyer);
+                        })
+                        .toList();
+
+        purchasedVoucherRepository.saveAll(purchasedVouchers);
+        order.updateStatus(CONFIRMED);
+
+        return new OrderNumberResponse(orderNumber);
     }
 }

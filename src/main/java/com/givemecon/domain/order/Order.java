@@ -1,5 +1,6 @@
 package com.givemecon.domain.order;
 
+import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import static com.givemecon.domain.order.OrderStatus.*;
 @SQLRestriction("deleted = false")
 @Table(name = "orders")
 @Entity
-public class Order {
+public class Order extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +30,10 @@ public class Order {
 
     public Order() {
         this.status = IN_PROGRESS;
+    }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
     }
 
     public void updateBuyer(Member buyer) {

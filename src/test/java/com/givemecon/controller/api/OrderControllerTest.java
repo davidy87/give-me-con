@@ -9,6 +9,8 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.order.OrderRepository;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
+import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
@@ -34,15 +36,18 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.domain.order.OrderDto.*;
+import static com.givemecon.domain.order.OrderStatus.CONFIRMED;
+import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.USABLE;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -78,6 +83,10 @@ class OrderControllerTest {
     OrderRepository orderRepository;
 
     List<Long> voucherForSaleIdList;
+
+    ObjectMapper objectMapper;
+    @Autowired
+    private PurchasedVoucherRepository purchasedVoucherRepository;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -123,11 +132,13 @@ class OrderControllerTest {
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherForSaleIdList.add(voucherForSale.getId());
         }
+
+        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("주문 요청 API 테스트")
+    @DisplayName("주문 생성 요청 API 테스트")
     void placeOrder() throws Exception {
         // given
         Member buyer = memberRepository.save(Member.builder()
@@ -147,12 +158,10 @@ class OrderControllerTest {
 
         // then
         String responseBody = response.andReturn().getResponse().getContentAsString();
-        PlacedOrderResponse placedOrderResponse = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .readValue(responseBody, PlacedOrderResponse.class);
+        OrderNumberResponse orderNumberResponse = objectMapper.readValue(responseBody, OrderNumberResponse.class);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("orderNumber").value(placedOrderResponse.getOrderNumber()))
+                .andExpect(jsonPath("orderNumber").value(orderNumberResponse.getOrderNumber()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -168,7 +177,7 @@ class OrderControllerTest {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("주문 조회 API 테스트")
+    @DisplayName("주문 조회 요청 API 테스트")
     void findOrder() throws Exception {
         // given
         Order order = orderRepository.save(new Order());
@@ -181,9 +190,7 @@ class OrderControllerTest {
 
         // then
         String responseBody = response.andReturn().getResponse().getContentAsString();
-        OrderSummary orderSummary = new ObjectMapper()
-                .registerModule(new JavaTimeModule())
-                .readValue(responseBody, OrderSummary.class);
+        OrderSummary orderSummary = objectMapper.readValue(responseBody, OrderSummary.class);
 
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("quantity").value(orderSummary.getQuantity()))
@@ -206,6 +213,56 @@ class OrderControllerTest {
                                 fieldWithPath("orderItems.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지"),
                                 fieldWithPath("orderItems.[].expDate").type(JsonFieldType.STRING).description("기프티콘 유효기간"),
                                 fieldWithPath("orderItems.[].status").type(JsonFieldType.STRING).description("기프티콘 상태")
+                        ))
+                );
+    }
+
+    @Test
+    @WithMockUser(roles = "USER", username = "buyer")
+    @DisplayName("주문 체결 요청 API 테스트")
+    void confirmOrder() throws Exception {
+        // given
+        Member buyer = memberRepository.save(Member.builder()
+                .email("buyer@gmail.com")
+                .username("buyer")
+                .authority(Authority.USER)
+                .build());
+
+        Order order = orderRepository.save(new Order());
+        order.updateBuyer(buyer);
+        voucherForSaleRepository.findAll()
+                .forEach(voucherForSale -> voucherForSale.updateOrder(order));
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/orders/{orderNumber}", order.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        Optional<Order> orderFound = orderRepository.findById(order.getId());
+        List<PurchasedVoucher> purchasedVouchers = purchasedVoucherRepository.findAll();
+
+        assertThat(orderFound).isPresent();
+        assertThat(orderFound.get().getStatus()).isSameAs(CONFIRMED);
+        assertThat(purchasedVouchers).isNotEmpty();
+
+        purchasedVouchers.forEach(purchasedVoucher -> {
+            assertThat(purchasedVoucher.getStatus()).isSameAs(USABLE);
+            assertThat(purchasedVoucher.getOwner()).isSameAs(buyer);
+        });
+
+        String responseBody = response.andReturn().getResponse().getContentAsString();
+        OrderNumberResponse orderNumberResponse = objectMapper.readValue(responseBody, OrderNumberResponse.class);
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("orderNumber").value(orderNumberResponse.getOrderNumber()))
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("orderNumber").description("체결할 주문의 주문번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("체결 완료된 주문의 주문번호")
                         ))
                 );
     }

@@ -22,11 +22,11 @@ public class OrderDto {
 
     @Getter
     @NoArgsConstructor
-    public static class PlacedOrderResponse {
+    public static class OrderNumberResponse {
 
         private Long orderNumber;
 
-        public PlacedOrderResponse(Long orderNumber) {
+        public OrderNumberResponse(Long orderNumber) {
             this.orderNumber = orderNumber;
         }
     }

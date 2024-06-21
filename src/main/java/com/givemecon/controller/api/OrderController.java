@@ -3,6 +3,7 @@ package com.givemecon.controller.api;
 import com.givemecon.domain.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import static com.givemecon.domain.order.OrderDto.*;
@@ -16,12 +17,17 @@ public class OrderController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public PlacedOrderResponse placeOrder(@RequestBody OrderRequest orderRequest) {
+    public OrderNumberResponse placeOrder(@RequestBody OrderRequest orderRequest) {
         return orderService.placeOrder(orderRequest);
     }
 
     @GetMapping("/{orderNumber}")
     public OrderSummary findOrder(@PathVariable Long orderNumber) {
         return orderService.findOrder(orderNumber);
+    }
+
+    @PutMapping("/{orderNumber}")
+    public OrderNumberResponse confirmOrder(Authentication authentication, @PathVariable Long orderNumber) {
+        return orderService.confirmOrder(orderNumber, authentication.getName());
     }
 }
