@@ -1,7 +1,6 @@
 package com.givemecon.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.givemecon.config.enums.Authority;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
@@ -80,13 +79,17 @@ class OrderControllerTest {
     VoucherForSaleImageRepository voucherForSaleImageRepository;
 
     @Autowired
+    PurchasedVoucherRepository purchasedVoucherRepository;
+
+    @Autowired
     OrderRepository orderRepository;
 
-    List<Long> voucherForSaleIdList;
-
-    ObjectMapper objectMapper;
     @Autowired
-    private PurchasedVoucherRepository purchasedVoucherRepository;
+    ObjectMapper objectMapper;
+
+    Member buyer;
+
+    List<Long> voucherForSaleIdList;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -96,6 +99,12 @@ class OrderControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        buyer = memberRepository.save(Member.builder()
+                .email("buyer@gmail.com")
+                .username("buyer")
+                .authority(Authority.USER)
+                .build());
 
         Member seller = memberRepository.save(Member.builder()
                 .email("seller@gmail.com")
@@ -132,22 +141,14 @@ class OrderControllerTest {
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherForSaleIdList.add(voucherForSale.getId());
         }
-
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "USER", username = "buyer")
     @DisplayName("주문 생성 요청 API 테스트")
     void placeOrder() throws Exception {
         // given
-        Member buyer = memberRepository.save(Member.builder()
-                .email("buyer@gmail.com")
-                .username("buyer")
-                .authority(Authority.USER)
-                .build());
-
-        OrderRequest orderRequest = new OrderRequest(buyer.getId(), voucherForSaleIdList);
+        OrderRequest orderRequest = new OrderRequest(voucherForSaleIdList);
 
         // when
         String requestBody = new ObjectMapper().writeValueAsString(orderRequest);
@@ -166,7 +167,6 @@ class OrderControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("buyerId").type(JsonFieldType.NUMBER).description("주문 요청자"),
                                 fieldWithPath("voucherForSaleIdList").type(JsonFieldType.ARRAY).description("주문할 기프티콘 id 리스트")
                         ),
                         responseFields(
@@ -176,11 +176,12 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
+    @WithMockUser(roles = "USER", username = "buyer")
     @DisplayName("주문 조회 요청 API 테스트")
     void findOrder() throws Exception {
         // given
         Order order = orderRepository.save(new Order());
+        order.updateBuyer(buyer);
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
@@ -222,12 +223,6 @@ class OrderControllerTest {
     @DisplayName("주문 체결 요청 API 테스트")
     void confirmOrder() throws Exception {
         // given
-        Member buyer = memberRepository.save(Member.builder()
-                .email("buyer@gmail.com")
-                .username("buyer")
-                .authority(Authority.USER)
-                .build());
-
         Order order = orderRepository.save(new Order());
         order.updateBuyer(buyer);
         voucherForSaleRepository.findAll()
@@ -243,7 +238,7 @@ class OrderControllerTest {
 
         assertThat(orderFound).isPresent();
         assertThat(orderFound.get().getStatus()).isSameAs(CONFIRMED);
-        assertThat(purchasedVouchers).isNotEmpty();
+        assertThat(purchasedVouchers.size()).isEqualTo(voucherForSaleIdList.size());
 
         purchasedVouchers.forEach(purchasedVoucher -> {
             assertThat(purchasedVoucher.getStatus()).isSameAs(USABLE);

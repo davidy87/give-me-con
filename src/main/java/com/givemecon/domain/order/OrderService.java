@@ -34,8 +34,8 @@ public class OrderService {
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
 
-    public OrderNumberResponse placeOrder(OrderRequest orderRequest) {
-        Member buyer = memberRepository.findById(orderRequest.getBuyerId())
+    public OrderNumberResponse placeOrder(OrderRequest orderRequest, String username) {
+        Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         Order order = orderRepository.save(new Order());
@@ -66,9 +66,15 @@ public class OrderService {
         return voucherForSale;
     }
 
-    public OrderSummary findOrder(Long orderNumber) {
+    public OrderSummary findOrder(Long orderNumber, String username) {
         Order order = orderRepository.findById(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
+
+        Member buyer = order.getBuyer();
+
+        if (!username.equals(buyer.getUsername())) {
+            throw new InvalidOrderException(BUYER_NOT_MATCH);
+        }
 
         int quantity = 0;
         long totalPrice = 0L;

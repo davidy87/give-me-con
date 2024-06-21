@@ -12,10 +12,9 @@ import java.util.List;
 public class OrderDto {
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class OrderRequest {
-
-        private Long buyerId;
 
         private List<Long> voucherForSaleIdList;
     }

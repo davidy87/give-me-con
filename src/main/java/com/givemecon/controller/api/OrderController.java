@@ -17,13 +17,13 @@ public class OrderController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public OrderNumberResponse placeOrder(@RequestBody OrderRequest orderRequest) {
-        return orderService.placeOrder(orderRequest);
+    public OrderNumberResponse placeOrder(Authentication authentication, @RequestBody OrderRequest orderRequest) {
+        return orderService.placeOrder(orderRequest, authentication.getName());
     }
 
     @GetMapping("/{orderNumber}")
-    public OrderSummary findOrder(@PathVariable Long orderNumber) {
-        return orderService.findOrder(orderNumber);
+    public OrderSummary findOrder(Authentication authentication, @PathVariable Long orderNumber) {
+        return orderService.findOrder(orderNumber, authentication.getName());
     }
 
     @PutMapping("/{orderNumber}")
