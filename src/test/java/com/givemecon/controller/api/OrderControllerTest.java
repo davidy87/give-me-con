@@ -2,6 +2,10 @@ package com.givemecon.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.enums.Authority;
+import com.givemecon.domain.brand.Brand;
+import com.givemecon.domain.brand.BrandRepository;
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherImageRepository;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
@@ -70,7 +74,13 @@ class OrderControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
+    BrandRepository brandRepository;
+
+    @Autowired
     VoucherRepository voucherRepository;
+
+    @Autowired
+    VoucherImageRepository voucherImageRepository;
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
@@ -112,11 +122,25 @@ class OrderControllerTest {
                 .authority(Authority.USER)
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("Brand")
+                .build());
+
+        Voucher voucher = Voucher.builder()
                 .title("voucher")
                 .description("description")
                 .caution("caution")
+                .build();
+
+        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("image.png")
                 .build());
+
+        voucher.updateBrand(brand);
+        voucher.updateVoucherImage(voucherImage);
+        voucherRepository.save(voucher);
 
         voucherForSaleIdList = new ArrayList<>();
 
@@ -210,8 +234,9 @@ class OrderControllerTest {
                                 fieldWithPath("orderItems").type(JsonFieldType.ARRAY).description("주문 품목 리스트"),
                                 fieldWithPath("orderItems.[].voucherForSaleId").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("orderItems.[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
+                                fieldWithPath("orderItems.[].brandName").type(JsonFieldType.STRING).description("기프티콘 브랜드 이름"),
                                 fieldWithPath("orderItems.[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),
-                                fieldWithPath("orderItems.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 이미지"),
+                                fieldWithPath("orderItems.[].voucherImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("orderItems.[].expDate").type(JsonFieldType.STRING).description("기프티콘 유효기간"),
                                 fieldWithPath("orderItems.[].status").type(JsonFieldType.STRING).description("기프티콘 상태")
                         ))

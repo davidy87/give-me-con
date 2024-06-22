@@ -1,9 +1,11 @@
 package com.givemecon.domain.order;
 
+import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.exception.InvalidOrderException;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
+import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -129,7 +131,7 @@ class OrderServiceTest {
 
     @Test
     @DisplayName("정상적인 주문 조회 처리")
-    void findOrder() {
+    void findOrder(@Mock Brand brand, @Mock Voucher voucher) {
         // given
         Long orderNumber = 1L;
         List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
@@ -143,6 +145,10 @@ class OrderServiceTest {
         Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
         Mockito.when(order.getBuyer()).thenReturn(buyer);
         Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
+        Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+        Mockito.when(voucher.getBrand()).thenReturn(brand);
+        Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+        Mockito.when(brand.getName()).thenReturn("Brand");
 
         // when
         OrderSummary orderSummary = orderService.findOrder(orderNumber, buyer.getUsername());
