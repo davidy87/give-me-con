@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.givemecon.domain.order.OrderDto.*;
-import static com.givemecon.domain.order.OrderStatus.CONFIRMED;
-import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
+import static com.givemecon.domain.order.OrderStatus.*;
 import static com.givemecon.domain.order.exception.OrderErrorCode.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
@@ -225,7 +224,6 @@ class OrderServiceTest {
 
         Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
 
-
         // when
         OrderNumberResponse response = orderService.confirmOrder(order.getId(), buyer.getUsername());
 
@@ -259,6 +257,67 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.confirmOrder(order.getId(), "notBuyer"))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessage(BUYER_NOT_MATCH.getMessage());
+    }
+
+    @Test
+    @DisplayName("정상적인 주문 취소 처리")
+    void cancelOrder() {
+        // given
+        Mockito.when(orderRepository.findById(order.getId()))
+                .thenReturn(Optional.of(order));
+
+        Mockito.when(order.getBuyer()).thenReturn(buyer);
+
+        // when
+        OrderNumberResponse result = orderService.cancelOrder(order.getId(), buyer.getUsername());
+
+        // then
+        assertThat(result.getOrderNumber()).isEqualTo(order.getId());
+    }
+
+    @Test
+    @DisplayName("주문 취소 처리 예외 1 - 이미 체결된 주문일 경우, 취소되지 않는다.")
+    void orderAlreadyConfirmedWhenCancel() {
+        // given
+        Mockito.when(orderRepository.findById(order.getId()))
+                .thenReturn(Optional.of(order));
+
+        Mockito.when(order.getStatus()).thenReturn(CONFIRMED);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.cancelOrder(order.getId(), buyer.getUsername()))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessage(ORDER_ALREADY_CONFIRMED.getMessage());
+    }
+
+    @Test
+    @DisplayName("주문 최소 처리 예외 2 - 이미 취소 처리가 된 주문일 경우, 예외를 던진다.")
+    void orderAlreadyCanceledWhenCancel() {
+        // given
+        Mockito.when(orderRepository.findById(order.getId()))
+                .thenReturn(Optional.of(order));
+
+        Mockito.when(order.getStatus()).thenReturn(CANCELLED);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.cancelOrder(order.getId(), buyer.getUsername()))
+                .isInstanceOf(InvalidOrderException.class)
+                .hasMessage(ORDER_ALREADY_CANCELLED.getMessage());
+    }
+
+    @Test
+    @DisplayName("주문 최소 처리 예외 3 - 취소할 주문의 주문자 정보와 취소 요청을 한 사용자의 정보와 일치하지 않을 경우, 취소되지 않는다.")
+    void buyerNotMatchWhenCancel() {
+        // given
+        Mockito.when(orderRepository.findById(order.getId()))
+                .thenReturn(Optional.of(order));
+
+        Mockito.when(order.getBuyer()).thenReturn(buyer);
+
+        // when & then
+        assertThatThrownBy(() -> orderService.cancelOrder(order.getId(), "notBuyer"))
                 .isInstanceOf(InvalidOrderException.class)
                 .hasMessage(BUYER_NOT_MATCH.getMessage());
     }

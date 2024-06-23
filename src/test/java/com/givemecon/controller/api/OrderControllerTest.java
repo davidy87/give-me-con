@@ -286,4 +286,41 @@ class OrderControllerTest {
                         ))
                 );
     }
+
+    @Test
+    @WithMockUser(roles = "USER", username = "buyer")
+    @DisplayName("주문 취소 요청 API 테스트")
+    void cancelOrder() throws Exception {
+        // given
+        Order order = orderRepository.save(new Order());
+        order.updateBuyer(buyer);
+        voucherForSaleRepository.findAll()
+                .forEach(voucherForSale -> voucherForSale.updateOrder(order));
+
+        // when
+        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        Optional<Order> orderFound = orderRepository.findById(order.getId());
+        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllByOrder(order);
+        assertThat(orderFound).isNotPresent();
+        assertThat(voucherForSaleList).isEmpty();
+
+        String responseBody = response.andReturn().getResponse().getContentAsString();
+        OrderNumberResponse orderNumberResponse = objectMapper.readValue(responseBody, OrderNumberResponse.class);
+
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("orderNumber").value(orderNumberResponse.getOrderNumber()))
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("orderNumber").description("취소할 주문의 주문번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("취소 처리된 주문의 주문번호")
+                        ))
+                );
+    }
 }

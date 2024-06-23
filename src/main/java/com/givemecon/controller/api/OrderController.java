@@ -30,4 +30,9 @@ public class OrderController {
     public OrderNumberResponse confirmOrder(Authentication authentication, @PathVariable Long orderNumber) {
         return orderService.confirmOrder(orderNumber, authentication.getName());
     }
+
+    @DeleteMapping("/{orderNumber}")
+    public OrderNumberResponse cancelOrder(Authentication authentication, @PathVariable Long orderNumber) {
+        return orderService.cancelOrder(orderNumber, authentication.getName());
+    }
 }

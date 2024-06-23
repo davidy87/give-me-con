@@ -21,4 +21,8 @@ public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, 
     @Query("update VoucherForSale vfs set vfs.status = 'EXPIRED' " +
             "where vfs.status <> 'EXPIRED' and vfs.expDate < :expDate")
     int updateAllByExpDateBefore(LocalDate expDate);
+
+    @Modifying
+    @Query("update VoucherForSale vfs set vfs.order = null where vfs.order.status = 'CANCELLED'")
+    void updateAllOrderCancelled();
 }

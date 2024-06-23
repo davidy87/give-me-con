@@ -10,7 +10,7 @@ import org.hibernate.annotations.SQLRestriction;
 import static com.givemecon.domain.order.OrderStatus.*;
 
 @Getter
-@SQLDelete(sql = "UPDATE order SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE orders SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Table(name = "orders")
 @Entity

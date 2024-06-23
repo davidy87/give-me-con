@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.domain.order.OrderDto.*;
-import static com.givemecon.domain.order.OrderStatus.CONFIRMED;
-import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
+import static com.givemecon.domain.order.OrderStatus.*;
 import static com.givemecon.domain.order.exception.OrderErrorCode.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 
@@ -118,6 +117,29 @@ public class OrderService {
 
         purchasedVoucherRepository.saveAll(purchasedVouchers);
         order.updateStatus(CONFIRMED);
+
+        return new OrderNumberResponse(orderNumber);
+    }
+
+    public OrderNumberResponse cancelOrder(Long orderNumber, String username) {
+        Order order = orderRepository.findById(orderNumber)
+                .orElseThrow(() -> new EntityNotFoundException(Order.class));
+
+        if (order.getStatus() == CONFIRMED) {
+            throw new InvalidOrderException(ORDER_ALREADY_CONFIRMED);
+        }
+
+        if (order.getStatus() == CANCELLED) {
+            throw new InvalidOrderException(ORDER_ALREADY_CANCELLED);
+        }
+
+        if (!username.equals(order.getBuyer().getUsername())) {
+            throw new InvalidOrderException(BUYER_NOT_MATCH);
+        }
+
+        order.updateStatus(CANCELLED);
+        voucherForSaleRepository.updateAllOrderCancelled();
+        orderRepository.delete(order);
 
         return new OrderNumberResponse(orderNumber);
     }
