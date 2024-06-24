@@ -24,7 +24,7 @@ public class Order extends BaseTimeEntity {
     @Column(nullable = false)
     private OrderStatus status;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Member buyer;
 
