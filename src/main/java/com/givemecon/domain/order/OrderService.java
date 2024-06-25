@@ -41,14 +41,14 @@ public class OrderService {
         order.updateBuyer(buyer);
 
         orderRequest.getVoucherForSaleIdList().forEach(id -> {
-            VoucherForSale voucherForSale = getValidOrderItem(id);
+            VoucherForSale voucherForSale = getValidOrderItem(id, buyer);
             voucherForSale.updateOrder(order);
         });
 
         return new OrderNumberResponse(order.getId());
     }
 
-    private VoucherForSale getValidOrderItem(Long voucherForSaleId) {
+    private VoucherForSale getValidOrderItem(Long voucherForSaleId, Member buyer) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(voucherForSaleId)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
 
@@ -62,6 +62,10 @@ public class OrderService {
             throw new InvalidOrderException(SELLER_UNAVAILABLE);
         }
 
+        if (buyer.getId().equals(seller.getId())) {
+            throw new InvalidOrderException(BUYER_EQUALS_SELLER);
+        }
+
         return voucherForSale;
     }
 
@@ -69,11 +73,8 @@ public class OrderService {
         Order order = orderRepository.findById(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        Member buyer = order.getBuyer();
-
-        if (!username.equals(buyer.getUsername())) {
-            throw new InvalidOrderException(BUYER_NOT_MATCH);
-        }
+        // buyer 예외 처리
+        checkBuyer(order, username);
 
         int quantity = 0;
         long totalPrice = 0L;
@@ -81,7 +82,7 @@ public class OrderService {
 
         for (VoucherForSale voucherForSale : voucherForSaleRepository.findAllByOrder(order)) {
             if (order.getStatus() == IN_PROGRESS && voucherForSale.getStatus() != FOR_SALE) {
-                continue;
+                throw new InvalidOrderException(ITEM_NOT_FOR_SALE);
             }
 
             quantity++;
@@ -96,24 +97,21 @@ public class OrderService {
         Order order = orderRepository.findById(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        if (order.getStatus() == CONFIRMED) {
-            throw new InvalidOrderException(ORDER_ALREADY_CONFIRMED);
-        }
+        // order status & buyer 예외 처리
+        checkOrderStatus(order);
+        Member buyer = checkBuyer(order, username);
 
-        Member buyer = order.getBuyer();
+        List<PurchasedVoucher> purchasedVouchers = new ArrayList<>();
 
-        if (!username.equals(buyer.getUsername())) {
-            throw new InvalidOrderException(BUYER_NOT_MATCH);
-        }
+        voucherForSaleRepository.findAllByOrder(order)
+                .forEach(voucherForSale -> {
+                    if (voucherForSale.getStatus() != FOR_SALE) {
+                        throw new InvalidOrderException(ITEM_NOT_FOR_SALE);
+                    }
 
-        List<PurchasedVoucher> purchasedVouchers =
-                voucherForSaleRepository.findAllByOrder(order).stream()
-                        .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
-                        .map(voucherForSale -> {
-                            voucherForSale.updateStatus(SOLD);
-                            return new PurchasedVoucher(voucherForSale, buyer);
-                        })
-                        .toList();
+                    voucherForSale.updateStatus(SOLD);
+                    purchasedVouchers.add(new PurchasedVoucher(voucherForSale, buyer));
+                });
 
         purchasedVoucherRepository.saveAll(purchasedVouchers);
         order.updateStatus(CONFIRMED);
@@ -125,22 +123,31 @@ public class OrderService {
         Order order = orderRepository.findById(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        if (order.getStatus() == CONFIRMED) {
-            throw new InvalidOrderException(ORDER_ALREADY_CONFIRMED);
-        }
-
-        if (order.getStatus() == CANCELLED) {
-            throw new InvalidOrderException(ORDER_ALREADY_CANCELLED);
-        }
-
-        if (!username.equals(order.getBuyer().getUsername())) {
-            throw new InvalidOrderException(BUYER_NOT_MATCH);
-        }
+        // order status & buyer 예외 처리
+        checkOrderStatus(order);
+        checkBuyer(order, username);
 
         order.updateStatus(CANCELLED);
         voucherForSaleRepository.updateAllOrderCancelled();
         orderRepository.delete(order);
 
         return new OrderNumberResponse(orderNumber);
+    }
+
+    private Member checkBuyer(Order order, String username) {
+        Member buyer = order.getBuyer();
+
+        if (buyer == null || !username.equals(buyer.getUsername())) {
+            throw new InvalidOrderException(BUYER_NOT_MATCH);
+        }
+
+        return buyer;
+    }
+
+    private void checkOrderStatus(Order order) {
+        switch (order.getStatus()) {
+            case CONFIRMED -> throw new InvalidOrderException(ORDER_ALREADY_CONFIRMED);
+            case CANCELLED -> throw new InvalidOrderException(ORDER_ALREADY_CANCELLED);
+        }
     }
 }
