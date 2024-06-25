@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.util.error.GlobalErrorCode.REFRESH_TOKEN_EXPIRED;
+import static com.givemecon.util.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
 
 @Slf4j
 @RequiredArgsConstructor

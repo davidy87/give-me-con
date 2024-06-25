@@ -3,6 +3,7 @@ package com.givemecon.domain.voucherforsale;
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.member.Member;
+import com.givemecon.domain.order.Order;
 import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -55,6 +56,10 @@ public class VoucherForSale extends BaseTimeEntity {
     @JoinColumn
     private Member seller;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Order order;
+
     @Builder
     public VoucherForSale(Long price, LocalDate expDate, String barcode) {
         this.price = price;
@@ -90,5 +95,9 @@ public class VoucherForSale extends BaseTimeEntity {
 
     public void updateSeller(Member seller) {
         this.seller = seller;
+    }
+
+    public void updateOrder(Order order) {
+        this.order = order;
     }
 }

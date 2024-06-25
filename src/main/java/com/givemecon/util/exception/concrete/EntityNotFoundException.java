@@ -3,7 +3,7 @@ package com.givemecon.util.exception.concrete;
 import com.givemecon.util.exception.GivemeconException;
 import lombok.Getter;
 
-import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.util.error.GlobalErrorCode.*;
 
 @Getter
 public class EntityNotFoundException extends GivemeconException {

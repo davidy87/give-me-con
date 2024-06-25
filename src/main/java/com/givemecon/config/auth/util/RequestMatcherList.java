@@ -44,6 +44,7 @@ public final class RequestMatcherList {
                 antMatcher(VOUCHER_FOR_SALE_API.getPattern()),
                 antMatcher(LIKED_VOUCHER_API.getPattern()),
                 antMatcher(PURCHASED_VOUCHER_API.getPattern()),
+                antMatcher(ORDER_API.getPattern()),
                 antMatcher(IMAGE_TEXT_EXTRACTION_API.getPattern())
         };
     }

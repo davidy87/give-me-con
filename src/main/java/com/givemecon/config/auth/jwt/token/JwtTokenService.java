@@ -24,7 +24,7 @@ import static com.givemecon.config.enums.GrantType.*;
 import static com.givemecon.config.enums.TokenDuration.ACCESS_TOKEN_DURATION;
 import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.util.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
 
 @Slf4j
 @Component

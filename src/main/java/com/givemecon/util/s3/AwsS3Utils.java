@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static com.givemecon.util.error.ErrorCode.*;
+import static com.givemecon.util.error.GlobalErrorCode.IMAGE_PROCESS_FAILED;
 
 @RequiredArgsConstructor
 @Component
