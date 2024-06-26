@@ -3,15 +3,16 @@ package com.givemecon.domain.order;
 import com.givemecon.domain.BaseTimeEntity;
 import com.givemecon.domain.member.Member;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.UUID;
 
 import static com.givemecon.domain.order.OrderStatus.*;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE orders SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Table(name = "orders")
@@ -33,16 +34,13 @@ public class Order extends BaseTimeEntity {
     @JoinColumn
     private Member buyer;
 
-    public Order() {
-        this.orderNumber = UUID.randomUUID().toString();
+    public Order(String orderNumber, Member buyer) {
+        this.orderNumber = orderNumber;
+        this.buyer = buyer;
         this.status = IN_PROGRESS;
     }
 
     public void updateStatus(OrderStatus status) {
         this.status = status;
-    }
-
-    public void updateBuyer(Member buyer) {
-        this.buyer = buyer;
     }
 }

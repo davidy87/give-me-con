@@ -40,6 +40,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
@@ -204,8 +205,9 @@ class OrderControllerTest {
     @DisplayName("주문 조회 요청 API 테스트")
     void findOrder() throws Exception {
         // given
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = UUID.randomUUID().toString();
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
+
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
@@ -247,8 +249,9 @@ class OrderControllerTest {
     @DisplayName("주문 체결 요청 API 테스트")
     void confirmOrder() throws Exception {
         // given
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = UUID.randomUUID().toString();
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
+
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
@@ -290,8 +293,9 @@ class OrderControllerTest {
     @DisplayName("주문 취소 요청 API 테스트")
     void cancelOrder() throws Exception {
         // given
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = UUID.randomUUID().toString();
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
+
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 

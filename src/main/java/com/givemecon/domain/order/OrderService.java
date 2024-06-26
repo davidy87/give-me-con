@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.order.OrderStatus.*;
@@ -37,8 +38,9 @@ public class OrderService {
         Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = generateOrderNumber();
+
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
 
         orderRequest.getVoucherForSaleIdList().forEach(id -> {
             VoucherForSale voucherForSale = getValidOrderItem(id, buyer);
@@ -46,6 +48,11 @@ public class OrderService {
         });
 
         return new OrderNumberResponse(order.getOrderNumber());
+    }
+
+    // TODO: 주문번호 생성 로직 변경 필요
+    private String generateOrderNumber() {
+        return UUID.randomUUID().toString();
     }
 
     private VoucherForSale getValidOrderItem(Long voucherForSaleId, Member buyer) {
