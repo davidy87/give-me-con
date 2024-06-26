@@ -45,7 +45,7 @@ public class OrderService {
             voucherForSale.updateOrder(order);
         });
 
-        return new OrderNumberResponse(order.getId());
+        return new OrderNumberResponse(order.getOrderNumber());
     }
 
     private VoucherForSale getValidOrderItem(Long voucherForSaleId, Member buyer) {
@@ -69,8 +69,8 @@ public class OrderService {
         return voucherForSale;
     }
 
-    public OrderSummary findOrder(Long orderNumber, String username) {
-        Order order = orderRepository.findById(orderNumber)
+    public OrderSummary findOrder(String orderNumber, String username) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // buyer 예외 처리
@@ -93,8 +93,8 @@ public class OrderService {
         return new OrderSummary(order.getStatus(), quantity, totalPrice, orderItems);
     }
 
-    public OrderNumberResponse confirmOrder(Long orderNumber, String username) {
-        Order order = orderRepository.findById(orderNumber)
+    public OrderNumberResponse confirmOrder(String orderNumber, String username) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // order status & buyer 예외 처리
@@ -119,8 +119,8 @@ public class OrderService {
         return new OrderNumberResponse(orderNumber);
     }
 
-    public OrderNumberResponse cancelOrder(Long orderNumber, String username) {
-        Order order = orderRepository.findById(orderNumber)
+    public OrderNumberResponse cancelOrder(String orderNumber, String username) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // order status & buyer 예외 처리

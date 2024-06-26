@@ -7,6 +7,8 @@ import lombok.Getter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.UUID;
+
 import static com.givemecon.domain.order.OrderStatus.*;
 
 @Getter
@@ -20,6 +22,9 @@ public class Order extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
+    private String orderNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status;
@@ -29,6 +34,7 @@ public class Order extends BaseTimeEntity {
     private Member buyer;
 
     public Order() {
+        this.orderNumber = UUID.randomUUID().toString();
         this.status = IN_PROGRESS;
     }
 

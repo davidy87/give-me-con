@@ -22,17 +22,17 @@ public class OrderController {
     }
 
     @GetMapping("/{orderNumber}")
-    public OrderSummary findOrder(Authentication authentication, @PathVariable Long orderNumber) {
+    public OrderSummary findOrder(Authentication authentication, @PathVariable String orderNumber) {
         return orderService.findOrder(orderNumber, authentication.getName());
     }
 
     @PutMapping("/{orderNumber}")
-    public OrderNumberResponse confirmOrder(Authentication authentication, @PathVariable Long orderNumber) {
+    public OrderNumberResponse confirmOrder(Authentication authentication, @PathVariable String orderNumber) {
         return orderService.confirmOrder(orderNumber, authentication.getName());
     }
 
     @DeleteMapping("/{orderNumber}")
-    public OrderNumberResponse cancelOrder(Authentication authentication, @PathVariable Long orderNumber) {
+    public OrderNumberResponse cancelOrder(Authentication authentication, @PathVariable String orderNumber) {
         return orderService.cancelOrder(orderNumber, authentication.getName());
     }
 }

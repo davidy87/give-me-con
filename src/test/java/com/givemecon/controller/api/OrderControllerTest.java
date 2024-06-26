@@ -194,7 +194,7 @@ class OrderControllerTest {
                                 fieldWithPath("voucherForSaleIdList").type(JsonFieldType.ARRAY).description("주문할 기프티콘 id 리스트")
                         ),
                         responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("주문 번호")
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("주문 번호")
                         ))
                 );
     }
@@ -210,8 +210,7 @@ class OrderControllerTest {
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getId())
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
         String responseBody = response.andReturn().getResponse().getContentAsString();
@@ -254,8 +253,7 @@ class OrderControllerTest {
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/orders/{orderNumber}", order.getId())
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mockMvc.perform(put("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
         Optional<Order> orderFound = orderRepository.findById(order.getId());
@@ -282,7 +280,7 @@ class OrderControllerTest {
                                 parameterWithName("orderNumber").description("체결할 주문의 주문번호")
                         ),
                         responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("체결 완료된 주문의 주문번호")
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("체결 완료된 주문의 주문번호")
                         ))
                 );
     }
@@ -298,8 +296,7 @@ class OrderControllerTest {
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getId())
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
         Optional<Order> orderFound = orderRepository.findById(order.getId());
@@ -319,7 +316,7 @@ class OrderControllerTest {
                                 parameterWithName("orderNumber").description("취소할 주문의 주문번호")
                         ),
                         responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("취소 처리된 주문의 주문번호")
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("취소 처리된 주문의 주문번호")
                         ))
                 );
     }

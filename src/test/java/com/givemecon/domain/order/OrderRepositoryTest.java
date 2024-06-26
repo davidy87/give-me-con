@@ -29,4 +29,17 @@ class OrderRepositoryTest {
         assertThat(found).isPresent();
         assertThat(found.get()).isEqualTo(saved);
     }
+
+    @Test
+    void findByOrderNumber() {
+        // given
+        Order order = orderRepository.save(new Order());
+
+        // when
+        Optional<Order> found = orderRepository.findByOrderNumber(order.getOrderNumber());
+
+        // then
+        assertThat(found).isPresent();
+        assertThat(found.get()).isEqualTo(order);
+    }
 }

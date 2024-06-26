@@ -24,9 +24,9 @@ public class OrderDto {
     @NoArgsConstructor
     public static class OrderNumberResponse {
 
-        private Long orderNumber;
+        private String orderNumber;
 
-        public OrderNumberResponse(Long orderNumber) {
+        public OrderNumberResponse(String orderNumber) {
             this.orderNumber = orderNumber;
         }
     }
