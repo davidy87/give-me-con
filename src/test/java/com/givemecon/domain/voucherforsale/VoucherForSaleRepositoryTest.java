@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -214,9 +215,10 @@ class VoucherForSaleRepositoryTest {
 
     @Test
     @DisplayName("주문별 VoucherForSale 조회")
-    void findAllByOrder() {
+    void findAllByOrder(@Mock Member member) {
         // given
-        Order order = orderRepository.save(new Order());
+        Order order = orderRepository.save(new Order("ORDER-NUMBER", member));
+
         VoucherForSale voucherForSale = VoucherForSale.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now())

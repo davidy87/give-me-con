@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,6 +28,7 @@ import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
@@ -285,6 +287,50 @@ public class DtoValidationTest {
                 .getContentAsString(StandardCharsets.UTF_8));
 
         response.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("OrderRequest DTO 검증 테스트 1 - voucherForSaleIdList는 비어있으면 안된다.")
+    void orderRequestWithEmptyList() throws Exception {
+        // given
+        OrderRequest orderRequest = new OrderRequest(List.of());
+
+        // when
+        String requestBody = new ObjectMapper().writeValueAsString(orderRequest);
+
+        ResultActions response = mockMvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        // then
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("OrderRequest DTO 검증 테스트 2 - voucherForSaleId는 모두 1 이상이어야 한다.")
+    void orderRequestWithInvalidVoucherForSaleId() throws Exception {
+        // given
+        OrderRequest orderRequest = new OrderRequest(List.of(0L, 1L, 2L));
+
+        // when
+        String requestBody = new ObjectMapper().writeValueAsString(orderRequest);
+
+        ResultActions response = mockMvc.perform(post("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody));
+
+        // then
+        response.andExpect(status().isBadRequest())
                 .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
                 .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
                 .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))

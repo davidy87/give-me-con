@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.order.OrderStatus.*;
@@ -37,15 +38,21 @@ public class OrderService {
         Member buyer = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = generateOrderNumber();
+
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
 
         orderRequest.getVoucherForSaleIdList().forEach(id -> {
             VoucherForSale voucherForSale = getValidOrderItem(id, buyer);
             voucherForSale.updateOrder(order);
         });
 
-        return new OrderNumberResponse(order.getId());
+        return new OrderNumberResponse(order.getOrderNumber());
+    }
+
+    // TODO: 주문번호 생성 로직 변경 필요
+    private String generateOrderNumber() {
+        return UUID.randomUUID().toString();
     }
 
     private VoucherForSale getValidOrderItem(Long voucherForSaleId, Member buyer) {
@@ -69,8 +76,8 @@ public class OrderService {
         return voucherForSale;
     }
 
-    public OrderSummary findOrder(Long orderNumber, String username) {
-        Order order = orderRepository.findById(orderNumber)
+    public OrderSummary findOrder(String orderNumber, String username) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // buyer 예외 처리
@@ -93,8 +100,8 @@ public class OrderService {
         return new OrderSummary(order.getStatus(), quantity, totalPrice, orderItems);
     }
 
-    public OrderNumberResponse confirmOrder(Long orderNumber, String username) {
-        Order order = orderRepository.findById(orderNumber)
+    public OrderNumberResponse confirmOrder(String orderNumber, String username) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // order status & buyer 예외 처리
@@ -119,8 +126,8 @@ public class OrderService {
         return new OrderNumberResponse(orderNumber);
     }
 
-    public OrderNumberResponse cancelOrder(Long orderNumber, String username) {
-        Order order = orderRepository.findById(orderNumber)
+    public OrderNumberResponse cancelOrder(String orderNumber, String username) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // order status & buyer 예외 처리

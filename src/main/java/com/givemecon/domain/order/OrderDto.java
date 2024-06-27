@@ -3,6 +3,8 @@ package com.givemecon.domain.order;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,22 +19,24 @@ public class OrderDto {
     @AllArgsConstructor
     public static class OrderRequest {
 
-        private List<Long> voucherForSaleIdList;
+        @NotEmpty
+        private List<@Min(1L) Long> voucherForSaleIdList;
     }
 
     @Getter
     @NoArgsConstructor
     public static class OrderNumberResponse {
 
-        private Long orderNumber;
+        private String orderNumber;
 
-        public OrderNumberResponse(Long orderNumber) {
+        public OrderNumberResponse(String orderNumber) {
             this.orderNumber = orderNumber;
         }
     }
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class OrderSummary {
 
         private OrderStatus status;
@@ -42,13 +46,6 @@ public class OrderDto {
         private Long totalPrice;
 
         private List<OrderItem> orderItems;
-
-        public OrderSummary(OrderStatus status, Integer quantity, Long totalPrice, List<OrderItem> orderItems) {
-            this.status = status;
-            this.quantity = quantity;
-            this.totalPrice = totalPrice;
-            this.orderItems = orderItems;
-        }
     }
 
     @Getter

@@ -40,6 +40,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
@@ -194,7 +195,7 @@ class OrderControllerTest {
                                 fieldWithPath("voucherForSaleIdList").type(JsonFieldType.ARRAY).description("주문할 기프티콘 id 리스트")
                         ),
                         responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("주문 번호")
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("주문 번호")
                         ))
                 );
     }
@@ -204,14 +205,14 @@ class OrderControllerTest {
     @DisplayName("주문 조회 요청 API 테스트")
     void findOrder() throws Exception {
         // given
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = UUID.randomUUID().toString();
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
+
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getId())
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
         String responseBody = response.andReturn().getResponse().getContentAsString();
@@ -248,14 +249,14 @@ class OrderControllerTest {
     @DisplayName("주문 체결 요청 API 테스트")
     void confirmOrder() throws Exception {
         // given
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = UUID.randomUUID().toString();
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
+
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(put("/api/orders/{orderNumber}", order.getId())
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mockMvc.perform(put("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
         Optional<Order> orderFound = orderRepository.findById(order.getId());
@@ -282,7 +283,7 @@ class OrderControllerTest {
                                 parameterWithName("orderNumber").description("체결할 주문의 주문번호")
                         ),
                         responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("체결 완료된 주문의 주문번호")
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("체결 완료된 주문의 주문번호")
                         ))
                 );
     }
@@ -292,14 +293,14 @@ class OrderControllerTest {
     @DisplayName("주문 취소 요청 API 테스트")
     void cancelOrder() throws Exception {
         // given
-        Order order = orderRepository.save(new Order());
-        order.updateBuyer(buyer);
+        String orderNumber = UUID.randomUUID().toString();
+        Order order = orderRepository.save(new Order(orderNumber, buyer));
+
         voucherForSaleRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getId())
-                .contentType(MediaType.APPLICATION_JSON));
+        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
         Optional<Order> orderFound = orderRepository.findById(order.getId());
@@ -319,7 +320,7 @@ class OrderControllerTest {
                                 parameterWithName("orderNumber").description("취소할 주문의 주문번호")
                         ),
                         responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.NUMBER).description("취소 처리된 주문의 주문번호")
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("취소 처리된 주문의 주문번호")
                         ))
                 );
     }
