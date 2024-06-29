@@ -229,7 +229,9 @@ class OrderControllerTest {
                                 parameterWithName("orderNumber").description("주문번호")
                         ),
                         responseFields(
+                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("주문 체결 상태"),
+                                fieldWithPath("customerName").type(JsonFieldType.STRING).description("구매자 이름"),
                                 fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("주문 수량"),
                                 fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총 주문 가격"),
                                 fieldWithPath("orderItems").type(JsonFieldType.ARRAY).description("주문 품목 리스트"),

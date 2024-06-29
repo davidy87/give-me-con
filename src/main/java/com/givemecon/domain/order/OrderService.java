@@ -97,7 +97,14 @@ public class OrderService {
             orderItems.add(new OrderItem(voucherForSale));
         }
 
-        return new OrderSummary(order.getStatus(), quantity, totalPrice, orderItems);
+        return OrderSummary.builder()
+                .orderNumber(order.getOrderNumber())
+                .status(order.getStatus())
+                .customerName(username)
+                .quantity(quantity)
+                .totalPrice(totalPrice)
+                .orderItems(orderItems)
+                .build();
     }
 
     public OrderNumberResponse confirmOrder(String orderNumber, String username) {
