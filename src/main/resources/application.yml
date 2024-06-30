@@ -19,7 +19,7 @@ spring:
         enabled: false
 
   profiles:
-    include: client,oauth,jwt,aws,gcp
+    include: client,oauth,jwt,aws,gcp,payment
 
   messages:
     basename: errors
