@@ -179,7 +179,9 @@ class OrderServiceTest {
             OrderSummary orderSummary = orderService.findOrder(order.getOrderNumber(), buyer.getUsername());
 
             // then
+            assertThat(orderSummary.getOrderNumber()).isEqualTo(order.getOrderNumber());
             assertThat(orderSummary.getStatus()).isSameAs(IN_PROGRESS);
+            assertThat(orderSummary.getCustomerName()).isEqualTo(buyer.getUsername());
             assertThat(orderSummary.getQuantity()).isEqualTo(voucherForSaleList.size());
             assertThat(orderSummary.getTotalPrice()).isEqualTo(voucherForSale.getPrice() * voucherForSaleList.size());
             assertThat(orderSummary.getOrderItems().size()).isEqualTo(orderSummary.getQuantity());
