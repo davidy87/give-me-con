@@ -8,9 +8,9 @@ import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,6 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         String orderNumber = generateOrderNumber();
-
         Order order = orderRepository.save(new Order(orderNumber, buyer));
 
         orderRequest.getVoucherForSaleIdList().forEach(id -> {
@@ -77,11 +76,12 @@ public class OrderService {
         return voucherForSale;
     }
 
+    @Transactional(readOnly = true)
     public OrderSummary findOrder(String orderNumber, String username) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        // order status & buyer 검증
+        // order status & buyer 예외 처리
         verifyOrderStatus(order);
         verifyBuyer(order, username);
 
@@ -113,7 +113,7 @@ public class OrderService {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        // order status & buyer 검증
+        // order status & buyer 예외 처리
         verifyOrderStatus(order);
         Member buyer = verifyBuyer(order, username);
 
@@ -139,7 +139,7 @@ public class OrderService {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        // order status & buyer 검증
+        // order status & buyer 예외 처리
         verifyOrderStatus(order);
         verifyBuyer(order, username);
 
