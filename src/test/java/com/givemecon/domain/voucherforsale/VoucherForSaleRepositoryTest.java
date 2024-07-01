@@ -1,5 +1,6 @@
 package com.givemecon.domain.voucherforsale;
 
+import com.givemecon.config.JpaConfig;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
@@ -7,33 +8,29 @@ import com.givemecon.domain.order.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.order.OrderStatus.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@Import(JpaConfig.class)
 @Transactional
-@SpringBootTest
+@DataJpaTest
 class VoucherForSaleRepositoryTest {
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
-
-    @MockBean
-    OrderRepository orderRepository;
 
     @Test
     void BaseTimeEntity() {
@@ -215,9 +212,9 @@ class VoucherForSaleRepositoryTest {
 
     @Test
     @DisplayName("주문별 VoucherForSale 조회")
-    void findAllByOrder(@Mock Member member) {
+    void findAllByOrder(@Autowired OrderRepository orderRepository) {
         // given
-        Order order = orderRepository.save(new Order("ORDER-NUMBER", member));
+        Order order = orderRepository.save(new Order("ORDER-NUMBER", null));
 
         VoucherForSale voucherForSale = VoucherForSale.builder()
                 .price(4_000L)
@@ -237,5 +234,33 @@ class VoucherForSaleRepositoryTest {
         VoucherForSale found = voucherForSaleList.get(0);
         assertThat(found).isEqualTo(voucherForSale);
         assertThat(found.getOrder()).isEqualTo(order);
+    }
+
+    @Test
+    @DisplayName("주문이 취소된 VoucherForSale 상태 변경")
+    void updateAllOrderCancelled(@Autowired OrderRepository orderRepository) {
+        // given
+        Order order = orderRepository.save(new Order("ORDER-NUMBER", null));
+        order.updateStatus(CANCELLED);
+
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .build();
+
+        voucherForSale.updateOrder(order);
+        voucherForSale.updateStatus(ORDER_PLACED);
+        voucherForSaleRepository.save(voucherForSale);
+
+        // when
+        voucherForSaleRepository.updateAllOrderCancelled();
+
+        // then
+        Optional<VoucherForSale> found = voucherForSaleRepository.findById(voucherForSale.getId());
+
+        assertThat(found).isPresent();
+        assertThat(found.get().getOrder()).isNull();
+        assertThat(found.get().getStatus()).isSameAs(FOR_SALE);
     }
 }

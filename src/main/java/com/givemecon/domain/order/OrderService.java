@@ -8,9 +8,9 @@ import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +39,12 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         String orderNumber = generateOrderNumber();
-
         Order order = orderRepository.save(new Order(orderNumber, buyer));
 
         orderRequest.getVoucherForSaleIdList().forEach(id -> {
             VoucherForSale voucherForSale = getValidOrderItem(id, buyer);
             voucherForSale.updateOrder(order);
+            voucherForSale.updateStatus(ORDER_PLACED);
         });
 
         return new OrderNumberResponse(order.getOrderNumber());
@@ -76,20 +76,22 @@ public class OrderService {
         return voucherForSale;
     }
 
+    @Transactional(readOnly = true)
     public OrderSummary findOrder(String orderNumber, String username) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
-        // buyer 예외 처리
-        checkBuyer(order, username);
+        // order status & buyer 예외 처리
+        verifyOrderStatus(order);
+        verifyBuyer(order, username);
 
         int quantity = 0;
         long totalPrice = 0L;
         List<OrderItem> orderItems = new ArrayList<>();
 
         for (VoucherForSale voucherForSale : voucherForSaleRepository.findAllByOrder(order)) {
-            if (order.getStatus() == IN_PROGRESS && voucherForSale.getStatus() != FOR_SALE) {
-                throw new InvalidOrderException(ITEM_NOT_FOR_SALE);
+            if (voucherForSale.getStatus() != ORDER_PLACED) {
+                throw new InvalidOrderException(ITEM_ORDER_NOT_PLACED);
             }
 
             quantity++;
@@ -112,15 +114,15 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // order status & buyer 예외 처리
-        checkOrderStatus(order);
-        Member buyer = checkBuyer(order, username);
+        verifyOrderStatus(order);
+        Member buyer = verifyBuyer(order, username);
 
         List<PurchasedVoucher> purchasedVouchers = new ArrayList<>();
 
         voucherForSaleRepository.findAllByOrder(order)
                 .forEach(voucherForSale -> {
-                    if (voucherForSale.getStatus() != FOR_SALE) {
-                        throw new InvalidOrderException(ITEM_NOT_FOR_SALE);
+                    if (voucherForSale.getStatus() != ORDER_PLACED) {
+                        throw new InvalidOrderException(ITEM_ORDER_NOT_PLACED);
                     }
 
                     voucherForSale.updateStatus(SOLD);
@@ -138,8 +140,8 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException(Order.class));
 
         // order status & buyer 예외 처리
-        checkOrderStatus(order);
-        checkBuyer(order, username);
+        verifyOrderStatus(order);
+        verifyBuyer(order, username);
 
         order.updateStatus(CANCELLED);
         voucherForSaleRepository.updateAllOrderCancelled();
@@ -148,7 +150,7 @@ public class OrderService {
         return new OrderNumberResponse(orderNumber);
     }
 
-    private Member checkBuyer(Order order, String username) {
+    private Member verifyBuyer(Order order, String username) {
         Member buyer = order.getBuyer();
 
         if (buyer == null || !username.equals(buyer.getUsername())) {
@@ -158,7 +160,7 @@ public class OrderService {
         return buyer;
     }
 
-    private void checkOrderStatus(Order order) {
+    private void verifyOrderStatus(Order order) {
         switch (order.getStatus()) {
             case CONFIRMED -> throw new InvalidOrderException(ORDER_ALREADY_CONFIRMED);
             case CANCELLED -> throw new InvalidOrderException(ORDER_ALREADY_CANCELLED);
