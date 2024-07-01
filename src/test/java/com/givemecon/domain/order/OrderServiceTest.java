@@ -169,7 +169,7 @@ class OrderServiceTest {
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
+            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
             Mockito.when(voucher.getBrand()).thenReturn(brand);
             Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
@@ -188,13 +188,13 @@ class OrderServiceTest {
 
             orderSummary.getOrderItems()
                     .forEach(orderItem -> {
-                        assertThat(orderItem.getStatus()).isSameAs(FOR_SALE);
+                        assertThat(orderItem.getStatus()).isSameAs(ORDER_PLACED);
                         assertThat(orderItem.getVoucherForSaleId()).isEqualTo(voucherForSale.getId());
                     });
         }
 
         @Test
-        @DisplayName("주문 조회 예외 1 - VoucherForSale의 status가 FOR_SALE이 아닌 경우, 예외를 던진다.")
+        @DisplayName("주문 조회 예외 1 - VoucherForSale의 status가 ORDER_PLACED가 아닌 경우, 예외를 던진다.")
         void ignoreItemsNotForSale() {
             // given
             List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
@@ -209,13 +209,14 @@ class OrderServiceTest {
             // when & then
             assertThatThrownBy(() -> orderService.findOrder(order.getOrderNumber(), buyer.getUsername()))
                     .isInstanceOf(InvalidOrderException.class)
-                    .hasMessage(ITEM_NOT_FOR_SALE.getMessage());
+                    .hasMessage(ITEM_ORDER_NOT_PLACED.getMessage());
         }
 
         @Test
         @DisplayName("주문 조회 예외 2 - 주문 정보에 있는 구매자의 username이 사용자의 username과 다르다면 해당 요청을 처리하지 않는다.")
         void buyerNotMatchWhenFindOrder() {
             // given
+            Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
 
             // when & then
@@ -246,7 +247,7 @@ class OrderServiceTest {
             Mockito.when(voucherForSaleRepository.findAllByOrder(order))
                     .thenReturn(List.of(voucherForSale));
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
+            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
 
@@ -295,7 +296,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 체결 요청 예외 4 - 주문할 VoucherForSale 중 하나라도 FOR_SALE 상태가 아닐 경우, 체결 처리하지 않는다.")
+        @DisplayName("주문 체결 요청 예외 4 - 주문할 VoucherForSale 중 하나라도 ORDER_PLACED 상태가 아닐 경우, 체결 처리하지 않는다.")
         void itemNotForSaleWhenConfirm() {
             // given
             Mockito.when(order.getBuyer()).thenReturn(buyer);
@@ -310,7 +311,7 @@ class OrderServiceTest {
             // when & then
             assertThatThrownBy(() -> orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername()))
                     .isInstanceOf(InvalidOrderException.class)
-                    .hasMessage(ITEM_NOT_FOR_SALE.getMessage());
+                    .hasMessage(ITEM_ORDER_NOT_PLACED.getMessage());
         }
     }
 

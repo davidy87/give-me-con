@@ -206,7 +206,10 @@ class OrderControllerTest {
         Order order = orderRepository.save(new Order(orderNumber, buyer));
 
         voucherForSaleRepository.findAll()
-                .forEach(voucherForSale -> voucherForSale.updateOrder(order));
+                .forEach(voucherForSale -> {
+                    voucherForSale.updateOrder(order);
+                    voucherForSale.updateStatus(ORDER_PLACED);
+                });
 
         // when
         ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getOrderNumber()));

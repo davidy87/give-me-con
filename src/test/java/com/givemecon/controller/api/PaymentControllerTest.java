@@ -139,7 +139,7 @@ class PaymentControllerTest {
 
         voucherForSale.updateVoucher(voucher);
         voucherForSale.updateOrder(order);
-        voucherForSale.updateStatus(VoucherForSaleStatus.FOR_SALE);
+        voucherForSale.updateStatus(VoucherForSaleStatus.ORDER_PLACED);
     }
 
     @Test
