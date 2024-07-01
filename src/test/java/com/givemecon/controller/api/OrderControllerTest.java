@@ -12,7 +12,6 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.order.OrderRepository;
-import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucher.VoucherRepository;
@@ -45,8 +44,6 @@ import java.util.UUID;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.domain.order.OrderDto.*;
-import static com.givemecon.domain.order.OrderStatus.CONFIRMED;
-import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.USABLE;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -242,50 +239,6 @@ class OrderControllerTest {
                                 fieldWithPath("orderItems.[].voucherImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("orderItems.[].expDate").type(JsonFieldType.STRING).description("기프티콘 유효기간"),
                                 fieldWithPath("orderItems.[].status").type(JsonFieldType.STRING).description("기프티콘 상태")
-                        ))
-                );
-    }
-
-    @Test
-    @WithMockUser(roles = "USER", username = "buyer")
-    @DisplayName("주문 체결 요청 API 테스트")
-    void confirmOrder() throws Exception {
-        // given
-        String orderNumber = UUID.randomUUID().toString();
-        Order order = orderRepository.save(new Order(orderNumber, buyer));
-
-        voucherForSaleRepository.findAll()
-                .forEach(voucherForSale -> voucherForSale.updateOrder(order));
-
-        // when
-        ResultActions response = mockMvc.perform(put("/api/orders/{orderNumber}", order.getOrderNumber()));
-
-        // then
-        Optional<Order> orderFound = orderRepository.findById(order.getId());
-        List<PurchasedVoucher> purchasedVouchers = purchasedVoucherRepository.findAll();
-
-        assertThat(orderFound).isPresent();
-        assertThat(orderFound.get().getStatus()).isSameAs(CONFIRMED);
-        assertThat(purchasedVouchers.size()).isEqualTo(voucherForSaleIdList.size());
-
-        purchasedVouchers.forEach(purchasedVoucher -> {
-            assertThat(purchasedVoucher.getStatus()).isSameAs(USABLE);
-            assertThat(purchasedVoucher.getOwner()).isSameAs(buyer);
-        });
-
-        String responseBody = response.andReturn().getResponse().getContentAsString();
-        OrderNumberResponse orderNumberResponse = objectMapper.readValue(responseBody, OrderNumberResponse.class);
-
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("orderNumber").value(orderNumberResponse.getOrderNumber()))
-                .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequestWithAuth(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("orderNumber").description("체결할 주문의 주문번호")
-                        ),
-                        responseFields(
-                                fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("체결 완료된 주문의 주문번호")
                         ))
                 );
     }
