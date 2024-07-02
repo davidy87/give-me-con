@@ -35,12 +35,12 @@ class PaymentServiceTest {
     PaymentService paymentService;
 
     @Mock
-    OrderSummary orderSummary;
+    OrderConfirmation orderConfirmation;
 
     @BeforeEach
     void setup() {
-        Mockito.when(orderService.findOrder(any(String.class), any(String.class)))
-                .thenReturn(orderSummary);
+        Mockito.when(orderService.confirmOrder(any(String.class), any(String.class)))
+                .thenReturn(orderConfirmation);
     }
 
     @Test
@@ -60,9 +60,7 @@ class PaymentServiceTest {
                 .receiptUrl(receiptUrl)
                 .build();
 
-        Mockito.when(orderSummary.getStatus()).thenReturn(OrderStatus.IN_PROGRESS);
-        Mockito.when(orderSummary.getCustomerName()).thenReturn(customerName);
-        Mockito.when(orderSummary.getTotalPrice()).thenReturn(amount);
+        Mockito.when(orderConfirmation.getAmount()).thenReturn(amount);
         Mockito.when(tossPaymentsRestClient.requestPaymentConfirmation(any(PaymentRequest.class)))
                 .thenReturn(paymentConfirmation);
 
@@ -81,50 +79,18 @@ class PaymentServiceTest {
         assertThat(paymentResponse.getReceiptUrl()).isEqualTo(receiptUrl);
     }
 
-    @Test
-    @DisplayName("결제 승인 요청 예외 1 - 주문의 상태가 IN_PROGRESS가 아닐 경우, 예외를 던진다.")
-    void orderNotInProgress() {
-        // given
-        PaymentRequest paymentRequest = new PaymentRequest("ORDER-ID", "orderName", 4_000L);
-        String buyerName = "buyer";
-
-        Mockito.when(orderSummary.getStatus()).thenReturn(OrderStatus.CONFIRMED);
-
-        // when & then
-        assertThatThrownBy(() -> paymentService.confirmPayment(paymentRequest, buyerName))
-                .isInstanceOf(InvalidPaymentException.class)
-                .hasMessage(ORDER_NOT_IN_PROGRESS.getMessage());
-    }
 
     @Test
-    @DisplayName("결제 승인 요청 예외 2  - 주문자와 결제 요청자가 일치하지 않을 경우, 예외를 던진다.")
-    void buyerNotMatch() {
-        // given
-        PaymentRequest paymentRequest = new PaymentRequest("ORDER-ID", "orderName", 4_000L);
-        String validCustomerName = "customer";
-        String invalidCustomerName = "invalidCustomer";
-
-        Mockito.when(orderSummary.getStatus()).thenReturn(OrderStatus.IN_PROGRESS);
-        Mockito.when(orderSummary.getCustomerName()).thenReturn(validCustomerName);
-
-        // when & then
-        assertThatThrownBy(() -> paymentService.confirmPayment(paymentRequest, invalidCustomerName))
-                .isInstanceOf(InvalidPaymentException.class)
-                .hasMessage(CUSTOMER_NOT_MATCH.getMessage());
-    }
-
-    @Test
-    @DisplayName("결제 승인 요청 예외 3 - 결제할 금액이 주문금액과 일치하지 않을 경우, 예외를 던진다.")
+    @DisplayName("결제 승인 요청 예외 - 결제금액이 주문금액과 일치하지 않을 경우, 예외를 던진다.")
     void amountNotMatch() {
         // given
         PaymentRequest paymentRequest = new PaymentRequest("ORDER-ID", "orderName", 4_000L);
         String customerName = "customer";
 
-        Mockito.when(orderSummary.getStatus()).thenReturn(OrderStatus.IN_PROGRESS);
-        Mockito.when(orderSummary.getCustomerName()).thenReturn(customerName);
-        Mockito.when(orderSummary.getTotalPrice()).thenReturn(3_000L);
+        // when
+        Mockito.when(orderConfirmation.getAmount()).thenReturn(paymentRequest.getAmount() + 1_000L);
 
-        // when & then
+        // then
         assertThatThrownBy(() -> paymentService.confirmPayment(paymentRequest, customerName))
                 .isInstanceOf(InvalidPaymentException.class)
                 .hasMessage(AMOUNT_NOT_MATCH.getMessage());

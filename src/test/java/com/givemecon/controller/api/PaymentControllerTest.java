@@ -140,6 +140,8 @@ class PaymentControllerTest {
         voucherForSale.updateVoucher(voucher);
         voucherForSale.updateOrder(order);
         voucherForSale.updateStatus(VoucherForSaleStatus.ORDER_PLACED);
+        order.updateQuantity(1);
+        order.updateAmount(voucherForSale.getPrice());
     }
 
     @Test

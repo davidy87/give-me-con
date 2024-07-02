@@ -26,7 +26,7 @@ public class OrderController {
 
     @GetMapping("/{orderNumber}")
     public OrderSummary findOrder(Authentication authentication, @PathVariable String orderNumber) {
-        return orderService.findOrder(orderNumber, authentication.getName());
+        return orderService.getOrderSummary(orderNumber, authentication.getName());
     }
 
     @DeleteMapping("/{orderNumber}")
