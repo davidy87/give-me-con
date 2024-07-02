@@ -29,6 +29,7 @@ import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.order.OrderDto.*;
+import static com.givemecon.domain.payment.PaymentDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
@@ -57,6 +58,8 @@ public class DtoValidationTest {
     Member member;
 
     TokenInfo tokenInfo;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setup() {
@@ -229,7 +232,7 @@ public class DtoValidationTest {
         ResultActions saveResult = mockMvc.perform(put("/api/vouchers-for-sale/{id}", 1)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestBody)));
+                .content(objectMapper.writeValueAsString(requestBody)));
 
         // then
         log.info(saveResult.andReturn()
@@ -255,7 +258,7 @@ public class DtoValidationTest {
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDtoList))
+                .content(objectMapper.writeValueAsString(requestDtoList))
         );
 
         log.info(response.andReturn()
@@ -279,7 +282,7 @@ public class DtoValidationTest {
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestDtoList))
+                .content(objectMapper.writeValueAsString(requestDtoList))
         );
 
         log.info(response.andReturn()
@@ -301,11 +304,9 @@ public class DtoValidationTest {
         OrderRequest orderRequest = new OrderRequest(List.of());
 
         // when
-        String requestBody = new ObjectMapper().writeValueAsString(orderRequest);
-
         ResultActions response = mockMvc.perform(post("/api/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody));
+                .content(objectMapper.writeValueAsString(orderRequest)));
 
         // then
         response.andExpect(status().isBadRequest())
@@ -323,11 +324,69 @@ public class DtoValidationTest {
         OrderRequest orderRequest = new OrderRequest(List.of(0L, 1L, 2L));
 
         // when
-        String requestBody = new ObjectMapper().writeValueAsString(orderRequest);
-
         ResultActions response = mockMvc.perform(post("/api/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody));
+                .content(objectMapper.writeValueAsString(orderRequest)));
+
+        // then
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("PaymentRequest DTO 검증 테스트 1 - paymentKey는 null이거나 빈 문자열이어서는 안된다.")
+    void paymentRequestWithInvalidPaymentKey() throws Exception {
+        // given
+        PaymentRequest paymentRequest = new PaymentRequest("", "ORDER-ID", 4_000L);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/api/payments/confirm")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(paymentRequest)));
+
+        // then
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("PaymentRequest DTO 검증 테스트 2 - orderId는 null이거나 빈 문자열이어서는 안된다.")
+    void paymentRequestWithInvalidOrderId() throws Exception {
+        // given
+        PaymentRequest paymentRequest = new PaymentRequest("PAYMENT-KEY", null, 4_000L);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/api/payments/confirm")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(paymentRequest)));
+
+        // then
+        response.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("error.status").value(INVALID_ARGUMENT.getStatus()))
+                .andExpect(jsonPath("error.code").value(INVALID_ARGUMENT.getCode()))
+                .andExpect(jsonPath("error.message").value(INVALID_ARGUMENT.getMessage()))
+                .andExpect(jsonPath("error.fieldErrors").isNotEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("PaymentRequest DTO 검증 테스트 3 - amount는 null이서선 안되며, 최소 0이어야 한다.")
+    void paymentRequestWithInvalidAmount() throws Exception {
+        // given
+        PaymentRequest paymentRequest = new PaymentRequest("PAYMENT-KEY", "ORDER-ID", null);
+
+        // when
+        ResultActions response = mockMvc.perform(post("/api/payments/confirm")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(paymentRequest)));
 
         // then
         response.andExpect(status().isBadRequest())
