@@ -30,6 +30,12 @@ public class Order extends BaseTimeEntity {
     @Column(nullable = false)
     private OrderStatus status;
 
+    @Column(nullable = false)
+    private Integer quantity;
+
+    @Column(nullable = false)
+    private Long amount;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Member buyer;
@@ -37,10 +43,20 @@ public class Order extends BaseTimeEntity {
     public Order(String orderNumber, Member buyer) {
         this.orderNumber = orderNumber;
         this.buyer = buyer;
+        this.quantity = 0;
+        this.amount = 0L;
         this.status = IN_PROGRESS;
     }
 
     public void updateStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public void updateAmount(Long amount) {
+        this.amount = amount;
     }
 }

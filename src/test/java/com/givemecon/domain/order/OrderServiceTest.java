@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -55,14 +56,12 @@ class OrderServiceTest {
     @Mock
     Order order;
 
+    @InjectMocks
     OrderService orderService;
 
     @BeforeEach
     void setup() {
         Mockito.when(buyer.getUsername()).thenReturn("buyer");
-
-        orderService =
-                new OrderService(orderRepository, memberRepository, voucherForSaleRepository, purchasedVoucherRepository);
     }
 
     @Nested
@@ -79,9 +78,6 @@ class OrderServiceTest {
 
             Mockito.when(voucherForSale.getSeller())
                     .thenReturn(seller);
-
-            Mockito.when(orderRepository.save(any(Order.class)))
-                    .thenReturn(order);
         }
 
         @Test
@@ -91,6 +87,7 @@ class OrderServiceTest {
             Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
             Mockito.when(buyer.getId()).thenReturn(1L);
             Mockito.when(seller.getId()).thenReturn(2L);
+            Mockito.when(orderRepository.save(any(Order.class))).thenReturn(order);
             Mockito.when(order.getOrderNumber()).thenReturn(UUID.randomUUID().toString());
 
             List<Long> voucherForSaleIdList = List.of(1L, 2L, 3L);
@@ -163,20 +160,26 @@ class OrderServiceTest {
         void findOrder(@Mock Brand brand, @Mock Voucher voucher) {
             // given
             List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            long price = 4_000L;
 
             Mockito.when(voucherForSaleRepository.findAllByOrder(order))
                     .thenReturn(voucherForSaleList);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
+            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
+            Mockito.when(order.getAmount()).thenReturn(price * voucherForSaleList.size());
+
             Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
             Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+
             Mockito.when(voucher.getBrand()).thenReturn(brand);
             Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when
-            OrderSummary orderSummary = orderService.findOrder(order.getOrderNumber(), buyer.getUsername());
+            OrderSummary orderSummary = orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername());
 
             // then
             assertThat(orderSummary.getOrderNumber()).isEqualTo(order.getOrderNumber());
@@ -195,7 +198,7 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("주문 조회 예외 1 - VoucherForSale의 status가 ORDER_PLACED가 아닌 경우, 예외를 던진다.")
-        void ignoreItemsNotForSale() {
+        void itemOrderNotPlaced() {
             // given
             List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
 
@@ -207,22 +210,82 @@ class OrderServiceTest {
             Mockito.when(voucherForSale.getStatus()).thenReturn(NOT_YET_PERMITTED);
 
             // when & then
-            assertThatThrownBy(() -> orderService.findOrder(order.getOrderNumber(), buyer.getUsername()))
+            assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))
                     .isInstanceOf(InvalidOrderException.class)
                     .hasMessage(ITEM_ORDER_NOT_PLACED.getMessage());
         }
 
         @Test
         @DisplayName("주문 조회 예외 2 - 주문 정보에 있는 구매자의 username이 사용자의 username과 다르다면 해당 요청을 처리하지 않는다.")
-        void buyerNotMatchWhenFindOrder() {
+        void buyerNotMatch() {
             // given
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
 
             // when & then
-            assertThatThrownBy(() -> orderService.findOrder(order.getOrderNumber(), "notBuyer"))
+            assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), "notBuyer"))
                     .isInstanceOf(InvalidOrderException.class)
                     .hasMessage(BUYER_NOT_MATCH.getMessage());
+        }
+
+        @Test
+        @DisplayName("주문 조회 예외 3 - 주문 수량에 오차가 있을 경우, 예외를 던진다.")
+        void invalidOrderQuantity(@Mock Brand brand, @Mock Voucher voucher) {
+            // given
+            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+
+            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
+                    .thenReturn(voucherForSaleList);
+
+            Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
+            Mockito.when(order.getBuyer()).thenReturn(buyer);
+
+            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucherForSale.getPrice()).thenReturn(4_000L);
+            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+
+            Mockito.when(voucher.getBrand()).thenReturn(brand);
+            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(brand.getName()).thenReturn("Brand");
+
+            // when
+            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size() + 1);
+
+            // then
+            assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))
+                    .isInstanceOf(InvalidOrderException.class)
+                    .hasMessage(INVALID_ORDER_QUANTITY.getMessage());
+        }
+
+        @Test
+        @DisplayName("주문 조회 예외 4 - 총 주문 금액에 오차가 있을 경우, 예외를 던진다.")
+        void invalidOrderAmount(@Mock Brand brand, @Mock Voucher voucher) {
+            // given
+            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            long price = 4_000L;
+
+            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
+                    .thenReturn(voucherForSaleList);
+
+            Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
+            Mockito.when(order.getBuyer()).thenReturn(buyer);
+            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
+
+            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
+            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+
+            Mockito.when(voucher.getBrand()).thenReturn(brand);
+            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(brand.getName()).thenReturn("Brand");
+
+            // when
+            Mockito.when(order.getAmount()).thenReturn(price * voucherForSaleList.size() + 1_000L);
+
+            // then
+            assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))
+                    .isInstanceOf(InvalidOrderException.class)
+                    .hasMessage(INVALID_ORDER_AMOUNT.getMessage());
         }
     }
 
@@ -242,20 +305,25 @@ class OrderServiceTest {
         @DisplayName("정상적인 주문 체결 요청")
         void confirmOrder() {
             // given
-            Mockito.when(order.getBuyer()).thenReturn(buyer);
+            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            long price = 4_000L;
 
+            Mockito.when(order.getBuyer()).thenReturn(buyer);
             Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(List.of(voucherForSale));
+                    .thenReturn(voucherForSaleList);
 
             Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
+            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
+            Mockito.when(order.getAmount()).thenReturn(price * voucherForSaleList.size());
 
             // when
-            OrderNumberResponse response = orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername());
+            OrderConfirmation orderConfirmation = orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername());
 
             // then
-            assertThat(response.getOrderNumber()).isEqualTo(order.getOrderNumber());
+            assertThat(orderConfirmation.getAmount()).isEqualTo(order.getAmount());
         }
 
         @Test
@@ -312,6 +380,52 @@ class OrderServiceTest {
             assertThatThrownBy(() -> orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername()))
                     .isInstanceOf(InvalidOrderException.class)
                     .hasMessage(ITEM_ORDER_NOT_PLACED.getMessage());
+        }
+
+        @Test
+        void invalidOrderQuantity() {
+            // given
+            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+
+            Mockito.when(order.getBuyer()).thenReturn(buyer);
+            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
+                    .thenReturn(voucherForSaleList);
+
+            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
+
+            // when
+            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size() + 1);
+
+            // then
+            assertThatThrownBy(() -> orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername()))
+                    .isInstanceOf(InvalidOrderException.class)
+                    .hasMessage(INVALID_ORDER_QUANTITY.getMessage());
+        }
+
+        @Test
+        void invalidOrderAmount() {
+            // given
+            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            long price = 4_000L;
+
+            Mockito.when(order.getBuyer()).thenReturn(buyer);
+            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
+                    .thenReturn(voucherForSaleList);
+
+            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
+
+            Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
+            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
+
+            // when
+            Mockito.when(order.getAmount()).thenReturn(0L);
+
+            // then
+            assertThatThrownBy(() -> orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername()))
+                    .isInstanceOf(InvalidOrderException.class)
+                    .hasMessage(INVALID_ORDER_AMOUNT.getMessage());
         }
     }
 

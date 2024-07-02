@@ -44,6 +44,7 @@ import java.util.UUID;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.domain.order.OrderDto.*;
+import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -180,6 +181,22 @@ class OrderControllerTest {
                 .content(requestBody));
 
         // then
+        List<Order> orders = orderRepository.findAll();
+        assertThat(orders).isNotEmpty();
+
+        int quantity = 0;
+        long amount = 0L;
+
+        for (VoucherForSale voucherForSale : voucherForSaleRepository.findAll()) {
+            quantity++;
+            amount += voucherForSale.getPrice();
+            assertThat(voucherForSale.getOrder()).isEqualTo(orders.get(0));
+            assertThat(voucherForSale.getStatus()).isSameAs(ORDER_PLACED);
+        }
+
+        assertThat(orders.get(0).getQuantity()).isEqualTo(quantity);
+        assertThat(orders.get(0).getAmount()).isEqualTo(amount);
+
         String responseBody = response.andReturn().getResponse().getContentAsString();
         OrderNumberResponse orderNumberResponse = objectMapper.readValue(responseBody, OrderNumberResponse.class);
 
@@ -203,24 +220,31 @@ class OrderControllerTest {
     void findOrder() throws Exception {
         // given
         String orderNumber = UUID.randomUUID().toString();
-        Order order = orderRepository.save(new Order(orderNumber, buyer));
+        Order order = new Order(orderNumber, buyer);
+        int quantity = 0;
+        long amount = 0L;
 
-        voucherForSaleRepository.findAll()
-                .forEach(voucherForSale -> {
-                    voucherForSale.updateOrder(order);
-                    voucherForSale.updateStatus(ORDER_PLACED);
-                });
+        for (VoucherForSale voucherForSale : voucherForSaleRepository.findAll()) {
+            quantity++;
+            amount += voucherForSale.getPrice();
+            voucherForSale.updateOrder(order);
+            voucherForSale.updateStatus(ORDER_PLACED);
+        }
+
+        order.updateQuantity(quantity);
+        order.updateAmount(amount);
+        orderRepository.save(order);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getOrderNumber()));
 
         // then
-        String responseBody = response.andReturn().getResponse().getContentAsString();
-        OrderSummary orderSummary = objectMapper.readValue(responseBody, OrderSummary.class);
-
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("quantity").value(orderSummary.getQuantity()))
-                .andExpect(jsonPath("totalPrice").value(orderSummary.getTotalPrice()))
+                .andExpect(jsonPath("orderNumber").value(orderNumber))
+                .andExpect(jsonPath("status").value(IN_PROGRESS.name()))
+                .andExpect(jsonPath("customerName").value("buyer"))
+                .andExpect(jsonPath("quantity").value(quantity))
+                .andExpect(jsonPath("totalPrice").value(amount))
                 .andExpect(jsonPath("orderItems").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),

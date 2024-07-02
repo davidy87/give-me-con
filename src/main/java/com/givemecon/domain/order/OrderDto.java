@@ -84,4 +84,12 @@ public class OrderDto {
             this.status = voucherForSale.getStatus();
         }
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OrderConfirmation {
+
+        private Long amount;
+    }
 }
