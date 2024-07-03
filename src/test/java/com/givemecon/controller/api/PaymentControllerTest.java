@@ -20,6 +20,7 @@ import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -146,6 +147,7 @@ class PaymentControllerTest {
 
     @Test
     @WithMockUser(roles = "USER", username = "tester")
+    @DisplayName("결제 승인 요청 API 테스트")
     void confirmPayment() throws Exception {
         // given
         String paymentKey = "PAYMENT-KEY";
