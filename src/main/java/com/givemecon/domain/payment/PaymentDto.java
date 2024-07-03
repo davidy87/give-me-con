@@ -1,5 +1,8 @@
 package com.givemecon.domain.payment;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -10,10 +13,14 @@ public final class PaymentDto {
     @AllArgsConstructor
     public static class PaymentRequest {
 
+        @NotBlank
         private String paymentKey;
 
+        @NotBlank
         private String orderId;
 
+        @Min(0L)
+        @NotNull
         private Long amount;
     }
 

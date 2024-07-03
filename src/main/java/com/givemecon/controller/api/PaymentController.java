@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.givemecon.domain.payment.PaymentDto.*;
@@ -19,7 +20,9 @@ public class PaymentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/confirm")
-    public PaymentResponse confirmPayment(Authentication authentication, @RequestBody PaymentRequest paymentRequest) {
+    public PaymentResponse confirmPayment(Authentication authentication,
+                                          @Validated @RequestBody PaymentRequest paymentRequest) {
+
         return paymentService.confirmPayment(paymentRequest, authentication.getName());
     }
 }
