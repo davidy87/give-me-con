@@ -1,5 +1,6 @@
 package com.givemecon.domain.voucher;
 
+import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -7,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class VoucherDto {
@@ -68,11 +71,15 @@ public final class VoucherDto {
 
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
-            this.minPrice = voucher.getMinPrice();
             this.title = voucher.getTitle();
             this.imageUrl = voucher.getImageUrl();
             this.description = voucher.getDescription();
             this.caution = voucher.getCaution();
+            this.minPrice = voucher.getVoucherForSaleList().stream()
+                    .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
+                    .map(VoucherForSale::getPrice)
+                    .reduce(Long::min)
+                    .orElse(0L);
         }
     }
 

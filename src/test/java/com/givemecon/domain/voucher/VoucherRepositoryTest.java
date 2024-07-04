@@ -39,7 +39,6 @@ class VoucherRepositoryTest {
         // then
         Voucher found = voucherList.get(0);
         assertThat(found.getTitle()).isEqualTo(title);
-        assertThat(found.getMinPrice()).isEqualTo(0L);
         assertThat(found.getDescription()).isEqualTo(description);
         assertThat(found.getCaution()).isEqualTo(caution);
     }

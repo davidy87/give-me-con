@@ -34,6 +34,7 @@ import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -116,12 +117,15 @@ class LikedVoucherApiControllerTest {
                 .content(new ObjectMapper().writeValueAsString(voucher.getId())));
 
         // then
+        VoucherResponse voucherResponse = new VoucherResponse(voucher);
+
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
-                .andExpect(jsonPath("title").value(voucher.getTitle()))
-                .andExpect(jsonPath("description").value(voucher.getDescription()))
-                .andExpect(jsonPath("caution").value(voucher.getCaution()))
+                .andExpect(jsonPath("id").value(voucherResponse.getId()))
+                .andExpect(jsonPath("minPrice").value(voucherResponse.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucherResponse.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(voucherResponse.getImageUrl()))
+                .andExpect(jsonPath("description").value(voucherResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherResponse.getCaution()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
