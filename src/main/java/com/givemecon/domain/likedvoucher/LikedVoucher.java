@@ -1,6 +1,6 @@
 package com.givemecon.domain.likedvoucher;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE liked_voucher SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class LikedVoucher extends BaseTimeEntity {
+public class LikedVoucher extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

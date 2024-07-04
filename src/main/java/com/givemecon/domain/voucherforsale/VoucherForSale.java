@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucherforsale;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.order.Order;
@@ -22,7 +22,7 @@ import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 @SQLDelete(sql = "UPDATE voucher_for_sale SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class VoucherForSale extends BaseTimeEntity {
+public class VoucherForSale extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,7 @@ package com.givemecon.domain.member;
 
 import com.givemecon.config.enums.OAuth2Provider;
 import com.givemecon.config.enums.Authority;
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE member SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class Member extends BaseTimeEntity {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

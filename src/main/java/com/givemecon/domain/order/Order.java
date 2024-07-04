@@ -1,6 +1,6 @@
 package com.givemecon.domain.order;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -17,7 +17,7 @@ import static com.givemecon.domain.order.OrderStatus.*;
 @SQLRestriction("deleted = false")
 @Table(name = "orders")
 @Entity
-public class Order extends BaseTimeEntity {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

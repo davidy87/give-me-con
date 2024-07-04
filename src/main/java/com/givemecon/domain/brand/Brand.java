@@ -1,6 +1,6 @@
 package com.givemecon.domain.brand;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.brand.BrandIcon;
 import jakarta.persistence.*;
@@ -16,7 +16,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE brand SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class Brand extends BaseTimeEntity {
+public class Brand extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

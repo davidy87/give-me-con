@@ -1,6 +1,6 @@
 package com.givemecon.domain.purchasedvoucher;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
@@ -17,7 +17,7 @@ import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
 @SQLDelete(sql = "UPDATE purchased_voucher SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class PurchasedVoucher extends BaseTimeEntity {
+public class PurchasedVoucher extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

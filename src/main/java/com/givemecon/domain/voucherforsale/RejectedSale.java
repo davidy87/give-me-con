@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucherforsale;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE rejected_sale SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class RejectedSale extends BaseTimeEntity {
+public class RejectedSale extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
