@@ -43,6 +43,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -152,13 +153,15 @@ class VoucherApiControllerTest {
         assertThat(voucher.getBrand()).isEqualTo(brand);
         assertThat(voucher.getBrand().getCategory()).isEqualTo(category);
 
+        VoucherResponse voucherResponse = new VoucherResponse(voucher);
+
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
-                .andExpect(jsonPath("title").value(voucher.getTitle()))
-                .andExpect(jsonPath("description").value(voucher.getDescription()))
-                .andExpect(jsonPath("caution").value(voucher.getCaution()))
-                .andExpect(jsonPath("imageUrl").value(voucher.getImageUrl()))
+                .andExpect(jsonPath("id").value(voucherResponse.getId()))
+                .andExpect(jsonPath("minPrice").value(voucherResponse.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucherResponse.getTitle()))
+                .andExpect(jsonPath("description").value(voucherResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherResponse.getCaution()))
+                .andExpect(jsonPath("imageUrl").value(voucherResponse.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -201,11 +204,16 @@ class VoucherApiControllerTest {
         ResultActions response = mockMvc.perform(get("/api/vouchers/{id}", voucher.getId()));
 
         // then
+        VoucherResponse voucherResponse = new VoucherResponse(voucher);
+
         response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
-                .andExpect(jsonPath("imageUrl").value(voucherImage.getImageUrl()))
+                .andExpect(jsonPath("id").value(voucherResponse.getId()))
+                .andExpect(jsonPath("minPrice").value(voucherResponse.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucherResponse.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(voucherResponse.getImageUrl()))
+                .andExpect(jsonPath("description").value(voucherResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherResponse.getCaution()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -420,7 +428,7 @@ class VoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("minPrice").value(voucher.getMinPrice()))
+                .andExpect(jsonPath("minPrice").value(0L))
                 .andExpect(jsonPath("imageUrl").value(voucher.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),

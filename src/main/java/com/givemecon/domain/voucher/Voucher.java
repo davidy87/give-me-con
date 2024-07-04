@@ -29,9 +29,6 @@ public class Voucher extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String title;
 
-    @Column(nullable = false)
-    private Long minPrice;
-
     @Column(length = 500)
     private String description;
 
@@ -56,7 +53,6 @@ public class Voucher extends BaseTimeEntity {
     @Builder
     public Voucher(String title, String description, String caution) {
         this.title = title;
-        this.minPrice = 0L;
         this.description = description;
         this.caution = caution;
     }
@@ -95,12 +91,6 @@ public class Voucher extends BaseTimeEntity {
         }
 
         voucherForSale.updateVoucher(this);
-
-        if (this.minPrice == 0L) {
-            this.minPrice = voucherForSale.getPrice();
-        } else {
-            this.minPrice = Math.min(this.minPrice, voucherForSale.getPrice());
-        }
     }
 
     public void deleteVoucherForSale(VoucherForSale voucherForSale) {
@@ -108,14 +98,7 @@ public class Voucher extends BaseTimeEntity {
             return;
         }
 
-        boolean removed = voucherForSaleList.remove(voucherForSale);
+        voucherForSaleList.remove(voucherForSale);
         voucherForSale.updateVoucher(null);
-
-        if (removed) {
-            this.minPrice = voucherForSaleList.stream()
-                    .map(VoucherForSale::getPrice)
-                    .reduce(Long::min)
-                    .orElse(0L);
-        }
     }
 }

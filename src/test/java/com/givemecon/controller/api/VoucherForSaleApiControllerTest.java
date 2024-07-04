@@ -170,7 +170,6 @@ class VoucherForSaleApiControllerTest {
         assertThat(voucherForSaleList).isNotEmpty();
 
         VoucherForSale voucherForSale = voucherForSaleList.get(0);
-        assertThat(voucherForSale.getVoucher().getMinPrice()).isEqualTo(price);
 
         response.andExpect(status().isAccepted())
                 .andExpect(jsonPath("id").value(voucherForSale.getId()))
@@ -413,6 +412,5 @@ class VoucherForSaleApiControllerTest {
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherForSaleList).isEmpty();
         assertThat(voucherList.get(0).getVoucherForSaleList()).isEmpty();
-        assertThat(voucher.getMinPrice()).isEqualTo(0L);
     }
 }
