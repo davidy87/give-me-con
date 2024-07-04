@@ -44,7 +44,7 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDate saleRequestedDate;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private VoucherForSaleImage voucherForSaleImage;
 
@@ -79,10 +79,6 @@ public class VoucherForSale extends BaseTimeEntity {
 
     public void updateStatus(VoucherForSaleStatus status) {
         this.status = status;
-    }
-
-    public void updateSaleRequestedDate(LocalDate saleRequestedDate) {
-        this.saleRequestedDate = saleRequestedDate;
     }
 
     public void updateVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

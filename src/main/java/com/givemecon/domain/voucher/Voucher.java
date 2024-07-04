@@ -15,6 +15,8 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE voucher SET deleted = true WHERE id = ?")
@@ -55,6 +57,14 @@ public class Voucher extends BaseTimeEntity {
         this.title = title;
         this.description = description;
         this.caution = caution;
+    }
+
+    public Long getMinPrice() {
+        return voucherForSaleList.stream()
+                .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
+                .map(VoucherForSale::getPrice)
+                .reduce(Long::min)
+                .orElse(0L);
     }
 
     public String getImageUrl() {
