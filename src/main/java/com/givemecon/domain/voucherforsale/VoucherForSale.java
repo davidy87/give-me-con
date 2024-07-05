@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucherforsale;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.order.Order;
@@ -22,7 +22,7 @@ import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 @SQLDelete(sql = "UPDATE voucher_for_sale SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class VoucherForSale extends BaseTimeEntity {
+public class VoucherForSale extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,20 +44,16 @@ public class VoucherForSale extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDate saleRequestedDate;
 
-    @OneToOne
-    @JoinColumn
+    @OneToOne(fetch = FetchType.LAZY)
     private VoucherForSaleImage voucherForSaleImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Voucher voucher;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Member seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Order order;
 
     @Builder
@@ -79,10 +75,6 @@ public class VoucherForSale extends BaseTimeEntity {
 
     public void updateStatus(VoucherForSaleStatus status) {
         this.status = status;
-    }
-
-    public void updateSaleRequestedDate(LocalDate saleRequestedDate) {
-        this.saleRequestedDate = saleRequestedDate;
     }
 
     public void updateVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {

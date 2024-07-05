@@ -12,11 +12,13 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseTimeEntity extends DeletionCheckEntity {
+public abstract class BaseEntity {
 
     @CreatedDate
     private LocalDateTime createdDate;
 
     @LastModifiedDate
     private LocalDateTime modifiedDate;
+
+    private boolean deleted;
 }

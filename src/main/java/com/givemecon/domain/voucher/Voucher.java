@@ -1,6 +1,6 @@
 package com.givemecon.domain.voucher;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
@@ -15,12 +15,14 @@ import org.hibernate.annotations.SQLRestriction;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE voucher SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class Voucher extends BaseTimeEntity {
+public class Voucher extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,11 +38,9 @@ public class Voucher extends BaseTimeEntity {
     private String caution;
 
     @OneToOne
-    @JoinColumn
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Brand brand;
 
     @OneToMany(
@@ -55,6 +55,14 @@ public class Voucher extends BaseTimeEntity {
         this.title = title;
         this.description = description;
         this.caution = caution;
+    }
+
+    public Long getMinPrice() {
+        return voucherForSaleList.stream()
+                .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
+                .map(VoucherForSale::getPrice)
+                .reduce(Long::min)
+                .orElse(0L);
     }
 
     public String getImageUrl() {

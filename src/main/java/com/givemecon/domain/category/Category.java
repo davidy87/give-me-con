@@ -1,6 +1,6 @@
 package com.givemecon.domain.category;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.image.category.CategoryIcon;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -15,7 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE category SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class Category extends BaseTimeEntity {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,6 @@ public class Category extends BaseTimeEntity {
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private CategoryIcon categoryIcon;
 
     @Builder

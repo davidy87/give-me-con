@@ -1,6 +1,6 @@
 package com.givemecon.domain.payment;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -13,7 +13,7 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE payment SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class Payment extends BaseTimeEntity {
+public class Payment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

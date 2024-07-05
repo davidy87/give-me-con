@@ -1,6 +1,6 @@
 package com.givemecon.domain.image;
 
-import com.givemecon.domain.BaseTimeEntity;
+import com.givemecon.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @MappedSuperclass
-public abstract class ImageEntity extends BaseTimeEntity {
+public abstract class ImageEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
