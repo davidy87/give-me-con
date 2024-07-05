@@ -46,8 +46,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAll() {
-        return categoryRepository.findAll()
-                .stream()
+        return categoryRepository.findAllWithCategoryIcon().stream()
                 .map(CategoryResponse::new)
                 .toList();
     }

@@ -24,7 +24,7 @@ public class Category extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private CategoryIcon categoryIcon;
 
     @Builder
