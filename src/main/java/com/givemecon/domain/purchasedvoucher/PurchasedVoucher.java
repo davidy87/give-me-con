@@ -28,11 +28,9 @@ public class PurchasedVoucher extends BaseEntity {
     private PurchasedVoucherStatus status;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private VoucherForSale voucherForSale;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Member owner;
 
     public PurchasedVoucher(VoucherForSale voucherForSale, Member owner) {

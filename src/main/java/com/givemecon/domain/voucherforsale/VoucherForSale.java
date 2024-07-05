@@ -45,19 +45,15 @@ public class VoucherForSale extends BaseEntity {
     private LocalDate saleRequestedDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private VoucherForSaleImage voucherForSaleImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Voucher voucher;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Member seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Order order;
 
     @Builder

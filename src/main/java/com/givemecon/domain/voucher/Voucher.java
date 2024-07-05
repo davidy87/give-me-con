@@ -38,11 +38,9 @@ public class Voucher extends BaseEntity {
     private String caution;
 
     @OneToOne
-    @JoinColumn
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Brand brand;
 
     @OneToMany(

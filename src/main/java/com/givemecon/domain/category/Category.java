@@ -25,7 +25,6 @@ public class Category extends BaseEntity {
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private CategoryIcon categoryIcon;
 
     @Builder

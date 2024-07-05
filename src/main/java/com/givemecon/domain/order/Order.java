@@ -37,7 +37,6 @@ public class Order extends BaseEntity {
     private Long amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Member buyer;
 
     public Order(String orderNumber, Member buyer) {

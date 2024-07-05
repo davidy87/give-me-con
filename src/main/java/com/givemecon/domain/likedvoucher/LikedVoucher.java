@@ -23,11 +23,9 @@ public class LikedVoucher extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Voucher voucher;
 
     @Builder

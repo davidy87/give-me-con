@@ -26,11 +26,9 @@ public class Brand extends BaseEntity {
     private String name;
 
     @OneToOne
-    @JoinColumn
     private BrandIcon brandIcon;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Category category;
 
     @Builder
