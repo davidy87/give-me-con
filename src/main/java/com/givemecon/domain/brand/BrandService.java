@@ -57,10 +57,7 @@ public class BrandService {
 
     @Transactional(readOnly = true)
     public List<BrandResponse> findAllByCategory(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
-
-        return brandRepository.findAllWithBrandIconByCategory(category).stream()
+        return brandRepository.findAllWithBrandIconByCategoryId(categoryId).stream()
                 .map(BrandResponse::new)
                 .toList();
     }

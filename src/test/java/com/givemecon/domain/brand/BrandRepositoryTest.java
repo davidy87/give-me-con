@@ -109,7 +109,7 @@ class BrandRepositoryTest {
         brandRepository.save(brand);
 
         // when
-        List<Brand> result = brandRepository.findAllWithBrandIconByCategory(category);
+        List<Brand> result = brandRepository.findAllWithBrandIconByCategoryId(category.getId());
 
         // then
         assertThat(result).isNotEmpty();

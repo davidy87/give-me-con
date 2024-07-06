@@ -16,8 +16,8 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query("select b from Brand b join fetch b.brandIcon")
     List<Brand> findAllWithBrandIcon();
 
-    @Query("select b from Brand b join fetch b.brandIcon where b.category = :category")
-    List<Brand> findAllWithBrandIconByCategory(Category category);
+    @Query("select b from Brand b join fetch b.brandIcon where b.category.id = :categoryId")
+    List<Brand> findAllWithBrandIconByCategoryId(Long categoryId);
 
     void deleteAllByCategory(Category category);
 }
