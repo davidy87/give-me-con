@@ -9,8 +9,6 @@ import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -51,29 +49,20 @@ public class BrandService {
 
     @Transactional(readOnly = true)
     public List<BrandResponse> findAll() {
-        return brandRepository.findAll()
+        return brandRepository.findAllWithBrandIcon()
                 .stream()
                 .map(BrandResponse::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public PagedBrandResponse findPage(Pageable pageable) {
-        Page<BrandResponse> pageResult = brandRepository.findAll(pageable)
-                .map(BrandResponse::new);
-
-        return new PagedBrandResponse(pageResult);
-    }
-
-    @Transactional(readOnly = true)
-    public PagedBrandResponse findPageByCategoryId(Long categoryId, Pageable pageable) {
+    public List<BrandResponse> findAllByCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-        Page<BrandResponse> pageResult = brandRepository.findPageByCategory(category, pageable)
-                .map(BrandResponse::new);
-
-        return new PagedBrandResponse(pageResult);
+        return brandRepository.findAllWithBrandIconByCategory(category).stream()
+                .map(BrandResponse::new)
+                .toList();
     }
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
