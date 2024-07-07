@@ -2,8 +2,6 @@ package com.givemecon.controller.api;
 
 import com.givemecon.domain.voucher.VoucherService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -28,13 +26,12 @@ public class VoucherApiController {
     }
 
     @GetMapping
-    public PagedVoucherResponse findAll(@RequestParam(required = false) String brandName,
-                                        @PageableDefault(sort = "id") Pageable pageable) {
-        if (brandName != null) {
-            return voucherService.findPageByBrandName(brandName, pageable);
+    public List<VoucherResponse> findAll(@RequestParam(required = false) Long brandId) {
+        if (brandId != null) {
+            return voucherService.findAllByBrandId(brandId);
         }
 
-        return voucherService.findPage(pageable);
+        return voucherService.findAll();
     }
 
     @GetMapping("/{id}")

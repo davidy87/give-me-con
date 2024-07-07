@@ -252,9 +252,6 @@ class VoucherApiControllerTest {
 
         // when
         String uri = UriComponentsBuilder.fromPath("/api/vouchers")
-                .queryParam("page", "1")
-                .queryParam("size", "10")
-                .queryParam("sort", "title")
                 .build()
                 .toString();
 
@@ -268,22 +265,18 @@ class VoucherApiControllerTest {
                         getDocumentResponse(),
                         pagingQueryParameters(),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
-                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 종류 목록"),
-                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
-                                fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
-                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
-                                fieldWithPath("vouchers.[].description").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("vouchers.[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
+                                fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("[].description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }
 
     @Test
-    void findAllByBrandName() throws Exception {
+    void findAllByBrandId() throws Exception {
         // given
         Brand brand = Brand.builder()
                 .name("Test Brand")
@@ -310,10 +303,7 @@ class VoucherApiControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers")
-                .queryParam("brandName", brandSaved.getName())
-                .queryParam("page", "1")
-                .queryParam("size", "10")
-                .queryParam("sort", "title"));
+                .queryParam("brandId", String.valueOf(brandSaved.getId())));
 
         // then
         response.andExpect(status().isOk())
@@ -322,19 +312,15 @@ class VoucherApiControllerTest {
                         getDocumentRequest(),
                         getDocumentResponse(),
                         pagingQueryParameters(
-                                parameterWithName("brandName").description("브랜드 이름")
+                                parameterWithName("brandId").description("브랜드 id")
                         ),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
-                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 종류 목록"),
-                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
-                                fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
-                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
-                                fieldWithPath("vouchers.[].description").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("vouchers.[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
+                                fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("[].description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }

@@ -46,6 +46,7 @@ public class Voucher extends BaseEntity {
     @OneToMany(
             mappedBy = "voucher",
             cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     List<VoucherForSale> voucherForSaleList = new ArrayList<>();

@@ -71,6 +71,13 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
+    public List<VoucherResponse> findAllByBrandId(Long brandId) {
+        return voucherRepository.findAllWithVoucherImageByBrandId(brandId).stream()
+                .map(VoucherResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public PagedVoucherResponse findPage(Pageable pageable) {
         Page<VoucherResponse> pageResult = voucherRepository.findAll(pageable)
                 .map(VoucherResponse::new);
@@ -88,7 +95,6 @@ public class VoucherService {
 
         return new PagedVoucherResponse(pageResult);
     }
-
 
     @Transactional(readOnly = true)
     public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
