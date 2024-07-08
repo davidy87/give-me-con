@@ -46,7 +46,6 @@ public class Voucher extends BaseEntity {
     @OneToMany(
             mappedBy = "voucher",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
             orphanRemoval = true
     )
     List<VoucherForSale> voucherForSaleList = new ArrayList<>();
@@ -58,6 +57,7 @@ public class Voucher extends BaseEntity {
         this.caution = caution;
     }
 
+    // TODO: 최소 가격 구하는 방법 개선 필요
     public Long getMinPrice() {
         return voucherForSaleList.stream()
                 .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)

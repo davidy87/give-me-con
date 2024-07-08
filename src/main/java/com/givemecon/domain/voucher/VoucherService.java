@@ -2,6 +2,7 @@ package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.brand.Brand;
@@ -36,6 +37,8 @@ public class VoucherService {
     private final VoucherImageRepository voucherImageRepository;
 
     private final ImageEntityUtils imageEntityUtils;
+
+    private final VoucherForSaleRepository voucherForSaleRepository;
 
     public VoucherResponse save(VoucherSaveRequest requestDto) {
         Brand brand = brandRepository.findById(requestDto.getBrandId())
@@ -97,12 +100,8 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
-        Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
-
-        return voucher.getVoucherForSaleList().stream()
-                .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
+    public List<VoucherForSaleResponse> findSellingListByVoucherId(Long voucherId) {
+        return voucherForSaleRepository.findAllByVoucherIdAndStatus(voucherId, FOR_SALE).stream()
                 .map(VoucherForSaleResponse::new)
                 .toList();
     }

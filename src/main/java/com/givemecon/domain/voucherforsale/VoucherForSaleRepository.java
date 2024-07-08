@@ -17,6 +17,11 @@ public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, 
 
     List<VoucherForSale> findAllByOrder(Order order);
 
+    @Query("select distinct vfs from VoucherForSale vfs " +
+            "join fetch vfs.voucher v " +
+            "where v.id = :voucherId and vfs.status = :status")
+    List<VoucherForSale> findAllByVoucherIdAndStatus(Long voucherId, VoucherForSaleStatus status);
+
     @Modifying(clearAutomatically = true)
     @Query("update VoucherForSale vfs set vfs.status = 'EXPIRED' " +
             "where vfs.status <> 'EXPIRED' and vfs.expDate < :expDate")

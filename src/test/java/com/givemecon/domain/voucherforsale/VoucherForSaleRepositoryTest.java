@@ -5,6 +5,8 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.order.OrderRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -234,6 +236,33 @@ class VoucherForSaleRepositoryTest {
         VoucherForSale found = voucherForSaleList.get(0);
         assertThat(found).isEqualTo(voucherForSale);
         assertThat(found.getOrder()).isEqualTo(order);
+    }
+
+    @Test
+    @DisplayName("기프티콘 종류와 기프티콘의 상태별 조회")
+    void findAllByVoucherIdAndStatus(@Autowired VoucherRepository voucherRepository) {
+        // given
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .build());
+
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .build();
+
+        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateStatus(FOR_SALE);
+        voucherForSaleRepository.save(voucherForSale);
+
+        // when
+        List<VoucherForSale> result = voucherForSaleRepository.findAllByVoucherIdAndStatus(voucher.getId(), FOR_SALE);
+
+        // then
+        assertThat(result).isNotEmpty();
+        assertThat(result.get(0).getVoucher()).isEqualTo(voucher);
+        assertThat(result.get(0).getStatus()).isSameAs(FOR_SALE);
     }
 
     @Test
