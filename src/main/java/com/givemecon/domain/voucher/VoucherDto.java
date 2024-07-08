@@ -68,7 +68,16 @@ public final class VoucherDto {
 
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
-            this.minPrice = voucher.getMinPrice();
+            this.minPrice = 0L;
+            this.title = voucher.getTitle();
+            this.imageUrl = voucher.getImageUrl();
+            this.description = voucher.getDescription();
+            this.caution = voucher.getCaution();
+        }
+
+        public VoucherResponse(Voucher voucher, Long minPrice) {
+            this.id = voucher.getId();
+            this.minPrice = minPrice;
             this.title = voucher.getTitle();
             this.imageUrl = voucher.getImageUrl();
             this.description = voucher.getDescription();

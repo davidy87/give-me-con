@@ -157,7 +157,7 @@ class VoucherApiControllerTest {
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherResponse.getId()))
-                .andExpect(jsonPath("minPrice").value(voucherResponse.getMinPrice()))
+                .andExpect(jsonPath("minPrice").value(0L))
                 .andExpect(jsonPath("title").value(voucherResponse.getTitle()))
                 .andExpect(jsonPath("description").value(voucherResponse.getDescription()))
                 .andExpect(jsonPath("caution").value(voucherResponse.getCaution()))

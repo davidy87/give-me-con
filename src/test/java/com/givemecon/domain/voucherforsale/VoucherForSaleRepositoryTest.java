@@ -13,10 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -263,6 +265,39 @@ class VoucherForSaleRepositoryTest {
         assertThat(result).isNotEmpty();
         assertThat(result.get(0).getVoucher()).isEqualTo(voucher);
         assertThat(result.get(0).getStatus()).isSameAs(FOR_SALE);
+    }
+
+    @Test
+    @DisplayName("기프티콘 종류별 최소 가격 테스트")
+    void findTopByVoucherOrderByPriceDesc(@Autowired VoucherRepository voucherRepository) {
+        // given
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .build());
+
+        List<VoucherForSale> voucherForSaleList = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            VoucherForSale voucherForSale = VoucherForSale.builder()
+                    .price(4_000L * i)
+                    .expDate(LocalDate.now())
+                    .barcode("1111 1111 1111")
+                    .build();
+
+            voucherForSale.updateVoucher(voucher);
+            voucherForSale.updateStatus(FOR_SALE);
+            voucherForSaleList.add(voucherForSale);
+        }
+
+        voucherForSaleRepository.saveAll(voucherForSaleList);
+
+        // when
+        List<VoucherForSale> found =
+                voucherForSaleRepository.findOneWithMinPrice(voucher, FOR_SALE, PageRequest.of(0, 1));
+
+        // then
+        assertThat(found.size()).isEqualTo(1);
+        assertThat(found.get(0).getPrice()).isEqualTo(4_000L);
     }
 
     @Test

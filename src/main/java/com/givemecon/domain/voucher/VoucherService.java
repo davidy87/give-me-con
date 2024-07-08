@@ -2,6 +2,7 @@ package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
@@ -12,6 +13,7 @@ import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +65,7 @@ public class VoucherService {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
-        return new VoucherResponse(voucher);
+        return getMinPriceResponse(voucher);
     }
 
     @Transactional(readOnly = true)
@@ -76,14 +78,14 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public List<VoucherResponse> findAllByBrandId(Long brandId) {
         return voucherRepository.findAllWithVoucherImageByBrandId(brandId).stream()
-                .map(VoucherResponse::new)
+                .map(this::getMinPriceResponse)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public PagedVoucherResponse findPage(Pageable pageable) {
         Page<VoucherResponse> pageResult = voucherRepository.findAll(pageable)
-                .map(VoucherResponse::new);
+                .map(this::getMinPriceResponse);
 
         return new PagedVoucherResponse(pageResult);
     }
@@ -94,9 +96,20 @@ public class VoucherService {
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         Page<VoucherResponse> pageResult = voucherRepository.findPageByBrand(brand, pageable)
-                .map(VoucherResponse::new);
+                .map(this::getMinPriceResponse);
 
         return new PagedVoucherResponse(pageResult);
+    }
+
+    // 최소 가격을 구해 VoucherResponse DTO 반환
+    private VoucherResponse getMinPriceResponse(Voucher voucher) {
+        Pageable limit = PageRequest.of(0, 1);
+        Long minPrice = voucherForSaleRepository.findOneWithMinPrice(voucher, FOR_SALE, limit).stream()
+                .findFirst()
+                .map(VoucherForSale::getPrice)
+                .orElse(0L);
+
+        return new VoucherResponse(voucher, minPrice);
     }
 
     @Transactional(readOnly = true)

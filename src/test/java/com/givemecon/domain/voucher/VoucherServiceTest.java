@@ -2,6 +2,7 @@ package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,18 +12,24 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.givemecon.domain.voucher.VoucherDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 class VoucherServiceTest {
 
     @Mock
     VoucherRepository voucherRepository;
+
+    @Mock
+    VoucherForSaleRepository voucherForSaleRepository;
 
     @InjectMocks
     VoucherService voucherService;
@@ -42,37 +49,35 @@ class VoucherServiceTest {
 
         Mockito.when(voucherRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(voucher));
+
     }
 
     @Test
     @DisplayName("Voucher 최소 가격 테스트 1")
     void minPrice() {
         // given
-        for (int i = 1; i <= 5; i++) {
-            VoucherForSale voucherForSale = VoucherForSale.builder()
-                    .price(4_000L)
-                    .build();
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
+                .build();
 
-            voucherForSale.updateStatus(FOR_SALE);
-            voucher.addVoucherForSale(voucherForSale);
-        }
+        voucherForSale.updateStatus(FOR_SALE);
+        voucher.addVoucherForSale(voucherForSale);
+
+        Mockito.when(voucherForSaleRepository.findOneWithMinPrice(eq(voucher), eq(FOR_SALE), any(Pageable.class)))
+                .thenReturn(List.of(voucherForSale));
 
         // when
         VoucherResponse voucherResponse = voucherService.find(1L);
 
         // then
-        Assertions.assertThat(voucherResponse.getMinPrice()).isEqualTo(4_000L);
+        Assertions.assertThat(voucherResponse.getMinPrice()).isEqualTo(voucherForSale.getPrice());
     }
 
     @Test
-    @DisplayName("Voucher 최소 가격 테스트 2 - VoucherForSale의 상태가 FOR_SALE이 아니라면 해당 가격은 최소 가격 계산에 포함되지 않는다.")
+    @DisplayName("Voucher 최소 가격 테스트 2 - 최소 가격 조회 시 결과가 없다면 0으로 설정한다.")
     void minPriceNotForSale() {
-        VoucherForSale voucherForSale = VoucherForSale.builder()
-                .price(4_000L)
-                .build();
-
-        voucherForSale.updateStatus(SOLD);
-        voucher.addVoucherForSale(voucherForSale);
+        Mockito.when(voucherForSaleRepository.findOneWithMinPrice(eq(voucher), eq(FOR_SALE), any(Pageable.class)))
+                .thenReturn(List.of());
 
         // when
         VoucherResponse voucherResponse = voucherService.find(1L);
