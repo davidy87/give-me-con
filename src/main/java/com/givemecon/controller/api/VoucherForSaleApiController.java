@@ -41,6 +41,11 @@ public class VoucherForSaleApiController {
         return voucherForSaleService.findAllByStatus(paramDto);
     }
 
+    @GetMapping("/{id}/image")
+    public ImageResponse findImageUrl(@PathVariable Long id) {
+        return voucherForSaleService.findImageUrl(id);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public VoucherForSaleResponse updateStatus(@PathVariable Long id,

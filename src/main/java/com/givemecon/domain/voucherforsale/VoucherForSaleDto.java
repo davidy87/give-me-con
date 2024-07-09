@@ -87,8 +87,6 @@ public final class VoucherForSaleDto {
 
         private final String barcode;
 
-        private final String imageUrl;
-
         private final LocalDate expDate;
 
         private final VoucherForSaleStatus status;
@@ -100,10 +98,19 @@ public final class VoucherForSaleDto {
             this.price = voucherForSale.getPrice();
             this.title = voucherForSale.getTitle();
             this.barcode = voucherForSale.getBarcode();
-            this.imageUrl = voucherForSale.getImageUrl();
             this.expDate = voucherForSale.getExpDate();
             this.status = voucherForSale.getStatus();
             this.saleRequestedDate = voucherForSale.getSaleRequestedDate();
+        }
+    }
+
+    @Getter
+    public static class ImageResponse {
+
+        private final String imageUrl;
+
+        public ImageResponse(VoucherForSale voucherForSale) {
+            this.imageUrl = voucherForSale.getImageUrl();
         }
     }
 }

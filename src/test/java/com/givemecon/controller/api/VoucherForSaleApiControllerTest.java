@@ -15,6 +15,7 @@ import com.givemecon.util.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -176,7 +178,6 @@ class VoucherForSaleApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("status").value(voucherForSale.getStatus().name()))
                 .andExpect(jsonPath("saleRequestedDate").value(voucherForSale.getSaleRequestedDate().toString()))
@@ -195,7 +196,6 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
                                 fieldWithPath("saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
@@ -245,7 +245,6 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
                                 fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
                                 fieldWithPath("[].saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
@@ -303,10 +302,50 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
                                 fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
                                 fieldWithPath("[].saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
+                        ))
+                );
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    @DisplayName("기프티콘 이미지 조회 API 테스트")
+    void findImageUrl() throws Exception {
+        // given
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now())
+                .build();
+
+        VoucherForSaleImage voucherForSaleImage =
+                voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+                        .imageKey("imageKey")
+                        .imageUrl("imageUrl")
+                        .originalName("voucherForSaleImage")
+                        .build());
+
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
+        voucherForSale.updateVoucher(voucher);
+        voucherForSaleRepository.save(voucherForSale);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale/{id}/image", voucherForSale.getId())
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("id").description("판매 중인 기프티콘 id")
+                        ),
+                        responseFields(
+                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL")
                         ))
                 );
     }
@@ -346,7 +385,6 @@ class VoucherForSaleApiControllerTest {
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSale.getImageUrl()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("status").value(FOR_SALE.name()))
                 .andExpect(jsonPath("saleRequestedDate").value(voucherForSale.getSaleRequestedDate().toString()))
@@ -367,7 +405,6 @@ class VoucherForSaleApiControllerTest {
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
                                 fieldWithPath("saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")

@@ -1,6 +1,8 @@
 package com.givemecon.domain.voucherforsale;
 
 import com.givemecon.config.JpaConfig;
+import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
+import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
@@ -298,6 +300,36 @@ class VoucherForSaleRepositoryTest {
         // then
         assertThat(found.size()).isEqualTo(1);
         assertThat(found.get(0).getPrice()).isEqualTo(4_000L);
+    }
+
+    @Test
+    @DisplayName("VoucherForSale & VoucherForSaleImage fetch join 테스트")
+    void findOneWithImage(@Autowired VoucherForSaleImageRepository voucherForSaleImageRepository) {
+        // given
+        VoucherForSale voucherForSale = VoucherForSale.builder()
+                .price(4_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .build();
+
+        VoucherForSaleImage voucherForSaleImage = VoucherForSaleImage.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("originalName")
+                .build();
+
+        voucherForSaleImageRepository.save(voucherForSaleImage);
+        voucherForSale.updateStatus(FOR_SALE);
+        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
+        voucherForSaleRepository.save(voucherForSale);
+
+        // when
+        Optional<VoucherForSale> result = voucherForSaleRepository.findOneWithImage(voucherForSale.getId());
+
+        // then
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(voucherForSale.getId());
+        assertThat(result.get().getImageUrl()).isEqualTo(voucherForSaleImage.getImageUrl());
     }
 
     @Test

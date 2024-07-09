@@ -75,6 +75,14 @@ public class VoucherForSaleService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public ImageResponse findImageUrl(Long voucherForSaleId) {
+        VoucherForSale voucherForSale = voucherForSaleRepository.findOneWithImage(voucherForSaleId)
+                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
+
+        return new ImageResponse(voucherForSale);
+    }
+
     public VoucherForSaleResponse updateStatus(Long id, StatusUpdateRequest requestDto) {
         VoucherForSale voucherForSale = voucherForSaleRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));

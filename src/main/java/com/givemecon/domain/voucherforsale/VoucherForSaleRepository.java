@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, Long> {
 
@@ -28,6 +29,11 @@ public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, 
             "where vfs.voucher = :voucher and vfs.status = :status " +
             "order by vfs.price")
     List<VoucherForSale> findOneWithMinPrice(Voucher voucher, VoucherForSaleStatus status, Pageable pageable);
+
+    @Query("select vfs from VoucherForSale vfs " +
+            "join fetch vfs.voucherForSaleImage " +
+            "where vfs.id = :voucherForSaleId")
+    Optional<VoucherForSale> findOneWithImage(Long voucherForSaleId);
 
     @Modifying(clearAutomatically = true)
     @Query("update VoucherForSale vfs set vfs.status = 'EXPIRED' " +
