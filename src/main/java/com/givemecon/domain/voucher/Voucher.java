@@ -3,7 +3,6 @@ package com.givemecon.domain.voucher;
 import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,9 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,13 +36,6 @@ public class Voucher extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Brand brand;
-
-    @OneToMany(
-            mappedBy = "voucher",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    List<VoucherForSale> voucherForSaleList = new ArrayList<>();
 
     @Builder
     public Voucher(String title, String description, String caution) {
@@ -77,26 +66,5 @@ public class Voucher extends BaseEntity {
 
     public void updateBrand(Brand brand) {
         this.brand = brand;
-    }
-
-    public void addVoucherForSale(VoucherForSale voucherForSale) {
-        if (voucherForSale == null) {
-            return;
-        }
-
-        if (!voucherForSaleList.contains(voucherForSale)) {
-            voucherForSaleList.add(voucherForSale);
-        }
-
-        voucherForSale.updateVoucher(this);
-    }
-
-    public void deleteVoucherForSale(VoucherForSale voucherForSale) {
-        if (voucherForSale == null) {
-            return;
-        }
-
-        voucherForSaleList.remove(voucherForSale);
-        voucherForSale.updateVoucher(null);
     }
 }

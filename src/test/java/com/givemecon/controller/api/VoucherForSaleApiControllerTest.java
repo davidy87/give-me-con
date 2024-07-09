@@ -392,7 +392,7 @@ class VoucherForSaleApiControllerTest {
 
         voucherForSale.updateSeller(user);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())
@@ -408,9 +408,7 @@ class VoucherForSaleApiControllerTest {
                         ))
                 );
 
-        List<Voucher> voucherList = voucherRepository.findAll();
         List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
         assertThat(voucherForSaleList).isEmpty();
-        assertThat(voucherList.get(0).getVoucherForSaleList()).isEmpty();
     }
 }

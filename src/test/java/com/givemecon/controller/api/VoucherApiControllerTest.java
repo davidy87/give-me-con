@@ -352,7 +352,7 @@ class VoucherApiControllerTest {
                             .build());
 
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucher.addVoucherForSale(voucherForSale);
+            voucherForSale.updateVoucher(voucher);
             voucherForSale.updateStatus(FOR_SALE);
         }
 

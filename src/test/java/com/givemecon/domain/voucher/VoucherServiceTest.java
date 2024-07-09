@@ -61,7 +61,7 @@ class VoucherServiceTest {
                 .build();
 
         voucherForSale.updateStatus(FOR_SALE);
-        voucher.addVoucherForSale(voucherForSale);
+        voucherForSale.updateVoucher(voucher);
 
         Mockito.when(voucherForSaleRepository.findOneWithMinPrice(eq(voucher), eq(FOR_SALE), any(Pageable.class)))
                 .thenReturn(List.of(voucherForSale));
