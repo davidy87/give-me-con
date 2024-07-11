@@ -17,7 +17,19 @@ public interface PurchasedVoucherRepository extends JpaRepository<PurchasedVouch
             "where pv.id = :id and pv.owner.username = :username")
     Optional<PurchasedVoucher> findByIdAndUsername(Long id, String username);
 
-    List<PurchasedVoucher> findAllByOwner(Member owner);
+    @Query("select pv from PurchasedVoucher pv " +
+            "join fetch pv.voucherForSale vfs " +
+            "join fetch vfs.voucher v " +
+            "join fetch v.voucherImage " +
+            "where pv.id = :id and pv.owner.username = :username")
+    Optional<PurchasedVoucher> findOneFetchedByIdAndUsername(Long id, String username);
+
+    @Query("select pv from PurchasedVoucher pv " +
+            "join fetch pv.voucherForSale vfs " +
+            "join fetch vfs.voucher v " +
+            "join fetch v.voucherImage " +
+            "where pv.owner.username = :username")
+    List<PurchasedVoucher> findAllFetchedByUsername(String username);
 
     Page<PurchasedVoucher> findPageByOwner(Member owner, Pageable pageable);
 

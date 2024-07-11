@@ -1,7 +1,11 @@
 package com.givemecon.domain.purchasedvoucher;
 
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
@@ -29,6 +33,12 @@ class PurchasedVoucherRepositoryTest {
     MemberRepository memberRepository;
 
     @Autowired
+    VoucherRepository voucherRepository;
+
+    @Autowired
+    VoucherImageRepository voucherImageRepository;
+
+    @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
 
     @Autowired
@@ -46,11 +56,24 @@ class PurchasedVoucherRepositoryTest {
                 .authority(USER)
                 .build());
 
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .title("voucher")
+                .build());
+
+        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("originalName")
+                .build());
+
         voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
                 .build());
+
+        voucher.updateVoucherImage(voucherImage);
+        voucherForSale.updateVoucher(voucher);
     }
 
     @Test
@@ -81,6 +104,45 @@ class PurchasedVoucherRepositoryTest {
         assertThat(found.isPresent()).isTrue();
         assertThat(found.get()).isEqualTo(saved);
         assertThat(found.get().getVoucherForSale()).isEqualTo(voucherForSale);
+    }
+
+    @Test
+    @DisplayName("PurchasedVoucher fetch join 단일 조회 테스트")
+    void findOneFetchedByIdAndUsername() {
+        // given
+        PurchasedVoucher saved =
+                purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
+
+        // when
+        Optional<PurchasedVoucher> result =
+                purchasedVoucherRepository.findOneFetchedByIdAndUsername(saved.getId(), member.getUsername());
+
+        // then
+        assertThat(result).isPresent();
+
+        PurchasedVoucher found = result.get();
+        assertThat(found.getId()).isEqualTo(saved.getId());
+        assertThat(found.getVoucherForSale()).isEqualTo(voucherForSale);
+        assertThat(found.getOwner()).isEqualTo(member);
+    }
+
+    @Test
+    @DisplayName("PurchasedVoucher fetch join 전체 조회 테스트")
+    void findAllFetchedByUsername() {
+        // given
+        PurchasedVoucher saved =
+                purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
+
+        // when
+        List<PurchasedVoucher> result = purchasedVoucherRepository.findAllFetchedByUsername(member.getUsername());
+
+        // then
+        assertThat(result).isNotEmpty();
+
+        PurchasedVoucher found = result.get(0);
+        assertThat(found.getId()).isEqualTo(saved.getId());
+        assertThat(found.getVoucherForSale()).isEqualTo(voucherForSale);
+        assertThat(found.getOwner()).isEqualTo(member);
     }
 
     @Test

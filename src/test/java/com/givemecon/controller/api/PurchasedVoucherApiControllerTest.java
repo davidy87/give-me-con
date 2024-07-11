@@ -3,6 +3,8 @@ package com.givemecon.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus;
@@ -70,6 +72,9 @@ class PurchasedVoucherApiControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
+    VoucherImageRepository voucherImageRepository;
+
+    @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
 
     @Autowired
@@ -105,6 +110,14 @@ class PurchasedVoucherApiControllerTest {
         voucher = voucherRepository.save(Voucher.builder()
                 .title("voucher")
                 .build());
+
+        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+                .imageUrl("imageUrl")
+                .imageKey("imageKey")
+                .originalName("originalName")
+                .build());
+
+        voucher.updateVoucherImage(voucherImage);
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
@@ -162,7 +175,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("[].voucherImageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -207,17 +220,25 @@ class PurchasedVoucherApiControllerTest {
                         getDocumentResponse(),
                         pagingQueryParameters(),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
-                                fieldWithPath("purchasedVouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 구매 목록"),
-                                fieldWithPath("purchasedVouchers.[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
-                                fieldWithPath("purchasedVouchers.[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("purchasedVouchers.[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
-                                fieldWithPath("purchasedVouchers.[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
-                                fieldWithPath("purchasedVouchers.[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("purchasedVouchers.[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
-                                fieldWithPath("purchasedVouchers.[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
+//                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+//                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
+//                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
+//                                fieldWithPath("purchasedVouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 구매 목록"),
+//                                fieldWithPath("purchasedVouchers.[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
+//                                fieldWithPath("purchasedVouchers.[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
+//                                fieldWithPath("purchasedVouchers.[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+//                                fieldWithPath("purchasedVouchers.[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
+//                                fieldWithPath("purchasedVouchers.[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
+//                                fieldWithPath("purchasedVouchers.[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
+//                                fieldWithPath("purchasedVouchers.[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
+
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
+                                fieldWithPath("[].voucherImageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
 
@@ -253,7 +274,7 @@ class PurchasedVoucherApiControllerTest {
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
                 .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
+                .andExpect(jsonPath("voucherImageUrl").value(voucherForSaleImage.getImageUrl()))
                 .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
                 .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
@@ -267,7 +288,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("voucherImageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -303,11 +324,6 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getVoucher().getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
-                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
                 .andExpect(jsonPath("status").value(purchasedVoucher.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -317,11 +333,6 @@ class PurchasedVoucherApiControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
-                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );

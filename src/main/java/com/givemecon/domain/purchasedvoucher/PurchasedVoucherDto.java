@@ -49,7 +49,7 @@ public final class PurchasedVoucherDto {
 
         private final String barcode;
 
-        private final String imageUrl;
+        private final String voucherImageUrl;
 
         private final PurchasedVoucherStatus status;
 
@@ -61,7 +61,7 @@ public final class PurchasedVoucherDto {
             this.price = voucherForSale.getPrice();
             this.expDate = voucherForSale.getExpDate();
             this.barcode = voucherForSale.getBarcode();
-            this.imageUrl = voucherForSale.getImageUrl();
+            this.voucherImageUrl = voucherForSale.getVoucher().getImageUrl();
             this.status = purchasedVoucher.getStatus();
         }
     }
@@ -82,6 +82,19 @@ public final class PurchasedVoucherDto {
             this.totalPages = pageResult.getTotalPages();
             this.size = pageResult.getSize();
             this.purchasedVouchers = pageResult.getContent();
+        }
+    }
+
+    @Getter
+    public static class StatusUpdateResponse {
+
+        private final Long id;
+
+        private final PurchasedVoucherStatus status;
+
+        public StatusUpdateResponse(PurchasedVoucher purchasedVoucher) {
+            this.id = purchasedVoucher.getId();
+            this.status = purchasedVoucher.getStatus();
         }
     }
 }

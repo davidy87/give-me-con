@@ -2,8 +2,6 @@ package com.givemecon.controller.api;
 
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -28,20 +26,24 @@ public class PurchasedVoucherApiController {
         return purchasedVoucherService.saveAll(authentication.getName(), requestDtoList.getRequests());
     }
 
+//    @GetMapping
+//    public PagedPurchasedVoucherResponse findAllByUsername(Authentication authentication,
+//                                                           @PageableDefault(sort = "id") Pageable pageable) {
+//
+//        return purchasedVoucherService.findPageByUsername(authentication.getName(), pageable);
+//    }
     @GetMapping
-    public PagedPurchasedVoucherResponse findAllByUsername(Authentication authentication,
-                                                           @PageableDefault(sort = "id") Pageable pageable) {
-
-        return purchasedVoucherService.findPageByUsername(authentication.getName(), pageable);
+    public List<PurchasedVoucherResponse> findAllByUsername(Authentication authentication) {
+        return purchasedVoucherService.findAllByUsername(authentication.getName());
     }
 
     @GetMapping("/{id}")
-    public PurchasedVoucherResponse find(Authentication authentication, @PathVariable Long id) {
-        return purchasedVoucherService.find(id, authentication.getName());
+    public PurchasedVoucherResponse findOne(Authentication authentication, @PathVariable Long id) {
+        return purchasedVoucherService.findOne(id, authentication.getName());
     }
 
     @PutMapping("/{id}")
-    public PurchasedVoucherResponse setUsed(@PathVariable Long id) {
+    public StatusUpdateResponse setUsed(@PathVariable Long id) {
         return purchasedVoucherService.setUsed(id);
     }
 }

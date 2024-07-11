@@ -60,10 +60,7 @@ public class PurchasedVoucherService {
 
     @Transactional(readOnly = true)
     public List<PurchasedVoucherResponse> findAllByUsername(String username) {
-        Member owner = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
-
-        return purchasedVoucherRepository.findAllByOwner(owner).stream()
+        return purchasedVoucherRepository.findAllFetchedByUsername(username).stream()
                 .map(PurchasedVoucherResponse::new)
                 .toList();
     }
@@ -80,13 +77,13 @@ public class PurchasedVoucherService {
     }
 
     @Transactional(readOnly = true)
-    public PurchasedVoucherResponse find(Long id, String username) {
-        return purchasedVoucherRepository.findByIdAndUsername(id, username)
+    public PurchasedVoucherResponse findOne(Long id, String username) {
+        return purchasedVoucherRepository.findOneFetchedByIdAndUsername(id, username)
                 .map(PurchasedVoucherResponse::new)
                 .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
     }
 
-    public PurchasedVoucherResponse setUsed(Long id) {
+    public StatusUpdateResponse setUsed(Long id) {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
 
@@ -95,6 +92,6 @@ public class PurchasedVoucherService {
             purchasedVoucher.updateStatus(USED);
         }
 
-        return new PurchasedVoucherResponse(purchasedVoucher);
+        return new StatusUpdateResponse(purchasedVoucher);
     }
 }
