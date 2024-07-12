@@ -1,4 +1,4 @@
-package com.givemecon.domain.image.voucher;
+package com.givemecon.domain.image.voucherkind;
 
 import com.givemecon.domain.image.ImageEntity;
 import jakarta.persistence.*;
@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class VoucherImage extends ImageEntity {
+public class VoucherKindImage extends ImageEntity {
 
     @Builder
-    public VoucherImage(String imageKey, String imageUrl, String originalName) {
+    public VoucherKindImage(String imageKey, String imageUrl, String originalName) {
         super(imageKey, imageUrl, originalName);
     }
 }

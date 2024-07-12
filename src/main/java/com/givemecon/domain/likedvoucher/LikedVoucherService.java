@@ -2,8 +2,8 @@ package com.givemecon.domain.likedvoucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
 import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
 
 @RequiredArgsConstructor
@@ -26,57 +26,57 @@ public class LikedVoucherService {
 
     private final MemberRepository memberRepository;
 
-    private final VoucherRepository voucherRepository;
+    private final VoucherKindRepository voucherKindRepository;
 
     private final VoucherForSaleRepository voucherForSaleRepository;
 
     private final LikedVoucherRepository likedVoucherRepository;
 
-    public VoucherResponse save(String username, Long voucherId) {
+    public VoucherKindResponse save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        Voucher voucher = voucherRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+        VoucherKind voucherKind = voucherKindRepository.findById(voucherId)
+                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
         likedVoucherRepository.save(LikedVoucher.builder()
                 .member(member)
-                .voucher(voucher)
+                .voucherKind(voucherKind)
                 .build());
 
-        return new VoucherResponse(voucher);
+        return new VoucherKindResponse(voucherKind);
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllByUsername(String username) {
+    public List<VoucherKindResponse> findAllByUsername(String username) {
         return likedVoucherRepository.findAllFetchedByUsername(username).stream()
-                .map(likedVoucher -> getMinPriceResponse(likedVoucher.getVoucher()))
+                .map(likedVoucher -> getMinPriceResponse(likedVoucher.getVoucherKind()))
                 .toList();
     }
 
-    // 최소 가격을 구해 VoucherResponse DTO 반환
-    private VoucherResponse getMinPriceResponse(Voucher voucher) {
+    // 최소 가격을 구해 VoucherKindResponse DTO 반환
+    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherForSaleRepository.findOneWithMinPrice(voucher, FOR_SALE, limit).stream()
+        Long minPrice = voucherForSaleRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
                 .map(VoucherForSale::getPrice)
                 .orElse(0L);
 
-        return new VoucherResponse(voucher, minPrice);
+        return new VoucherKindResponse(voucherKind, minPrice);
     }
 
     @Transactional(readOnly = true)
-    public PagedVoucherResponse findPageByUsername(String username, Pageable pageable) {
+    public PagedVoucherKindResponse findPageByUsername(String username, Pageable pageable) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        Page<VoucherResponse> pageResult = likedVoucherRepository.findPageByMember(member, pageable)
-                .map(likedVoucher -> new VoucherResponse(likedVoucher.getVoucher()));
+        Page<VoucherKindResponse> pageResult = likedVoucherRepository.findPageByMember(member, pageable)
+                .map(likedVoucher -> new VoucherKindResponse(likedVoucher.getVoucherKind()));
 
-        return new PagedVoucherResponse(pageResult);
+        return new PagedVoucherKindResponse(pageResult);
     }
 
-    public void deleteByUsernameAndVoucherId(String username, Long voucherId) {
-        likedVoucherRepository.deleteByUsernameAndVoucherId(username, voucherId);
+    public void deleteByUsernameAndVoucherId(String username, Long voucherKindId) {
+        likedVoucherRepository.deleteByUsernameAndVoucherKindId(username, voucherKindId);
     }
 }

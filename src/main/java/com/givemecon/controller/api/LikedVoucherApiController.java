@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,18 +21,18 @@ public class LikedVoucherApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public VoucherResponse save(Authentication authentication, @RequestBody Long voucherId) {
+    public VoucherKindResponse save(Authentication authentication, @RequestBody Long voucherId) {
         return likedVoucherService.save(authentication.getName(), voucherId);
     }
 
     @GetMapping
-    public List<VoucherResponse> findAllByUsername(Authentication authentication) {
+    public List<VoucherKindResponse> findAllByUsername(Authentication authentication) {
         return likedVoucherService.findAllByUsername(authentication.getName());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{voucherId}")
-    public void deleteByUsernameAndVoucherId(Authentication authentication, @PathVariable Long voucherId) {
-        likedVoucherService.deleteByUsernameAndVoucherId(authentication.getName(), voucherId);
+    @DeleteMapping("/{voucherKindId}")
+    public void deleteByUsernameAndVoucherId(Authentication authentication, @PathVariable Long voucherKindId) {
+        likedVoucherService.deleteByUsernameAndVoucherId(authentication.getName(), voucherKindId);
     }
 }

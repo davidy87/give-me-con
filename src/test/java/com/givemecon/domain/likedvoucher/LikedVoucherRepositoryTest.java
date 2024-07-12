@@ -1,12 +1,12 @@
 package com.givemecon.domain.likedvoucher;
 
 import com.givemecon.config.enums.Authority;
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,8 +55,8 @@ class LikedVoucherRepositoryTest {
 
     @Test
     void findAllFetchedByUsername(@Autowired MemberRepository memberRepository,
-                                  @Autowired VoucherRepository voucherRepository,
-                                  @Autowired VoucherImageRepository voucherImageRepository) {
+                                  @Autowired VoucherKindRepository voucherKindRepository,
+                                  @Autowired VoucherKindImageRepository voucherKindImageRepository) {
 
         // given
         Member member = memberRepository.save(Member.builder()
@@ -65,21 +65,21 @@ class LikedVoucherRepositoryTest {
                 .authority(Authority.USER)
                 .build());
 
-        Voucher voucher = Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
                 .build();
 
-        VoucherImage voucherImage = VoucherImage.builder()
+        VoucherKindImage voucherKindImage = VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("originalName")
                 .build();
 
-        voucher.updateVoucherImage(voucherImage);
-        voucherRepository.save(voucher);
-        voucherImageRepository.save(voucherImage);
+        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKindRepository.save(voucherKind);
+        voucherKindImageRepository.save(voucherKindImage);
 
-        LikedVoucher likedVoucher = new LikedVoucher(member, voucher);
+        LikedVoucher likedVoucher = new LikedVoucher(member, voucherKind);
         likedVoucherRepository.save(likedVoucher);
 
         // when
@@ -90,6 +90,6 @@ class LikedVoucherRepositoryTest {
 
         LikedVoucher found = result.get(0);
         assertThat(found.getMember()).isEqualTo(member);
-        assertThat(found.getVoucher()).isEqualTo(voucher);
+        assertThat(found.getVoucherKind()).isEqualTo(voucherKind);
     }
 }

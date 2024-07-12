@@ -1,11 +1,11 @@
 package com.givemecon.domain.purchasedvoucher;
 
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
@@ -33,10 +33,10 @@ class PurchasedVoucherRepositoryTest {
     MemberRepository memberRepository;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
-    VoucherImageRepository voucherImageRepository;
+    VoucherKindImageRepository voucherKindImageRepository;
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
@@ -56,11 +56,11 @@ class PurchasedVoucherRepositoryTest {
                 .authority(USER)
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
 
-        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+        VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("originalName")
@@ -72,8 +72,8 @@ class PurchasedVoucherRepositoryTest {
                 .expDate(LocalDate.now())
                 .build());
 
-        voucher.updateVoucherImage(voucherImage);
-        voucherForSale.updateVoucher(voucher);
+        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherForSale.updateVoucher(voucherKind);
     }
 
     @Test

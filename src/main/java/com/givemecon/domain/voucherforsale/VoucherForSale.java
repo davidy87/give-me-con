@@ -4,7 +4,7 @@ import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.order.Order;
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -48,7 +48,7 @@ public class VoucherForSale extends BaseEntity {
     private VoucherForSaleImage voucherForSaleImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Voucher voucher;
+    private VoucherKind voucherKind;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member seller;
@@ -66,7 +66,7 @@ public class VoucherForSale extends BaseEntity {
     }
 
     public String getTitle() {
-        return voucher.getTitle();
+        return voucherKind.getTitle();
     }
 
     public String getImageUrl() {
@@ -81,8 +81,8 @@ public class VoucherForSale extends BaseEntity {
         this.voucherForSaleImage = voucherForSaleImage;
     }
 
-    public void updateVoucher(Voucher voucher) {
-        this.voucher = voucher;
+    public void updateVoucher(VoucherKind voucherKind) {
+        this.voucherKind = voucherKind;
     }
 
     public void updateSeller(Member seller) {

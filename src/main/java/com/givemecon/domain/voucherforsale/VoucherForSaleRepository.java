@@ -2,7 +2,7 @@ package com.givemecon.domain.voucherforsale;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.order.Order;
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -21,14 +21,14 @@ public interface VoucherForSaleRepository extends JpaRepository<VoucherForSale, 
     List<VoucherForSale> findAllByOrder(Order order);
 
     @Query("select distinct vfs from VoucherForSale vfs " +
-            "join fetch vfs.voucher v " +
-            "where v.id = :voucherId and vfs.status = :status")
-    List<VoucherForSale> findAllByVoucherIdAndStatus(Long voucherId, VoucherForSaleStatus status);
+            "join fetch vfs.voucherKind vk " +
+            "where vk.id = :voucherKindId and vfs.status = :status")
+    List<VoucherForSale> findAllByVoucherKindIdAndStatus(Long voucherKindId, VoucherForSaleStatus status);
 
     @Query("select vfs from VoucherForSale vfs " +
-            "where vfs.voucher = :voucher and vfs.status = :status " +
+            "where vfs.voucherKind = :voucherKind and vfs.status = :status " +
             "order by vfs.price")
-    List<VoucherForSale> findOneWithMinPrice(Voucher voucher, VoucherForSaleStatus status, Pageable pageable);
+    List<VoucherForSale> findOneWithMinPrice(VoucherKind voucherKind, VoucherForSaleStatus status, Pageable pageable);
 
     @Query("select vfs from VoucherForSale vfs " +
             "join fetch vfs.voucherForSaleImage " +

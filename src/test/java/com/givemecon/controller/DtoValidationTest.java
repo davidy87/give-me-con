@@ -134,7 +134,7 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("Voucher Request DTO 검증 실패 테스트")
+    @DisplayName("VoucherKind Request DTO 검증 실패 테스트")
     void voucherDtoFailed() throws Exception {
         // given
         MockPart price = new MockPart("price", null);
@@ -142,7 +142,7 @@ public class DtoValidationTest {
         MockMultipartFile imageFile = new MockMultipartFile("imageFile", (byte[]) null);
 
         // when
-        ResultActions saveResult = mockMvc.perform(multipart("/api/vouchers")
+        ResultActions saveResult = mockMvc.perform(multipart("/api/voucher-kinds")
                 .file(imageFile)
                 .part(price)
                 .part(title)

@@ -5,8 +5,8 @@ import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,7 @@ public class VoucherForSaleService {
 
     private final MemberRepository memberRepository;
 
-    private final VoucherRepository voucherRepository;
+    private final VoucherKindRepository voucherKindRepository;
 
     private final VoucherForSaleRepository voucherForSaleRepository;
 
@@ -41,15 +41,15 @@ public class VoucherForSaleService {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+        VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherId())
+                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
         VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherForSaleImage.class, requestDto.getImageFile()));
 
         VoucherForSale voucherForSale = voucherForSaleRepository.save(requestDto.toEntity());
         voucherForSale.updateSeller(seller);
-        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateVoucher(voucherKind);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
 
         return new VoucherForSaleResponse(voucherForSale);

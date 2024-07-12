@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.enums.Authority;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
@@ -13,8 +13,8 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.order.OrderRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import jakarta.transaction.Transactional;
@@ -76,10 +76,10 @@ class OrderControllerTest {
     BrandRepository brandRepository;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
-    VoucherImageRepository voucherImageRepository;
+    VoucherKindImageRepository voucherKindImageRepository;
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
@@ -125,21 +125,21 @@ class OrderControllerTest {
                 .name("Brand")
                 .build());
 
-        Voucher voucher = Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
                 .description("description")
                 .caution("caution")
                 .build();
 
-        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+        VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucher.updateBrand(brand);
-        voucher.updateVoucherImage(voucherImage);
-        voucherRepository.save(voucher);
+        voucherKind.updateBrand(brand);
+        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKindRepository.save(voucherKind);
 
         voucherForSaleIdList = new ArrayList<>();
 
@@ -160,7 +160,7 @@ class OrderControllerTest {
 
             voucherForSale.updateStatus(FOR_SALE);
             voucherForSale.updateSeller(seller);
-            voucherForSale.updateVoucher(voucher);
+            voucherForSale.updateVoucher(voucherKind);
             voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
             voucherForSaleIdList.add(voucherForSale.getId());
         }

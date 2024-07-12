@@ -7,8 +7,8 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.order.OrderRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -244,10 +244,10 @@ class VoucherForSaleRepositoryTest {
 
     @Test
     @DisplayName("기프티콘 종류와 기프티콘의 상태별 조회")
-    void findAllByVoucherIdAndStatus(@Autowired VoucherRepository voucherRepository) {
+    void findAllByVoucherKindIdAndStatus(@Autowired VoucherKindRepository voucherKindRepository) {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
 
         VoucherForSale voucherForSale = VoucherForSale.builder()
@@ -256,25 +256,25 @@ class VoucherForSaleRepositoryTest {
                 .barcode("1111 1111 1111")
                 .build();
 
-        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateVoucher(voucherKind);
         voucherForSale.updateStatus(FOR_SALE);
         voucherForSaleRepository.save(voucherForSale);
 
         // when
-        List<VoucherForSale> result = voucherForSaleRepository.findAllByVoucherIdAndStatus(voucher.getId(), FOR_SALE);
+        List<VoucherForSale> result = voucherForSaleRepository.findAllByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE);
 
         // then
         assertThat(result).isNotEmpty();
-        assertThat(result.get(0).getVoucher()).isEqualTo(voucher);
+        assertThat(result.get(0).getVoucherKind()).isEqualTo(voucherKind);
         assertThat(result.get(0).getStatus()).isSameAs(FOR_SALE);
     }
 
     @Test
     @DisplayName("기프티콘 종류별 최소 가격 테스트")
-    void findTopByVoucherOrderByPriceDesc(@Autowired VoucherRepository voucherRepository) {
+    void findOneWithMinPrice(@Autowired VoucherKindRepository voucherKindRepository) {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
 
         List<VoucherForSale> voucherForSaleList = new ArrayList<>();
@@ -286,7 +286,7 @@ class VoucherForSaleRepositoryTest {
                     .barcode("1111 1111 1111")
                     .build();
 
-            voucherForSale.updateVoucher(voucher);
+            voucherForSale.updateVoucher(voucherKind);
             voucherForSale.updateStatus(FOR_SALE);
             voucherForSaleList.add(voucherForSale);
         }
@@ -295,7 +295,7 @@ class VoucherForSaleRepositoryTest {
 
         // when
         List<VoucherForSale> found =
-                voucherForSaleRepository.findOneWithMinPrice(voucher, FOR_SALE, PageRequest.of(0, 1));
+                voucherForSaleRepository.findOneWithMinPrice(voucherKind, FOR_SALE, PageRequest.of(0, 1));
 
         // then
         assertThat(found.size()).isEqualTo(1);

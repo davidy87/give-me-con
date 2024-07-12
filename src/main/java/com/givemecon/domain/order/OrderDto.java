@@ -1,6 +1,6 @@
 package com.givemecon.domain.order;
 
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
 import jakarta.validation.constraints.Min;
@@ -73,13 +73,13 @@ public class OrderDto {
         private VoucherForSaleStatus status;
 
         public OrderItem(VoucherForSale voucherForSale) {
-            Voucher voucher = voucherForSale.getVoucher();
+            VoucherKind voucherKind = voucherForSale.getVoucherKind();
 
             this.voucherForSaleId = voucherForSale.getId();
             this.price = voucherForSale.getPrice();
-            this.brandName = voucher.getBrand().getName();
+            this.brandName = voucherKind.getBrand().getName();
             this.title = voucherForSale.getTitle();
-            this.voucherImageUrl = voucher.getImageUrl();
+            this.voucherImageUrl = voucherKind.getImageUrl();
             this.expDate = voucherForSale.getExpDate();
             this.status = voucherForSale.getStatus();
         }

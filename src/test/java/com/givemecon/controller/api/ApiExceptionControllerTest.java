@@ -7,7 +7,7 @@ import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -136,7 +136,7 @@ public class ApiExceptionControllerTest {
     @Test
     void voucherExceptionTest() throws Exception {
         // given
-        String url = "http://localhost:" + port + "/api/vouchers/" + 1;
+        String url = "http://localhost:" + port + "/api/voucher-kinds/" + 1;
 
         // when
         ResultActions response = mockMvc.perform(get(url)
@@ -147,7 +147,7 @@ public class ApiExceptionControllerTest {
                 .andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
                 .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                .andExpect(jsonPath("error.message").value(new EntityNotFoundException(Voucher.class).getMessage()));
+                .andExpect(jsonPath("error.message").value(new EntityNotFoundException(VoucherKind.class).getMessage()));
     }
 
     @Test

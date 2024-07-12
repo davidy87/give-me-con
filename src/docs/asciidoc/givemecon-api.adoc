@@ -99,31 +99,31 @@ operation::brand-api-controller-test/delete-one[snippets='path-parameters,http-r
 {sp} +
 
 === 새 기프티콘 생성
-operation::voucher-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+operation::voucherKind-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 단일 조회
-operation::voucher-api-controller-test/find-one[snippets='path-parameters,http-request,response-fields,http-response']
+operation::voucherKind-api-controller-test/find-one[snippets='path-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 전체 조회
-operation::voucher-api-controller-test/find-all[snippets='query-parameters,http-request,response-fields,http-response']
+operation::voucherKind-api-controller-test/find-all[snippets='query-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 브랜드 이름 별 기프티콘 조회
-operation::voucher-api-controller-test/find-all-by-brand-name[snippets='query-parameters,http-request,response-fields,http-response']
+operation::voucherKind-api-controller-test/find-all-by-brand-name[snippets='query-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 id 별 판매중인 기프티콘 조회
-operation::voucher-api-controller-test/find-selling-list-by-voucher-id[snippets='path-parameters,http-request,response-fields,http-response']
+operation::voucherKind-api-controller-test/find-selling-list-by-voucherKind-id[snippets='path-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 수정
-operation::voucher-api-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
+operation::voucherKind-api-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 삭제
-operation::voucher-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+operation::voucherKind-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
 :sectnums!:
 {sp} +
 
@@ -133,23 +133,23 @@ operation::voucher-api-controller-test/delete-one[snippets='path-parameters,http
 {sp} +
 
 === 기프티콘 판매 등록
-operation::voucher-for-sale-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+operation::voucherKind-for-sale-api-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
 {sp} +
 
 === 판매자별 기프티콘 조회
-operation::voucher-for-sale-api-controller-test/find-all-by-seller[snippets='http-request,response-fields,http-response']
+operation::voucherKind-for-sale-api-controller-test/find-all-by-seller[snippets='http-request,response-fields,http-response']
 {sp} +
 
 === 상태별 기프티콘 조회
-operation::voucher-for-sale-api-controller-test/find-all-by-status[snippets='status-code,query-parameters,http-request,response-fields,http-response']
+operation::voucherKind-for-sale-api-controller-test/find-all-by-status[snippets='status-code,query-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 판매 상태 변경
-operation::voucher-for-sale-api-controller-test/update-status[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
+operation::voucherKind-for-sale-api-controller-test/update-status[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
 {sp} +
 
 === 판매중인 기프티콘 삭제
-operation::voucher-for-sale-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+operation::voucherKind-for-sale-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
 :sectnums!:
 {sp} +
 
@@ -159,19 +159,19 @@ operation::voucher-for-sale-api-controller-test/delete-one[snippets='path-parame
 {sp} +
 
 === 기프티콘 구매 등록
-operation::purchased-voucher-api-controller-test/save-all[snippets='request-fields,http-request,response-fields,http-response']
+operation::purchased-voucherKind-api-controller-test/save-all[snippets='request-fields,http-request,response-fields,http-response']
 {sp} +
 
 === 구매한 기프티콘 단일 조회
-operation::purchased-voucher-api-controller-test/find-one[snippets='path-parameters,http-request,response-fields,http-response']
+operation::purchased-voucherKind-api-controller-test/find-one[snippets='path-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 회원 별 구매한 기프티콘 전체 조회
-operation::purchased-voucher-api-controller-test/find-all-by-username[snippets='http-request,response-fields,http-response']
+operation::purchased-voucherKind-api-controller-test/find-all-by-username[snippets='http-request,response-fields,http-response']
 {sp} +
 
 === 구매한 기프티콘 사용 유효 여부 수정
-operation::purchased-voucher-api-controller-test/update-validity[snippets='path-parameters,http-request,response-fields,http-response']
+operation::purchased-voucherKind-api-controller-test/update-validity[snippets='path-parameters,http-request,response-fields,http-response']
 :sectnums!:
 {sp} +
 
@@ -181,13 +181,13 @@ operation::purchased-voucher-api-controller-test/update-validity[snippets='path-
 {sp} +
 
 === 기프티콘 찜하기 등록
-operation::liked-voucher-api-controller-test/save[snippets='http-request,response-fields,http-response']
+operation::liked-voucherKind-api-controller-test/save[snippets='http-request,response-fields,http-response']
 {sp} +
 
 === 회원 별 찜한 기프티콘 전체 조회
-operation::liked-voucher-api-controller-test/find-all-by-username[snippets='http-request,response-fields,http-response']
+operation::liked-voucherKind-api-controller-test/find-all-by-username[snippets='http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 찜하기 취소
-operation::liked-voucher-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+operation::liked-voucherKind-api-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
 :sectnums!:

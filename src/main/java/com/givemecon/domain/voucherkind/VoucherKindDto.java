@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucher;
+package com.givemecon.domain.voucherkind;
 
 import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
@@ -9,11 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class VoucherDto {
+public final class VoucherKindDto {
 
     @Getter
     @RequiredArgsConstructor
-    public static class VoucherSaveRequest {
+    public static class VoucherKindSaveRequest {
 
         @NotNull
         @Min(1L)
@@ -29,8 +29,8 @@ public final class VoucherDto {
         @ValidFile
         private final MultipartFile imageFile;
 
-        public Voucher toEntity() {
-            return Voucher.builder()
+        public VoucherKind toEntity() {
+            return VoucherKind.builder()
                     .title(title)
                     .description(description)
                     .caution(caution)
@@ -40,7 +40,7 @@ public final class VoucherDto {
 
     @Getter
     @RequiredArgsConstructor
-    public static class VoucherUpdateRequest {
+    public static class VoucherKindUpdateRequest {
 
         private final String title;
 
@@ -52,7 +52,7 @@ public final class VoucherDto {
     }
 
     @Getter
-    public static class VoucherResponse {
+    public static class VoucherKindResponse {
 
         private final Long id;
 
@@ -66,27 +66,27 @@ public final class VoucherDto {
 
         private final String caution;
 
-        public VoucherResponse(Voucher voucher) {
-            this.id = voucher.getId();
+        public VoucherKindResponse(VoucherKind voucherKind) {
+            this.id = voucherKind.getId();
             this.minPrice = 0L;
-            this.title = voucher.getTitle();
-            this.imageUrl = voucher.getImageUrl();
-            this.description = voucher.getDescription();
-            this.caution = voucher.getCaution();
+            this.title = voucherKind.getTitle();
+            this.imageUrl = voucherKind.getImageUrl();
+            this.description = voucherKind.getDescription();
+            this.caution = voucherKind.getCaution();
         }
 
-        public VoucherResponse(Voucher voucher, Long minPrice) {
-            this.id = voucher.getId();
+        public VoucherKindResponse(VoucherKind voucherKind, Long minPrice) {
+            this.id = voucherKind.getId();
             this.minPrice = minPrice;
-            this.title = voucher.getTitle();
-            this.imageUrl = voucher.getImageUrl();
-            this.description = voucher.getDescription();
-            this.caution = voucher.getCaution();
+            this.title = voucherKind.getTitle();
+            this.imageUrl = voucherKind.getImageUrl();
+            this.description = voucherKind.getDescription();
+            this.caution = voucherKind.getCaution();
         }
     }
 
     @Getter
-    public static class PagedVoucherResponse {
+    public static class PagedVoucherKindResponse {
 
         private final int number;
 
@@ -94,9 +94,9 @@ public final class VoucherDto {
 
         private final int size;
 
-        private final List<VoucherResponse> vouchers;
+        private final List<VoucherKindResponse> vouchers;
 
-        public PagedVoucherResponse(Page<VoucherResponse> pageResult) {
+        public PagedVoucherKindResponse(Page<VoucherKindResponse> pageResult) {
             this.number = pageResult.getNumber();
             this.totalPages = pageResult.getTotalPages();
             this.size = pageResult.getSize();

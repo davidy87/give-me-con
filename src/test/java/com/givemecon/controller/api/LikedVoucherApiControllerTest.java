@@ -3,12 +3,12 @@ package com.givemecon.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.likedvoucher.LikedVoucher;
 import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -61,10 +61,10 @@ class LikedVoucherApiControllerTest {
     JwtTokenService jwtTokenService;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
-    VoucherImageRepository voucherImageRepository;
+    VoucherKindImageRepository voucherKindImageRepository;
 
     @Autowired
     MemberRepository memberRepository;
@@ -97,36 +97,36 @@ class LikedVoucherApiControllerTest {
     @Test
     void save() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
-                .description("voucher description")
-                .caution("voucher caution")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
+                .description("voucherKind description")
+                .caution("voucherKind caution")
                 .build());
 
-        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+        VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
-                .originalName("voucherImage.png")
+                .originalName("voucherKindImage.png")
                 .build());
 
-        voucher.updateVoucherImage(voucherImage);
+        voucherKind.updateVoucherImage(voucherKindImage);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(voucher.getId())));
+                .content(new ObjectMapper().writeValueAsString(voucherKind.getId())));
 
         // then
-        VoucherResponse voucherResponse = new VoucherResponse(voucher);
+        VoucherKindResponse voucherKindResponse = new VoucherKindResponse(voucherKind);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucherResponse.getId()))
-                .andExpect(jsonPath("minPrice").value(voucherResponse.getMinPrice()))
-                .andExpect(jsonPath("title").value(voucherResponse.getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherResponse.getImageUrl()))
-                .andExpect(jsonPath("description").value(voucherResponse.getDescription()))
-                .andExpect(jsonPath("caution").value(voucherResponse.getCaution()))
+                .andExpect(jsonPath("id").value(voucherKindResponse.getId()))
+                .andExpect(jsonPath("minPrice").value(voucherKindResponse.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucherKindResponse.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(voucherKindResponse.getImageUrl()))
+                .andExpect(jsonPath("description").value(voucherKindResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherKindResponse.getCaution()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -143,7 +143,7 @@ class LikedVoucherApiControllerTest {
 
         List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
         LikedVoucher found = likedVoucherList.get(0);
-        assertThat(found.getVoucher()).isEqualTo(voucher);
+        assertThat(found.getVoucherKind()).isEqualTo(voucherKind);
         assertThat(found.getMember()).isEqualTo(member);
     }
 
@@ -152,20 +152,20 @@ class LikedVoucherApiControllerTest {
     void findAllByUsername() throws Exception {
         // given
         for (int i = 1; i <= 5; i++) {
-            Voucher voucher = voucherRepository.save(Voucher.builder()
-                    .title("voucher" + i)
-                    .description("voucher" + i + " description")
-                    .caution("voucher" + i + " caution")
+            VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                    .title("voucherKind" + i)
+                    .description("voucherKind" + i + " description")
+                    .caution("voucherKind" + i + " caution")
                     .build());
 
-            VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+            VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
-                    .originalName("voucherImage" + i + ".png")
+                    .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucher.updateVoucherImage(voucherImage);
-            likedVoucherRepository.save(new LikedVoucher(member, voucher));
+            voucherKind.updateVoucherImage(voucherKindImage);
+            likedVoucherRepository.save(new LikedVoucher(member, voucherKind));
         }
 
         // when
@@ -192,18 +192,18 @@ class LikedVoucherApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        Voucher voucherSaved = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKindSaved = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
 
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(
                 LikedVoucher.builder()
                         .member(member)
-                        .voucher(voucherSaved)
+                        .voucherKind(voucherKindSaved)
                         .build());
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherSaved.getId())
+        ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherKindSaved.getId())
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then

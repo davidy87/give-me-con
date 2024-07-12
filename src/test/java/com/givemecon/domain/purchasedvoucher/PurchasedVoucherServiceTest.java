@@ -1,8 +1,8 @@
 package com.givemecon.domain.purchasedvoucher;
 
-import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,15 +38,15 @@ class PurchasedVoucherServiceTest {
 
     @BeforeEach
     void setup() {
-        Voucher voucher = Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
                 .build();
 
-        VoucherImage voucherImage = VoucherImage.builder()
+        VoucherKindImage voucherKindImage = VoucherKindImage.builder()
                 .imageUrl("voucherImageUrl")
                 .build();
 
-        voucher.updateVoucherImage(voucherImage);
+        voucherKind.updateVoucherImage(voucherKindImage);
 
         VoucherForSaleImage voucherForSaleImage = VoucherForSaleImage.builder()
                 .imageUrl("imageUrl")
@@ -58,7 +58,7 @@ class PurchasedVoucherServiceTest {
                 .expDate(LocalDate.now())
                 .build();
 
-        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateVoucher(voucherKind);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
     }
 
@@ -82,7 +82,7 @@ class PurchasedVoucherServiceTest {
         assertThat(response.get(0).getPrice()).isEqualTo(voucherForSale.getPrice());
         assertThat(response.get(0).getBarcode()).isEqualTo(voucherForSale.getBarcode());
         assertThat(response.get(0).getExpDate()).isEqualTo(voucherForSale.getExpDate());
-        assertThat(response.get(0).getVoucherImageUrl()).isEqualTo(voucherForSale.getVoucher().getVoucherImage().getImageUrl());
+        assertThat(response.get(0).getVoucherKindImageUrl()).isEqualTo(voucherForSale.getVoucherKind().getVoucherKindImage().getImageUrl());
         assertThat(response.get(0).getStatus()).isEqualTo(purchasedVoucher.getStatus());
     }
 

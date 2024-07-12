@@ -5,8 +5,8 @@ import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
 import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
@@ -76,7 +76,7 @@ class VoucherForSaleApiControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
     VoucherForSaleRepository voucherForSaleRepository;
@@ -100,7 +100,7 @@ class VoucherForSaleApiControllerTest {
 
     Member admin;
 
-    Voucher voucher;
+    VoucherKind voucherKind;
 
     TokenInfo userTokenInfo;
 
@@ -120,8 +120,8 @@ class VoucherForSaleApiControllerTest {
                 .bucket(bucketName)
                 .build());
 
-        voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
 
         user = memberRepository.save(Member.builder()
@@ -160,7 +160,7 @@ class VoucherForSaleApiControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
                 .file(imageFile)
-                .part(new MockPart("voucherId", voucher.getId().toString().getBytes()))
+                .part(new MockPart("voucherId", voucherKind.getId().toString().getBytes()))
                 .part(new MockPart("price", price.toString().getBytes()))
                 .part(new MockPart("expDate", expDate.toString().getBytes()))
                 .part(new MockPart("barcode", barcode.getBytes()))
@@ -223,7 +223,7 @@ class VoucherForSaleApiControllerTest {
                             .build());
 
             toSave.updateVoucherForSaleImage(voucherForSaleImage);
-            toSave.updateVoucher(voucher);
+            toSave.updateVoucher(voucherKind);
             toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
@@ -276,7 +276,7 @@ class VoucherForSaleApiControllerTest {
             }
 
             toSave.updateVoucherForSaleImage(voucherForSaleImage);
-            toSave.updateVoucher(voucher);
+            toSave.updateVoucher(voucherKind);
             toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
@@ -328,7 +328,7 @@ class VoucherForSaleApiControllerTest {
                         .build());
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateVoucher(voucherKind);
         voucherForSaleRepository.save(voucherForSale);
 
         // when
@@ -367,7 +367,7 @@ class VoucherForSaleApiControllerTest {
                         .build());
 
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateVoucher(voucherKind);
         voucherForSaleRepository.save(voucherForSale);
 
         // when
@@ -429,7 +429,7 @@ class VoucherForSaleApiControllerTest {
 
         voucherForSale.updateSeller(user);
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucherForSale.updateVoucher(voucherKind);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())

@@ -5,7 +5,7 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.exception.InvalidOrderException;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherforsale.VoucherForSale;
 import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -157,7 +157,7 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("정상적인 주문 조회 처리")
-        void findOrder(@Mock Brand brand, @Mock Voucher voucher) {
+        void findOrder(@Mock Brand brand, @Mock VoucherKind voucherKind) {
             // given
             List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
             long price = 4_000L;
@@ -172,10 +172,10 @@ class OrderServiceTest {
 
             Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucherForSale.getPrice()).thenReturn(price);
-            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+            Mockito.when(voucherForSale.getVoucherKind()).thenReturn(voucherKind);
 
-            Mockito.when(voucher.getBrand()).thenReturn(brand);
-            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(voucherKind.getBrand()).thenReturn(brand);
+            Mockito.when(voucherKind.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when
@@ -230,7 +230,7 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("주문 조회 예외 3 - 주문 수량에 오차가 있을 경우, 예외를 던진다.")
-        void invalidOrderQuantity(@Mock Brand brand, @Mock Voucher voucher) {
+        void invalidOrderQuantity(@Mock Brand brand, @Mock VoucherKind voucherKind) {
             // given
             List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
 
@@ -242,10 +242,10 @@ class OrderServiceTest {
 
             Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucherForSale.getPrice()).thenReturn(4_000L);
-            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+            Mockito.when(voucherForSale.getVoucherKind()).thenReturn(voucherKind);
 
-            Mockito.when(voucher.getBrand()).thenReturn(brand);
-            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(voucherKind.getBrand()).thenReturn(brand);
+            Mockito.when(voucherKind.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when
@@ -259,7 +259,7 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("주문 조회 예외 4 - 총 주문 금액에 오차가 있을 경우, 예외를 던진다.")
-        void invalidOrderAmount(@Mock Brand brand, @Mock Voucher voucher) {
+        void invalidOrderAmount(@Mock Brand brand, @Mock VoucherKind voucherKind) {
             // given
             List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
             long price = 4_000L;
@@ -273,10 +273,10 @@ class OrderServiceTest {
 
             Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucherForSale.getPrice()).thenReturn(price);
-            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+            Mockito.when(voucherForSale.getVoucherKind()).thenReturn(voucherKind);
 
-            Mockito.when(voucher.getBrand()).thenReturn(brand);
-            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(voucherKind.getBrand()).thenReturn(brand);
+            Mockito.when(voucherKind.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when

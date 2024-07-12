@@ -2,8 +2,8 @@ package com.givemecon.controller.api;
 
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.s3.S3MockConfig;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.image.category.CategoryIcon;
@@ -70,7 +70,7 @@ class CategoryApiControllerTest {
     BrandRepository brandRepository;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
     S3Mock s3Mock;
@@ -254,15 +254,15 @@ class CategoryApiControllerTest {
                 .name("brand")
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .description("description")
                 .caution("caution")
                 .build());
 
         category.updateCategoryIcon(categoryIcon);
         brand.updateCategory(category);
-        voucher.updateBrand(brand);
+        voucherKind.updateBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));
@@ -279,9 +279,9 @@ class CategoryApiControllerTest {
 
         List<Category> categoryList = categoryRepository.findAll();
         List<Brand> brandList = brandRepository.findAll();
-        List<Voucher> voucherList = voucherRepository.findAll();
+        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
         assertThat(categoryList).isEmpty();
         assertThat(brandList).isEmpty();
-        assertThat(voucherList).isEmpty();
+        assertThat(voucherKindList).isEmpty();
     }
 }

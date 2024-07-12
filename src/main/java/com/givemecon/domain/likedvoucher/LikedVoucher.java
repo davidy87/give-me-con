@@ -2,7 +2,7 @@ package com.givemecon.domain.likedvoucher;
 
 import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.member.Member;
-import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,11 +26,11 @@ public class LikedVoucher extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Voucher voucher;
+    private VoucherKind voucherKind;
 
     @Builder
-    public LikedVoucher(Member member, Voucher voucher) {
+    public LikedVoucher(Member member, VoucherKind voucherKind) {
         this.member = member;
-        this.voucher = voucher;
+        this.voucherKind = voucherKind;
     }
 }

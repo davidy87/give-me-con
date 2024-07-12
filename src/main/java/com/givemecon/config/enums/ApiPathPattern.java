@@ -12,7 +12,7 @@ public enum ApiPathPattern {
 
     CATEGORY_API("/categories/**"),
     BRAND_API("/brands/**"),
-    VOUCHER_API("/vouchers/**"),
+    VOUCHER_KIND_API("/voucher-kinds/**"),
     VOUCHER_FOR_SALE_API("/vouchers-for-sale/**"),
     LIKED_VOUCHER_API("/liked-vouchers/**"),
     PURCHASED_VOUCHER_API("/purchased-vouchers/**"),
