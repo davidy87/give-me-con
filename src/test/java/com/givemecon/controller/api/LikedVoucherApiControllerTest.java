@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -147,9 +148,10 @@ class LikedVoucherApiControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER", username = "tester")
     void findAllByUsername() throws Exception {
         // given
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 5; i++) {
             Voucher voucher = voucherRepository.save(Voucher.builder()
                     .title("voucher" + i)
                     .description("voucher" + i + " description")
@@ -167,11 +169,7 @@ class LikedVoucherApiControllerTest {
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/liked-vouchers")
-                .queryParam("page", "1")
-                .queryParam("size", "10")
-                .queryParam("sort", "id")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
+        ResultActions response = mockMvc.perform(get("/api/liked-vouchers"));
 
         // then
         response.andExpect(status().isOk())
@@ -181,16 +179,12 @@ class LikedVoucherApiControllerTest {
                         getDocumentResponse(),
                         pagingQueryParameters(),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
-                                fieldWithPath("vouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 종류 목록"),
-                                fieldWithPath("vouchers.[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
-                                fieldWithPath("vouchers.[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
-                                fieldWithPath("vouchers.[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("vouchers.[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
-                                fieldWithPath("vouchers.[].description").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("vouchers.[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
+                                fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
+                                fieldWithPath("[].description").type(JsonFieldType.STRING).description("상품 설명"),
+                                fieldWithPath("[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
                         ))
                 );
     }

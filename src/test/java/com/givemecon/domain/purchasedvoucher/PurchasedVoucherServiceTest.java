@@ -62,8 +62,6 @@ class PurchasedVoucherServiceTest {
         voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
     }
 
-
-
     @Test
     @DisplayName("회원 닉네임별 구매한 기프티콘 조회 테스트")
     void findAllByUsername() {

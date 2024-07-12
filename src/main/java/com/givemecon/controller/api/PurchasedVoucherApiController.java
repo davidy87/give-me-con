@@ -26,12 +26,6 @@ public class PurchasedVoucherApiController {
         return purchasedVoucherService.saveAll(authentication.getName(), requestDtoList.getRequests());
     }
 
-//    @GetMapping
-//    public PagedPurchasedVoucherResponse findAllByUsername(Authentication authentication,
-//                                                           @PageableDefault(sort = "id") Pageable pageable) {
-//
-//        return purchasedVoucherService.findPageByUsername(authentication.getName(), pageable);
-//    }
     @GetMapping
     public List<PurchasedVoucherResponse> findAllByUsername(Authentication authentication) {
         return purchasedVoucherService.findAllByUsername(authentication.getName());

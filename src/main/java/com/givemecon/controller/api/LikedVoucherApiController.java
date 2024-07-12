@@ -3,11 +3,11 @@ package com.givemecon.controller.api;
 import com.givemecon.domain.likedvoucher.LikedVoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.givemecon.domain.voucher.VoucherDto.*;
 
@@ -26,10 +26,8 @@ public class LikedVoucherApiController {
     }
 
     @GetMapping
-    public PagedVoucherResponse findAllByUsername(Authentication authentication,
-                                                  @PageableDefault(sort = "id") Pageable pageable) {
-
-        return likedVoucherService.findPageByUsername(authentication.getName(), pageable);
+    public List<VoucherResponse> findAllByUsername(Authentication authentication) {
+        return likedVoucherService.findAllByUsername(authentication.getName());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
