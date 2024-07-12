@@ -87,7 +87,7 @@ class VoucherKindRepositoryTest {
                 .build();
 
         voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
         brandRepository.save(brand);
         voucherKindImageRepository.save(voucherKindImage);
         voucherKindRepository.save(voucherKind);

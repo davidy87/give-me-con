@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
 import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
@@ -8,14 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class VoucherForSaleDto {
+public final class VoucherDto {
 
     @Getter
     @RequiredArgsConstructor
-    public static class VoucherForSaleRequest {
+    public static class VoucherRequest {
 
         @NotNull
         @Min(1L)
@@ -35,8 +35,8 @@ public final class VoucherForSaleDto {
         @ValidFile
         private final MultipartFile imageFile;
 
-        public VoucherForSale toEntity() {
-            return VoucherForSale.builder()
+        public Voucher toEntity() {
+            return Voucher.builder()
                     .price(price)
                     .expDate(expDate)
                     .barcode(barcode)
@@ -77,7 +77,7 @@ public final class VoucherForSaleDto {
     }
 
     @Getter
-    public static class VoucherForSaleResponse {
+    public static class VoucherResponse {
 
         private final Long id;
 
@@ -89,18 +89,18 @@ public final class VoucherForSaleDto {
 
         private final LocalDate expDate;
 
-        private final VoucherForSaleStatus status;
+        private final VoucherStatus status;
 
         private final LocalDate saleRequestedDate;
 
-        public VoucherForSaleResponse(VoucherForSale voucherForSale) {
-            this.id = voucherForSale.getId();
-            this.price = voucherForSale.getPrice();
-            this.title = voucherForSale.getTitle();
-            this.barcode = voucherForSale.getBarcode();
-            this.expDate = voucherForSale.getExpDate();
-            this.status = voucherForSale.getStatus();
-            this.saleRequestedDate = voucherForSale.getSaleRequestedDate();
+        public VoucherResponse(Voucher voucher) {
+            this.id = voucher.getId();
+            this.price = voucher.getPrice();
+            this.title = voucher.getTitle();
+            this.barcode = voucher.getBarcode();
+            this.expDate = voucher.getExpDate();
+            this.status = voucher.getStatus();
+            this.saleRequestedDate = voucher.getSaleRequestedDate();
         }
     }
 
@@ -109,8 +109,8 @@ public final class VoucherForSaleDto {
 
         private final String imageUrl;
 
-        public ImageResponse(VoucherForSale voucherForSale) {
-            this.imageUrl = voucherForSale.getImageUrl();
+        public ImageResponse(Voucher voucher) {
+            this.imageUrl = voucher.getImageUrl();
         }
     }
 }

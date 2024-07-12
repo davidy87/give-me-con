@@ -2,8 +2,8 @@ package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -24,7 +24,7 @@ public class PurchasedVoucherService {
 
     private final MemberRepository memberRepository;
 
-    private final VoucherForSaleRepository voucherForSaleRepository;
+    private final VoucherRepository voucherRepository;
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
 
@@ -49,13 +49,13 @@ public class PurchasedVoucherService {
      * @return PurchasedVoucher Entity
      */
     private PurchasedVoucher saveOne(Member buyer, PurchasedVoucherRequest requestDto) {
-        VoucherForSale voucherForSale = voucherForSaleRepository.findById(requestDto.getVoucherForSaleId())
+        Voucher voucher = voucherRepository.findById(requestDto.getVoucherForSaleId())
                 .filter(forSale -> forSale.getStatus() == FOR_SALE)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
-        voucherForSale.updateStatus(SOLD);
+        voucher.updateStatus(SOLD);
 
-        return purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, buyer));
+        return purchasedVoucherRepository.save(new PurchasedVoucher(voucher, buyer));
     }
 
     @Transactional(readOnly = true)

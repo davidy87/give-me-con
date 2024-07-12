@@ -4,9 +4,9 @@ import com.givemecon.domain.member.Member;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucher.VoucherStatus;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 class SchedulerServiceTest {
 
     @Mock
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherRepository voucherRepository;
 
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
@@ -37,25 +37,25 @@ class SchedulerServiceTest {
     void updateExpired() {
         // given
         LocalDate today = LocalDate.now();
-        List<VoucherForSale> voucherForSaleList = new ArrayList<>();
+        List<Voucher> voucherList = new ArrayList<>();
         List<PurchasedVoucher> purchasedVoucherList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            VoucherForSale voucherForSale = VoucherForSale.builder()
+            Voucher voucher = Voucher.builder()
                     .price(4_000L)
                     .expDate(today.minusDays(1))
                     .barcode("1111 1111 1111")
                     .build();
 
-            PurchasedVoucher purchasedVoucher = new PurchasedVoucher(voucherForSale, Member.builder().build());
-            voucherForSaleList.add(voucherForSale);
+            PurchasedVoucher purchasedVoucher = new PurchasedVoucher(voucher, Member.builder().build());
+            voucherList.add(voucher);
             purchasedVoucherList.add(purchasedVoucher);
         }
 
-        Mockito.when(voucherForSaleRepository.updateAllByExpDateBefore(any(LocalDate.class)))
+        Mockito.when(voucherRepository.updateAllByExpDateBefore(any(LocalDate.class)))
                 .then(invocation -> {
-                    voucherForSaleList.forEach(vfs -> vfs.updateStatus(VoucherForSaleStatus.EXPIRED));
-                    return voucherForSaleList.size();
+                    voucherList.forEach(vfs -> vfs.updateStatus(VoucherStatus.EXPIRED));
+                    return voucherList.size();
                 });
 
         Mockito.when(purchasedVoucherRepository.updateAllStatusForExpired())
@@ -65,12 +65,12 @@ class SchedulerServiceTest {
                 });
 
         // when
-        SchedulerService schedulerService = new SchedulerService(voucherForSaleRepository, purchasedVoucherRepository);
+        SchedulerService schedulerService = new SchedulerService(voucherRepository, purchasedVoucherRepository);
         schedulerService.updateExpired(today);
 
         // then
-        voucherForSaleList.forEach(voucherForSale ->
-                assertThat(voucherForSale.getStatus()).isEqualTo(VoucherForSaleStatus.EXPIRED));
+        voucherList.forEach(voucherForSale ->
+                assertThat(voucherForSale.getStatus()).isEqualTo(VoucherStatus.EXPIRED));
 
         purchasedVoucherList.forEach(purchasedVoucher ->
                 assertThat(purchasedVoucher.getStatus()).isEqualTo(PurchasedVoucherStatus.EXPIRED));

@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,10 @@ class RejectedSaleRepositoryTest {
     @Test
     void save() {
         // given
-        Long voucherForSaleId = 1L;
+        Long voucherId = 1L;
         String rejectedReason = "유효기간 만료";
         RejectedSale rejectedSale = RejectedSale.builder()
-                .voucherForSaleId(voucherForSaleId)
+                .voucherId(voucherId)
                 .rejectedReason(rejectedReason)
                 .build();
 
@@ -35,17 +35,17 @@ class RejectedSaleRepositoryTest {
 
         RejectedSale found = rejectedSaleList.get(0);
         assertThat(found).isEqualTo(saved);
-        assertThat(found.getVoucherForSaleId()).isEqualTo(voucherForSaleId);
+        assertThat(found.getVoucherId()).isEqualTo(voucherId);
         assertThat(found.getRejectedReason()).isEqualTo(rejectedReason);
     }
 
     @Test
     void delete() {
         // given
-        Long voucherForSaleId = 1L;
+        Long voucherId = 1L;
         String rejectedReason = "유효기간 만료";
         RejectedSale rejectedSale = rejectedSaleRepository.save(RejectedSale.builder()
-                .voucherForSaleId(voucherForSaleId)
+                .voucherId(voucherId)
                 .rejectedReason(rejectedReason)
                 .build());
 

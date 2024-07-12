@@ -19,7 +19,7 @@ public final class RequestMatcherList {
                 antMatcher(GET, CATEGORY_API.getPattern()),
                 antMatcher(GET, BRAND_API.getPattern()),
                 antMatcher(GET, VOUCHER_KIND_API.getPattern()),
-                antMatcher(GET, VOUCHER_FOR_SALE_API.getPattern())
+                antMatcher(GET, VOUCHER_API.getPattern())
         };
     }
 
@@ -41,7 +41,7 @@ public final class RequestMatcherList {
     public static RequestMatcher[] ofAnyRole() {
         return new AntPathRequestMatcher[] {
                 antMatcher(TOKEN_REISSUE_API.getPattern()),
-                antMatcher(VOUCHER_FOR_SALE_API.getPattern()),
+                antMatcher(VOUCHER_API.getPattern()),
                 antMatcher(LIKED_VOUCHER_API.getPattern()),
                 antMatcher(PURCHASED_VOUCHER_API.getPattern()),
                 antMatcher(ORDER_API.getPattern()),

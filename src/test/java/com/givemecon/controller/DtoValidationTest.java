@@ -30,8 +30,8 @@ import static com.givemecon.controller.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.payment.PaymentDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static com.givemecon.util.error.GlobalErrorCode.INVALID_ARGUMENT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -163,7 +163,7 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("VoucherForSale Request DTO 검증 실패 테스트")
+    @DisplayName("Voucher Request DTO 검증 실패 테스트")
     void voucherForSaleDtoFailed() throws Exception {
         // given
         MockPart title = new MockPart("title", null);
@@ -173,7 +173,7 @@ public class DtoValidationTest {
         MockMultipartFile imageFile = new MockMultipartFile("imageFile", (byte[]) null);
 
         // when
-        ResultActions saveResult = mockMvc.perform(multipart("/api/vouchers-for-sale")
+        ResultActions saveResult = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
                 .part(title)
                 .part(price)
@@ -196,13 +196,13 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("상태별 VoucherForSale 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 4까지만 가능하다.")
+    @DisplayName("상태별 Voucher 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 4까지만 가능하다.")
     void statusCodeParameterFailed() throws Exception {
         // given
         Integer invalidStatusCode = 5;
 
         // when
-        ResultActions saveResult = mockMvc.perform(get("/api/vouchers-for-sale")
+        ResultActions saveResult = mockMvc.perform(get("/api/vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .queryParam("statusCode", String.valueOf(invalidStatusCode)));
 
@@ -229,7 +229,7 @@ public class DtoValidationTest {
         StatusUpdateRequest requestBody = new StatusUpdateRequest();
         requestBody.setStatusCode(statusCode);
 
-        ResultActions saveResult = mockMvc.perform(put("/api/vouchers-for-sale/{id}", 1)
+        ResultActions saveResult = mockMvc.perform(put("/api/vouchers/{id}", 1)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody)));

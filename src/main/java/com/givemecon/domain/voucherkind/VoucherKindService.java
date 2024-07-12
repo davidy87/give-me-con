@@ -2,8 +2,8 @@ package com.givemecon.domain.voucherkind;
 
 import com.givemecon.domain.image.voucherkind.VoucherKindImage;
 import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.brand.Brand;
@@ -23,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,7 +40,7 @@ public class VoucherKindService {
 
     private final ImageEntityUtils imageEntityUtils;
 
-    private final VoucherForSaleRepository voucherForSaleRepository;
+    private final VoucherRepository voucherRepository;
 
     public VoucherKindResponse save(VoucherKindSaveRequest requestDto) {
         Brand brand = brandRepository.findById(requestDto.getBrandId())
@@ -54,7 +54,7 @@ public class VoucherKindService {
                 imageEntityUtils.createImageEntity(VoucherKindImage.class, requestDto.getImageFile()));
 
         VoucherKind voucherKind = voucherKindRepository.save(requestDto.toEntity());
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
         voucherKind.updateBrand(brand);
 
         return new VoucherKindResponse(voucherKind);
@@ -104,18 +104,18 @@ public class VoucherKindService {
     // 최소 가격을 구해 VoucherKindResponse DTO 반환
     private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherForSaleRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
+        Long minPrice = voucherRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
-                .map(VoucherForSale::getPrice)
+                .map(Voucher::getPrice)
                 .orElse(0L);
 
         return new VoucherKindResponse(voucherKind, minPrice);
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherForSaleResponse> findSellingListByVoucherId(Long voucherId) {
-        return voucherForSaleRepository.findAllByVoucherKindIdAndStatus(voucherId, FOR_SALE).stream()
-                .map(VoucherForSaleResponse::new)
+    public List<VoucherResponse> findSellingListByVoucherId(Long voucherId) {
+        return voucherRepository.findAllByVoucherKindIdAndStatus(voucherId, FOR_SALE).stream()
+                .map(VoucherResponse::new)
                 .toList();
     }
 

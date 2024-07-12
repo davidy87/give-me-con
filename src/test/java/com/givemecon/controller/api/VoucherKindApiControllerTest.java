@@ -4,13 +4,13 @@ import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
+import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
@@ -44,7 +44,7 @@ import java.util.List;
 
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -82,7 +82,7 @@ class VoucherKindApiControllerTest {
     VoucherKindImageRepository voucherKindImageRepository;
 
     @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherRepository voucherRepository;
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
@@ -198,7 +198,7 @@ class VoucherKindApiControllerTest {
                 .originalName("ice_cream_cake.png")
                 .build());
 
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}", voucherKind.getId()));
@@ -247,7 +247,7 @@ class VoucherKindApiControllerTest {
                     .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucherKind.updateVoucherImage(voucherKindImage);
+            voucherKind.updateVoucherKindImage(voucherKindImage);
         }
 
         // when
@@ -297,7 +297,7 @@ class VoucherKindApiControllerTest {
                     .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucherKind.updateVoucherImage(voucherKindImage);
+            voucherKind.updateVoucherKindImage(voucherKindImage);
             voucherKind.updateBrand(brandSaved);
         }
 
@@ -337,23 +337,23 @@ class VoucherKindApiControllerTest {
         VoucherKind voucherKindSaved = voucherKindRepository.save(voucherKind);
 
         for (int i = 1; i <= 10; i++) {
-            VoucherForSale voucherForSale = voucherForSaleRepository.save(
-                    VoucherForSale.builder()
+            Voucher voucher = voucherRepository.save(
+                    Voucher.builder()
                             .price(4_000L)
                             .expDate(LocalDate.now().plusDays(1))
                             .barcode("1111 1111 1111")
                             .build());
 
-            VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(
-                    VoucherForSaleImage.builder()
+            VoucherImage voucherImage = voucherForSaleImageRepository.save(
+                    VoucherImage.builder()
                             .imageKey("imageKey" + i)
                             .imageUrl("imageUrl" + i)
                             .originalName("voucherImage" + i + ".png")
                             .build());
 
-            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucherForSale.updateVoucher(voucherKind);
-            voucherForSale.updateStatus(FOR_SALE);
+            voucher.updateVoucherImage(voucherImage);
+            voucher.updateVoucherKind(voucherKind);
+            voucher.updateStatus(FOR_SALE);
         }
 
         // when
@@ -395,7 +395,7 @@ class VoucherKindApiControllerTest {
                 .originalName("oldVoucherImage.jpg")
                 .build());
 
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
 
         String newTitle = "newTitle";
         MockMultipartFile imageFileToUpdate = new MockMultipartFile(
@@ -451,7 +451,7 @@ class VoucherKindApiControllerTest {
                 .originalName("voucherKindImage.jpg")
                 .build());
 
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/voucher-kinds/{id}", voucherKind.getId()));
@@ -467,8 +467,8 @@ class VoucherKindApiControllerTest {
                 );
 
         List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
+        List<Voucher> voucherList = voucherRepository.findAll();
         assertThat(voucherKindList).isEmpty();
-        assertThat(voucherForSaleList).isEmpty();
+        assertThat(voucherList).isEmpty();
     }
 }

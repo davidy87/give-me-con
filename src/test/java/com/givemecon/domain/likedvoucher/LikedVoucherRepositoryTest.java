@@ -75,7 +75,7 @@ class LikedVoucherRepositoryTest {
                 .originalName("originalName")
                 .build();
 
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
         voucherKindRepository.save(voucherKind);
         voucherKindImageRepository.save(voucherKindImage);
 

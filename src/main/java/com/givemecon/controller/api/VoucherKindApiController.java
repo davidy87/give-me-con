@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/voucher-kinds")
@@ -40,7 +40,7 @@ public class VoucherKindApiController {
     }
 
     @GetMapping("/{id}/selling-list")
-    public List<VoucherForSaleResponse> findSellingListByVoucherId(@PathVariable Long id) {
+    public List<VoucherResponse> findSellingListByVoucherId(@PathVariable Long id) {
         return voucherKindService.findSellingListByVoucherId(id);
     }
 

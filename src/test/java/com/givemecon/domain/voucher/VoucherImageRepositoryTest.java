@@ -1,7 +1,7 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class VoucherForSaleImageRepositoryTest {
+class VoucherImageRepositoryTest {
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
@@ -26,18 +26,18 @@ class VoucherForSaleImageRepositoryTest {
         String imageKey = "imageKey";
         String originalName = "voucherImage.png";
 
-        VoucherForSaleImage voucherForSaleImage = VoucherForSaleImage.builder()
+        VoucherImage voucherImage = VoucherImage.builder()
                 .imageUrl(imageUrl)
                 .imageKey(imageKey)
                 .originalName(originalName)
                 .build();
 
         // when
-        voucherForSaleImageRepository.save(voucherForSaleImage);
-        List<VoucherForSaleImage> voucherForSaleImageList = voucherForSaleImageRepository.findAll();
+        voucherForSaleImageRepository.save(voucherImage);
+        List<VoucherImage> voucherImageList = voucherForSaleImageRepository.findAll();
 
         // then
-        VoucherForSaleImage found = voucherForSaleImageList.get(0);
+        VoucherImage found = voucherImageList.get(0);
         assertThat(found.getImageUrl()).isEqualTo(imageUrl);
         assertThat(found.getImageKey()).isEqualTo(imageKey);
         assertThat(found.getOriginalName()).isEqualTo(originalName);
@@ -47,17 +47,17 @@ class VoucherForSaleImageRepositoryTest {
     void BaseTimeEntityTest() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+        voucherForSaleImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .originalName("testImage.png")
                 .imageUrl("imageUrl")
                 .build());
 
         // when
-        List<VoucherForSaleImage> voucherImageList = voucherForSaleImageRepository.findAll();
+        List<VoucherImage> voucherImageList = voucherForSaleImageRepository.findAll();
 
         // then
-        VoucherForSaleImage found = voucherImageList.get(0);
+        VoucherImage found = voucherImageList.get(0);
         assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
         assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }

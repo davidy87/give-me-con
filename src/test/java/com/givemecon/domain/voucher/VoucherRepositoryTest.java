@@ -1,8 +1,8 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
 import com.givemecon.config.JpaConfig;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
@@ -26,33 +26,33 @@ import java.util.Optional;
 
 import static com.givemecon.config.enums.Authority.USER;
 import static com.givemecon.domain.order.OrderStatus.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @Import(JpaConfig.class)
 @Transactional
 @DataJpaTest
-class VoucherForSaleRepositoryTest {
+class VoucherRepositoryTest {
 
     @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherRepository voucherRepository;
 
     @Test
     void BaseTimeEntity() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        voucherForSaleRepository.save(VoucherForSale.builder()
+        voucherRepository.save(Voucher.builder()
                 .price(10_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build());
 
         // when
-        List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
+        List<Voucher> voucherList = voucherRepository.findAll();
 
         // then
-        VoucherForSale found = voucherList.get(0);
+        Voucher found = voucherList.get(0);
         log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
         assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
         assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
@@ -61,21 +61,21 @@ class VoucherForSaleRepositoryTest {
     @Test
     void saveAndFindAll() {
         // given
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(15_000L)
                 .expDate(LocalDate.now().plusDays(1))
                 .barcode("1111 1111 1111")
                 .build();
 
         // when
-        voucherForSaleRepository.save(voucherForSale);
-        List<VoucherForSale> voucherList = voucherForSaleRepository.findAll();
+        voucherRepository.save(voucher);
+        List<Voucher> voucherList = voucherRepository.findAll();
 
         // then
-        VoucherForSale found = voucherList.get(0);
-        assertThat(found.getPrice()).isEqualTo(voucherForSale.getPrice());
-        assertThat(found.getExpDate()).isEqualTo(voucherForSale.getExpDate());
-        assertThat(found.getBarcode()).isEqualTo(voucherForSale.getBarcode());
+        Voucher found = voucherList.get(0);
+        assertThat(found.getPrice()).isEqualTo(voucher.getPrice());
+        assertThat(found.getExpDate()).isEqualTo(voucher.getExpDate());
+        assertThat(found.getBarcode()).isEqualTo(voucher.getBarcode());
     }
 
     @Test
@@ -87,22 +87,22 @@ class VoucherForSaleRepositoryTest {
                 .authority(USER)
                 .build());
 
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(15_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build();
 
-        voucherForSale.updateSeller(seller);
-        voucherForSaleRepository.save(voucherForSale);
+        voucher.updateSeller(seller);
+        voucherRepository.save(voucher);
 
         // when
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllBySeller(seller);
+        List<Voucher> voucherList = voucherRepository.findAllBySeller(seller);
 
         // then
-        assertThat(voucherForSaleList).isNotEmpty();
-        voucherForSaleList.forEach(found -> {
-            assertThat(found).isEqualTo(voucherForSale);
+        assertThat(voucherList).isNotEmpty();
+        voucherList.forEach(found -> {
+            assertThat(found).isEqualTo(voucher);
             assertThat(found.getSeller()).isEqualTo(seller);
         });
     }
@@ -110,21 +110,21 @@ class VoucherForSaleRepositoryTest {
     @Test
     void findAllByStatus() {
         // given
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(15_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build();
 
-        voucherForSaleRepository.save(voucherForSale);
+        voucherRepository.save(voucher);
 
         // when
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllByStatus(NOT_YET_PERMITTED);
+        List<Voucher> voucherList = voucherRepository.findAllByStatus(NOT_YET_PERMITTED);
 
         // then
-        VoucherForSale found = voucherForSaleList.get(0);
-        assertThat(voucherForSaleList).isNotEmpty();
-        assertThat(found).isEqualTo(voucherForSale);
+        Voucher found = voucherList.get(0);
+        assertThat(voucherList).isNotEmpty();
+        assertThat(found).isEqualTo(voucher);
         assertThat(found.getStatus()).isSameAs(NOT_YET_PERMITTED);
     }
 
@@ -134,32 +134,32 @@ class VoucherForSaleRepositoryTest {
         // given
         LocalDate today = LocalDate.now();
 
-        VoucherForSale expired1 = VoucherForSale.builder()
+        Voucher expired1 = Voucher.builder()
                 .price(15_000L)
                 .expDate(today.minusDays(1))
                 .barcode("1111 1111 1111")
                 .build();
 
-        VoucherForSale expired2 = VoucherForSale.builder()
+        Voucher expired2 = Voucher.builder()
                 .price(15_000L)
                 .expDate(today.minusDays(1))
                 .barcode("2222 2222 2222")
                 .build();
 
-        List<VoucherForSale> expiredList = List.of(expired1, expired2);
-        voucherForSaleRepository.saveAll(expiredList);
+        List<Voucher> expiredList = List.of(expired1, expired2);
+        voucherRepository.saveAll(expiredList);
 
         // when
-        int numModified = voucherForSaleRepository.updateAllByExpDateBefore(today);
+        int numModified = voucherRepository.updateAllByExpDateBefore(today);
 
         // then
-        long numExpired = voucherForSaleRepository.findAll().stream()
+        long numExpired = voucherRepository.findAll().stream()
                 .filter(voucherForSale -> voucherForSale.getStatus().equals(EXPIRED))
                 .count();
 
         assertThat(numModified).isEqualTo(numExpired);
 
-        voucherForSaleRepository.findAll()
+        voucherRepository.findAll()
                 .forEach(expired -> assertThat(expired.getStatus()).isEqualTo(EXPIRED));
     }
 
@@ -169,25 +169,25 @@ class VoucherForSaleRepositoryTest {
         // given
         LocalDate today = LocalDate.now();
 
-        VoucherForSale expired = VoucherForSale.builder()
+        Voucher expired = Voucher.builder()
                 .price(15_000L)
                 .expDate(today.minusDays(1))
                 .barcode("1111 1111 1111")
                 .build();
 
-        VoucherForSale notExpired = VoucherForSale.builder()
+        Voucher notExpired = Voucher.builder()
                 .price(15_000L)
                 .expDate(today)
                 .barcode("2222 2222 2222")
                 .build();
 
-        voucherForSaleRepository.saveAll(List.of(expired, notExpired));
+        voucherRepository.saveAll(List.of(expired, notExpired));
 
         // when
-        int numModified = voucherForSaleRepository.updateAllByExpDateBefore(today);
+        int numModified = voucherRepository.updateAllByExpDateBefore(today);
 
         // then
-        long numExpired = voucherForSaleRepository.findAll().stream()
+        long numExpired = voucherRepository.findAll().stream()
                 .filter(voucherForSale -> voucherForSale.getStatus().equals(EXPIRED))
                 .count();
 
@@ -200,45 +200,45 @@ class VoucherForSaleRepositoryTest {
         // given
         LocalDate today = LocalDate.now();
 
-        VoucherForSale stateAlreadyExpired = VoucherForSale.builder()
+        Voucher stateAlreadyExpired = Voucher.builder()
                 .price(15_000L)
                 .expDate(today.minusDays(1))
                 .barcode("1111 1111 1111")
                 .build();
 
         stateAlreadyExpired.updateStatus(EXPIRED);
-        voucherForSaleRepository.save(stateAlreadyExpired);
+        voucherRepository.save(stateAlreadyExpired);
 
         // when
-        int numModified = voucherForSaleRepository.updateAllByExpDateBefore(today);
+        int numModified = voucherRepository.updateAllByExpDateBefore(today);
 
         // then
         assertThat(numModified).isEqualTo(0);
     }
 
     @Test
-    @DisplayName("주문별 VoucherForSale 조회")
+    @DisplayName("주문별 Voucher 조회")
     void findAllByOrder(@Autowired OrderRepository orderRepository) {
         // given
         Order order = orderRepository.save(new Order("ORDER-NUMBER", null));
 
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build();
 
-        voucherForSale.updateOrder(order);
-        voucherForSaleRepository.save(voucherForSale);
+        voucher.updateOrder(order);
+        voucherRepository.save(voucher);
 
         // when
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllByOrder(order);
+        List<Voucher> voucherList = voucherRepository.findAllByOrder(order);
 
         // then
-        assertThat(voucherForSaleList).isNotEmpty();
+        assertThat(voucherList).isNotEmpty();
 
-        VoucherForSale found = voucherForSaleList.get(0);
-        assertThat(found).isEqualTo(voucherForSale);
+        Voucher found = voucherList.get(0);
+        assertThat(found).isEqualTo(voucher);
         assertThat(found.getOrder()).isEqualTo(order);
     }
 
@@ -250,18 +250,18 @@ class VoucherForSaleRepositoryTest {
                 .title("voucherKind")
                 .build());
 
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build();
 
-        voucherForSale.updateVoucher(voucherKind);
-        voucherForSale.updateStatus(FOR_SALE);
-        voucherForSaleRepository.save(voucherForSale);
+        voucher.updateVoucherKind(voucherKind);
+        voucher.updateStatus(FOR_SALE);
+        voucherRepository.save(voucher);
 
         // when
-        List<VoucherForSale> result = voucherForSaleRepository.findAllByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE);
+        List<Voucher> result = voucherRepository.findAllByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE);
 
         // then
         assertThat(result).isNotEmpty();
@@ -277,25 +277,25 @@ class VoucherForSaleRepositoryTest {
                 .title("voucherKind")
                 .build());
 
-        List<VoucherForSale> voucherForSaleList = new ArrayList<>();
+        List<Voucher> voucherList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            VoucherForSale voucherForSale = VoucherForSale.builder()
+            Voucher voucher = Voucher.builder()
                     .price(4_000L * i)
                     .expDate(LocalDate.now())
                     .barcode("1111 1111 1111")
                     .build();
 
-            voucherForSale.updateVoucher(voucherKind);
-            voucherForSale.updateStatus(FOR_SALE);
-            voucherForSaleList.add(voucherForSale);
+            voucher.updateVoucherKind(voucherKind);
+            voucher.updateStatus(FOR_SALE);
+            voucherList.add(voucher);
         }
 
-        voucherForSaleRepository.saveAll(voucherForSaleList);
+        voucherRepository.saveAll(voucherList);
 
         // when
-        List<VoucherForSale> found =
-                voucherForSaleRepository.findOneWithMinPrice(voucherKind, FOR_SALE, PageRequest.of(0, 1));
+        List<Voucher> found =
+                voucherRepository.findOneWithMinPrice(voucherKind, FOR_SALE, PageRequest.of(0, 1));
 
         // then
         assertThat(found.size()).isEqualTo(1);
@@ -303,57 +303,57 @@ class VoucherForSaleRepositoryTest {
     }
 
     @Test
-    @DisplayName("VoucherForSale & VoucherForSaleImage fetch join 테스트")
+    @DisplayName("Voucher & VoucherImage fetch join 테스트")
     void findOneWithImage(@Autowired VoucherForSaleImageRepository voucherForSaleImageRepository) {
         // given
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build();
 
-        VoucherForSaleImage voucherForSaleImage = VoucherForSaleImage.builder()
+        VoucherImage voucherImage = VoucherImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("originalName")
                 .build();
 
-        voucherForSaleImageRepository.save(voucherForSaleImage);
-        voucherForSale.updateStatus(FOR_SALE);
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSaleRepository.save(voucherForSale);
+        voucherForSaleImageRepository.save(voucherImage);
+        voucher.updateStatus(FOR_SALE);
+        voucher.updateVoucherImage(voucherImage);
+        voucherRepository.save(voucher);
 
         // when
-        Optional<VoucherForSale> result = voucherForSaleRepository.findOneWithImage(voucherForSale.getId());
+        Optional<Voucher> result = voucherRepository.findOneWithImage(voucher.getId());
 
         // then
         assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(voucherForSale.getId());
-        assertThat(result.get().getImageUrl()).isEqualTo(voucherForSaleImage.getImageUrl());
+        assertThat(result.get().getId()).isEqualTo(voucher.getId());
+        assertThat(result.get().getImageUrl()).isEqualTo(voucherImage.getImageUrl());
     }
 
     @Test
-    @DisplayName("주문이 취소된 VoucherForSale 상태 변경")
+    @DisplayName("주문이 취소된 Voucher 상태 변경")
     void updateAllOrderCancelled(@Autowired OrderRepository orderRepository) {
         // given
         Order order = orderRepository.save(new Order("ORDER-NUMBER", null));
         order.updateStatus(CANCELLED);
 
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build();
 
-        voucherForSale.updateOrder(order);
-        voucherForSale.updateStatus(ORDER_PLACED);
-        voucherForSaleRepository.save(voucherForSale);
+        voucher.updateOrder(order);
+        voucher.updateStatus(ORDER_PLACED);
+        voucherRepository.save(voucher);
 
         // when
-        voucherForSaleRepository.updateAllOrderCancelled();
+        voucherRepository.updateAllOrderCancelled();
 
         // then
-        Optional<VoucherForSale> found = voucherForSaleRepository.findById(voucherForSale.getId());
+        Optional<Voucher> found = voucherRepository.findById(voucher.getId());
 
         assertThat(found).isPresent();
         assertThat(found.get().getOrder()).isNull();

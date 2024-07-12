@@ -109,7 +109,7 @@ class LikedVoucherApiControllerTest {
                 .originalName("voucherKindImage.png")
                 .build());
 
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
@@ -164,7 +164,7 @@ class LikedVoucherApiControllerTest {
                     .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucherKind.updateVoucherImage(voucherKindImage);
+            voucherKind.updateVoucherKindImage(voucherKindImage);
             likedVoucherRepository.save(new LikedVoucher(member, voucherKind));
         }
 

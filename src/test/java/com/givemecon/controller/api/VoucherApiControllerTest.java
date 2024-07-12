@@ -3,14 +3,14 @@ package com.givemecon.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
@@ -47,8 +47,8 @@ import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.ApiDocumentUtils.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -65,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(S3MockConfig.class)
 @Transactional
 @SpringBootTest
-class VoucherForSaleApiControllerTest {
+class VoucherApiControllerTest {
 
     @Autowired
     WebApplicationContext context;
@@ -79,7 +79,7 @@ class VoucherForSaleApiControllerTest {
     VoucherKindRepository voucherKindRepository;
 
     @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherRepository voucherRepository;
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
@@ -158,7 +158,7 @@ class VoucherForSaleApiControllerTest {
                 "Americano_T.png".getBytes());
 
         // when
-        ResultActions response = mockMvc.perform(multipart("/api/vouchers-for-sale")
+        ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
                 .part(new MockPart("voucherId", voucherKind.getId().toString().getBytes()))
                 .part(new MockPart("price", price.toString().getBytes()))
@@ -168,19 +168,19 @@ class VoucherForSaleApiControllerTest {
                 .contentType(MediaType.MULTIPART_FORM_DATA));
 
         // then
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
-        assertThat(voucherForSaleList).isNotEmpty();
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).isNotEmpty();
 
-        VoucherForSale voucherForSale = voucherForSaleList.get(0);
+        Voucher voucher = voucherList.get(0);
 
         response.andExpect(status().isAccepted())
-                .andExpect(jsonPath("id").value(voucherForSale.getId()))
-                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
-                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
-                .andExpect(jsonPath("status").value(voucherForSale.getStatus().name()))
-                .andExpect(jsonPath("saleRequestedDate").value(voucherForSale.getSaleRequestedDate().toString()))
+                .andExpect(jsonPath("id").value(voucher.getId()))
+                .andExpect(jsonPath("price").value(voucher.getPrice()))
+                .andExpect(jsonPath("title").value(voucher.getTitle()))
+                .andExpect(jsonPath("barcode").value(voucher.getBarcode()))
+                .andExpect(jsonPath("expDate").value(voucher.getExpDate().toString()))
+                .andExpect(jsonPath("status").value(voucher.getStatus().name()))
+                .andExpect(jsonPath("saleRequestedDate").value(voucher.getSaleRequestedDate().toString()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -206,32 +206,32 @@ class VoucherForSaleApiControllerTest {
     @Test
     void findAllBySeller() throws Exception {
         // given
-        List<VoucherForSale> toSaveList = new ArrayList<>();
+        List<Voucher> toSaveList = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            VoucherForSale toSave = VoucherForSale.builder()
+            Voucher toSave = Voucher.builder()
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now())
                     .build();
 
-            VoucherForSaleImage voucherForSaleImage =
-                    voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+            VoucherImage voucherImage =
+                    voucherForSaleImageRepository.save(VoucherImage.builder()
                             .imageUrl("imageUrl" + i)
-                            .originalName("voucherForSaleImage" + i)
+                            .originalName("voucherImage" + i)
                             .imageKey("imageKey" + i)
                             .build());
 
-            toSave.updateVoucherForSaleImage(voucherForSaleImage);
-            toSave.updateVoucher(voucherKind);
+            toSave.updateVoucherImage(voucherImage);
+            toSave.updateVoucherKind(voucherKind);
             toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
 
-        voucherForSaleRepository.saveAll(toSaveList);
+        voucherRepository.saveAll(toSaveList);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
+        ResultActions response = mockMvc.perform(get("/api/vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo)));
 
         // then
@@ -255,19 +255,19 @@ class VoucherForSaleApiControllerTest {
     @Test
     void findAllByStatus() throws Exception {
         // given
-        List<VoucherForSale> toSaveList = new ArrayList<>();
+        List<Voucher> toSaveList = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
-            VoucherForSale toSave = VoucherForSale.builder()
+            Voucher toSave = Voucher.builder()
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now())
                     .build();
 
-            VoucherForSaleImage voucherForSaleImage =
-                    voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+            VoucherImage voucherImage =
+                    voucherForSaleImageRepository.save(VoucherImage.builder()
                             .imageUrl("imageUrl" + i)
-                            .originalName("voucherForSaleImage" + i)
+                            .originalName("voucherImage" + i)
                             .imageKey("imageKey" + i)
                             .build());
 
@@ -275,16 +275,16 @@ class VoucherForSaleApiControllerTest {
                 toSave.updateStatus(FOR_SALE);
             }
 
-            toSave.updateVoucherForSaleImage(voucherForSaleImage);
-            toSave.updateVoucher(voucherKind);
+            toSave.updateVoucherImage(voucherImage);
+            toSave.updateVoucherKind(voucherKind);
             toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
 
-        voucherForSaleRepository.saveAll(toSaveList);
+        voucherRepository.saveAll(toSaveList);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale")
+        ResultActions response = mockMvc.perform(get("/api/vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
                 .queryParam("statusCode", String.valueOf(NOT_YET_PERMITTED.ordinal())));
 
@@ -314,30 +314,30 @@ class VoucherForSaleApiControllerTest {
     @DisplayName("기프티콘 이미지 조회 API 테스트")
     void findImageUrl() throws Exception {
         // given
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
                 .build();
 
-        VoucherForSaleImage voucherForSaleImage =
-                voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+        VoucherImage voucherImage =
+                voucherForSaleImageRepository.save(VoucherImage.builder()
                         .imageKey("imageKey")
                         .imageUrl("imageUrl")
-                        .originalName("voucherForSaleImage")
+                        .originalName("voucherImage")
                         .build());
 
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucherKind);
-        voucherForSaleRepository.save(voucherForSale);
+        voucher.updateVoucherImage(voucherImage);
+        voucher.updateVoucherKind(voucherKind);
+        voucherRepository.save(voucher);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale/{id}/image", voucherForSale.getId())
+        ResultActions response = mockMvc.perform(get("/api/vouchers/{id}/image", voucher.getId())
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
+                .andExpect(jsonPath("imageUrl").value(voucherImage.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -353,41 +353,41 @@ class VoucherForSaleApiControllerTest {
     @Test
     void updateStatus() throws Exception {
         // given
-        VoucherForSale voucherForSale = VoucherForSale.builder()
+        Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
                 .build();
 
-        VoucherForSaleImage voucherForSaleImage =
-                voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+        VoucherImage voucherImage =
+                voucherForSaleImageRepository.save(VoucherImage.builder()
                         .imageUrl("imageUrl")
-                        .originalName("voucherForSaleImage")
+                        .originalName("voucherImage")
                         .imageKey("imageKey")
                         .build());
 
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucherKind);
-        voucherForSaleRepository.save(voucherForSale);
+        voucher.updateVoucherImage(voucherImage);
+        voucher.updateVoucherKind(voucherKind);
+        voucherRepository.save(voucher);
 
         // when
         StatusUpdateRequest requestBody = new StatusUpdateRequest();
         requestBody.setStatusCode(FOR_SALE.ordinal());
 
-        ResultActions response = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())
+        ResultActions response = mockMvc.perform(put("/api/vouchers/{id}", voucher.getId())
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestBody)));
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(voucherForSale.getId()))
-                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
-                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
+                .andExpect(jsonPath("id").value(voucher.getId()))
+                .andExpect(jsonPath("price").value(voucher.getPrice()))
+                .andExpect(jsonPath("title").value(voucher.getTitle()))
+                .andExpect(jsonPath("barcode").value(voucher.getBarcode()))
+                .andExpect(jsonPath("expDate").value(voucher.getExpDate().toString()))
                 .andExpect(jsonPath("status").value(FOR_SALE.name()))
-                .andExpect(jsonPath("saleRequestedDate").value(voucherForSale.getSaleRequestedDate().toString()))
+                .andExpect(jsonPath("saleRequestedDate").value(voucher.getSaleRequestedDate().toString()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -415,24 +415,24 @@ class VoucherForSaleApiControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(4_000L)
                 .expDate(LocalDate.now().plusDays(1))
                 .barcode("1111 1111 1111")
                 .build());
 
-        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+        VoucherImage voucherImage = voucherForSaleImageRepository.save(VoucherImage.builder()
                 .imageUrl("imageUrl")
                 .imageKey("imageKey")
                 .originalName("Americano_T.png")
                 .build());
 
-        voucherForSale.updateSeller(user);
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucherKind);
+        voucher.updateSeller(user);
+        voucher.updateVoucherImage(voucherImage);
+        voucher.updateVoucherKind(voucherKind);
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId())
+        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId())
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo)));
 
         // then
@@ -445,7 +445,7 @@ class VoucherForSaleApiControllerTest {
                         ))
                 );
 
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
-        assertThat(voucherForSaleList).isEmpty();
+        List<Voucher> voucherList = voucherRepository.findAll();
+        assertThat(voucherList).isEmpty();
     }
 }

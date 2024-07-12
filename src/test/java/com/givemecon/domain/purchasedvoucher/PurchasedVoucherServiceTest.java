@@ -1,9 +1,9 @@
 package com.givemecon.domain.purchasedvoucher;
 
+import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.image.voucherkind.VoucherKindImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
+import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ class PurchasedVoucherServiceTest {
     @InjectMocks
     PurchasedVoucherService purchasedVoucherService;
 
-    VoucherForSale voucherForSale;
+    Voucher voucher;
 
     @Mock
     PurchasedVoucher purchasedVoucher;
@@ -46,20 +46,20 @@ class PurchasedVoucherServiceTest {
                 .imageUrl("voucherImageUrl")
                 .build();
 
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
 
-        VoucherForSaleImage voucherForSaleImage = VoucherForSaleImage.builder()
+        VoucherImage voucherImage = VoucherImage.builder()
                 .imageUrl("imageUrl")
                 .build();
 
-        voucherForSale = VoucherForSale.builder()
+        voucher = Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
                 .build();
 
-        voucherForSale.updateVoucher(voucherKind);
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
+        voucher.updateVoucherKind(voucherKind);
+        voucher.updateVoucherImage(voucherImage);
     }
 
     @Test
@@ -71,18 +71,18 @@ class PurchasedVoucherServiceTest {
         Mockito.when(purchasedVoucherRepository.findAllFetchedByUsername(any(String.class)))
                 .thenReturn(List.of(purchasedVoucher));
 
-        Mockito.when(purchasedVoucher.getVoucherForSale()).thenReturn(voucherForSale);
+        Mockito.when(purchasedVoucher.getVoucher()).thenReturn(voucher);
 
         // when
         List<PurchasedVoucherResponse> response = purchasedVoucherService.findAllByUsername(username);
 
         // then
         assertThat(response).hasSize(1);
-        assertThat(response.get(0).getTitle()).isEqualTo(voucherForSale.getTitle());
-        assertThat(response.get(0).getPrice()).isEqualTo(voucherForSale.getPrice());
-        assertThat(response.get(0).getBarcode()).isEqualTo(voucherForSale.getBarcode());
-        assertThat(response.get(0).getExpDate()).isEqualTo(voucherForSale.getExpDate());
-        assertThat(response.get(0).getVoucherKindImageUrl()).isEqualTo(voucherForSale.getVoucherKind().getVoucherKindImage().getImageUrl());
+        assertThat(response.get(0).getTitle()).isEqualTo(voucher.getTitle());
+        assertThat(response.get(0).getPrice()).isEqualTo(voucher.getPrice());
+        assertThat(response.get(0).getBarcode()).isEqualTo(voucher.getBarcode());
+        assertThat(response.get(0).getExpDate()).isEqualTo(voucher.getExpDate());
+        assertThat(response.get(0).getVoucherKindImageUrl()).isEqualTo(voucher.getVoucherKind().getVoucherKindImage().getImageUrl());
         assertThat(response.get(0).getStatus()).isEqualTo(purchasedVoucher.getStatus());
     }
 

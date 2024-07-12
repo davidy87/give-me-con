@@ -2,10 +2,10 @@ package com.givemecon.domain.likedvoucher;
 
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
+import static com.givemecon.domain.voucher.VoucherStatus.FOR_SALE;
 
 @RequiredArgsConstructor
 @Service
@@ -28,7 +28,7 @@ public class LikedVoucherService {
 
     private final VoucherKindRepository voucherKindRepository;
 
-    private final VoucherForSaleRepository voucherForSaleRepository;
+    private final VoucherRepository voucherRepository;
 
     private final LikedVoucherRepository likedVoucherRepository;
 
@@ -57,9 +57,9 @@ public class LikedVoucherService {
     // 최소 가격을 구해 VoucherKindResponse DTO 반환
     private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherForSaleRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
+        Long minPrice = voucherRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
-                .map(VoucherForSale::getPrice)
+                .map(Voucher::getPrice)
                 .orElse(0L);
 
         return new VoucherKindResponse(voucherKind, minPrice);

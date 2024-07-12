@@ -15,9 +15,9 @@ import com.givemecon.domain.payment.toss.PaymentConfirmation;
 import com.givemecon.domain.payment.toss.TossPaymentsRestClient;
 import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucher.VoucherStatus;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +73,7 @@ class PaymentControllerTest {
     VoucherKindImageRepository voucherKindImageRepository;
 
     @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherRepository voucherRepository;
 
     @Autowired
     PaymentRepository paymentRepository;
@@ -128,21 +128,21 @@ class PaymentControllerTest {
                 .build());
 
         voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherImage(voucherKindImage);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
         voucherKindRepository.save(voucherKind);
 
-        VoucherForSale voucherForSale =
-                voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher =
+                voucherRepository.save(Voucher.builder()
                         .price(4_000L)
                         .barcode("1111 1111 1111")
                         .expDate(LocalDate.now())
                         .build());
 
-        voucherForSale.updateVoucher(voucherKind);
-        voucherForSale.updateOrder(order);
-        voucherForSale.updateStatus(VoucherForSaleStatus.ORDER_PLACED);
+        voucher.updateVoucherKind(voucherKind);
+        voucher.updateOrder(order);
+        voucher.updateStatus(VoucherStatus.ORDER_PLACED);
         order.updateQuantity(1);
-        order.updateAmount(voucherForSale.getPrice());
+        order.updateAmount(voucher.getPrice());
     }
 
     @Test

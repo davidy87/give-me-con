@@ -1,8 +1,8 @@
 package com.givemecon.domain.order;
 
 import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -70,18 +70,18 @@ public class OrderDto {
 
         private LocalDate expDate;
 
-        private VoucherForSaleStatus status;
+        private VoucherStatus status;
 
-        public OrderItem(VoucherForSale voucherForSale) {
-            VoucherKind voucherKind = voucherForSale.getVoucherKind();
+        public OrderItem(Voucher voucher) {
+            VoucherKind voucherKind = voucher.getVoucherKind();
 
-            this.voucherForSaleId = voucherForSale.getId();
-            this.price = voucherForSale.getPrice();
+            this.voucherForSaleId = voucher.getId();
+            this.price = voucher.getPrice();
             this.brandName = voucherKind.getBrand().getName();
-            this.title = voucherForSale.getTitle();
+            this.title = voucher.getTitle();
             this.voucherImageUrl = voucherKind.getImageUrl();
-            this.expDate = voucherForSale.getExpDate();
-            this.status = voucherForSale.getStatus();
+            this.expDate = voucher.getExpDate();
+            this.status = voucher.getStatus();
         }
     }
 

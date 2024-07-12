@@ -5,8 +5,8 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.exception.InvalidOrderException;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.UUID;
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.order.OrderStatus.*;
 import static com.givemecon.domain.order.exception.OrderErrorCode.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @RequiredArgsConstructor
 @Service
@@ -30,7 +30,7 @@ public class OrderService {
 
     private final MemberRepository memberRepository;
 
-    private final VoucherForSaleRepository voucherForSaleRepository;
+    private final VoucherRepository voucherRepository;
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
 
@@ -44,11 +44,11 @@ public class OrderService {
         long amount = 0L;
 
         for (Long id : orderRequest.getVoucherForSaleIdList()) {
-            VoucherForSale voucherForSale = getValidOrderItem(id, buyer);
+            Voucher voucher = getValidOrderItem(id, buyer);
             quantity++;
-            amount += voucherForSale.getPrice();
-            voucherForSale.updateOrder(order);
-            voucherForSale.updateStatus(ORDER_PLACED);
+            amount += voucher.getPrice();
+            voucher.updateOrder(order);
+            voucher.updateStatus(ORDER_PLACED);
         }
 
         order.updateQuantity(quantity);
@@ -62,13 +62,13 @@ public class OrderService {
         return UUID.randomUUID().toString();
     }
 
-    private VoucherForSale getValidOrderItem(Long voucherForSaleId, Member buyer) {
-        VoucherForSale voucherForSale = voucherForSaleRepository.findById(voucherForSaleId)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherForSale.class));
+    private Voucher getValidOrderItem(Long voucherForSaleId, Member buyer) {
+        Voucher voucher = voucherRepository.findById(voucherForSaleId)
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
-        Member seller = voucherForSale.getSeller();
+        Member seller = voucher.getSeller();
 
-        if (voucherForSale.getStatus() != FOR_SALE) {
+        if (voucher.getStatus() != FOR_SALE) {
             throw new InvalidOrderException(ITEM_NOT_FOR_SALE);
         }
 
@@ -80,7 +80,7 @@ public class OrderService {
             throw new InvalidOrderException(BUYER_EQUALS_SELLER);
         }
 
-        return voucherForSale;
+        return voucher;
     }
 
     @Transactional(readOnly = true)
@@ -95,14 +95,14 @@ public class OrderService {
         long amount = 0L;
         List<OrderItem> orderItems = new ArrayList<>();
 
-        for (VoucherForSale voucherForSale : voucherForSaleRepository.findAllByOrder(order)) {
-            if (voucherForSale.getStatus() != ORDER_PLACED) {
+        for (Voucher voucher : voucherRepository.findAllByOrder(order)) {
+            if (voucher.getStatus() != ORDER_PLACED) {
                 throw new InvalidOrderException(ITEM_ORDER_NOT_PLACED);
             }
 
             quantity++;
-            amount += voucherForSale.getPrice();
-            orderItems.add(new OrderItem(voucherForSale));
+            amount += voucher.getPrice();
+            orderItems.add(new OrderItem(voucher));
         }
 
         // 주문 수량 및 금액 예외 처리
@@ -130,15 +130,15 @@ public class OrderService {
         long amount = 0L;
         List<PurchasedVoucher> purchasedVouchers = new ArrayList<>();
 
-        for (VoucherForSale voucherForSale : voucherForSaleRepository.findAllByOrder(order)) {
-            if (voucherForSale.getStatus() != ORDER_PLACED) {
+        for (Voucher voucher : voucherRepository.findAllByOrder(order)) {
+            if (voucher.getStatus() != ORDER_PLACED) {
                 throw new InvalidOrderException(ITEM_ORDER_NOT_PLACED);
             }
 
             quantity++;
-            amount += voucherForSale.getPrice();
-            voucherForSale.updateStatus(SOLD);
-            purchasedVouchers.add(new PurchasedVoucher(voucherForSale, buyer));
+            amount += voucher.getPrice();
+            voucher.updateStatus(SOLD);
+            purchasedVouchers.add(new PurchasedVoucher(voucher, buyer));
         }
 
         // 주문 수량 및 금액 예외 처리
@@ -158,7 +158,7 @@ public class OrderService {
         verifyBuyer(order.getBuyer(), username);
 
         order.updateStatus(CANCELLED);
-        voucherForSaleRepository.updateAllOrderCancelled();
+        voucherRepository.updateAllOrderCancelled();
         orderRepository.delete(order);
 
         return new OrderNumberResponse(orderNumber);

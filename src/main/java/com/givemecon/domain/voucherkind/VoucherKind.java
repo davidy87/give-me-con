@@ -60,7 +60,7 @@ public class VoucherKind extends BaseEntity {
         this.caution = caution;
     }
 
-    public void updateVoucherImage(VoucherKindImage voucherKindImage) {
+    public void updateVoucherKindImage(VoucherKindImage voucherKindImage) {
         this.voucherKindImage = voucherKindImage;
     }
 

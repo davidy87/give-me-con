@@ -7,9 +7,9 @@ import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucher.Voucher;
 import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,8 +34,8 @@ import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
 import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
+import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.domain.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.util.error.GlobalErrorCode.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
@@ -200,7 +200,7 @@ public class ApiExceptionControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("VoucherForSale API 권한 예외 처리 1 - ROLE_USER 권한만 접근 가능한 API에 다른 권한이 접근")
+    @DisplayName("Voucher API 권한 예외 처리 1 - ROLE_USER 권한만 접근 가능한 API에 다른 권한이 접근")
     void voucherForSaleApiRoleException1() throws Exception {
         ResultActions response = mockMvc.perform(get("/api/vouchers-for-sale"));
         response.andExpect(status().isForbidden());
@@ -208,9 +208,9 @@ public class ApiExceptionControllerTest {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("VoucherForSale API 권한 예외 처리 2 - ROLE_ADMIN 권한만 접근 가능한 API에 다른 권한이 접근")
-    void voucherForSaleApiRoleException2(@Autowired VoucherForSaleRepository voucherForSaleRepository) throws Exception {
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+    @DisplayName("Voucher API 권한 예외 처리 2 - ROLE_ADMIN 권한만 접근 가능한 API에 다른 권한이 접근")
+    void voucherForSaleApiRoleException2(@Autowired VoucherRepository voucherRepository) throws Exception {
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
@@ -219,11 +219,11 @@ public class ApiExceptionControllerTest {
         StatusUpdateRequest requestBody = new StatusUpdateRequest();
         requestBody.setStatusCode(FOR_SALE.ordinal());
 
-        ResultActions update = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucherForSale.getId())
+        ResultActions update = mockMvc.perform(put("/api/vouchers-for-sale/{id}", voucher.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(requestBody)));
 
-        ResultActions delete = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucherForSale.getId()));
+        ResultActions delete = mockMvc.perform(delete("/api/vouchers-for-sale/{id}", voucher.getId()));
 
         update.andExpect(status().isForbidden());
         delete.andExpect(status().isForbidden());

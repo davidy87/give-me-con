@@ -1,7 +1,7 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.BaseEntity;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
+import com.givemecon.domain.image.voucher.VoucherImage;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.voucherkind.VoucherKind;
@@ -15,14 +15,14 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE voucher_for_sale SET deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE voucher SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
 @Entity
-public class VoucherForSale extends BaseEntity {
+public class Voucher extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,13 +39,13 @@ public class VoucherForSale extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private VoucherForSaleStatus status;
+    private VoucherStatus status;
 
     @Column(nullable = false)
     private LocalDate saleRequestedDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private VoucherForSaleImage voucherForSaleImage;
+    private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private VoucherKind voucherKind;
@@ -57,7 +57,7 @@ public class VoucherForSale extends BaseEntity {
     private Order order;
 
     @Builder
-    public VoucherForSale(Long price, LocalDate expDate, String barcode) {
+    public Voucher(Long price, LocalDate expDate, String barcode) {
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
@@ -70,18 +70,18 @@ public class VoucherForSale extends BaseEntity {
     }
 
     public String getImageUrl() {
-        return voucherForSaleImage.getImageUrl();
+        return voucherImage.getImageUrl();
     }
 
-    public void updateStatus(VoucherForSaleStatus status) {
+    public void updateStatus(VoucherStatus status) {
         this.status = status;
     }
 
-    public void updateVoucherForSaleImage(VoucherForSaleImage voucherForSaleImage) {
-        this.voucherForSaleImage = voucherForSaleImage;
+    public void updateVoucherImage(VoucherImage voucherImage) {
+        this.voucherImage = voucherImage;
     }
 
-    public void updateVoucher(VoucherKind voucherKind) {
+    public void updateVoucherKind(VoucherKind voucherKind) {
         this.voucherKind = voucherKind;
     }
 
