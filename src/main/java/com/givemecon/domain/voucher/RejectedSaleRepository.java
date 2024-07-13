@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,7 +1,7 @@
 package com.givemecon.controller.api;
 
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.s3.S3MockConfig;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.brand.BrandIcon;
@@ -73,7 +73,7 @@ class BrandApiControllerTest {
     BrandIconRepository brandIconRepository;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
     S3Mock s3Mock;
@@ -155,47 +155,6 @@ class BrandApiControllerTest {
     }
 
     @Test
-    void findAll() throws Exception {
-        // given
-        for (int i = 1; i <= 20; i++) {
-            Brand brand = brandRepository.save(Brand.builder()
-                    .name("Brand" + i)
-                    .build());
-
-            BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
-                    .imageKey("imageKey" + i)
-                    .imageUrl("imageUrl" + i)
-                    .originalName("brandIcon" + i + ".png")
-                    .build());
-
-            brand.updateBrandIcon(brandIcon);
-        }
-
-        // when
-        ResultActions response = mockMvc.perform(get("/api/brands")
-                .queryParam("page", "1")
-                .queryParam("size", "10")
-                .queryParam("sort", "name"));
-
-        // then
-        response.andExpect(status().isOk())
-                .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pagingQueryParameters(),
-                        responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
-                                fieldWithPath("brands").type(JsonFieldType.ARRAY).description("현재 페이지의 브랜드 목록"),
-                                fieldWithPath("brands.[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
-                                fieldWithPath("brands.[].name").type(JsonFieldType.STRING).description("브랜드 이름"),
-                                fieldWithPath("brands.[].iconUrl").type(JsonFieldType.STRING).description("브랜드 이미지")
-                        ))
-                );
-    }
-
-    @Test
     void findAllByCategoryId() throws Exception {
         // given
         for (int i = 1; i <= 20; i++) {
@@ -216,9 +175,6 @@ class BrandApiControllerTest {
         // when
         String uri = UriComponentsBuilder.fromPath("/api/brands")
                 .queryParam("categoryId", category.getId())
-                .queryParam("page", "1")
-                .queryParam("size", "10")
-                .queryParam("sort", "name")
                 .build()
                 .toString();
 
@@ -239,13 +195,9 @@ class BrandApiControllerTest {
                                 parameterWithName("categoryId").description("카테고리 id")
                         ),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("페이징된 브랜드 목록 길이"),
-                                fieldWithPath("brands").type(JsonFieldType.ARRAY).description("페이징된 브랜드 목록"),
-                                fieldWithPath("brands.[].id").type(JsonFieldType.NUMBER).description("페이징된 브랜드 id"),
-                                fieldWithPath("brands.[].name").type(JsonFieldType.STRING).description("페이징된 브랜드 name"),
-                                fieldWithPath("brands.[].iconUrl").type(JsonFieldType.STRING).description("페이징된 브랜드 iconUrl")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("페이징된 브랜드 id"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("페이징된 브랜드 name"),
+                                fieldWithPath("[].iconUrl").type(JsonFieldType.STRING).description("페이징된 브랜드 iconUrl")
                         ))
                 );
     }
@@ -327,14 +279,14 @@ class BrandApiControllerTest {
                 .originalName("brandIcon.png")
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .description("description")
                 .caution("caution")
                 .build());
 
         brand.updateBrandIcon(brandIcon);
-        voucher.updateBrand(brand);
+        voucherKind.updateBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/brands/{id}", brand.getId()));
@@ -350,8 +302,8 @@ class BrandApiControllerTest {
                 );
 
         List<Brand> brandList = brandRepository.findAll();
-        List<Voucher> voucherList = voucherRepository.findAll();
+        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
         assertThat(brandList).isEmpty();
-        assertThat(voucherList).isEmpty();
+        assertThat(voucherKindList).isEmpty();
     }
 }

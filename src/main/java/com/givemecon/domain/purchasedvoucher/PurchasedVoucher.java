@@ -2,7 +2,7 @@ package com.givemecon.domain.purchasedvoucher;
 
 import com.givemecon.domain.BaseEntity;
 import com.givemecon.domain.member.Member;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucher.Voucher;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,14 +28,14 @@ public class PurchasedVoucher extends BaseEntity {
     private PurchasedVoucherStatus status;
 
     @OneToOne(fetch = FetchType.LAZY)
-    private VoucherForSale voucherForSale;
+    private Voucher voucher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member owner;
 
-    public PurchasedVoucher(VoucherForSale voucherForSale, Member owner) {
+    public PurchasedVoucher(Voucher voucher, Member owner) {
         this.status = USABLE;
-        this.voucherForSale = voucherForSale;
+        this.voucher = voucher;
         this.owner = owner;
     }
 

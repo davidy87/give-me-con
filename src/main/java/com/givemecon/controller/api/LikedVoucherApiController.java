@@ -3,13 +3,13 @@ package com.givemecon.controller.api;
 import com.givemecon.domain.likedvoucher.LikedVoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.domain.voucher.VoucherDto.*;
+import java.util.List;
+
+import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,20 +21,18 @@ public class LikedVoucherApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public VoucherResponse save(Authentication authentication, @RequestBody Long voucherId) {
+    public VoucherKindResponse save(Authentication authentication, @RequestBody Long voucherId) {
         return likedVoucherService.save(authentication.getName(), voucherId);
     }
 
     @GetMapping
-    public PagedVoucherResponse findAllByUsername(Authentication authentication,
-                                                  @PageableDefault(sort = "id") Pageable pageable) {
-
-        return likedVoucherService.findPageByUsername(authentication.getName(), pageable);
+    public List<VoucherKindResponse> findAllByUsername(Authentication authentication) {
+        return likedVoucherService.findAllByUsername(authentication.getName());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{voucherId}")
-    public void deleteByUsernameAndVoucherId(Authentication authentication, @PathVariable Long voucherId) {
-        likedVoucherService.deleteByUsernameAndVoucherId(authentication.getName(), voucherId);
+    @DeleteMapping("/{voucherKindId}")
+    public void deleteByUsernameAndVoucherId(Authentication authentication, @PathVariable Long voucherKindId) {
+        likedVoucherService.deleteByUsernameAndVoucherId(authentication.getName(), voucherKindId);
     }
 }

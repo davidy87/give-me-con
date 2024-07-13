@@ -1,7 +1,7 @@
 package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
 class VoucherImageRepositoryTest {
 
     @Autowired
-    VoucherImageRepository voucherImageRepository;
+    VoucherForSaleImageRepository voucherForSaleImageRepository;
 
     @Test
     void saveAndFindAll() {
@@ -33,8 +33,8 @@ class VoucherImageRepositoryTest {
                 .build();
 
         // when
-        voucherImageRepository.save(voucherImage);
-        List<VoucherImage> voucherImageList = voucherImageRepository.findAll();
+        voucherForSaleImageRepository.save(voucherImage);
+        List<VoucherImage> voucherImageList = voucherForSaleImageRepository.findAll();
 
         // then
         VoucherImage found = voucherImageList.get(0);
@@ -47,14 +47,14 @@ class VoucherImageRepositoryTest {
     void BaseTimeEntityTest() {
         // given
         LocalDateTime now = LocalDateTime.now();
-        voucherImageRepository.save(VoucherImage.builder()
+        voucherForSaleImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .originalName("testImage.png")
                 .imageUrl("imageUrl")
                 .build());
 
         // when
-        List<VoucherImage> voucherImageList = voucherImageRepository.findAll();
+        List<VoucherImage> voucherImageList = voucherForSaleImageRepository.findAll();
 
         // then
         VoucherImage found = voucherImageList.get(0);

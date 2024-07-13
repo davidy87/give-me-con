@@ -3,7 +3,7 @@ package com.givemecon.domain.category;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
@@ -30,7 +30,7 @@ public class CategoryService {
 
     private final BrandRepository brandRepository;
 
-    private final VoucherRepository voucherRepository;
+    private final VoucherKindRepository voucherKindRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
@@ -46,8 +46,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAll() {
-        return categoryRepository.findAll()
-                .stream()
+        return categoryRepository.findAllWithCategoryIcon().stream()
                 .map(CategoryResponse::new)
                 .toList();
     }
@@ -75,7 +74,7 @@ public class CategoryService {
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
         brandRepository.findAllByCategory(category)
-                .forEach(voucherRepository::deleteAllByBrand);
+                .forEach(voucherKindRepository::deleteAllByBrand);
         brandRepository.deleteAllByCategory(category);
         categoryRepository.delete(category);
     }

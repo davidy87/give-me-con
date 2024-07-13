@@ -3,18 +3,20 @@ package com.givemecon.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.image.voucher.VoucherImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherStatus;
 import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSaleStatus;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
+import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucher.VoucherStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,10 +69,13 @@ class PurchasedVoucherApiControllerTest {
     JwtTokenService jwtTokenService;
 
     @Autowired
-    VoucherRepository voucherRepository;
+    VoucherKindRepository voucherKindRepository;
 
     @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherKindImageRepository voucherKindImageRepository;
+
+    @Autowired
+    VoucherRepository voucherRepository;
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
@@ -83,7 +88,7 @@ class PurchasedVoucherApiControllerTest {
 
     Member member;
 
-    Voucher voucher;
+    VoucherKind voucherKind;
 
     TokenInfo tokenInfo;
 
@@ -102,9 +107,17 @@ class PurchasedVoucherApiControllerTest {
                 .authority(USER)
                 .build());
 
-        voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
+
+        VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
+                .imageUrl("imageUrl")
+                .imageKey("imageKey")
+                .originalName("originalName")
+                .build());
+
+        voucherKind.updateVoucherKindImage(voucherKindImage);
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
@@ -115,22 +128,22 @@ class PurchasedVoucherApiControllerTest {
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+            Voucher voucher = voucherRepository.save(Voucher.builder()
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now().plusDays(1))
                     .build());
 
-            VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+            VoucherImage voucherImage = voucherForSaleImageRepository.save(VoucherImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("image" + i + ".png")
                     .build());
 
-            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucherForSale.updateVoucher(voucher);
-            voucherForSale.updateStatus(VoucherForSaleStatus.FOR_SALE);
-            dtoList.add(new PurchasedVoucherRequest(voucherForSale.getId()));
+            voucher.updateVoucherImage(voucherImage);
+            voucher.updateVoucherKind(voucherKind);
+            voucher.updateStatus(VoucherStatus.FOR_SALE);
+            dtoList.add(new PurchasedVoucherRequest(voucher.getId()));
         }
 
         PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(dtoList);
@@ -146,8 +159,8 @@ class PurchasedVoucherApiControllerTest {
         assertThat(purchasedVoucherList).hasSize(requestDtoList.getRequests().size());
 
         purchasedVoucherList.forEach(purchasedVoucher -> {
-            VoucherForSale voucherForSale = purchasedVoucher.getVoucherForSale();
-            assertThat(voucherForSale.getStatus()).isEqualTo(VoucherForSaleStatus.SOLD);
+            Voucher voucher = purchasedVoucher.getVoucher();
+            assertThat(voucher.getStatus()).isEqualTo(VoucherStatus.SOLD);
             assertThat(purchasedVoucher.getStatus()).isEqualTo(PurchasedVoucherStatus.USABLE);
         });
 
@@ -162,7 +175,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("[].voucherKindImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -175,22 +188,22 @@ class PurchasedVoucherApiControllerTest {
     void findAllByUsername() throws Exception {
         // given
         for (int i = 1; i <= 20; i++) {
-            VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+            Voucher voucher = voucherRepository.save(Voucher.builder()
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now().plusDays(1))
                     .build());
 
-            VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+            VoucherImage voucherImage = voucherForSaleImageRepository.save(VoucherImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("image" + i + ".png")
                     .build());
 
 
-            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucherForSale.updateVoucher(voucher);
-            purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
+            voucher.updateVoucherImage(voucherImage);
+            voucher.updateVoucherKind(voucherKind);
+            purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
         }
 
         // when
@@ -207,17 +220,13 @@ class PurchasedVoucherApiControllerTest {
                         getDocumentResponse(),
                         pagingQueryParameters(),
                         responseFields(
-                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
-                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 번호"),
-                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("현재 페이지의 항목 수"),
-                                fieldWithPath("purchasedVouchers").type(JsonFieldType.ARRAY).description("현재 페이지의 기프티콘 구매 목록"),
-                                fieldWithPath("purchasedVouchers.[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
-                                fieldWithPath("purchasedVouchers.[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("purchasedVouchers.[].imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
-                                fieldWithPath("purchasedVouchers.[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
-                                fieldWithPath("purchasedVouchers.[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("purchasedVouchers.[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
-                                fieldWithPath("purchasedVouchers.[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
+                                fieldWithPath("[].voucherKindImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
 
@@ -228,22 +237,22 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void findOne() throws Exception {
         // given
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now().plusDays(1))
                 .build());
 
-        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+        VoucherImage voucherImage = voucherForSaleImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucher.updateVoucherImage(voucherImage);
+        voucher.updateVoucherKind(voucherKind);
         PurchasedVoucher purchasedVoucher =
-                purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
+                purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
@@ -252,11 +261,11 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
-                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
+                .andExpect(jsonPath("title").value(voucher.getTitle()))
+                .andExpect(jsonPath("voucherKindImageUrl").value(voucherImage.getImageUrl()))
+                .andExpect(jsonPath("price").value(voucher.getPrice()))
+                .andExpect(jsonPath("expDate").value(voucher.getExpDate().toString()))
+                .andExpect(jsonPath("barcode").value(voucher.getBarcode()))
                 .andExpect(jsonPath("status").value(purchasedVoucher.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -267,7 +276,7 @@ class PurchasedVoucherApiControllerTest {
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
+                                fieldWithPath("voucherKindImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
                                 fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
@@ -279,22 +288,22 @@ class PurchasedVoucherApiControllerTest {
     @Test
     void setUsed() throws Exception {
         // given
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now().plusDays(1))
                 .build());
 
-        VoucherForSaleImage voucherForSaleImage = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+        VoucherImage voucherImage = voucherForSaleImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-        voucherForSale.updateVoucher(voucher);
+        voucher.updateVoucherImage(voucherImage);
+        voucher.updateVoucherKind(voucherKind);
         PurchasedVoucher purchasedVoucher =
-                purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, member));
+                purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/purchased-vouchers/{id}", purchasedVoucher.getId())
@@ -303,11 +312,6 @@ class PurchasedVoucherApiControllerTest {
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(purchasedVoucher.getId()))
-                .andExpect(jsonPath("title").value(voucherForSale.getVoucher().getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherForSaleImage.getImageUrl()))
-                .andExpect(jsonPath("price").value(voucherForSale.getPrice()))
-                .andExpect(jsonPath("expDate").value(voucherForSale.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(voucherForSale.getBarcode()))
                 .andExpect(jsonPath("status").value(purchasedVoucher.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -317,11 +321,6 @@ class PurchasedVoucherApiControllerTest {
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("구매한 기프티콘 타이틀"),
-                                fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("구매한 기프티콘 이미지"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
-                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );

@@ -10,15 +10,15 @@ import com.givemecon.domain.image.category.CategoryIcon;
 import com.givemecon.domain.image.category.CategoryIconRepository;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import com.givemecon.domain.likedvoucher.LikedVoucher;
 import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucher;
@@ -55,13 +55,13 @@ public class EntityRelationshipTest {
     MemberRepository memberRepository;
 
     @Autowired
+    VoucherKindRepository voucherKindRepository;
+
+    @Autowired
+    VoucherKindImageRepository voucherKindImageRepository;
+
+    @Autowired
     VoucherRepository voucherRepository;
-
-    @Autowired
-    VoucherImageRepository voucherImageRepository;
-
-    @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
@@ -119,13 +119,37 @@ public class EntityRelationshipTest {
     @Test
     void voucherImage() {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("Americano T")
                 .description("description")
                 .caution("caution")
                 .build());
 
-        VoucherImage image = voucherImageRepository.save(VoucherImage.builder()
+        VoucherKindImage image = voucherKindImageRepository.save(VoucherKindImage.builder()
+                .imageKey("imageKey")
+                .originalName("testIcon.png")
+                .imageUrl("imageUrl")
+                .build());
+
+        // when
+        voucherKind.updateVoucherKindImage(image);
+        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
+
+        // then
+        assertThat(voucherKindList).isNotEmpty();
+        assertThat(voucherKindList.get(0).getVoucherKindImage()).isEqualTo(image);
+    }
+
+    @Test
+    void voucherForSaleImage() {
+        // given
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now())
+                .build());
+
+        VoucherImage image = voucherForSaleImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .originalName("testIcon.png")
                 .imageUrl("imageUrl")
@@ -138,30 +162,6 @@ public class EntityRelationshipTest {
         // then
         assertThat(voucherList).isNotEmpty();
         assertThat(voucherList.get(0).getVoucherImage()).isEqualTo(image);
-    }
-
-    @Test
-    void voucherForSaleImage() {
-        // given
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
-                .price(4_000L)
-                .barcode("1111 1111 1111")
-                .expDate(LocalDate.now())
-                .build());
-
-        VoucherForSaleImage image = voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
-                .imageKey("imageKey")
-                .originalName("testIcon.png")
-                .imageUrl("imageUrl")
-                .build());
-
-        // when
-        voucherForSale.updateVoucherForSaleImage(image);
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
-
-        // then
-        assertThat(voucherForSaleList).isNotEmpty();
-        assertThat(voucherForSaleList.get(0).getVoucherForSaleImage()).isEqualTo(image);
     }
 
     @Test
@@ -185,7 +185,7 @@ public class EntityRelationshipTest {
     }
 
     @Test
-    void voucher() {
+    void voucherKind() {
         // given
         Category category = categoryRepository.save(Category.builder()
                 .name("coffee")
@@ -195,19 +195,19 @@ public class EntityRelationshipTest {
                 .name("Starbucks")
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("Starbucks Americano T")
                 .build());
 
         // when
         brand.updateCategory(category);
-        voucher.updateBrand(brand);
-        List<Voucher> voucherList = voucherRepository.findAll();
+        voucherKind.updateBrand(brand);
+        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
 
         // then
-        assertThat(voucherList).isNotEmpty();
+        assertThat(voucherKindList).isNotEmpty();
 
-        Voucher found = voucherList.get(0);
+        VoucherKind found = voucherKindList.get(0);
         assertThat(found.getBrand()).isEqualTo(brand);
         assertThat(found.getBrand().getCategory()).isEqualTo(category);
     }
@@ -221,27 +221,27 @@ public class EntityRelationshipTest {
                 .authority(Authority.USER)
                 .build());
 
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(15_000L)
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("Americano T")
                 .build());
 
         // when
-        voucherForSale.updateSeller(seller);
-        voucherForSale.updateVoucher(voucher);
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAll();
+        voucher.updateSeller(seller);
+        voucher.updateVoucherKind(voucherKind);
+        List<Voucher> voucherList = voucherRepository.findAll();
 
         // then
-        assertThat(voucherForSaleList).isNotEmpty();
+        assertThat(voucherList).isNotEmpty();
 
-        VoucherForSale found = voucherForSaleList.get(0);
+        Voucher found = voucherList.get(0);
         assertThat(found.getSeller()).isEqualTo(seller);
-        assertThat(found.getVoucher()).isEqualTo(voucher);
+        assertThat(found.getVoucherKind()).isEqualTo(voucherKind);
     }
 
     @Test
@@ -253,13 +253,13 @@ public class EntityRelationshipTest {
                 .authority(Authority.USER)
                 .build());
 
-        Voucher voucherSaved = voucherRepository.save(Voucher.builder()
+        VoucherKind voucherKindSaved = voucherKindRepository.save(VoucherKind.builder()
                 .title("Americano T")
                 .build());
 
         likedVoucherRepository.save(LikedVoucher.builder()
                 .member(memberSaved)
-                .voucher(voucherSaved)
+                .voucherKind(voucherKindSaved)
                 .build());
 
         // when
@@ -270,7 +270,7 @@ public class EntityRelationshipTest {
 
         LikedVoucher found = likedVoucherList.get(0);
         assertThat(found.getMember()).isEqualTo(memberSaved);
-        assertThat(found.getVoucher()).isEqualTo(voucherSaved);
+        assertThat(found.getVoucherKind()).isEqualTo(voucherKindSaved);
     }
 
     @Test
@@ -290,11 +290,11 @@ public class EntityRelationshipTest {
                 .authority(Authority.USER)
                 .build());
 
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
                 .build());
 
-        VoucherForSale voucherForSale = voucherForSaleRepository.save(VoucherForSale.builder()
+        Voucher voucher = voucherRepository.save(Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now().plusDays(1))
@@ -303,9 +303,9 @@ public class EntityRelationshipTest {
 
         // when
         brand.updateCategory(category);
-        voucher.updateBrand(brand);
-        voucherForSale.updateVoucher(voucher);
-        purchasedVoucherRepository.save(new PurchasedVoucher(voucherForSale, owner));
+        voucherKind.updateBrand(brand);
+        voucher.updateVoucherKind(voucherKind);
+        purchasedVoucherRepository.save(new PurchasedVoucher(voucher, owner));
 
         List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
 
@@ -314,9 +314,9 @@ public class EntityRelationshipTest {
 
         PurchasedVoucher found = purchasedVoucherList.get(0);
         assertThat(found.getOwner()).isEqualTo(owner);
-        assertThat(found.getVoucherForSale()).isEqualTo(voucherForSale);
-        assertThat(found.getVoucherForSale().getVoucher()).isEqualTo(voucher);
-        assertThat(found.getVoucherForSale().getVoucher().getBrand()).isEqualTo(brand);
-        assertThat(found.getVoucherForSale().getVoucher().getBrand().getCategory()).isEqualTo(category);
+        assertThat(found.getVoucher()).isEqualTo(voucher);
+        assertThat(found.getVoucher().getVoucherKind()).isEqualTo(voucherKind);
+        assertThat(found.getVoucher().getVoucherKind().getBrand()).isEqualTo(brand);
+        assertThat(found.getVoucher().getVoucherKind().getBrand().getCategory()).isEqualTo(category);
     }
 }

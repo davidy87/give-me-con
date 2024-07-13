@@ -1,4 +1,4 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -21,14 +21,14 @@ public class RejectedSale extends BaseEntity {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private Long voucherForSaleId;
+    private Long voucherId;
 
     @Column(nullable = false)
     private String rejectedReason;
 
     @Builder
-    public RejectedSale(Long voucherForSaleId, String rejectedReason) {
-        this.voucherForSaleId = voucherForSaleId;
+    public RejectedSale(Long voucherId, String rejectedReason) {
+        this.voucherId = voucherId;
         this.rejectedReason = rejectedReason;
     }
 }

@@ -2,15 +2,13 @@ package com.givemecon.domain.brand;
 
 import com.givemecon.domain.image.brand.BrandIcon;
 import com.givemecon.domain.image.brand.BrandIconRepository;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
 import com.givemecon.util.FileUtils;
 import com.givemecon.domain.category.Category;
 import com.givemecon.domain.category.CategoryRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,7 +29,7 @@ public class BrandService {
 
     private final BrandIconRepository brandIconRepository;
 
-    private final VoucherRepository voucherRepository;
+    private final VoucherKindRepository voucherKindRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
@@ -51,29 +49,17 @@ public class BrandService {
 
     @Transactional(readOnly = true)
     public List<BrandResponse> findAll() {
-        return brandRepository.findAll()
+        return brandRepository.findAllWithBrandIcon()
                 .stream()
                 .map(BrandResponse::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public PagedBrandResponse findPage(Pageable pageable) {
-        Page<BrandResponse> pageResult = brandRepository.findAll(pageable)
-                .map(BrandResponse::new);
-
-        return new PagedBrandResponse(pageResult);
-    }
-
-    @Transactional(readOnly = true)
-    public PagedBrandResponse findPageByCategoryId(Long categoryId, Pageable pageable) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
-
-        Page<BrandResponse> pageResult = brandRepository.findPageByCategory(category, pageable)
-                .map(BrandResponse::new);
-
-        return new PagedBrandResponse(pageResult);
+    public List<BrandResponse> findAllByCategory(Long categoryId) {
+        return brandRepository.findAllWithBrandIconByCategoryId(categoryId).stream()
+                .map(BrandResponse::new)
+                .toList();
     }
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
@@ -106,7 +92,7 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
-        voucherRepository.deleteAllByBrand(brand);
+        voucherKindRepository.deleteAllByBrand(brand);
         brandRepository.delete(brand);
     }
 }

@@ -19,7 +19,7 @@ public class VoucherUpdateScheduler {
     @Scheduled(cron = EVERY_MIDNIGHT)
     public void updateExpiredEveryMidnight() {
         LocalDate today = LocalDate.now();
-        log.info("[Log] --- VoucherForSale scheduler started ---");
+        log.info("[Log] --- Voucher scheduler started ---");
         log.info("[Log] Date: {}", today);
         schedulerService.updateExpired(today);
     }

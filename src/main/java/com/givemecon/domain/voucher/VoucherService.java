@@ -1,27 +1,23 @@
 package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
 import com.givemecon.util.image_entity.ImageEntityUtils;
-import com.givemecon.util.FileUtils;
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.category.Category;
+import com.givemecon.domain.member.Member;
+import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 import static com.givemecon.domain.voucher.VoucherDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,104 +25,96 @@ import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
 @Transactional
 public class VoucherService {
 
-    private final BrandRepository brandRepository;
+    private final MemberRepository memberRepository;
+
+    private final VoucherKindRepository voucherKindRepository;
 
     private final VoucherRepository voucherRepository;
 
-    private final VoucherImageRepository voucherImageRepository;
+    private final VoucherForSaleImageRepository voucherForSaleImageRepository;
+
+    private final RejectedSaleRepository rejectedSaleRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 
-    public VoucherResponse save(VoucherSaveRequest requestDto) {
-        Brand brand = brandRepository.findById(requestDto.getBrandId())
-                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
+    public VoucherResponse save(String username, VoucherRequest requestDto) {
+        Member seller = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        if (brand.getCategory() == null) {
-            throw new EntityNotFoundException(Category.class);
-        }
+        VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherId())
+                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
-        VoucherImage voucherImage = voucherImageRepository.save(
+        VoucherImage voucherImage = voucherForSaleImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherImage.class, requestDto.getImageFile()));
 
         Voucher voucher = voucherRepository.save(requestDto.toEntity());
+        voucher.updateSeller(seller);
+        voucher.updateVoucherKind(voucherKind);
         voucher.updateVoucherImage(voucherImage);
-        voucher.updateBrand(brand);
 
         return new VoucherResponse(voucher);
     }
 
     @Transactional(readOnly = true)
-    public VoucherResponse find(Long id) {
-        Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+    @PreAuthorize("hasRole('USER')")
+    public List<VoucherResponse> findAllByUsername(String username) {
+        Member seller = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        return new VoucherResponse(voucher);
-    }
-
-    @Transactional(readOnly = true)
-    public List<VoucherResponse> findAll() {
-        return voucherRepository.findAll().stream()
+        return voucherRepository.findAllBySeller(seller).stream()
                 .map(VoucherResponse::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public PagedVoucherResponse findPage(Pageable pageable) {
-        Page<VoucherResponse> pageResult = voucherRepository.findAll(pageable)
-                .map(VoucherResponse::new);
+    public List<VoucherResponse> findAllByStatus(StatusCodeParameter paramDto) {
+        VoucherStatus status = findStatus(paramDto.getStatusCode());
 
-        return new PagedVoucherResponse(pageResult);
-    }
-
-    @Transactional(readOnly = true)
-    public PagedVoucherResponse findPageByBrandName(String brandName, Pageable pageable) {
-        Brand brand = brandRepository.findByName(brandName)
-                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
-
-        Page<VoucherResponse> pageResult = voucherRepository.findPageByBrand(brand, pageable)
-                .map(VoucherResponse::new);
-
-        return new PagedVoucherResponse(pageResult);
-    }
-
-
-    @Transactional(readOnly = true)
-    public List<VoucherForSaleResponse> findSellingListByVoucherId(Long id) {
-        Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
-
-        return voucher.getVoucherForSaleList().stream()
-                .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
-                .map(VoucherForSaleResponse::new)
+        return voucherRepository.findAllByStatus(status).stream()
+                .map(VoucherResponse::new)
                 .toList();
     }
 
-    public VoucherResponse update(Long id, VoucherUpdateRequest requestDto) {
+    @Transactional(readOnly = true)
+    public ImageResponse findImageUrl(Long voucherId) {
+        Voucher voucher = voucherRepository.findOneWithImage(voucherId)
+                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+
+        return new ImageResponse(voucher);
+    }
+
+    public VoucherResponse updateStatus(Long id, StatusUpdateRequest requestDto) {
         Voucher voucher = voucherRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
-        String newTitle = requestDto.getTitle();
-        String newDescription = requestDto.getDescription();
-        String newCaution = requestDto.getCaution();
-        MultipartFile newImageFile = requestDto.getImageFile();
+        VoucherStatus newStatus = findStatus(requestDto.getStatusCode());
+        voucher.updateStatus(newStatus);
 
-        if (StringUtils.hasText(newTitle)) {
-            voucher.updateTitle(newTitle);
-        }
-
-        if (StringUtils.hasText(newDescription)) {
-            voucher.updateDescription(newDescription);
-        }
-
-        if (StringUtils.hasText(newCaution)) {
-            voucher.updateCaution(newCaution);
-        }
-
-        if (FileUtils.isFileValid(newImageFile)) {
-            imageEntityUtils.updateImageEntity(voucher.getVoucherImage(), newImageFile);
+        // 판매 요청 거절 시
+        if (newStatus == REJECTED) {
+            recordRejectedSale(voucher.getId(), requestDto.getRejectedReason());
         }
 
         return new VoucherResponse(voucher);
+    }
+
+    private void recordRejectedSale(Long voucherId, String rejectedReason) {
+        RejectedSale rejectedSale = RejectedSale.builder()
+                .voucherId(voucherId)
+                .rejectedReason(rejectedReason)
+                .build();
+
+        rejectedSaleRepository.save(rejectedSale);
+    }
+
+    private VoucherStatus findStatus(Integer statusCode) {
+        VoucherStatus[] statuses = VoucherStatus.values();
+
+        if (statusCode < 0 || statusCode >= statuses.length) {
+            throw new EntityNotFoundException(Voucher.class);
+        }
+
+        return statuses[statusCode];
     }
 
     public void delete(Long id) {

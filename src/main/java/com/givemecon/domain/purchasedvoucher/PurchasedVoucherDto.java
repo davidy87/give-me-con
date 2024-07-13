@@ -1,6 +1,6 @@
 package com.givemecon.domain.purchasedvoucher;
 
-import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.voucher.Voucher;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -49,19 +49,19 @@ public final class PurchasedVoucherDto {
 
         private final String barcode;
 
-        private final String imageUrl;
+        private final String voucherKindImageUrl;
 
         private final PurchasedVoucherStatus status;
 
         public PurchasedVoucherResponse(PurchasedVoucher purchasedVoucher) {
-            VoucherForSale voucherForSale = purchasedVoucher.getVoucherForSale();
+            Voucher voucher = purchasedVoucher.getVoucher();
 
             this.id = purchasedVoucher.getId();
-            this.title = voucherForSale.getTitle();
-            this.price = voucherForSale.getPrice();
-            this.expDate = voucherForSale.getExpDate();
-            this.barcode = voucherForSale.getBarcode();
-            this.imageUrl = voucherForSale.getImageUrl();
+            this.title = voucher.getTitle();
+            this.price = voucher.getPrice();
+            this.expDate = voucher.getExpDate();
+            this.barcode = voucher.getBarcode();
+            this.voucherKindImageUrl = voucher.getVoucherKind().getImageUrl();
             this.status = purchasedVoucher.getStatus();
         }
     }
@@ -82,6 +82,19 @@ public final class PurchasedVoucherDto {
             this.totalPages = pageResult.getTotalPages();
             this.size = pageResult.getSize();
             this.purchasedVouchers = pageResult.getContent();
+        }
+    }
+
+    @Getter
+    public static class StatusUpdateResponse {
+
+        private final Long id;
+
+        private final PurchasedVoucherStatus status;
+
+        public StatusUpdateResponse(PurchasedVoucher purchasedVoucher) {
+            this.id = purchasedVoucher.getId();
+            this.status = purchasedVoucher.getStatus();
         }
     }
 }

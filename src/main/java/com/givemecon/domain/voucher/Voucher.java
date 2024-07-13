@@ -1,9 +1,10 @@
 package com.givemecon.domain.voucher;
 
 import com.givemecon.domain.BaseEntity;
-import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
+import com.givemecon.domain.member.Member;
+import com.givemecon.domain.order.Order;
+import com.givemecon.domain.voucherkind.VoucherKind;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,10 +13,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.FOR_SALE;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,85 +28,68 @@ public class Voucher extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String title;
+    @Column(nullable = false)
+    private Long price;
 
-    @Column(length = 500)
-    private String description;
+    @Column(nullable = false)
+    private LocalDate expDate;
 
-    @Column(length = 500)
-    private String caution;
+    @Column(nullable = false)
+    private String barcode;
 
-    @OneToOne
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private VoucherStatus status;
+
+    @Column(nullable = false)
+    private LocalDate saleRequestedDate;
+
+    @OneToOne(fetch = FetchType.LAZY)
     private VoucherImage voucherImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Brand brand;
+    private VoucherKind voucherKind;
 
-    @OneToMany(
-            mappedBy = "voucher",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    List<VoucherForSale> voucherForSaleList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member seller;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Order order;
 
     @Builder
-    public Voucher(String title, String description, String caution) {
-        this.title = title;
-        this.description = description;
-        this.caution = caution;
+    public Voucher(Long price, LocalDate expDate, String barcode) {
+        this.price = price;
+        this.expDate = expDate;
+        this.barcode = barcode;
+        this.status = NOT_YET_PERMITTED;
+        this.saleRequestedDate = LocalDate.now();
     }
 
-    public Long getMinPrice() {
-        return voucherForSaleList.stream()
-                .filter(voucherForSale -> voucherForSale.getStatus() == FOR_SALE)
-                .map(VoucherForSale::getPrice)
-                .reduce(Long::min)
-                .orElse(0L);
+    public String getTitle() {
+        return voucherKind.getTitle();
     }
 
     public String getImageUrl() {
         return voucherImage.getImageUrl();
     }
 
-    public void updateTitle(String title) {
-        this.title = title;
-    }
-
-    public void updateDescription(String description) {
-        this.description = description;
-    }
-
-    public void updateCaution(String caution) {
-        this.caution = caution;
+    public void updateStatus(VoucherStatus status) {
+        this.status = status;
     }
 
     public void updateVoucherImage(VoucherImage voucherImage) {
         this.voucherImage = voucherImage;
     }
 
-    public void updateBrand(Brand brand) {
-        this.brand = brand;
+    public void updateVoucherKind(VoucherKind voucherKind) {
+        this.voucherKind = voucherKind;
     }
 
-    public void addVoucherForSale(VoucherForSale voucherForSale) {
-        if (voucherForSale == null) {
-            return;
-        }
-
-        if (!voucherForSaleList.contains(voucherForSale)) {
-            voucherForSaleList.add(voucherForSale);
-        }
-
-        voucherForSale.updateVoucher(this);
+    public void updateSeller(Member seller) {
+        this.seller = seller;
     }
 
-    public void deleteVoucherForSale(VoucherForSale voucherForSale) {
-        if (voucherForSale == null) {
-            return;
-        }
-
-        voucherForSaleList.remove(voucherForSale);
-        voucherForSale.updateVoucher(null);
+    public void updateOrder(Order order) {
+        this.order = order;
     }
 }

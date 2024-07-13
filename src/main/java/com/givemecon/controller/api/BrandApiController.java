@@ -2,12 +2,12 @@ package com.givemecon.controller.api;
 
 import com.givemecon.domain.brand.BrandService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.givemecon.domain.brand.BrandDto.*;
 
@@ -25,14 +25,12 @@ public class BrandApiController {
     }
 
     @GetMapping
-    public PagedBrandResponse findAll(@RequestParam(required = false) Long categoryId,
-                                      @PageableDefault(sort = "id") Pageable pageable) {
-
+    public List<BrandResponse> findAll(@RequestParam(required = false) Long categoryId) {
         if (categoryId != null) {
-            return brandService.findPageByCategoryId(categoryId, pageable);
+            return brandService.findAllByCategory(categoryId);
         }
 
-        return brandService.findPage(pageable);
+        return brandService.findAll();
     }
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

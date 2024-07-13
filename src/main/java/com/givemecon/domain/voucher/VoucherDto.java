@@ -3,52 +3,77 @@ package com.givemecon.domain.voucher;
 import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.springframework.data.domain.Page;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.time.LocalDate;
+
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class VoucherDto {
 
     @Getter
     @RequiredArgsConstructor
-    public static class VoucherSaveRequest {
+    public static class VoucherRequest {
 
         @NotNull
         @Min(1L)
-        private final Long brandId;
+        private final Long voucherId;
+
+        @NotNull
+        @Min(0L)
+        private final Long price;
+
+        @NotNull
+        @Future
+        private final LocalDate expDate;
 
         @NotBlank
-        private final String title;
-
-        private final String description;
-
-        private final String caution;
+        private final String barcode;
 
         @ValidFile
         private final MultipartFile imageFile;
 
         public Voucher toEntity() {
             return Voucher.builder()
-                    .title(title)
-                    .description(description)
-                    .caution(caution)
+                    .price(price)
+                    .expDate(expDate)
+                    .barcode(barcode)
                     .build();
         }
     }
 
     @Getter
     @RequiredArgsConstructor
-    public static class VoucherUpdateRequest {
+    public static class StatusCodeParameter {
 
-        private final String title;
+        @Min(0)
+        @Max(4)
+        private final Integer statusCode;
+    }
 
-        private final String description;
+    @Getter
+    @Setter
+    public static class StatusUpdateRequest {
 
-        private final String caution;
+        @Min(0)
+        @Max(4)
+        @NotNull
+        private Integer statusCode;
 
-        private final MultipartFile imageFile;
+        private String rejectedReason;
+
+        @AssertTrue(message = "판매 거절 시, 거절 사유는 필수입니다.")
+        private boolean isRejectedReason() {
+            boolean valid = StringUtils.hasText(rejectedReason);
+
+            if (statusCode == REJECTED.ordinal()) {
+                return valid;
+            }
+
+            return !valid;
+        }
     }
 
     @Getter
@@ -56,42 +81,36 @@ public final class VoucherDto {
 
         private final Long id;
 
-        private final Long minPrice;
+        private final Long price;
 
         private final String title;
 
-        private final String imageUrl;
+        private final String barcode;
 
-        private final String description;
+        private final LocalDate expDate;
 
-        private final String caution;
+        private final VoucherStatus status;
+
+        private final LocalDate saleRequestedDate;
 
         public VoucherResponse(Voucher voucher) {
             this.id = voucher.getId();
-            this.minPrice = voucher.getMinPrice();
+            this.price = voucher.getPrice();
             this.title = voucher.getTitle();
-            this.imageUrl = voucher.getImageUrl();
-            this.description = voucher.getDescription();
-            this.caution = voucher.getCaution();
+            this.barcode = voucher.getBarcode();
+            this.expDate = voucher.getExpDate();
+            this.status = voucher.getStatus();
+            this.saleRequestedDate = voucher.getSaleRequestedDate();
         }
     }
 
     @Getter
-    public static class PagedVoucherResponse {
+    public static class ImageResponse {
 
-        private final int number;
+        private final String imageUrl;
 
-        private final int totalPages;
-
-        private final int size;
-
-        private final List<VoucherResponse> vouchers;
-
-        public PagedVoucherResponse(Page<VoucherResponse> pageResult) {
-            this.number = pageResult.getNumber();
-            this.totalPages = pageResult.getTotalPages();
-            this.size = pageResult.getSize();
-            this.vouchers = pageResult.getContent();
+        public ImageResponse(Voucher voucher) {
+            this.imageUrl = voucher.getImageUrl();
         }
     }
 }

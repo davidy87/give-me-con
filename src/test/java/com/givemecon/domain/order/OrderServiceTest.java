@@ -6,8 +6,8 @@ import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.exception.InvalidOrderException;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucher.VoucherRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +25,7 @@ import java.util.UUID;
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.order.OrderStatus.*;
 import static com.givemecon.domain.order.exception.OrderErrorCode.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -39,7 +39,7 @@ class OrderServiceTest {
     MemberRepository memberRepository;
 
     @Mock
-    VoucherForSaleRepository voucherForSaleRepository;
+    VoucherRepository voucherRepository;
 
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
@@ -51,7 +51,7 @@ class OrderServiceTest {
     Member buyer;
 
     @Mock
-    VoucherForSale voucherForSale;
+    Voucher voucher;
 
     @Mock
     Order order;
@@ -73,10 +73,10 @@ class OrderServiceTest {
             Mockito.when(memberRepository.findByUsername(any(String.class)))
                     .thenReturn(Optional.of(buyer));
 
-            Mockito.when(voucherForSaleRepository.findById(any(Long.class)))
-                    .thenReturn(Optional.of(voucherForSale));
+            Mockito.when(voucherRepository.findById(any(Long.class)))
+                    .thenReturn(Optional.of(voucher));
 
-            Mockito.when(voucherForSale.getSeller())
+            Mockito.when(voucher.getSeller())
                     .thenReturn(seller);
         }
 
@@ -84,7 +84,7 @@ class OrderServiceTest {
         @DisplayName("정상적인 주문 요청 테스트")
         void placeValidOrder() {
             // given
-            Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
+            Mockito.when(voucher.getStatus()).thenReturn(FOR_SALE);
             Mockito.when(buyer.getId()).thenReturn(1L);
             Mockito.when(seller.getId()).thenReturn(2L);
             Mockito.when(orderRepository.save(any(Order.class))).thenReturn(order);
@@ -104,7 +104,7 @@ class OrderServiceTest {
         @DisplayName("주문 요청 예외 1 - 구매할 VoucherForSale의 status가 FOR_SALE이 아닐 경우 주문 요청 실패")
         void notForSaleOrder() {
             // given
-            Mockito.when(voucherForSale.getStatus()).thenReturn(NOT_YET_PERMITTED);
+            Mockito.when(voucher.getStatus()).thenReturn(NOT_YET_PERMITTED);
             OrderRequest orderRequest = new OrderRequest(List.of(1L, 2L, 3L));
 
             // when & then
@@ -117,8 +117,8 @@ class OrderServiceTest {
         @DisplayName("주문 요청 예외 2 - 구매할 VoucherForSale의 seller가 존재하지 않을 경우 주문 요청 실패")
         void unavailableSellerOrder() {
             // given
-            Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
-            Mockito.when(voucherForSale.getSeller().isDeleted()).thenReturn(true);
+            Mockito.when(voucher.getStatus()).thenReturn(FOR_SALE);
+            Mockito.when(voucher.getSeller().isDeleted()).thenReturn(true);
             OrderRequest orderRequest = new OrderRequest(List.of(1L, 2L, 3L));
 
             // when & then
@@ -131,8 +131,8 @@ class OrderServiceTest {
         @DisplayName("주문 요청 예외 3 - 구매자와 구매할 기프티콘의 판매자가 같을 경우 예외 처리")
         void buyerEqualsSeller() {
             // given
-            Mockito.when(voucherForSale.getStatus()).thenReturn(FOR_SALE);
-            Mockito.when(voucherForSale.getSeller()).thenReturn(buyer);
+            Mockito.when(voucher.getStatus()).thenReturn(FOR_SALE);
+            Mockito.when(voucher.getSeller()).thenReturn(buyer);
             OrderRequest orderRequest = new OrderRequest(List.of(1L, 2L, 3L));
 
             // when & then
@@ -157,25 +157,25 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("정상적인 주문 조회 처리")
-        void findOrder(@Mock Brand brand, @Mock Voucher voucher) {
+        void findOrder(@Mock Brand brand, @Mock VoucherKind voucherKind) {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
             long price = 4_000L;
 
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
-            Mockito.when(order.getAmount()).thenReturn(price * voucherForSaleList.size());
+            Mockito.when(order.getQuantity()).thenReturn(voucherList.size());
+            Mockito.when(order.getAmount()).thenReturn(price * voucherList.size());
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
-            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
-            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+            Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getVoucherKind()).thenReturn(voucherKind);
 
-            Mockito.when(voucher.getBrand()).thenReturn(brand);
-            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(voucherKind.getBrand()).thenReturn(brand);
+            Mockito.when(voucherKind.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when
@@ -185,14 +185,14 @@ class OrderServiceTest {
             assertThat(orderSummary.getOrderNumber()).isEqualTo(order.getOrderNumber());
             assertThat(orderSummary.getStatus()).isSameAs(IN_PROGRESS);
             assertThat(orderSummary.getCustomerName()).isEqualTo(buyer.getUsername());
-            assertThat(orderSummary.getQuantity()).isEqualTo(voucherForSaleList.size());
-            assertThat(orderSummary.getTotalPrice()).isEqualTo(voucherForSale.getPrice() * voucherForSaleList.size());
+            assertThat(orderSummary.getQuantity()).isEqualTo(voucherList.size());
+            assertThat(orderSummary.getTotalPrice()).isEqualTo(voucher.getPrice() * voucherList.size());
             assertThat(orderSummary.getOrderItems().size()).isEqualTo(orderSummary.getQuantity());
 
             orderSummary.getOrderItems()
                     .forEach(orderItem -> {
                         assertThat(orderItem.getStatus()).isSameAs(ORDER_PLACED);
-                        assertThat(orderItem.getVoucherForSaleId()).isEqualTo(voucherForSale.getId());
+                        assertThat(orderItem.getVoucherForSaleId()).isEqualTo(voucher.getId());
                     });
         }
 
@@ -200,14 +200,14 @@ class OrderServiceTest {
         @DisplayName("주문 조회 예외 1 - VoucherForSale의 status가 ORDER_PLACED가 아닌 경우, 예외를 던진다.")
         void itemOrderNotPlaced() {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
 
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(voucherForSale.getStatus()).thenReturn(NOT_YET_PERMITTED);
+            Mockito.when(voucher.getStatus()).thenReturn(NOT_YET_PERMITTED);
 
             // when & then
             assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))
@@ -230,26 +230,26 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("주문 조회 예외 3 - 주문 수량에 오차가 있을 경우, 예외를 던진다.")
-        void invalidOrderQuantity(@Mock Brand brand, @Mock Voucher voucher) {
+        void invalidOrderQuantity(@Mock Brand brand, @Mock VoucherKind voucherKind) {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
 
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
-            Mockito.when(voucherForSale.getPrice()).thenReturn(4_000L);
-            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+            Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getPrice()).thenReturn(4_000L);
+            Mockito.when(voucher.getVoucherKind()).thenReturn(voucherKind);
 
-            Mockito.when(voucher.getBrand()).thenReturn(brand);
-            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(voucherKind.getBrand()).thenReturn(brand);
+            Mockito.when(voucherKind.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when
-            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size() + 1);
+            Mockito.when(order.getQuantity()).thenReturn(voucherList.size() + 1);
 
             // then
             assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))
@@ -259,28 +259,28 @@ class OrderServiceTest {
 
         @Test
         @DisplayName("주문 조회 예외 4 - 총 주문 금액에 오차가 있을 경우, 예외를 던진다.")
-        void invalidOrderAmount(@Mock Brand brand, @Mock Voucher voucher) {
+        void invalidOrderAmount(@Mock Brand brand, @Mock VoucherKind voucherKind) {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
             long price = 4_000L;
 
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
+            Mockito.when(order.getQuantity()).thenReturn(voucherList.size());
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
-            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
-            Mockito.when(voucherForSale.getVoucher()).thenReturn(voucher);
+            Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getVoucherKind()).thenReturn(voucherKind);
 
-            Mockito.when(voucher.getBrand()).thenReturn(brand);
-            Mockito.when(voucher.getImageUrl()).thenReturn("imageUrl");
+            Mockito.when(voucherKind.getBrand()).thenReturn(brand);
+            Mockito.when(voucherKind.getImageUrl()).thenReturn("imageUrl");
             Mockito.when(brand.getName()).thenReturn("Brand");
 
             // when
-            Mockito.when(order.getAmount()).thenReturn(price * voucherForSaleList.size() + 1_000L);
+            Mockito.when(order.getAmount()).thenReturn(price * voucherList.size() + 1_000L);
 
             // then
             assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))
@@ -305,19 +305,19 @@ class OrderServiceTest {
         @DisplayName("정상적인 주문 체결 요청")
         void confirmOrder() {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
             long price = 4_000L;
 
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
-            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getPrice()).thenReturn(price);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
-            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
-            Mockito.when(order.getAmount()).thenReturn(price * voucherForSaleList.size());
+            Mockito.when(order.getQuantity()).thenReturn(voucherList.size());
+            Mockito.when(order.getAmount()).thenReturn(price * voucherList.size());
 
             // when
             OrderConfirmation orderConfirmation = orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername());
@@ -364,15 +364,15 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 체결 요청 예외 4 - 주문할 VoucherForSale 중 하나라도 ORDER_PLACED 상태가 아닐 경우, 체결 처리하지 않는다.")
+        @DisplayName("주문 체결 요청 예외 4 - 주문할 Voucher 중 하나라도 ORDER_PLACED 상태가 아닐 경우, 체결 처리하지 않는다.")
         void itemNotForSaleWhenConfirm() {
             // given
             Mockito.when(order.getBuyer()).thenReturn(buyer);
 
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(List.of(voucherForSale));
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(List.of(voucher));
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(SOLD);
+            Mockito.when(voucher.getStatus()).thenReturn(SOLD);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
 
@@ -385,17 +385,17 @@ class OrderServiceTest {
         @Test
         void invalidOrderQuantity() {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
 
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
 
             // when
-            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size() + 1);
+            Mockito.when(order.getQuantity()).thenReturn(voucherList.size() + 1);
 
             // then
             assertThatThrownBy(() -> orderService.confirmOrder(order.getOrderNumber(), buyer.getUsername()))
@@ -406,18 +406,18 @@ class OrderServiceTest {
         @Test
         void invalidOrderAmount() {
             // given
-            List<VoucherForSale> voucherForSaleList = List.of(voucherForSale);
+            List<Voucher> voucherList = List.of(voucher);
             long price = 4_000L;
 
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(voucherForSaleRepository.findAllByOrder(order))
-                    .thenReturn(voucherForSaleList);
+            Mockito.when(voucherRepository.findAllByOrder(order))
+                    .thenReturn(voucherList);
 
-            Mockito.when(voucherForSale.getStatus()).thenReturn(ORDER_PLACED);
-            Mockito.when(voucherForSale.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getPrice()).thenReturn(price);
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
-            Mockito.when(order.getQuantity()).thenReturn(voucherForSaleList.size());
+            Mockito.when(order.getQuantity()).thenReturn(voucherList.size());
 
             // when
             Mockito.when(order.getAmount()).thenReturn(0L);

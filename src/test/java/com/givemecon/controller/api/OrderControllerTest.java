@@ -5,18 +5,18 @@ import com.givemecon.config.enums.Authority;
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
 import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucher.VoucherImageRepository;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImage;
-import com.givemecon.domain.image.voucherforsale.VoucherForSaleImageRepository;
+import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
 import com.givemecon.domain.member.Member;
 import com.givemecon.domain.member.MemberRepository;
 import com.givemecon.domain.order.Order;
 import com.givemecon.domain.order.OrderRepository;
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
 import com.givemecon.domain.voucher.Voucher;
+import com.givemecon.domain.voucherkind.VoucherKind;
+import com.givemecon.domain.voucherkind.VoucherKindRepository;
 import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucherforsale.VoucherForSale;
-import com.givemecon.domain.voucherforsale.VoucherForSaleRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +45,7 @@ import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAu
 import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleStatus.*;
+import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -76,13 +76,13 @@ class OrderControllerTest {
     BrandRepository brandRepository;
 
     @Autowired
+    VoucherKindRepository voucherKindRepository;
+
+    @Autowired
+    VoucherKindImageRepository voucherKindImageRepository;
+
+    @Autowired
     VoucherRepository voucherRepository;
-
-    @Autowired
-    VoucherImageRepository voucherImageRepository;
-
-    @Autowired
-    VoucherForSaleRepository voucherForSaleRepository;
 
     @Autowired
     VoucherForSaleImageRepository voucherForSaleImageRepository;
@@ -125,44 +125,44 @@ class OrderControllerTest {
                 .name("Brand")
                 .build());
 
-        Voucher voucher = Voucher.builder()
-                .title("voucher")
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
                 .description("description")
                 .caution("caution")
                 .build();
 
-        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
+        VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucher.updateBrand(brand);
-        voucher.updateVoucherImage(voucherImage);
-        voucherRepository.save(voucher);
+        voucherKind.updateBrand(brand);
+        voucherKind.updateVoucherKindImage(voucherKindImage);
+        voucherKindRepository.save(voucherKind);
 
         voucherForSaleIdList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            VoucherForSale voucherForSale =
-                    voucherForSaleRepository.save(VoucherForSale.builder()
+            Voucher voucher =
+                    voucherRepository.save(Voucher.builder()
                             .price(4_000L)
                             .barcode("1111 1111 1111")
                             .expDate(LocalDate.now())
                             .build());
 
-            VoucherForSaleImage voucherForSaleImage =
-                    voucherForSaleImageRepository.save(VoucherForSaleImage.builder()
+            VoucherImage voucherImage =
+                    voucherForSaleImageRepository.save(VoucherImage.builder()
                             .imageKey("imageKey" + i)
                             .imageUrl("test_image" + i + ".png")
                             .originalName("test_image")
                             .build());
 
-            voucherForSale.updateStatus(FOR_SALE);
-            voucherForSale.updateSeller(seller);
-            voucherForSale.updateVoucher(voucher);
-            voucherForSale.updateVoucherForSaleImage(voucherForSaleImage);
-            voucherForSaleIdList.add(voucherForSale.getId());
+            voucher.updateStatus(FOR_SALE);
+            voucher.updateSeller(seller);
+            voucher.updateVoucherKind(voucherKind);
+            voucher.updateVoucherImage(voucherImage);
+            voucherForSaleIdList.add(voucher.getId());
         }
     }
 
@@ -187,11 +187,11 @@ class OrderControllerTest {
         int quantity = 0;
         long amount = 0L;
 
-        for (VoucherForSale voucherForSale : voucherForSaleRepository.findAll()) {
+        for (Voucher voucher : voucherRepository.findAll()) {
             quantity++;
-            amount += voucherForSale.getPrice();
-            assertThat(voucherForSale.getOrder()).isEqualTo(orders.get(0));
-            assertThat(voucherForSale.getStatus()).isSameAs(ORDER_PLACED);
+            amount += voucher.getPrice();
+            assertThat(voucher.getOrder()).isEqualTo(orders.get(0));
+            assertThat(voucher.getStatus()).isSameAs(ORDER_PLACED);
         }
 
         assertThat(orders.get(0).getQuantity()).isEqualTo(quantity);
@@ -224,11 +224,11 @@ class OrderControllerTest {
         int quantity = 0;
         long amount = 0L;
 
-        for (VoucherForSale voucherForSale : voucherForSaleRepository.findAll()) {
+        for (Voucher voucher : voucherRepository.findAll()) {
             quantity++;
-            amount += voucherForSale.getPrice();
-            voucherForSale.updateOrder(order);
-            voucherForSale.updateStatus(ORDER_PLACED);
+            amount += voucher.getPrice();
+            voucher.updateOrder(order);
+            voucher.updateStatus(ORDER_PLACED);
         }
 
         order.updateQuantity(quantity);
@@ -278,7 +278,7 @@ class OrderControllerTest {
         String orderNumber = UUID.randomUUID().toString();
         Order order = orderRepository.save(new Order(orderNumber, buyer));
 
-        voucherForSaleRepository.findAll()
+        voucherRepository.findAll()
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
@@ -286,9 +286,9 @@ class OrderControllerTest {
 
         // then
         Optional<Order> orderFound = orderRepository.findById(order.getId());
-        List<VoucherForSale> voucherForSaleList = voucherForSaleRepository.findAllByOrder(order);
+        List<Voucher> voucherList = voucherRepository.findAllByOrder(order);
         assertThat(orderFound).isNotPresent();
-        assertThat(voucherForSaleList).isEmpty();
+        assertThat(voucherList).isEmpty();
 
         String responseBody = response.andReturn().getResponse().getContentAsString();
         OrderNumberResponse orderNumberResponse = objectMapper.readValue(responseBody, OrderNumberResponse.class);

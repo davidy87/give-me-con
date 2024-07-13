@@ -1,6 +1,6 @@
-package com.givemecon.domain.voucherforsale;
+package com.givemecon.domain.voucher;
 
-public enum VoucherForSaleStatus {
+public enum VoucherStatus {
 
     NOT_YET_PERMITTED,
     REJECTED,

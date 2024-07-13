@@ -2,18 +2,19 @@ package com.givemecon.controller.api;
 
 import com.givemecon.domain.voucher.VoucherService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 import static com.givemecon.domain.voucher.VoucherDto.*;
-import static com.givemecon.domain.voucherforsale.VoucherForSaleDto.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/vouchers")
 @RestController
@@ -21,41 +22,41 @@ public class VoucherApiController {
 
     private final VoucherService voucherService;
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public VoucherResponse save(@Validated @ModelAttribute VoucherSaveRequest requestDto) {
-        return voucherService.save(requestDto);
+    public VoucherResponse save(Authentication authentication,
+                                @Validated @ModelAttribute VoucherRequest requestDto) {
+
+        return voucherService.save(authentication.getName(), requestDto);
     }
 
     @GetMapping
-    public PagedVoucherResponse findAll(@RequestParam(required = false) String brandName,
-                                        @PageableDefault(sort = "id") Pageable pageable) {
-        if (brandName != null) {
-            return voucherService.findPageByBrandName(brandName, pageable);
+    public List<VoucherResponse> findAll(Authentication authentication,
+                                         @Validated @ModelAttribute StatusCodeParameter paramDto) {
+
+        if (paramDto.getStatusCode() == null) {
+            return voucherService.findAllByUsername(authentication.getName());
         }
 
-        return voucherService.findPage(pageable);
+        return voucherService.findAllByStatus(paramDto);
     }
 
-    @GetMapping("/{id}")
-    public VoucherResponse find(@PathVariable Long id) {
-        return voucherService.find(id);
+    @GetMapping("/{id}/image")
+    public ImageResponse findImageUrl(@PathVariable Long id) {
+        return voucherService.findImageUrl(id);
     }
 
-    @GetMapping("/{id}/selling-list")
-    public List<VoucherForSaleResponse> findSellingListByVoucherId(@PathVariable Long id) {
-        return voucherService.findSellingListByVoucherId(id);
-    }
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public VoucherResponse updateStatus(@PathVariable Long id,
+                                        @Validated @RequestBody StatusUpdateRequest requestDto) {
 
-    @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public VoucherResponse update(@PathVariable Long id,
-                                  @ModelAttribute VoucherUpdateRequest requestDto) {
-
-        return voucherService.update(id, requestDto);
+        return voucherService.updateStatus(id, requestDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         voucherService.delete(id);
     }
