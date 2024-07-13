@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
@@ -29,9 +29,9 @@ import java.net.URL;
 
 import static com.givemecon.config.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.config.enums.Authority.USER;
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
-import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @SpringBootTest
-class ImageTextExtractionApiControllerTest {
+class ImageTextExtractionControllerTest {
 
     @Autowired
     WebApplicationContext context;

@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.purchasedvoucher.PurchasedVoucherService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/purchased-vouchers")
 @RestController
-public class PurchasedVoucherApiController {
+public class PurchasedVoucherController {
 
     private final PurchasedVoucherService purchasedVoucherService;
 

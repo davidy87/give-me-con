@@ -1,4 +1,4 @@
-package com.givemecon.controller;
+package com.givemecon.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

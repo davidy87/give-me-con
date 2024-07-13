@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.image.ExtractedImageInfo;
 import com.givemecon.domain.image.ImageTextExtractionService;
@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/api/images")
 @RestController
-public class ImageTextExtractionApiController {
+public class ImageTextExtractionController {
 
     private final ImageTextExtractionService imageTextExtractionService;
 

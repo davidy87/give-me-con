@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.member.Member;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.config.enums.Authority.*;
-import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
-class MemberApiControllerTest {
+class MemberControllerTest {
 
     @Autowired
     WebApplicationContext context;

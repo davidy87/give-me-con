@@ -26,7 +26,7 @@ import java.util.List;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
-import static com.givemecon.controller.TokenHeaderUtils.*;
+import static com.givemecon.util.TokenHeaderUtils.*;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.payment.PaymentDto.*;

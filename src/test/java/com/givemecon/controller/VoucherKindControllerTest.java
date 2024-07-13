@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.brand.Brand;
 import com.givemecon.domain.brand.BrandRepository;
@@ -42,7 +42,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
 import static com.givemecon.domain.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.*;
@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @SpringBootTest
 @WithMockUser(roles = "ADMIN")
-class VoucherKindApiControllerTest {
+class VoucherKindControllerTest {
 
     @Autowired
     WebApplicationContext context;

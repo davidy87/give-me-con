@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.auth.dto.TokenInfo;
@@ -39,8 +39,8 @@ import java.util.List;
 
 import static com.givemecon.config.enums.JwtAuthHeader.*;
 import static com.givemecon.config.enums.Authority.*;
-import static com.givemecon.controller.ApiDocumentUtils.*;
-import static com.givemecon.controller.TokenHeaderUtils.getAccessTokenHeader;
+import static com.givemecon.util.ApiDocumentUtils.*;
+import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.domain.member.MemberDto.*;
 import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
 import static org.assertj.core.api.Assertions.*;
@@ -58,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional
 @SpringBootTest
-class PurchasedVoucherApiControllerTest {
+class PurchasedVoucherControllerTest {
 
     @Autowired
     WebApplicationContext context;

@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.brand.BrandService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import static com.givemecon.domain.brand.BrandDto.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/brands")
 @RestController
-public class BrandApiController {
+public class BrandController {
 
     private final BrandService brandService;
 

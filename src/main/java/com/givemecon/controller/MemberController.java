@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.domain.member.MemberService;
@@ -11,7 +11,7 @@ import static com.givemecon.domain.member.MemberDto.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/members")
 @RestController
-public class MemberApiController {
+public class MemberController {
 
     private final MemberService memberService;
 
