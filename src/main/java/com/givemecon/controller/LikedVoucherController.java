@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.likedvoucher.LikedVoucherService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,7 @@ import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/liked-vouchers")
 @RestController
-public class LikedVoucherApiController {
+public class LikedVoucherController {
 
     private final LikedVoucherService likedVoucherService;
 

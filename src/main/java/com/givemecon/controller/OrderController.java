@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.order.OrderService;
 import lombok.RequiredArgsConstructor;

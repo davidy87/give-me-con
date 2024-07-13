@@ -1,4 +1,4 @@
-package com.givemecon.controller;
+package com.givemecon.util;
 
 import com.givemecon.config.auth.dto.TokenInfo;
 import lombok.AccessLevel;

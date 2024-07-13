@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.category.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import static com.givemecon.domain.category.CategoryDto.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")
 @RestController
-public class CategoryApiController {
+public class CategoryController {
 
     private final CategoryService categoryService;
 

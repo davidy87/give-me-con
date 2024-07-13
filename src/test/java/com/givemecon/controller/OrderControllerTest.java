@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.enums.Authority;
@@ -41,8 +41,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.domain.order.OrderDto.*;
 import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
 import static com.givemecon.domain.voucher.VoucherStatus.*;

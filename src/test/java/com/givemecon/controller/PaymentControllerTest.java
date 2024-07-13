@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.config.enums.Authority;
@@ -41,8 +41,8 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 import java.util.Map;
 
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentRequestWithAuth;
-import static com.givemecon.controller.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.domain.payment.PaymentDto.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;

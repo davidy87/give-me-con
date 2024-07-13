@@ -1,4 +1,4 @@
-package com.givemecon.controller.api;
+package com.givemecon.controller;
 
 import com.givemecon.domain.voucherkind.VoucherKind;
 import com.givemecon.domain.voucherkind.VoucherKindRepository;
@@ -37,7 +37,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.givemecon.controller.ApiDocumentUtils.*;
+import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
-class BrandApiControllerTest {
+class BrandControllerTest {
 
     @Autowired
     WebApplicationContext context;
