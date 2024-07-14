@@ -2,8 +2,8 @@ package com.givemecon.config.auth.util;
 
 import com.givemecon.config.auth.CustomOAuth2UserService;
 import com.givemecon.config.auth.dto.OAuth2Attributes;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.member.entity.Member;
+import com.givemecon.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Component;

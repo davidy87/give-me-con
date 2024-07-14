@@ -2,7 +2,7 @@ package com.givemecon.config.auth;
 
 import com.givemecon.config.auth.dto.OAuth2Attributes;
 import com.givemecon.config.auth.util.OAuth2MemberUtils;
-import com.givemecon.domain.member.Member;
+import com.givemecon.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

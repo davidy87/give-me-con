@@ -1,6 +1,6 @@
 package com.givemecon.util.image_entity.builder.concrete;
 
-import com.givemecon.domain.image.brand.BrandIcon;
+import com.givemecon.domain.image.entity.BrandIcon;
 import com.givemecon.util.image_entity.builder.ImageEntityBuilder;
 import org.springframework.stereotype.Component;
 

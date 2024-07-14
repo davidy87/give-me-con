@@ -1,6 +1,6 @@
 package com.givemecon.util.image_entity.builder.concrete;
 
-import com.givemecon.domain.image.voucherkind.VoucherKindImage;
+import com.givemecon.domain.image.entity.VoucherKindImage;
 import com.givemecon.util.image_entity.builder.ImageEntityBuilder;
 import org.springframework.stereotype.Component;
 
