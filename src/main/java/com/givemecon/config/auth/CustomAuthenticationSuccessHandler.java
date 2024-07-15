@@ -3,8 +3,8 @@ package com.givemecon.config.auth;
 import com.givemecon.config.auth.dto.TokenInfo;
 import com.givemecon.config.auth.jwt.token.JwtTokenService;
 import com.givemecon.config.auth.util.ClientUrlProperties;
-import com.givemecon.domain.member.entity.Member;
-import com.givemecon.domain.member.repository.MemberRepository;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 import static com.givemecon.config.enums.OAuth2ParameterName.*;
-import static com.givemecon.domain.member.dto.MemberDto.*;
+import static com.givemecon.application.dto.MemberDto.*;
 
 @Slf4j
 @RequiredArgsConstructor

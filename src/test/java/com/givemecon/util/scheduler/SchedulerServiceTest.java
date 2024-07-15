@@ -1,12 +1,12 @@
 package com.givemecon.util.scheduler;
 
-import com.givemecon.domain.member.entity.Member;
-import com.givemecon.domain.purchasedvoucher.entity.PurchasedVoucher;
-import com.givemecon.domain.purchasedvoucher.repository.PurchasedVoucherRepository;
-import com.givemecon.domain.purchasedvoucher.dto.PurchasedVoucherStatus;
-import com.givemecon.domain.voucher.entity.Voucher;
-import com.givemecon.domain.voucher.repository.VoucherRepository;
-import com.givemecon.domain.voucher.dto.VoucherStatus;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
+import com.givemecon.domain.repository.PurchasedVoucherRepository;
+import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
+import com.givemecon.domain.entity.voucher.Voucher;
+import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.domain.entity.voucher.VoucherStatus;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

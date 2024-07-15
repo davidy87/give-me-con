@@ -2,8 +2,8 @@ package com.givemecon.jwt;
 
 import com.givemecon.config.auth.dto.OAuth2Attributes;
 import com.givemecon.config.auth.util.OAuth2MemberUtils;
-import com.givemecon.domain.member.entity.Member;
-import com.givemecon.domain.member.repository.MemberRepository;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

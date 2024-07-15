@@ -1,8 +1,8 @@
 package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.domain.member.entity.Member;
-import com.givemecon.domain.member.repository.MemberRepository;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import static com.givemecon.domain.member.dto.MemberDto.*;
+import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.util.error.GlobalErrorCode.REFRESH_TOKEN_EXPIRED;
 import static com.givemecon.util.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
 

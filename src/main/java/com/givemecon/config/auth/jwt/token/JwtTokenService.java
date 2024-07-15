@@ -1,7 +1,7 @@
 package com.givemecon.config.auth.jwt.token;
 
 import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.domain.member.repository.MemberRepository;
+import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.util.exception.concrete.InvalidTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -23,7 +23,7 @@ import java.util.*;
 import static com.givemecon.config.enums.GrantType.*;
 import static com.givemecon.config.enums.TokenDuration.ACCESS_TOKEN_DURATION;
 import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
-import static com.givemecon.domain.member.dto.MemberDto.*;
+import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.util.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
 
 @Slf4j

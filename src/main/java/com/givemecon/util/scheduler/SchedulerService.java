@@ -1,7 +1,7 @@
 package com.givemecon.util.scheduler;
 
-import com.givemecon.domain.purchasedvoucher.repository.PurchasedVoucherRepository;
-import com.givemecon.domain.voucher.repository.VoucherRepository;
+import com.givemecon.domain.repository.PurchasedVoucherRepository;
+import com.givemecon.domain.repository.voucher.VoucherRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.givemecon.util.image_entity.builder;
 
-import com.givemecon.domain.image.entity.ImageEntity;
+import com.givemecon.domain.entity.ImageEntity;
 
 public abstract class ImageEntityBuilder {
 
