@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.payment.PaymentService;
+import com.givemecon.application.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.domain.payment.PaymentDto.*;
+import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
+import static com.givemecon.application.dto.PaymentDto.PaymentResponse;
 
 @Slf4j
 @RequiredArgsConstructor

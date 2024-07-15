@@ -1,22 +1,22 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.enums.Authority;
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucherkind.VoucherKindImage;
-import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.order.Order;
-import com.givemecon.domain.order.OrderRepository;
-import com.givemecon.domain.purchasedvoucher.PurchasedVoucherRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.voucher.VoucherRepository;
+import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.brand.Brand;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.entity.order.Order;
+import com.givemecon.domain.entity.voucher.Voucher;
+import com.givemecon.domain.entity.voucher.VoucherImage;
+import com.givemecon.domain.entity.voucherkind.VoucherKind;
+import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
+import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.OrderRepository;
+import com.givemecon.domain.repository.PurchasedVoucherRepository;
+import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.voucher.VoucherImageRepository;
+import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,17 +41,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.givemecon.application.dto.OrderDto.OrderNumberResponse;
+import static com.givemecon.application.dto.OrderDto.OrderRequest;
+import static com.givemecon.domain.entity.order.OrderStatus.IN_PROGRESS;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.ORDER_PLACED;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
-import static com.givemecon.domain.order.OrderDto.*;
-import static com.givemecon.domain.order.OrderStatus.IN_PROGRESS;
-import static com.givemecon.domain.voucher.VoucherStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -85,7 +86,7 @@ class OrderControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherForSaleImageRepository voucherForSaleImageRepository;
+    VoucherImageRepository voucherImageRepository;
 
     @Autowired
     PurchasedVoucherRepository purchasedVoucherRepository;
@@ -152,7 +153,7 @@ class OrderControllerTest {
                             .build());
 
             VoucherImage voucherImage =
-                    voucherForSaleImageRepository.save(VoucherImage.builder()
+                    voucherImageRepository.save(VoucherImage.builder()
                             .imageKey("imageKey" + i)
                             .imageUrl("test_image" + i + ".png")
                             .originalName("test_image")

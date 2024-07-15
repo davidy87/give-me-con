@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.likedvoucher.LikedVoucherService;
+import com.givemecon.application.service.LikedVoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
+import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
 
 @Slf4j
 @RequiredArgsConstructor

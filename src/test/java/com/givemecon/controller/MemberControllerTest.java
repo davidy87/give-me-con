@@ -1,8 +1,8 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,15 +21,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static com.givemecon.config.enums.Authority.*;
+import static com.givemecon.application.dto.MemberDto.LoginRequest;
+import static com.givemecon.application.dto.MemberDto.SignupRequest;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Authority.USER;
 import static com.givemecon.util.ApiDocumentUtils.*;
-import static com.givemecon.domain.member.MemberDto.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

@@ -1,23 +1,23 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.enums.Authority;
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.image.voucherkind.VoucherKindImage;
-import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.order.Order;
-import com.givemecon.domain.order.OrderRepository;
-import com.givemecon.domain.payment.PaymentRepository;
-import com.givemecon.domain.payment.toss.PaymentConfirmation;
-import com.givemecon.domain.payment.toss.TossPaymentsRestClient;
-import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucher.VoucherStatus;
+import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.brand.Brand;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.entity.order.Order;
+import com.givemecon.domain.entity.voucher.Voucher;
+import com.givemecon.domain.entity.voucher.VoucherStatus;
+import com.givemecon.domain.entity.voucherkind.VoucherKind;
+import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
+import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.OrderRepository;
+import com.givemecon.domain.repository.PaymentRepository;
+import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
+import com.givemecon.infrastructure.tosspayments.PaymentConfirmation;
+import com.givemecon.infrastructure.tosspayments.TossPaymentsRestClient;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,9 +41,9 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
-import static com.givemecon.domain.payment.PaymentDto.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -51,7 +51,8 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional

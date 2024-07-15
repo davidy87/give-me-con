@@ -1,18 +1,18 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.category.Category;
-import com.givemecon.domain.category.CategoryRepository;
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.image.voucherkind.VoucherKindImage;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
-import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.util.s3.S3MockConfig;
+import com.givemecon.domain.entity.brand.Brand;
+import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.voucher.Voucher;
+import com.givemecon.domain.entity.voucher.VoucherImage;
+import com.givemecon.domain.entity.voucherkind.VoucherKind;
+import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
+import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryRepository;
+import com.givemecon.domain.repository.voucher.VoucherImageRepository;
+import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
+import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,15 +42,15 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.util.ApiDocumentUtils.*;
-import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static com.givemecon.domain.voucher.VoucherStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -85,7 +85,7 @@ class VoucherKindControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherForSaleImageRepository voucherForSaleImageRepository;
+    VoucherImageRepository voucherImageRepository;
 
     @Autowired
     S3Client s3Client;
@@ -344,7 +344,7 @@ class VoucherKindControllerTest {
                             .barcode("1111 1111 1111")
                             .build());
 
-            VoucherImage voucherImage = voucherForSaleImageRepository.save(
+            VoucherImage voucherImage = voucherImageRepository.save(
                     VoucherImage.builder()
                             .imageKey("imageKey" + i)
                             .imageUrl("imageUrl" + i)

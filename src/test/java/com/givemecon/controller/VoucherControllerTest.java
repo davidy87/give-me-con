@@ -1,17 +1,17 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
-import com.givemecon.domain.image.voucher.VoucherImage;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucher.Voucher;
-import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.image.voucher.VoucherForSaleImageRepository;
-import com.givemecon.domain.voucher.VoucherRepository;
-import com.givemecon.util.s3.S3MockConfig;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.entity.voucher.Voucher;
+import com.givemecon.domain.entity.voucher.VoucherImage;
+import com.givemecon.domain.entity.voucherkind.VoucherKind;
+import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.voucher.VoucherImageRepository;
+import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
+import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,19 +42,21 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Authority.*;
-import static com.givemecon.util.ApiDocumentUtils.*;
+import static com.givemecon.application.dto.MemberDto.TokenRequest;
+import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.NOT_YET_PERMITTED;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
+import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
-import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.domain.voucher.VoucherDto.*;
-import static com.givemecon.domain.voucher.VoucherStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -82,7 +84,7 @@ class VoucherControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherForSaleImageRepository voucherForSaleImageRepository;
+    VoucherImageRepository voucherImageRepository;
 
     @Autowired
     JwtTokenService jwtTokenService;
@@ -216,7 +218,7 @@ class VoucherControllerTest {
                     .build();
 
             VoucherImage voucherImage =
-                    voucherForSaleImageRepository.save(VoucherImage.builder()
+                    voucherImageRepository.save(VoucherImage.builder()
                             .imageUrl("imageUrl" + i)
                             .originalName("voucherImage" + i)
                             .imageKey("imageKey" + i)
@@ -265,7 +267,7 @@ class VoucherControllerTest {
                     .build();
 
             VoucherImage voucherImage =
-                    voucherForSaleImageRepository.save(VoucherImage.builder()
+                    voucherImageRepository.save(VoucherImage.builder()
                             .imageUrl("imageUrl" + i)
                             .originalName("voucherImage" + i)
                             .imageKey("imageKey" + i)
@@ -321,7 +323,7 @@ class VoucherControllerTest {
                 .build();
 
         VoucherImage voucherImage =
-                voucherForSaleImageRepository.save(VoucherImage.builder()
+                voucherImageRepository.save(VoucherImage.builder()
                         .imageKey("imageKey")
                         .imageUrl("imageUrl")
                         .originalName("voucherImage")
@@ -360,7 +362,7 @@ class VoucherControllerTest {
                 .build();
 
         VoucherImage voucherImage =
-                voucherForSaleImageRepository.save(VoucherImage.builder()
+                voucherImageRepository.save(VoucherImage.builder()
                         .imageUrl("imageUrl")
                         .originalName("voucherImage")
                         .imageKey("imageKey")
@@ -421,7 +423,7 @@ class VoucherControllerTest {
                 .barcode("1111 1111 1111")
                 .build());
 
-        VoucherImage voucherImage = voucherForSaleImageRepository.save(VoucherImage.builder()
+        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
                 .imageUrl("imageUrl")
                 .imageKey("imageKey")
                 .originalName("Americano_T.png")

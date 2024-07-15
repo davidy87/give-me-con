@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.voucherkind.VoucherKindService;
+import com.givemecon.application.service.VoucherKindService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.application.dto.VoucherDto.VoucherResponse;
+import static com.givemecon.application.dto.VoucherKindDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/voucher-kinds")

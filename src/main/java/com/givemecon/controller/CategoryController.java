@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.category.CategoryService;
+import com.givemecon.application.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.category.CategoryDto.*;
+import static com.givemecon.application.dto.CategoryDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/categories")

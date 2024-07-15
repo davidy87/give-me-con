@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.voucher.VoucherService;
+import com.givemecon.application.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.voucher.VoucherDto.*;
+import static com.givemecon.application.dto.VoucherDto.*;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.purchasedvoucher.PurchasedVoucherService;
+import com.givemecon.application.service.PurchasedVoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.purchasedvoucher.PurchasedVoucherDto.*;
+import static com.givemecon.application.dto.PurchasedVoucherDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/purchased-vouchers")

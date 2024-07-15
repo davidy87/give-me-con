@@ -1,6 +1,6 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.brand.BrandService;
+import com.givemecon.application.service.BrandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.domain.brand.BrandDto.*;
+import static com.givemecon.application.dto.BrandDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/brands")

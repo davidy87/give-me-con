@@ -1,12 +1,12 @@
 package com.givemecon.controller;
 
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
-import com.givemecon.domain.brand.Brand;
-import com.givemecon.domain.brand.BrandRepository;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberDto;
-import com.givemecon.domain.member.MemberRepository;
+import com.givemecon.application.dto.MemberDto;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.entity.brand.Brand;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.brand.BrandRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +27,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URL;
 
-import static com.givemecon.config.enums.JwtAuthHeader.AUTHORIZATION;
-import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;

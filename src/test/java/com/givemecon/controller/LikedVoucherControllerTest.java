@@ -1,16 +1,16 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
-import com.givemecon.domain.image.voucherkind.VoucherKindImage;
-import com.givemecon.domain.member.Member;
-import com.givemecon.domain.member.MemberRepository;
-import com.givemecon.domain.voucherkind.VoucherKind;
-import com.givemecon.domain.image.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.voucherkind.VoucherKindRepository;
-import com.givemecon.domain.likedvoucher.LikedVoucher;
-import com.givemecon.domain.likedvoucher.LikedVoucherRepository;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.entity.voucherkind.VoucherKind;
+import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
+import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.likedvoucher.LikedVoucherRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
+import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,22 +30,23 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
-import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Authority.*;
+import static com.givemecon.application.dto.MemberDto.TokenRequest;
+import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
+import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
-import static com.givemecon.domain.member.MemberDto.*;
-import static com.givemecon.domain.voucherkind.VoucherKindDto.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Transactional

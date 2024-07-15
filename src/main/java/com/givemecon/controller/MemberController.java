@@ -1,12 +1,12 @@
 package com.givemecon.controller;
 
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.domain.member.MemberService;
+import com.givemecon.application.service.MemberService;
+import com.givemecon.common.auth.dto.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.domain.member.MemberDto.*;
+import static com.givemecon.application.dto.MemberDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/members")

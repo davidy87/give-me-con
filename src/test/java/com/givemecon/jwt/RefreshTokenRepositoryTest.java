@@ -1,7 +1,7 @@
 package com.givemecon.jwt;
 
-import com.givemecon.config.auth.jwt.token.RefreshToken;
-import com.givemecon.config.auth.jwt.token.RefreshTokenRepository;
+import com.givemecon.common.auth.jwt.token.RefreshToken;
+import com.givemecon.common.auth.jwt.token.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static com.givemecon.config.enums.TokenDuration.REFRESH_TOKEN_DURATION;
+import static com.givemecon.common.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j

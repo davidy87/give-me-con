@@ -1,13 +1,13 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.order.OrderService;
+import com.givemecon.application.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.givemecon.domain.order.OrderDto.*;
+import static com.givemecon.application.dto.OrderDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
