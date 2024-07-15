@@ -1,6 +1,6 @@
 package com.givemecon.domain.entity;
 
-import com.givemecon.config.enums.Authority;
+import com.givemecon.domain.entity.member.Authority;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;

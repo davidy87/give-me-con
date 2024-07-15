@@ -12,7 +12,7 @@ import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.util.s3.S3MockConfig;
+import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.enums.Authority;
+import com.givemecon.domain.entity.member.Authority;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;

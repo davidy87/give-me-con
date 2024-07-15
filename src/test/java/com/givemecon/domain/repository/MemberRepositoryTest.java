@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.entity.member.Authority.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j

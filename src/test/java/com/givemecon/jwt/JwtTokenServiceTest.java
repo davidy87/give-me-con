@@ -1,6 +1,6 @@
 package com.givemecon.jwt;
 
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

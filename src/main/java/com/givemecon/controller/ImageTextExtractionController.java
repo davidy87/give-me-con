@@ -1,8 +1,8 @@
 package com.givemecon.controller;
 
 import com.givemecon.application.dto.ExtractedImageInfo;
+import com.givemecon.application.dto.validator.ValidFile;
 import com.givemecon.application.service.ImageTextExtractionService;
-import com.givemecon.util.validator.ValidFile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

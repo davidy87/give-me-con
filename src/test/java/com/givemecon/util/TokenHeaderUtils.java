@@ -1,6 +1,6 @@
 package com.givemecon.util;
 
-import com.givemecon.config.auth.dto.TokenInfo;
+import com.givemecon.common.auth.dto.TokenInfo;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

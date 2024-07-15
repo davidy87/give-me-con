@@ -1,17 +1,17 @@
 package com.givemecon.application.service;
 
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
-import com.givemecon.util.exception.concrete.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.application.dto.MemberDto.*;
-import static com.givemecon.config.enums.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
 
 @RequiredArgsConstructor
 @Service

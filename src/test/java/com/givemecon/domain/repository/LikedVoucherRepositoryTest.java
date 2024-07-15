@@ -1,6 +1,6 @@
 package com.givemecon.domain.repository;
 
-import com.givemecon.config.enums.Authority;
+import com.givemecon.domain.entity.member.Authority;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;

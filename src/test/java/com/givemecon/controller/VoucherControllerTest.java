@@ -1,8 +1,8 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherImage;
@@ -11,7 +11,7 @@ import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.util.s3.S3MockConfig;
+import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,9 +44,9 @@ import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
-import static com.givemecon.config.enums.Authority.ADMIN;
-import static com.givemecon.config.enums.Authority.USER;
-import static com.givemecon.config.enums.JwtAuthHeader.AUTHORIZATION;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.NOT_YET_PERMITTED;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;

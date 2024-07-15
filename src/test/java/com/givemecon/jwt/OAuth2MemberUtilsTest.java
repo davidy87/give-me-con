@@ -1,7 +1,7 @@
 package com.givemecon.jwt;
 
-import com.givemecon.config.auth.dto.OAuth2Attributes;
-import com.givemecon.config.auth.util.OAuth2MemberUtils;
+import com.givemecon.common.auth.dto.OAuth2Attributes;
+import com.givemecon.common.auth.util.OAuth2MemberUtils;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.givemecon.config.enums.Authority.*;
-import static com.givemecon.config.enums.OAuth2Provider.*;
+import static com.givemecon.domain.entity.member.Authority.*;
+import static com.givemecon.common.auth.enums.OAuth2Provider.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional

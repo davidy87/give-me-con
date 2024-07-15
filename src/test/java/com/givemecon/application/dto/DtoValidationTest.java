@@ -1,8 +1,8 @@
 package com.givemecon.application.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +30,11 @@ import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequestList;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
-import static com.givemecon.config.enums.Authority.ADMIN;
-import static com.givemecon.config.enums.JwtAuthHeader.AUTHORIZATION;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
-import static com.givemecon.util.error.GlobalErrorCode.INVALID_ARGUMENT;
+import static com.givemecon.common.error.GlobalErrorCode.INVALID_ARGUMENT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

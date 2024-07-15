@@ -23,8 +23,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.application.dto.MemberDto.LoginRequest;
 import static com.givemecon.application.dto.MemberDto.SignupRequest;
-import static com.givemecon.config.enums.Authority.ADMIN;
-import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Authority.USER;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;

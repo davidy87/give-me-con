@@ -1,5 +1,7 @@
 package com.givemecon.application.service;
 
+import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.common.util.FileUtils;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
@@ -7,9 +9,7 @@ import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.util.FileUtils;
-import com.givemecon.util.exception.concrete.EntityNotFoundException;
-import com.givemecon.util.image_entity.ImageEntityUtils;
+import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

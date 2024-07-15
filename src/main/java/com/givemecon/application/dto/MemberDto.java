@@ -1,13 +1,13 @@
 package com.givemecon.application.dto;
 
-import com.givemecon.config.enums.Authority;
+import com.givemecon.domain.entity.member.Authority;
 import com.givemecon.domain.entity.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.givemecon.config.enums.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Authority.ADMIN;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MemberDto {

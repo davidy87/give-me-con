@@ -1,6 +1,6 @@
 package com.givemecon.domain.repository.voucher;
 
-import com.givemecon.config.JpaConfig;
+import com.givemecon.common.configuration.JpaConfig;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
 import com.givemecon.domain.entity.voucher.Voucher;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.entity.member.Authority.USER;
 import static com.givemecon.domain.entity.order.OrderStatus.CANCELLED;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;

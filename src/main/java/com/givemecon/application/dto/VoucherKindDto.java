@@ -1,7 +1,7 @@
 package com.givemecon.application.dto;
 
+import com.givemecon.application.dto.validator.ValidFile;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
-import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

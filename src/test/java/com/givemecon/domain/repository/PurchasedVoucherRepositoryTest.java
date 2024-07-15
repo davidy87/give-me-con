@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.givemecon.config.enums.Authority.USER;
+import static com.givemecon.domain.entity.member.Authority.USER;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USABLE;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;

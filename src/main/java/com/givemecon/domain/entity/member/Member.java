@@ -1,7 +1,6 @@
 package com.givemecon.domain.entity.member;
 
-import com.givemecon.config.enums.Authority;
-import com.givemecon.config.enums.OAuth2Provider;
+import com.givemecon.common.auth.enums.OAuth2Provider;
 import com.givemecon.domain.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

@@ -1,8 +1,8 @@
 package com.givemecon.application.dto;
 
+import com.givemecon.application.dto.validator.ValidFile;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
-import com.givemecon.util.validator.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.util.StringUtils;

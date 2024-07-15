@@ -1,5 +1,6 @@
 package com.givemecon.application.service;
 
+import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.RejectedSale;
 import com.givemecon.domain.entity.voucher.Voucher;
@@ -11,8 +12,7 @@ import com.givemecon.domain.repository.voucher.RejectedSaleRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.util.exception.concrete.EntityNotFoundException;
-import com.givemecon.util.image_entity.ImageEntityUtils;
+import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;

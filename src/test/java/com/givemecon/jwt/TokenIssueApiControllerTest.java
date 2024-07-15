@@ -1,8 +1,8 @@
 package com.givemecon.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.config.auth.dto.TokenInfo;
-import com.givemecon.config.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
@@ -24,9 +24,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
-import static com.givemecon.config.enums.JwtAuthHeader.*;
-import static com.givemecon.config.enums.Authority.*;
-import static com.givemecon.config.enums.OAuth2ParameterName.*;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.domain.entity.member.Authority.*;
+import static com.givemecon.common.auth.enums.OAuth2ParameterName.*;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.util.TokenHeaderUtils.*;
 import static com.givemecon.application.dto.MemberDto.*;

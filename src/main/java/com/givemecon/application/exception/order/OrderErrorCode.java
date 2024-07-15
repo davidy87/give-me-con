@@ -1,6 +1,6 @@
 package com.givemecon.application.exception.order;
 
-import com.givemecon.util.error.ErrorCode;
+import com.givemecon.common.error.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

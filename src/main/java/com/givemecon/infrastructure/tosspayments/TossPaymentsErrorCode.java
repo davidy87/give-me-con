@@ -1,6 +1,6 @@
 package com.givemecon.infrastructure.tosspayments;
 
-import com.givemecon.util.error.ErrorCode;
+import com.givemecon.common.error.ErrorCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

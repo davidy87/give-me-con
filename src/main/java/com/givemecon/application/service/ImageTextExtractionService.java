@@ -2,7 +2,7 @@ package com.givemecon.application.service;
 
 import com.givemecon.application.dto.ExtractedImageInfo;
 import com.givemecon.domain.repository.brand.BrandRepository;
-import com.givemecon.util.gcp.ocr.TextExtractor;
+import com.givemecon.infrastructure.gcp.ocr.TextExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
