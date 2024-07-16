@@ -20,15 +20,16 @@ public class Category extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 10)
     private String name;
 
-    @OneToOne
+    @OneToOne(optional = false)
     private CategoryIcon categoryIcon;
 
     @Builder
-    public Category(String name) {
+    public Category(String name, CategoryIcon categoryIcon) {
         this.name = name;
+        this.categoryIcon = categoryIcon;
     }
 
     public String getImageUrl() {

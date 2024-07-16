@@ -3,9 +3,11 @@ package com.givemecon.controller;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.S3MockConfig;
@@ -66,6 +68,9 @@ class BrandControllerTest {
     CategoryRepository categoryRepository;
 
     @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
 
     @Autowired
@@ -99,8 +104,15 @@ class BrandControllerTest {
                 .bucket(bucketName)
                 .build());
 
+        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("categoryIcon")
+                .build());
+
         category = categoryRepository.save(Category.builder()
                 .name("category")
+                .categoryIcon(categoryIcon)
                 .build());
     }
 
@@ -204,8 +216,15 @@ class BrandControllerTest {
     @Test
     void update() throws Exception {
         // given
+        CategoryIcon newCategoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("newImageKey")
+                .imageUrl("newImageUrl")
+                .originalName("newCategoryIcon")
+                .build());
+
         Category newCategory = categoryRepository.save(Category.builder()
-                .name("newCategory")
+                .name("new")
+                .categoryIcon(newCategoryIcon)
                 .build());
 
         Brand brand = brandRepository.save(Brand.builder()

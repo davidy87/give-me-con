@@ -2,11 +2,13 @@ package com.givemecon.controller;
 
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherImage;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
@@ -73,6 +75,9 @@ class VoucherKindControllerTest {
     CategoryRepository categoryRepository;
 
     @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
 
     @Autowired
@@ -128,9 +133,19 @@ class VoucherKindControllerTest {
                 "image/png",
                 image.getBytes());
 
-        Category category = categoryRepository.save(Category.builder()
+        CategoryIcon categoryIcon = CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("categoryIcon")
+                .build();
+
+        Category category = Category.builder()
                 .name("Cafe")
-                .build());
+                .categoryIcon(categoryIcon)
+                .build();
+
+        categoryIconRepository.save(categoryIcon);
+        categoryRepository.save(category);
 
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")

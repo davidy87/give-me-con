@@ -4,6 +4,7 @@ package com.givemecon.domain.repository.category;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,29 +24,29 @@ class CategoryRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
 
-    @Test
-    void BaseTimeEntityTest() {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        categoryRepository.save(Category.builder()
-                .name("coffee")
-                .build());
+    @Autowired
+    CategoryIconRepository categoryIconRepository;
 
-        // when
-        List<Category> categoryList = categoryRepository.findAll();
+    CategoryIcon categoryIcon;
 
-        // then
-        Category found = categoryList.get(0);
-        log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
-        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
-        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
+    @BeforeEach
+    void setup() {
+        categoryIcon = CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("coffeeIcon")
+                .build();
+
+        categoryIconRepository.save(categoryIcon);
     }
+
 
     @Test
     void saveAndFindAll() {
         // given
-        Category category = Category.builder()
+        Category category =  Category.builder()
                 .name("coffee")
+                .categoryIcon(categoryIcon)
                 .build();
 
         // when
@@ -58,21 +59,35 @@ class CategoryRepositoryTest {
     }
 
     @Test
+    void BaseTimeEntityTest() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        Category category =  Category.builder()
+                .name("coffee")
+                .categoryIcon(categoryIcon)
+                .build();
+
+        categoryRepository.save(category);
+
+        // when
+        List<Category> categoryList = categoryRepository.findAll();
+
+        // then
+        Category found = categoryList.get(0);
+        log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
+        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
+    }
+
+    @Test
     @DisplayName("Category & CategoryIcon fetch join 조회 테스트")
     void findAllWithCategoryIcon(@Autowired CategoryIconRepository categoryIconRepository) {
         // given
         Category category = Category.builder()
                 .name("coffee")
+                .categoryIcon(categoryIcon)
                 .build();
 
-        CategoryIcon categoryIcon = CategoryIcon.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("coffeeIcon")
-                .build();
-
-        categoryIconRepository.save(categoryIcon);
-        category.updateCategoryIcon(categoryIcon);
         categoryRepository.save(category);
 
         // when

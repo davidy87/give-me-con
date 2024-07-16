@@ -40,8 +40,10 @@ public class CategoryService {
         CategoryIcon categoryIcon = categoryIconRepository.save(
                 imageEntityUtils.createImageEntity(CategoryIcon.class, requestDto.getIconFile()));
 
-        Category category = categoryRepository.save(requestDto.toEntity());
-        category.updateCategoryIcon(categoryIcon);
+        Category category = categoryRepository.save(Category.builder()
+                .name(requestDto.getName())
+                .categoryIcon(categoryIcon)
+                .build());
 
         return new CategoryResponse(category);
     }

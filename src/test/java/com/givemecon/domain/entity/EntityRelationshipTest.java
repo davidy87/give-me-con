@@ -75,23 +75,26 @@ public class EntityRelationshipTest {
     @Test
     void categoryIcon() {
         // given
-        Category category = categoryRepository.save(Category.builder()
-                .name("coffee")
-                .build());
-
-        CategoryIcon icon = categoryIconRepository.save(CategoryIcon.builder()
+        CategoryIcon categoryIcon = CategoryIcon.builder()
                 .imageKey("imageKey")
-                .originalName("testIcon.png")
                 .imageUrl("imageUrl")
-                .build());
+                .originalName("originalName")
+                .build();
+
+        Category category = Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build();
+
+        categoryIconRepository.save(categoryIcon);
+        categoryRepository.save(category);
 
         // when
-        category.updateCategoryIcon(icon);
         List<Category> categoryList = categoryRepository.findAll();
 
         // then
         assertThat(categoryList).isNotEmpty();
-        assertThat(categoryList.get(0).getCategoryIcon()).isEqualTo(icon);
+        assertThat(categoryList.get(0).getCategoryIcon()).isEqualTo(categoryIcon);
     }
 
     @Test
@@ -167,9 +170,19 @@ public class EntityRelationshipTest {
     @Test
     void brand() {
         // given
-        Category category = categoryRepository.save(Category.builder()
-                .name("coffee")
-                .build());
+        CategoryIcon categoryIcon = CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("originalName")
+                .build();
+
+        Category category = Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build();
+
+        categoryIconRepository.save(categoryIcon);
+        categoryRepository.save(category);
 
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
@@ -187,9 +200,19 @@ public class EntityRelationshipTest {
     @Test
     void voucherKind() {
         // given
-        Category category = categoryRepository.save(Category.builder()
-                .name("coffee")
-                .build());
+        CategoryIcon categoryIcon = CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("originalName")
+                .build();
+
+        Category category = Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build();
+
+        categoryIconRepository.save(categoryIcon);
+        categoryRepository.save(category);
 
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
@@ -276,9 +299,19 @@ public class EntityRelationshipTest {
     @Test
     void purchasedVoucher() {
         // given
-        Category category = categoryRepository.save(Category.builder()
-                .name("coffee")
-                .build());
+        CategoryIcon categoryIcon = CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("originalName")
+                .build();
+
+        Category category = Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build();
+
+        categoryIconRepository.save(categoryIcon);
+        categoryRepository.save(category);
 
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")

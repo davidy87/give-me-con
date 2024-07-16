@@ -3,6 +3,8 @@ package com.givemecon.domain.repository.brand;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -86,12 +88,23 @@ class BrandRepositoryTest {
 
     @Test
     void findAllWithBrandIconByCategoryId(@Autowired CategoryRepository categoryRepository,
+                                          @Autowired CategoryIconRepository categoryIconRepository,
                                           @Autowired BrandIconRepository brandIconRepository) {
 
         // given
-        Category category = categoryRepository.save(Category.builder()
+        Category category = Category.builder()
                 .name("category")
-                .build());
+                .build();
+
+        CategoryIcon categoryIcon = CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("originalName")
+                .build();
+
+        category.updateCategoryIcon(categoryIcon);
+        categoryIconRepository.save(categoryIcon);
+        categoryRepository.save(category);
 
         Brand brand = Brand.builder()
                 .name("Brand")

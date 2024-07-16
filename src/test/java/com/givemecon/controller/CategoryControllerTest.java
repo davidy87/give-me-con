@@ -145,17 +145,18 @@ class CategoryControllerTest {
     void findAll() throws Exception {
         // given
         for (int i = 1; i <= 5; i++) {
-            Category category = categoryRepository.save(Category.builder()
-                    .name("category" + i)
-                    .build());
-
             CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("categoryIcon" + i + ".png")
                     .build());
 
-            category.updateCategoryIcon(categoryIcon);
+            Category category = Category.builder()
+                    .name("category" + i)
+                    .categoryIcon(categoryIcon)
+                    .build();
+
+            categoryRepository.save(category);
         }
 
         // when
@@ -177,24 +178,23 @@ class CategoryControllerTest {
     @Test
     void update() throws Exception {
         // given
-        String name = "oldCategory";
-        String icon = "oldCategoryIcon.png";
+        String oldName = "old";
+        String oldIconName = "oldCategoryIcon.png";
         String imageKey = "imageKey";
         String imageUrl = "imageUrl";
 
-        Category category = categoryRepository.save(Category.builder()
-                .name(name)
-                .build());
-
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey(imageKey)
-                .originalName(icon)
                 .imageUrl(imageUrl)
+                .originalName(oldIconName)
                 .build());
 
-        category.updateCategoryIcon(categoryIcon);
+        Category category = categoryRepository.save(Category.builder()
+                .name(oldName)
+                .categoryIcon(categoryIcon)
+                .build());
 
-        String newName = "newCategory";
+        String newName = "new";
         MockMultipartFile newIconFile = new MockMultipartFile(
                 "iconFile",
                 "newCategoryIcon.png",
@@ -241,14 +241,15 @@ class CategoryControllerTest {
         String imageKey = "imageKey";
         String imageUrl = "imageUrl";
 
-        Category category = categoryRepository.save(Category.builder()
-                .name(name)
-                .build());
-
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey(imageKey)
                 .originalName(icon)
                 .imageUrl(imageUrl)
+                .build());
+
+        Category category = categoryRepository.save(Category.builder()
+                .name(name)
+                .categoryIcon(categoryIcon)
                 .build());
 
         Brand brand = brandRepository.save(Brand.builder()
