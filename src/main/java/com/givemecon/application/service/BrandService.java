@@ -42,9 +42,11 @@ public class BrandService {
         BrandIcon brandIcon = brandIconRepository.save(
                 imageEntityUtils.createImageEntity(BrandIcon.class, requestDto.getIconFile()));
 
-        Brand brand = brandRepository.save(requestDto.toEntity());
-        brand.updateCategory(category);
-        brand.updateBrandIcon(brandIcon);
+        Brand brand = brandRepository.save(Brand.builder()
+                .name(requestDto.getName())
+                .brandIcon(brandIcon)
+                .category(category)
+                .build());
 
         return new BrandResponse(brand);
     }
@@ -94,7 +96,6 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
-        voucherKindRepository.deleteAllByBrand(brand);
         brandRepository.delete(brand);
     }
 }

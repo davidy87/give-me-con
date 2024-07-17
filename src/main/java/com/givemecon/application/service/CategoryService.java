@@ -77,9 +77,6 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-        brandRepository.findAllByCategory(category)
-                .forEach(voucherKindRepository::deleteAllByBrand);
-        brandRepository.deleteAllByCategory(category);
         categoryRepository.delete(category);
     }
 }

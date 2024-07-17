@@ -4,9 +4,15 @@ import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.brand.Brand;
+import com.givemecon.domain.entity.brand.BrandIcon;
+import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
+import com.givemecon.domain.repository.category.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +63,16 @@ class ImageTextExtractionControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    BrandIconRepository brandIconRepository;
 
     @Autowired
     JwtTokenService jwtTokenService;
@@ -82,15 +97,34 @@ class ImageTextExtractionControllerTest {
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(member));
+
+        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("categoryIcon")
+                .build());
+
+        Category category = categoryRepository.save(Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build());
+
+        BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("brandIcon")
+                .build());
+
+        brandRepository.save(Brand.builder()
+                .name("brand")
+                .brandIcon(brandIcon)
+                .category(category)
+                .build());
     }
 
     @Test
     void extractTextFromImage(@Value("${gcp.test-voucher-image.url}") String imageUrl) throws Exception {
         // given
-        brandRepository.save(Brand.builder()
-                .name("미스터피자")
-                .build());
-
         MockMultipartFile imageFile = new MockMultipartFile("imageFile", new URL(imageUrl).openStream());
 
         // when
@@ -115,5 +149,4 @@ class ImageTextExtractionControllerTest {
                         ))
                 );
     }
-
 }

@@ -4,12 +4,10 @@ import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
@@ -75,9 +73,6 @@ class BrandControllerTest {
 
     @Autowired
     BrandIconRepository brandIconRepository;
-
-    @Autowired
-    VoucherKindRepository voucherKindRepository;
 
     @Autowired
     S3Mock s3Mock;
@@ -169,18 +164,17 @@ class BrandControllerTest {
     void findAllByCategoryId() throws Exception {
         // given
         for (int i = 1; i <= 20; i++) {
-            Brand brand = brandRepository.save(Brand.builder()
-                    .name("Brand " + i)
-                    .build());
-
             BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("brandIcon" + i + ".jpg")
                     .build());
 
-            brand.updateBrandIcon(brandIcon);
-            brand.updateCategory(category);
+            brandRepository.save(Brand.builder()
+                    .name("Brand " + i)
+                    .brandIcon(brandIcon)
+                    .category(category)
+                    .build());
         }
 
         // when
@@ -227,18 +221,17 @@ class BrandControllerTest {
                 .categoryIcon(newCategoryIcon)
                 .build());
 
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("oldBrand")
-                .build());
-
         BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("brandIcon.jpg")
                 .build());
 
-        brand.updateCategory(category);
-        brand.updateBrandIcon(brandIcon);
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("oldBrand")
+                .brandIcon(brandIcon)
+                .category(category)
+                .build());
 
         String newName = "newBrand";
         MockMultipartFile newIconFile = new MockMultipartFile(
@@ -287,24 +280,17 @@ class BrandControllerTest {
     @Test
     void deleteOne() throws Exception {
         // given
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("Brand")
-                .build());
-
         BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("brandIcon.png")
                 .build());
 
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("voucherKind")
-                .description("description")
-                .caution("caution")
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("Brand")
+                .brandIcon(brandIcon)
+                .category(category)
                 .build());
-
-        brand.updateBrandIcon(brandIcon);
-        voucherKind.updateBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/brands/{id}", brand.getId()));
@@ -320,8 +306,6 @@ class BrandControllerTest {
                 );
 
         List<Brand> brandList = brandRepository.findAll();
-        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
         assertThat(brandList).isEmpty();
-        assertThat(voucherKindList).isEmpty();
     }
 }

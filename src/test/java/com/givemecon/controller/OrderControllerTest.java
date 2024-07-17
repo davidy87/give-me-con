@@ -1,6 +1,9 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.domain.entity.brand.BrandIcon;
+import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
 import com.givemecon.domain.entity.member.Authority;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
@@ -12,7 +15,10 @@ import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
+import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
+import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
@@ -74,7 +80,16 @@ class OrderControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    BrandIconRepository brandIconRepository;
 
     @Autowired
     VoucherKindRepository voucherKindRepository;
@@ -122,8 +137,27 @@ class OrderControllerTest {
                 .authority(Authority.USER)
                 .build());
 
+        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("categoryIcon")
+                .build());
+
+        Category category = categoryRepository.save(Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build());
+
+        BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("brandIcon")
+                .build());
+
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Brand")
+                .brandIcon(brandIcon)
+                .category(category)
                 .build());
 
         VoucherKind voucherKind = VoucherKind.builder()
