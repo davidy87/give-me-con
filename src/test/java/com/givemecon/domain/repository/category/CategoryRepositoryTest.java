@@ -1,11 +1,10 @@
 package com.givemecon.domain.repository.category;
 
-
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,29 +23,11 @@ class CategoryRepositoryTest {
     @Autowired
     CategoryRepository categoryRepository;
 
-    @Autowired
-    CategoryIconRepository categoryIconRepository;
-
-    CategoryIcon categoryIcon;
-
-    @BeforeEach
-    void setup() {
-        categoryIcon = CategoryIcon.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("coffeeIcon")
-                .build();
-
-        categoryIconRepository.save(categoryIcon);
-    }
-
-
     @Test
     void saveAndFindAll() {
         // given
         Category category =  Category.builder()
                 .name("coffee")
-                .categoryIcon(categoryIcon)
                 .build();
 
         // when
@@ -64,7 +45,6 @@ class CategoryRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         Category category =  Category.builder()
                 .name("coffee")
-                .categoryIcon(categoryIcon)
                 .build();
 
         categoryRepository.save(category);
@@ -79,23 +59,37 @@ class CategoryRepositoryTest {
         assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }
 
-    @Test
-    @DisplayName("Category & CategoryIcon fetch join 조회 테스트")
-    void findAllWithCategoryIcon(@Autowired CategoryIconRepository categoryIconRepository) {
-        // given
-        Category category = Category.builder()
-                .name("coffee")
-                .categoryIcon(categoryIcon)
-                .build();
+    @Nested
+    @DisplayName("JPQL 테스트")
+    class JPQLTest {
 
-        categoryRepository.save(category);
+        @Autowired
+        CategoryIconRepository categoryIconRepository;
 
-        // when
-        List<Category> found = categoryRepository.findAllWithCategoryIcon();
+        @Test
+        @DisplayName("Category & CategoryIcon fetch join 조회 테스트")
+        void findAllWithCategoryIcon() {
+            // given
+            CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                    .imageKey("imageKey")
+                    .imageUrl("imageUrl")
+                    .originalName("categoryIcon")
+                    .build());
 
-        // then
-        assertThat(found).isNotEmpty();
-        assertThat(found.get(0)).isEqualTo(category);
-        assertThat(found.get(0).getCategoryIcon()).isEqualTo(categoryIcon);
+            Category category = Category.builder()
+                    .name("coffee")
+                    .categoryIcon(categoryIcon)
+                    .build();
+
+            categoryRepository.save(category);
+
+            // when
+            List<Category> found = categoryRepository.findAllWithCategoryIcon();
+
+            // then
+            assertThat(found).isNotEmpty();
+            assertThat(found.get(0)).isEqualTo(category);
+            assertThat(found.get(0).getCategoryIcon()).isEqualTo(categoryIcon);
+        }
     }
 }

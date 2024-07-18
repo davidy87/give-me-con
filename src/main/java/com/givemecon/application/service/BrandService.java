@@ -8,7 +8,6 @@ import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,8 +29,6 @@ public class BrandService {
     private final BrandRepository brandRepository;
 
     private final BrandIconRepository brandIconRepository;
-
-    private final VoucherKindRepository voucherKindRepository;
 
     private final ImageEntityUtils imageEntityUtils;
 

@@ -24,10 +24,10 @@ public class Brand extends BaseEntity {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @OneToOne(optional = false)
+    @OneToOne
     private BrandIcon brandIcon;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
     @Builder

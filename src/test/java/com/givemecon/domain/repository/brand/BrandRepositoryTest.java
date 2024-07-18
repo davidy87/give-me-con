@@ -8,6 +8,8 @@ import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,48 +26,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BrandRepositoryTest {
 
     @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    CategoryIconRepository categoryIconRepository;
-
-    @Autowired
     BrandRepository brandRepository;
-
-    @Autowired
-    BrandIconRepository brandIconRepository;
-
-    Category category;
-
-    BrandIcon brandIcon;
-
-    @BeforeEach
-    void setup() {
-        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("categoryIcon")
-                .build());
-
-        category = categoryRepository.save(Category.builder()
-                .name("category")
-                .categoryIcon(categoryIcon)
-                .build());
-
-        brandIcon = brandIconRepository.save(BrandIcon.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("brandIcon")
-                .build());
-    }
 
     @Test
     void saveAndFindAll() {
         // given
         Brand brand = Brand.builder()
                 .name("brand")
-                .brandIcon(brandIcon)
-                .category(category)
                 .build();
 
         // when
@@ -84,8 +51,6 @@ class BrandRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         brandRepository.save(Brand.builder()
                 .name("brand")
-                .brandIcon(brandIcon)
-                .category(category)
                 .build());
 
         // when
@@ -98,43 +63,83 @@ class BrandRepositoryTest {
         assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }
 
-    @Test
-    void findAllWithBrandIcon() {
-        // given
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("Brand")
-                .brandIcon(brandIcon)
-                .category(category)
-                .build());
+    @Nested
+    @DisplayName("JPQL 테스트")
+    class JPQLTest {
 
-        // when
-        List<Brand> found = brandRepository.findAllWithBrandIcon();
+        @Autowired
+        CategoryRepository categoryRepository;
 
-        // then
-        assertThat(found).isNotEmpty();
-        assertThat(found.get(0)).isEqualTo(brand);
-        assertThat(found.get(0).getBrandIcon()).isEqualTo(brandIcon);
-    }
+        @Autowired
+        CategoryIconRepository categoryIconRepository;
 
-    @Test
-    void findAllWithBrandIconByCategoryId() {
+        @Autowired
+        BrandIconRepository brandIconRepository;
 
-        // given
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("Brand")
-                .brandIcon(brandIcon)
-                .category(category)
-                .build());
+        Category category;
 
-        // when
-        List<Brand> result = brandRepository.findAllWithBrandIconByCategoryId(category.getId());
+        BrandIcon brandIcon;
 
-        // then
-        assertThat(result).isNotEmpty();
+        @BeforeEach
+        void setup() {
+            CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                    .imageKey("imageKey")
+                    .imageUrl("imageUrl")
+                    .originalName("categoryIcon")
+                    .build());
 
-        Brand brandFound = result.get(0);
-        assertThat(brandFound).isEqualTo(brand);
-        assertThat(brandFound.getBrandIcon()).isEqualTo(brandIcon);
-        assertThat(brandFound.getCategory()).isEqualTo(category);
+            category = categoryRepository.save(Category.builder()
+                    .name("category")
+                    .categoryIcon(categoryIcon)
+                    .build());
+
+            brandIcon = brandIconRepository.save(BrandIcon.builder()
+                    .imageKey("imageKey")
+                    .imageUrl("imageUrl")
+                    .originalName("brandIcon")
+                    .build());
+        }
+
+        @Test
+        @DisplayName("Brand & BrandIcon fetch join 테스트")
+        void findAllWithBrandIcon() {
+            // given
+            Brand brand = brandRepository.save(Brand.builder()
+                    .name("Brand")
+                    .brandIcon(brandIcon)
+                    .category(category)
+                    .build());
+
+            // when
+            List<Brand> found = brandRepository.findAllWithBrandIcon();
+
+            // then
+            assertThat(found).isNotEmpty();
+            assertThat(found.get(0)).isEqualTo(brand);
+            assertThat(found.get(0).getBrandIcon()).isEqualTo(brandIcon);
+        }
+
+        @Test
+        @DisplayName("Brand & BrandIcon fetch join 후 categoryId 별로 조회하는 테스트")
+        void findAllWithBrandIconByCategoryId() {
+
+            // given
+            Brand brand = brandRepository.save(Brand.builder()
+                    .name("Brand")
+                    .brandIcon(brandIcon)
+                    .category(category)
+                    .build());
+
+            // when
+            List<Brand> result = brandRepository.findAllWithBrandIconByCategoryId(category.getId());
+
+            // then
+            assertThat(result).isNotEmpty();
+
+            Brand brandFound = result.get(0);
+            assertThat(brandFound).isEqualTo(brand);
+            assertThat(brandFound.getBrandIcon()).isEqualTo(brandIcon);
+            assertThat(brandFound.getCategory()).isEqualTo(category);
+        }
     }
 }

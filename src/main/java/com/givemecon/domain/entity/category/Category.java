@@ -23,7 +23,7 @@ public class Category extends BaseEntity {
     @Column(nullable = false, unique = true, length = 10)
     private String name;
 
-    @OneToOne(optional = false)
+    @OneToOne
     private CategoryIcon categoryIcon;
 
     @Builder
