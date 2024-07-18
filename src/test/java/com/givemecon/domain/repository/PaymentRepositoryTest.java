@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.domain.entity.payment.OrderInfo;
 import com.givemecon.domain.entity.payment.Payment;
 import com.givemecon.domain.entity.payment.PaymentMethod;
 import jakarta.transaction.Transactional;
@@ -21,13 +22,13 @@ class PaymentRepositoryTest {
     @Test
     void saveAndFind() {
         // given
+        OrderInfo orderInfo = new OrderInfo("order-id", "Americano T", 4_000L);
+
         Payment payment = Payment.builder()
                 .paymentKey("paymentKey")
                 .method(PaymentMethod.CARD)
-                .orderId("order-id")
-                .orderName("Americano T")
-                .amount(4_000L)
                 .receiptUrl("receiptUrl")
+                .orderInfo(orderInfo)
                 .build();
 
         // when

@@ -7,8 +7,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE payment SET deleted = true WHERE id = ?")
 @SQLRestriction("deleted = false")
@@ -26,15 +24,17 @@ public class Payment extends BaseEntity {
     @Column(nullable = false)
     private PaymentMethod method;
 
-    @Column(unique = true, nullable = false)
-    private String orderId;
-
-    @Column(nullable = false)
-    private String orderName;
-
-    @Column(nullable = false)
-    private Long amount;
-
     @Column(nullable = false)
     private String receiptUrl;
+
+    @Embedded
+    private OrderInfo orderInfo;
+
+    @Builder
+    public Payment(String paymentKey, PaymentMethod method, String receiptUrl, OrderInfo orderInfo) {
+        this.paymentKey = paymentKey;
+        this.method = method;
+        this.receiptUrl = receiptUrl;
+        this.orderInfo = orderInfo;
+    }
 }
