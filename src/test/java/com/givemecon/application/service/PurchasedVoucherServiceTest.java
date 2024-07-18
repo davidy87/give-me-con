@@ -41,15 +41,14 @@ class PurchasedVoucherServiceTest {
 
     @BeforeEach
     void setup() {
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("voucherKind")
-                .build();
-
         VoucherKindImage voucherKindImage = VoucherKindImage.builder()
                 .imageUrl("voucherImageUrl")
                 .build();
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
+                .voucherKindImage(voucherKindImage)
+                .build();
 
         VoucherImage voucherImage = VoucherImage.builder()
                 .imageUrl("imageUrl")
@@ -59,10 +58,9 @@ class PurchasedVoucherServiceTest {
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
+                .voucherImage(voucherImage)
+                .voucherKind(voucherKind)
                 .build();
-
-        voucher.updateVoucherKind(voucherKind);
-        voucher.updateVoucherImage(voucherImage);
     }
 
     @Test

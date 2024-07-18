@@ -40,14 +40,15 @@ class VoucherKindServiceTest {
 
     @BeforeEach
     void setup() {
-        voucherKind = VoucherKind.builder().build();
         VoucherKindImage voucherKindImage = VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("voucherKindImage")
                 .build();
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        voucherKind = VoucherKind.builder()
+                .voucherKindImage(voucherKindImage)
+                .build();
 
         Mockito.when(voucherKindRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(voucherKind));
@@ -60,10 +61,10 @@ class VoucherKindServiceTest {
         // given
         Voucher voucher = Voucher.builder()
                 .price(4_000L)
+                .voucherKind(voucherKind)
                 .build();
 
         voucher.updateStatus(FOR_SALE);
-        voucher.updateVoucherKind(voucherKind);
 
         Mockito.when(voucherRepository.findOneWithMinPrice(eq(voucherKind), eq(FOR_SALE), any(Pageable.class)))
                 .thenReturn(List.of(voucher));

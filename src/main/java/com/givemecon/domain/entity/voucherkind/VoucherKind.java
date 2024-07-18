@@ -37,10 +37,17 @@ public class VoucherKind extends BaseEntity {
     private Brand brand;
 
     @Builder
-    public VoucherKind(String title, String description, String caution) {
+    public VoucherKind(String title,
+                       String description,
+                       String caution,
+                       VoucherKindImage voucherKindImage,
+                       Brand brand) {
+
         this.title = title;
         this.description = description;
         this.caution = caution;
+        this.voucherKindImage = voucherKindImage;
+        this.brand = brand;
     }
 
     public String getImageUrl() {
@@ -57,13 +64,5 @@ public class VoucherKind extends BaseEntity {
 
     public void updateCaution(String caution) {
         this.caution = caution;
-    }
-
-    public void updateVoucherKindImage(VoucherKindImage voucherKindImage) {
-        this.voucherKindImage = voucherKindImage;
-    }
-
-    public void updateBrand(Brand brand) {
-        this.brand = brand;
     }
 }

@@ -160,32 +160,25 @@ class OrderControllerTest {
                 .category(category)
                 .build());
 
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("voucherKind")
-                .description("description")
-                .caution("caution")
-                .build();
-
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
+                .description("description")
+                .caution("caution")
+                .voucherKindImage(voucherKindImage)
+                .brand(brand)
+                .build();
+
         voucherKindRepository.save(voucherKind);
 
         voucherForSaleIdList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            Voucher voucher =
-                    voucherRepository.save(Voucher.builder()
-                            .price(4_000L)
-                            .barcode("1111 1111 1111")
-                            .expDate(LocalDate.now())
-                            .build());
-
             VoucherImage voucherImage =
                     voucherImageRepository.save(VoucherImage.builder()
                             .imageKey("imageKey" + i)
@@ -193,10 +186,17 @@ class OrderControllerTest {
                             .originalName("test_image")
                             .build());
 
+            Voucher voucher =
+                    voucherRepository.save(Voucher.builder()
+                            .price(4_000L)
+                            .barcode("1111 1111 1111")
+                            .expDate(LocalDate.now())
+                            .voucherImage(voucherImage)
+                            .voucherKind(voucherKind)
+                            .seller(seller)
+                            .build());
+
             voucher.updateStatus(FOR_SALE);
-            voucher.updateSeller(seller);
-            voucher.updateVoucherKind(voucherKind);
-            voucher.updateVoucherImage(voucherImage);
             voucherForSaleIdList.add(voucher.getId());
         }
     }

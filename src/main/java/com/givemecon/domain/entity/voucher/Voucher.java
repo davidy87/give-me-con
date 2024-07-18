@@ -56,12 +56,21 @@ public class Voucher extends BaseEntity {
     private Order order;
 
     @Builder
-    public Voucher(Long price, LocalDate expDate, String barcode) {
+    public Voucher(Long price,
+                   LocalDate expDate,
+                   String barcode,
+                   VoucherImage voucherImage,
+                   VoucherKind voucherKind,
+                   Member seller) {
+
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
         this.status = NOT_YET_PERMITTED;
         this.saleRequestedDate = LocalDate.now();
+        this.voucherImage = voucherImage;
+        this.voucherKind = voucherKind;
+        this.seller = seller;
     }
 
     public String getTitle() {
@@ -74,18 +83,6 @@ public class Voucher extends BaseEntity {
 
     public void updateStatus(VoucherStatus status) {
         this.status = status;
-    }
-
-    public void updateVoucherImage(VoucherImage voucherImage) {
-        this.voucherImage = voucherImage;
-    }
-
-    public void updateVoucherKind(VoucherKind voucherKind) {
-        this.voucherKind = voucherKind;
-    }
-
-    public void updateSeller(Member seller) {
-        this.seller = seller;
     }
 
     public void updateOrder(Order order) {

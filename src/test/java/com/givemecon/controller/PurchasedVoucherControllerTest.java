@@ -108,17 +108,16 @@ class PurchasedVoucherControllerTest {
                 .authority(USER)
                 .build());
 
-        voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("voucherKind")
-                .build());
-
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageUrl("imageUrl")
                 .imageKey("imageKey")
                 .originalName("originalName")
                 .build());
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
+                .voucherKindImage(voucherKindImage)
+                .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
@@ -129,20 +128,20 @@ class PurchasedVoucherControllerTest {
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            Voucher voucher = voucherRepository.save(Voucher.builder()
-                    .price(4_000L)
-                    .barcode("1111 1111 1111")
-                    .expDate(LocalDate.now().plusDays(1))
-                    .build());
-
             VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("image" + i + ".png")
                     .build());
 
-            voucher.updateVoucherImage(voucherImage);
-            voucher.updateVoucherKind(voucherKind);
+            Voucher voucher = voucherRepository.save(Voucher.builder()
+                    .price(4_000L)
+                    .barcode("1111 1111 1111")
+                    .expDate(LocalDate.now().plusDays(1))
+                    .voucherImage(voucherImage)
+                    .voucherKind(voucherKind)
+                    .build());
+
             voucher.updateStatus(VoucherStatus.FOR_SALE);
             dtoList.add(new PurchasedVoucherRequest(voucher.getId()));
         }
@@ -189,21 +188,20 @@ class PurchasedVoucherControllerTest {
     void findAllByUsername() throws Exception {
         // given
         for (int i = 1; i <= 20; i++) {
-            Voucher voucher = voucherRepository.save(Voucher.builder()
-                    .price(4_000L)
-                    .barcode("1111 1111 1111")
-                    .expDate(LocalDate.now().plusDays(1))
-                    .build());
-
             VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("image" + i + ".png")
                     .build());
 
+            Voucher voucher = voucherRepository.save(Voucher.builder()
+                    .price(4_000L)
+                    .barcode("1111 1111 1111")
+                    .expDate(LocalDate.now().plusDays(1))
+                    .voucherImage(voucherImage)
+                    .voucherKind(voucherKind)
+                    .build());
 
-            voucher.updateVoucherImage(voucherImage);
-            voucher.updateVoucherKind(voucherKind);
             purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
         }
 
@@ -238,20 +236,20 @@ class PurchasedVoucherControllerTest {
     @Test
     void findOne() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .price(4_000L)
-                .barcode("1111 1111 1111")
-                .expDate(LocalDate.now().plusDays(1))
-                .build());
-
         VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucher.updateVoucherImage(voucherImage);
-        voucher.updateVoucherKind(voucherKind);
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now().plusDays(1))
+                .voucherImage(voucherImage)
+                .voucherKind(voucherKind)
+                .build());
+
         PurchasedVoucher purchasedVoucher =
                 purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 
@@ -289,20 +287,20 @@ class PurchasedVoucherControllerTest {
     @Test
     void setUsed() throws Exception {
         // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .price(4_000L)
-                .barcode("1111 1111 1111")
-                .expDate(LocalDate.now().plusDays(1))
-                .build());
-
         VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucher.updateVoucherImage(voucherImage);
-        voucher.updateVoucherKind(voucherKind);
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now().plusDays(1))
+                .voucherImage(voucherImage)
+                .voucherKind(voucherKind)
+                .build());
+
         PurchasedVoucher purchasedVoucher =
                 purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 

@@ -26,6 +26,20 @@ class LikedVoucherRepositoryTest {
     LikedVoucherRepository likedVoucherRepository;
 
     @Test
+    void saveAndFindAll() {
+        // given
+        LikedVoucher likedVoucher = LikedVoucher.builder().build();
+
+        // when
+        LikedVoucher saved = likedVoucherRepository.save(likedVoucher);
+        List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
+
+        // then
+        LikedVoucher found = likedVoucherList.get(0);
+        assertThat(found.getId()).isEqualTo(saved.getId());
+    }
+
+    @Test
     void BaseTimeEntity() {
         // given
         LocalDateTime now = LocalDateTime.now();
@@ -42,20 +56,6 @@ class LikedVoucherRepositoryTest {
     }
 
     @Test
-    void saveAndFindAll() {
-        // given
-        LikedVoucher likedVoucher = LikedVoucher.builder().build();
-
-        // when
-        LikedVoucher saved = likedVoucherRepository.save(likedVoucher);
-        List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
-
-        // then
-        LikedVoucher found = likedVoucherList.get(0);
-        assertThat(found.getId()).isEqualTo(saved.getId());
-    }
-
-    @Test
     void findAllFetchedByUsername(@Autowired MemberRepository memberRepository,
                                   @Autowired VoucherKindRepository voucherKindRepository,
                                   @Autowired VoucherKindImageRepository voucherKindImageRepository) {
@@ -67,17 +67,17 @@ class LikedVoucherRepositoryTest {
                 .authority(Authority.USER)
                 .build());
 
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("voucherKind")
-                .build();
-
         VoucherKindImage voucherKindImage = VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("originalName")
                 .build();
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
+                .voucherKindImage(voucherKindImage)
+                .build();
+
         voucherKindRepository.save(voucherKind);
         voucherKindImageRepository.save(voucherKindImage);
 

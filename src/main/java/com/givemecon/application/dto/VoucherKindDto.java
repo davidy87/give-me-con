@@ -34,14 +34,6 @@ public final class VoucherKindDto {
 
         @ValidFile
         private final MultipartFile imageFile;
-
-        public VoucherKind toEntity() {
-            return VoucherKind.builder()
-                    .title(title)
-                    .description(description)
-                    .caution(caution)
-                    .build();
-        }
     }
 
     @Getter

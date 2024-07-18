@@ -150,20 +150,20 @@ class PaymentControllerTest {
                 .category(category)
                 .build());
 
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("voucherKind")
-                .description("description")
-                .caution("caution")
-                .build();
-
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("image.png")
                 .build());
 
-        voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
+                .description("description")
+                .caution("caution")
+                .voucherKindImage(voucherKindImage)
+                .brand(brand)
+                .build();
+
         voucherKindRepository.save(voucherKind);
 
         Voucher voucher =
@@ -171,9 +171,9 @@ class PaymentControllerTest {
                         .price(4_000L)
                         .barcode("1111 1111 1111")
                         .expDate(LocalDate.now())
+                        .voucherKind(voucherKind)
                         .build());
 
-        voucher.updateVoucherKind(voucherKind);
         voucher.updateOrder(order);
         voucher.updateStatus(VoucherStatus.ORDER_PLACED);
         order.updateQuantity(1);

@@ -46,7 +46,7 @@ class BrandRepositoryTest {
     }
 
     @Test
-    void BaseTimeEntityTest() {
+    void BaseTimeEntity() {
         // given
         LocalDateTime now = LocalDateTime.now();
         brandRepository.save(Brand.builder()
@@ -122,7 +122,6 @@ class BrandRepositoryTest {
         @Test
         @DisplayName("Brand & BrandIcon fetch join 후 categoryId 별로 조회하는 테스트")
         void findAllWithBrandIconByCategoryId() {
-
             // given
             Brand brand = brandRepository.save(Brand.builder()
                     .name("Brand")

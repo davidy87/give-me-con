@@ -46,16 +46,20 @@ public class VoucherService {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherId())
+        VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherKindId())
                 .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
         VoucherImage voucherImage = voucherImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherImage.class, requestDto.getImageFile()));
 
-        Voucher voucher = voucherRepository.save(requestDto.toEntity());
-        voucher.updateSeller(seller);
-        voucher.updateVoucherKind(voucherKind);
-        voucher.updateVoucherImage(voucherImage);
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(requestDto.getPrice())
+                .expDate(requestDto.getExpDate())
+                .barcode(requestDto.getBarcode())
+                .voucherImage(voucherImage)
+                .voucherKind(voucherKind)
+                .seller(seller)
+                .build());
 
         return new VoucherResponse(voucher);
     }

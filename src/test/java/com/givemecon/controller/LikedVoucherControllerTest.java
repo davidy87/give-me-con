@@ -98,19 +98,18 @@ class LikedVoucherControllerTest {
     @Test
     void save() throws Exception {
         // given
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("voucherKind")
-                .description("voucherKind description")
-                .caution("voucherKind caution")
-                .build());
-
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("voucherKindImage.png")
                 .build());
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
+                .description("voucherKind description")
+                .caution("voucherKind caution")
+                .voucherKindImage(voucherKindImage)
+                .build());
 
         // when
         ResultActions response = mockMvc.perform(post("/api/liked-vouchers")
@@ -153,19 +152,19 @@ class LikedVoucherControllerTest {
     void findAllByUsername() throws Exception {
         // given
         for (int i = 1; i <= 5; i++) {
-            VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                    .title("voucherKind" + i)
-                    .description("voucherKind" + i + " description")
-                    .caution("voucherKind" + i + " caution")
-                    .build());
-
             VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucherKind.updateVoucherKindImage(voucherKindImage);
+            VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                    .title("voucherKind" + i)
+                    .description("voucherKind" + i + " description")
+                    .caution("voucherKind" + i + " caution")
+                    .voucherKindImage(voucherKindImage)
+                    .build());
+
             likedVoucherRepository.save(new LikedVoucher(member, voucherKind));
         }
 

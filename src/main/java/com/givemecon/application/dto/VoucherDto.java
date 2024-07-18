@@ -21,7 +21,7 @@ public final class VoucherDto {
 
         @NotNull
         @Min(1L)
-        private final Long voucherId;
+        private final Long voucherKindId;
 
         @NotNull
         @Min(0L)
@@ -36,14 +36,6 @@ public final class VoucherDto {
 
         @ValidFile
         private final MultipartFile imageFile;
-
-        public Voucher toEntity() {
-            return Voucher.builder()
-                    .price(price)
-                    .expDate(expDate)
-                    .barcode(barcode)
-                    .build();
-        }
     }
 
     @Getter
