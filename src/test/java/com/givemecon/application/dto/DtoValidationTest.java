@@ -32,7 +32,7 @@ import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucher
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
-import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.common.error.GlobalErrorCode.INVALID_ARGUMENT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -221,10 +221,10 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("상태 수정 요청 DTO의 statusCode가 3(REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
+    @DisplayName("상태 수정 요청 DTO의 statusCode가 3(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
     void saleRejectionRequestFailed() throws Exception {
         // given
-        Integer statusCode = REJECTED.ordinal();
+        Integer statusCode = SALE_REJECTED.ordinal();
 
         // when
         StatusUpdateRequest requestBody = new StatusUpdateRequest();

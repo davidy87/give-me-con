@@ -48,7 +48,7 @@ import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
-import static com.givemecon.domain.entity.voucher.VoucherStatus.NOT_YET_PERMITTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REQUESTED;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -271,7 +271,7 @@ class VoucherControllerTest {
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
-                .queryParam("statusCode", String.valueOf(NOT_YET_PERMITTED.ordinal())));
+                .queryParam("statusCode", String.valueOf(SALE_REQUESTED.ordinal())));
 
         // then
         response.andExpect(status().isOk())
@@ -374,7 +374,7 @@ class VoucherControllerTest {
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드 (0 ~ 4)"),
                                 fieldWithPath("rejectedReason")
                                         .type(JsonFieldType.STRING).optional()
-                                        .description("판매 요청 거절 사유 (statusCode가 3(REJECTED)일 경우 필수)")
+                                        .description("판매 요청 거절 사유 (statusCode가 3(SALE_REJECTED)일 경우 필수)")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),

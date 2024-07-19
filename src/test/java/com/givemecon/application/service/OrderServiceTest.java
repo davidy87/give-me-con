@@ -107,7 +107,7 @@ class OrderServiceTest {
         @DisplayName("주문 요청 예외 1 - 구매할 VoucherForSale의 status가 FOR_SALE이 아닐 경우 주문 요청 실패")
         void notForSaleOrder() {
             // given
-            Mockito.when(voucher.getStatus()).thenReturn(NOT_YET_PERMITTED);
+            Mockito.when(voucher.getStatus()).thenReturn(SALE_REQUESTED);
             OrderRequest orderRequest = new OrderRequest(List.of(1L, 2L, 3L));
 
             // when & then
@@ -210,7 +210,7 @@ class OrderServiceTest {
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getBuyer()).thenReturn(buyer);
-            Mockito.when(voucher.getStatus()).thenReturn(NOT_YET_PERMITTED);
+            Mockito.when(voucher.getStatus()).thenReturn(SALE_REQUESTED);
 
             // when & then
             assertThatThrownBy(() -> orderService.getOrderSummary(order.getOrderNumber(), buyer.getUsername()))

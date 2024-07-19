@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 
-import static com.givemecon.domain.entity.voucher.VoucherStatus.NOT_YET_PERMITTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REQUESTED;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,12 +36,12 @@ public class Voucher extends BaseEntity {
     @Column(nullable = false)
     private String barcode;
 
+    @Column(nullable = false)
+    private LocalDate saleRequestedDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private VoucherStatus status;
-
-    @Column(nullable = false)
-    private LocalDate saleRequestedDate;
 
     @OneToOne(fetch = FetchType.LAZY)
     private VoucherImage voucherImage;
@@ -66,8 +66,8 @@ public class Voucher extends BaseEntity {
         this.price = price;
         this.expDate = expDate;
         this.barcode = barcode;
-        this.status = NOT_YET_PERMITTED;
         this.saleRequestedDate = LocalDate.now();
+        this.status = SALE_REQUESTED;
         this.voucherImage = voucherImage;
         this.voucherKind = voucherKind;
         this.seller = seller;

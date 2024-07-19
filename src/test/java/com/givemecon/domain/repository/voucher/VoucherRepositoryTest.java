@@ -119,13 +119,13 @@ class VoucherRepositoryTest {
         voucherRepository.save(voucher);
 
         // when
-        List<Voucher> voucherList = voucherRepository.findAllByStatus(NOT_YET_PERMITTED);
+        List<Voucher> voucherList = voucherRepository.findAllByStatus(SALE_REQUESTED);
 
         // then
         Voucher found = voucherList.get(0);
         assertThat(voucherList).isNotEmpty();
         assertThat(found).isEqualTo(voucher);
-        assertThat(found.getStatus()).isSameAs(NOT_YET_PERMITTED);
+        assertThat(found.getStatus()).isSameAs(SALE_REQUESTED);
     }
 
     @Test

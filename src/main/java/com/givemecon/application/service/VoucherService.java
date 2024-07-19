@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.application.dto.VoucherDto.*;
-import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -100,7 +100,7 @@ public class VoucherService {
         voucher.updateStatus(newStatus);
 
         // 판매 요청 거절 시
-        if (newStatus == REJECTED) {
+        if (newStatus == SALE_REJECTED) {
             recordRejectedSale(voucher.getId(), requestDto.getRejectedReason());
         }
 

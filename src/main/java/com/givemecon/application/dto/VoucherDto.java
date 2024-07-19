@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
-import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class VoucherDto {
@@ -62,7 +62,7 @@ public final class VoucherDto {
         private boolean isRejectedReason() {
             boolean valid = StringUtils.hasText(rejectedReason);
 
-            if (statusCode == REJECTED.ordinal()) {
+            if (statusCode == SALE_REJECTED.ordinal()) {
                 return valid;
             }
 
