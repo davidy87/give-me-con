@@ -31,25 +31,25 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private Authority authority;
+    private Role role;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10)
     private OAuth2Provider provider;
 
     @Builder
-    public Member(String email, String username, String password, Authority authority) {
+    public Member(String email, String username, String password, Role role) {
         this.email = email;
         this.username = username;
         this.password = password;
-        this.authority = authority;
+        this.role = role;
     }
 
     @Builder(builderClassName = "oauthBuilder", builderMethodName = "oauthBuilder")
-    public Member(String email, String username, Authority authority, OAuth2Provider provider) {
+    public Member(String email, String username, Role role, OAuth2Provider provider) {
         this.email = email;
         this.username = username;
-        this.authority = authority;
+        this.role = role;
         this.provider = provider;
     }
 
@@ -58,7 +58,7 @@ public class Member extends BaseEntity {
         this.username = username;
     }
 
-    public String getRole() {
-        return authority.getRole();
+    public String getAuthority() {
+        return role.getAuthority();
     }
 }

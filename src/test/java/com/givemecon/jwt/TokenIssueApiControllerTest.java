@@ -25,7 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.UUID;
 
 import static com.givemecon.common.auth.enums.JwtAuthHeader.*;
-import static com.givemecon.domain.entity.member.Authority.*;
+import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.common.auth.enums.OAuth2ParameterName.*;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.util.TokenHeaderUtils.*;
@@ -72,7 +72,7 @@ public class TokenIssueApiControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
     }
 
@@ -114,7 +114,7 @@ public class TokenIssueApiControllerTest {
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                                 fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
                                 fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                                fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("권한")
                         ))
         );
     }
@@ -150,7 +150,7 @@ public class TokenIssueApiControllerTest {
                     fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                     fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
                     fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                    fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
+                    fieldWithPath("role").type(JsonFieldType.STRING).description("권한")
                 ))
         );
     }

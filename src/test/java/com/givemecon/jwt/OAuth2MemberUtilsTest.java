@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.givemecon.domain.entity.member.Authority.*;
+import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.common.auth.enums.OAuth2Provider.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -66,7 +66,7 @@ class OAuth2MemberUtilsTest {
         memberRepository.save(Member.oauthBuilder()
                 .email(oauth2Attributes.getEmail())
                 .username(oauth2Attributes.getUsername())
-                .authority(USER)
+                .role(USER)
                 .provider(KAKAO)
                 .build());
 

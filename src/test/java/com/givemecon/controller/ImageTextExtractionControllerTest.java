@@ -33,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URL;
 
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
@@ -93,7 +93,7 @@ class ImageTextExtractionControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(member));

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -128,13 +128,13 @@ class OrderControllerTest {
         buyer = memberRepository.save(Member.builder()
                 .email("buyer@gmail.com")
                 .username("buyer")
-                .authority(Authority.USER)
+                .role(Role.USER)
                 .build());
 
         Member seller = memberRepository.save(Member.builder()
                 .email("seller@gmail.com")
                 .username("seller")
-                .authority(Authority.USER)
+                .role(Role.USER)
                 .build());
 
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()

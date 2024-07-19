@@ -30,7 +30,7 @@ import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequestList;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -72,7 +72,7 @@ public class DtoValidationTest {
         member = memberRepository.save(Member.builder()
                 .username("tester")
                 .email("test@gmail.com")
-                .authority(ADMIN)
+                .role(ADMIN)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));

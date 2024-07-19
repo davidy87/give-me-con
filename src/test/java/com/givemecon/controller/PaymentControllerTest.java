@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -122,7 +122,7 @@ class PaymentControllerTest {
         buyer = memberRepository.save(Member.builder()
                 .username("tester")
                 .email("test@gmail.com")
-                .authority(Authority.USER)
+                .role(Role.USER)
                 .build());
 
         order = orderRepository.save(new Order("ORDER-NUMBER", buyer));

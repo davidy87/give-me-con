@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.domain.entity.order.OrderStatus.CANCELLED;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -84,7 +84,7 @@ class VoucherRepositoryTest {
         Member seller = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         Voucher voucher = Voucher.builder()

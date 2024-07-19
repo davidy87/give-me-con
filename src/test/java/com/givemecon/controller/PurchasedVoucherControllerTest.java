@@ -40,7 +40,7 @@ import java.util.List;
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequestList;
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -105,7 +105,7 @@ class PurchasedVoucherControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()

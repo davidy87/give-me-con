@@ -1,6 +1,6 @@
 package com.givemecon.domain.repository;
 
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
@@ -64,7 +64,7 @@ class LikedVoucherRepositoryTest {
         Member member = memberRepository.save(Member.builder()
                 .username("tester")
                 .email("tester@gmail.com")
-                .authority(Authority.USER)
+                .role(Role.USER)
                 .build());
 
         VoucherKindImage voucherKindImage = VoucherKindImage.builder()

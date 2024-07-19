@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.application.dto.MemberDto.*;
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
 
 @RequiredArgsConstructor
 @Service
@@ -38,7 +38,7 @@ public class MemberService {
     public TokenInfo login(LoginRequest loginRequest) {
         Member loginMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .filter(member -> passwordEncoder.matches(loginRequest.getPassword(), member.getPassword()))
-                .filter(member -> member.getAuthority() == ADMIN)
+                .filter(member -> member.getRole() == ADMIN)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         return jwtTokenService.getTokenInfo(new TokenRequest(loginMember));

@@ -35,7 +35,7 @@ public class JwtTokenService {
 
     private static final String CLAIM_NAME_USERNAME = "username";
 
-    private static final String CLAIM_NAME_ROLE = "role";
+    private static final String CLAIM_NAME_AUTHORITY = "authority";
 
     private static final String TOKEN_HEADER_DELIMITER = " ";
 
@@ -71,7 +71,7 @@ public class JwtTokenService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .username(tokenRequest.getUsername())
-                .authority(tokenRequest.getAuthority())
+                .role(tokenRequest.getRole())
                 .build();
     }
 
@@ -99,7 +99,7 @@ public class JwtTokenService {
         return Jwts.builder()
                 .setId(UUID.randomUUID().toString())
                 .claim(CLAIM_NAME_USERNAME, tokenRequest.getUsername())
-                .claim(CLAIM_NAME_ROLE, tokenRequest.getRole())
+                .claim(CLAIM_NAME_AUTHORITY, tokenRequest.getAuthority())
                 .setIssuedAt(new Date(issuedAt))
                 .setExpiration(new Date(issuedAt + ACCESS_TOKEN_DURATION.toMillis()))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
@@ -140,24 +140,24 @@ public class JwtTokenService {
     public Authentication getAuthentication(String token) throws JwtException, InvalidTokenException {
         Claims claims = getClaims(token);
         String username = (String) claims.get(CLAIM_NAME_USERNAME);
-        String role = (String) claims.get(CLAIM_NAME_ROLE);
+        String authority = (String) claims.get(CLAIM_NAME_AUTHORITY);
 
         // Claim에 있는 username과 authority가 올바른지 확인
-        validateClaims(username, role);
+        validateClaims(username, authority);
 
-        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
+        Collection<? extends GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authority));
         UserDetails principal = new User(username, "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
-    private void validateClaims(String username, String role) {
-        if (username == null || role == null) {
+    private void validateClaims(String username, String authority) {
+        if (username == null || authority == null) {
             throw new InvalidTokenException(TOKEN_NOT_AUTHENTICATED);
         }
 
         memberRepository.findByUsername(username)
-                .filter(member -> role.equals(member.getRole()))
+                .filter(member -> authority.equals(member.getAuthority()))
                 .orElseThrow(() -> new InvalidTokenException(TOKEN_NOT_AUTHENTICATED));
     }
 

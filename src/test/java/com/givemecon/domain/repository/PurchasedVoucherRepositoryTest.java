@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USABLE;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +55,7 @@ class PurchasedVoucherRepositoryTest {
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()

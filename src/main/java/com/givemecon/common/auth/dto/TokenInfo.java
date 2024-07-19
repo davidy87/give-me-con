@@ -1,6 +1,6 @@
 package com.givemecon.common.auth.dto;
 
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.member.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,5 +20,5 @@ public final class TokenInfo {
 
     private String username;
 
-    private Authority authority;
+    private Role role;
 }

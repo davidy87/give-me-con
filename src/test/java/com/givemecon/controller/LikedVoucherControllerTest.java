@@ -32,7 +32,7 @@ import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -89,7 +89,7 @@ class LikedVoucherControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));

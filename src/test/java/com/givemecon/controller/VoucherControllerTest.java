@@ -44,8 +44,8 @@ import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.NOT_YET_PERMITTED;
@@ -129,13 +129,13 @@ class VoucherControllerTest {
         user = memberRepository.save(Member.builder()
                 .email("user@gmail.com")
                 .username("user")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         admin = memberRepository.save(Member.builder()
                 .email("admin@gmail.com")
                 .username("admin")
-                .authority(ADMIN)
+                .role(ADMIN)
                 .build());
 
         userTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));

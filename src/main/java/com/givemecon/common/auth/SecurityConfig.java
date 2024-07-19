@@ -28,8 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 import static com.givemecon.common.auth.util.RequestMatcherList.*;
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
