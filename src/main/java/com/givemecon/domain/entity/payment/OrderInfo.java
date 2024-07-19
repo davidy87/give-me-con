@@ -3,11 +3,13 @@ package com.givemecon.domain.entity.payment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class OrderInfo {
 
@@ -19,10 +21,5 @@ public class OrderInfo {
 
     @Column(nullable = false)
     private Long amount;
-
-    public OrderInfo(String orderId, String orderName, Long amount) {
-        this.orderId = orderId;
-        this.orderName = orderName;
-        this.amount = amount;
-    }
 }
+

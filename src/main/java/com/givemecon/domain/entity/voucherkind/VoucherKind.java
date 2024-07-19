@@ -30,7 +30,7 @@ public class VoucherKind extends BaseEntity {
     @Column(length = 500)
     private String caution;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private VoucherKindImage voucherKindImage;
 
     @ManyToOne(fetch = FetchType.LAZY)

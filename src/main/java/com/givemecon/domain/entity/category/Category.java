@@ -23,7 +23,7 @@ public class Category extends BaseEntity {
     @Column(nullable = false, unique = true, length = 10)
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private CategoryIcon categoryIcon;
 
     @Builder
@@ -38,9 +38,5 @@ public class Category extends BaseEntity {
 
     public void updateName(String name) {
         this.name = name;
-    }
-
-    public void updateCategoryIcon(CategoryIcon categoryIcon) {
-        this.categoryIcon = categoryIcon;
     }
 }

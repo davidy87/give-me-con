@@ -53,10 +53,9 @@ public class Member extends BaseEntity {
         this.provider = provider;
     }
 
-    public Member update(String email, String username) {
+    public void update(String email, String username) {
         this.email = email;
         this.username = username;
-        return this;
     }
 
     public String getRole() {

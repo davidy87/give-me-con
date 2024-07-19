@@ -24,7 +24,7 @@ public class Brand extends BaseEntity {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private BrandIcon brandIcon;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,10 +43,6 @@ public class Brand extends BaseEntity {
 
     public void updateName(String name) {
         this.name = name;
-    }
-
-    public void updateBrandIcon(BrandIcon brandIcon) {
-        this.brandIcon = brandIcon;
     }
 
     public void updateCategory(Category category) {
