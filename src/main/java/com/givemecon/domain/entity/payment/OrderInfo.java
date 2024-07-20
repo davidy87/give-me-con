@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class OrderInfo {
 
     @Column(unique = true, nullable = false)
-    private String orderId;
+    private String orderNumber;
 
     @Column(nullable = false)
     private String orderName;
@@ -22,4 +22,3 @@ public class OrderInfo {
     @Column(nullable = false)
     private Long amount;
 }
-

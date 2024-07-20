@@ -14,7 +14,6 @@ import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
-import com.givemecon.domain.repository.PaymentRepository;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
@@ -90,9 +89,6 @@ class PaymentControllerTest {
 
     @Autowired
     VoucherRepository voucherRepository;
-
-    @Autowired
-    PaymentRepository paymentRepository;
 
     @Autowired
     OrderRepository orderRepository;
@@ -186,14 +182,14 @@ class PaymentControllerTest {
     void confirmPayment() throws Exception {
         // given
         String paymentKey = "PAYMENT-KEY";
-        String orderId = order.getOrderNumber();
+        String orderNumber = order.getOrderNumber();
         String orderName = "orderName";
         Long amount = 4_000L;
         Map<String, String> receipt =  Map.of("url", "receiptUrl");
 
-        PaymentRequest paymentRequest = new PaymentRequest(paymentKey, orderId, amount);
+        PaymentRequest paymentRequest = new PaymentRequest(paymentKey, orderNumber, amount);
         PaymentConfirmation paymentConfirmation =
-                new PaymentConfirmation(paymentKey, "DONE", orderId, orderName, amount, receipt);
+                new PaymentConfirmation(paymentKey, "DONE", orderNumber, orderName, amount, receipt);
 
         Mockito.when(tossPaymentsRestClient.requestPaymentConfirmation(any(PaymentRequest.class)))
                 .thenReturn(paymentConfirmation);
@@ -207,14 +203,14 @@ class PaymentControllerTest {
         // then
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("amount").value(amount))
-                .andExpect(jsonPath("orderId").value(orderId))
+                .andExpect(jsonPath("orderId").value(orderNumber))
                 .andExpect(jsonPath("orderName").value(orderName))
                 .andExpect(jsonPath("receiptUrl").value(receipt.get("url")))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("paymentKey").type(JsonFieldType.STRING).description("토스페이먼츠에서 제공하는 결제의 키 값"),
+                                fieldWithPath("paymentKey").type(JsonFieldType.STRING).description("토스페이먼츠에서 제공하는 결제 키"),
                                 fieldWithPath("orderId").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주문금액")
                         ),
