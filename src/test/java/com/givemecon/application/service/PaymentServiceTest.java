@@ -1,6 +1,7 @@
 package com.givemecon.application.service;
 
 import com.givemecon.application.exception.payment.InvalidPaymentException;
+import com.givemecon.domain.entity.payment.OrderInfo;
 import com.givemecon.domain.entity.payment.Payment;
 import com.givemecon.domain.repository.PaymentRepository;
 import com.givemecon.infrastructure.tosspayments.PaymentConfirmation;
@@ -51,16 +52,15 @@ class PaymentServiceTest {
     void confirmPayment(@Mock PaymentConfirmation paymentConfirmation) {
         // given
         String customerName = "customer";
-        Long amount = 4_000L;
         String orderId = "ORDER-ID";
         String orderName = "orderName";
+        Long amount = 4_000L;
         String receiptUrl = "receiptUrl";
+        OrderInfo orderInfo = new OrderInfo(orderId, orderName, amount);
 
         Payment payment = Payment.builder()
-                .orderId(orderId)
-                .orderName(orderName)
-                .amount(amount)
                 .receiptUrl(receiptUrl)
+                .orderInfo(orderInfo)
                 .build();
 
         Mockito.when(orderConfirmation.getAmount()).thenReturn(amount);

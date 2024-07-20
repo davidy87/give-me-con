@@ -1,7 +1,10 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.brand.BrandIcon;
+import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
+import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -11,8 +14,10 @@ import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
-import com.givemecon.domain.repository.PaymentRepository;
+import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
+import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
@@ -65,7 +70,16 @@ class PaymentControllerTest {
     WebApplicationContext context;
 
     @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    BrandIconRepository brandIconRepository;
 
     @Autowired
     VoucherKindRepository voucherKindRepository;
@@ -75,9 +89,6 @@ class PaymentControllerTest {
 
     @Autowired
     VoucherRepository voucherRepository;
-
-    @Autowired
-    PaymentRepository paymentRepository;
 
     @Autowired
     OrderRepository orderRepository;
@@ -107,20 +118,33 @@ class PaymentControllerTest {
         buyer = memberRepository.save(Member.builder()
                 .username("tester")
                 .email("test@gmail.com")
-                .authority(Authority.USER)
+                .role(Role.USER)
                 .build());
 
         order = orderRepository.save(new Order("ORDER-NUMBER", buyer));
 
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("Brand")
+        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("categoryIcon")
                 .build());
 
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("voucherKind")
-                .description("description")
-                .caution("caution")
-                .build();
+        Category category = categoryRepository.save(Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build());
+
+        BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("brandIcon")
+                .build());
+
+        Brand brand = brandRepository.save(Brand.builder()
+                .name("Brand")
+                .brandIcon(brandIcon)
+                .category(category)
+                .build());
 
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
@@ -128,8 +152,14 @@ class PaymentControllerTest {
                 .originalName("image.png")
                 .build());
 
-        voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
+                .description("description")
+                .caution("caution")
+                .voucherKindImage(voucherKindImage)
+                .brand(brand)
+                .build();
+
         voucherKindRepository.save(voucherKind);
 
         Voucher voucher =
@@ -137,9 +167,9 @@ class PaymentControllerTest {
                         .price(4_000L)
                         .barcode("1111 1111 1111")
                         .expDate(LocalDate.now())
+                        .voucherKind(voucherKind)
                         .build());
 
-        voucher.updateVoucherKind(voucherKind);
         voucher.updateOrder(order);
         voucher.updateStatus(VoucherStatus.ORDER_PLACED);
         order.updateQuantity(1);
@@ -152,14 +182,14 @@ class PaymentControllerTest {
     void confirmPayment() throws Exception {
         // given
         String paymentKey = "PAYMENT-KEY";
-        String orderId = order.getOrderNumber();
+        String orderNumber = order.getOrderNumber();
         String orderName = "orderName";
         Long amount = 4_000L;
         Map<String, String> receipt =  Map.of("url", "receiptUrl");
 
-        PaymentRequest paymentRequest = new PaymentRequest(paymentKey, orderId, amount);
+        PaymentRequest paymentRequest = new PaymentRequest(paymentKey, orderNumber, amount);
         PaymentConfirmation paymentConfirmation =
-                new PaymentConfirmation(paymentKey, "DONE", orderId, orderName, amount, receipt);
+                new PaymentConfirmation(paymentKey, "DONE", orderNumber, orderName, amount, receipt);
 
         Mockito.when(tossPaymentsRestClient.requestPaymentConfirmation(any(PaymentRequest.class)))
                 .thenReturn(paymentConfirmation);
@@ -173,14 +203,14 @@ class PaymentControllerTest {
         // then
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("amount").value(amount))
-                .andExpect(jsonPath("orderId").value(orderId))
+                .andExpect(jsonPath("orderId").value(orderNumber))
                 .andExpect(jsonPath("orderName").value(orderName))
                 .andExpect(jsonPath("receiptUrl").value(receipt.get("url")))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("paymentKey").type(JsonFieldType.STRING).description("토스페이먼츠에서 제공하는 결제의 키 값"),
+                                fieldWithPath("paymentKey").type(JsonFieldType.STRING).description("토스페이먼츠에서 제공하는 결제 키"),
                                 fieldWithPath("orderId").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주문금액")
                         ),

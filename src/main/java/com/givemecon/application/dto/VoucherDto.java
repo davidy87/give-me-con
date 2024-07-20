@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
-import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class VoucherDto {
@@ -21,7 +21,7 @@ public final class VoucherDto {
 
         @NotNull
         @Min(1L)
-        private final Long voucherId;
+        private final Long voucherKindId;
 
         @NotNull
         @Min(0L)
@@ -36,14 +36,6 @@ public final class VoucherDto {
 
         @ValidFile
         private final MultipartFile imageFile;
-
-        public Voucher toEntity() {
-            return Voucher.builder()
-                    .price(price)
-                    .expDate(expDate)
-                    .barcode(barcode)
-                    .build();
-        }
     }
 
     @Getter
@@ -70,7 +62,7 @@ public final class VoucherDto {
         private boolean isRejectedReason() {
             boolean valid = StringUtils.hasText(rejectedReason);
 
-            if (statusCode == REJECTED.ordinal()) {
+            if (statusCode == SALE_REJECTED.ordinal()) {
                 return valid;
             }
 

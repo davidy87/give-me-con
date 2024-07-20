@@ -7,7 +7,7 @@ import lombok.Getter;
 
 import java.util.Map;
 
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 
 @Getter
 @Builder
@@ -74,7 +74,7 @@ public final class OAuth2Attributes {
         return Member.oauthBuilder()
                 .email(email)
                 .username(username)
-                .authority(USER)
+                .role(USER)
                 .provider(provider)
                 .build();
     }

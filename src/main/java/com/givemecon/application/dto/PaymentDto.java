@@ -39,9 +39,9 @@ public final class PaymentDto {
 
         @Builder
         public PaymentResponse(Payment payment) {
-            this.amount = payment.getAmount();
-            this.orderId = payment.getOrderId();
-            this.orderName = payment.getOrderName();
+            this.amount = payment.getOrderInfo().getAmount();
+            this.orderId = payment.getOrderInfo().getOrderNumber();
+            this.orderName = payment.getOrderInfo().getOrderName();
             this.receiptUrl = payment.getReceiptUrl();
         }
     }

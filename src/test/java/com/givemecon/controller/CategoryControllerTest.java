@@ -1,13 +1,9 @@
 package com.givemecon.controller;
 
-import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.entity.voucherkind.VoucherKind;
-import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
@@ -66,12 +62,6 @@ class CategoryControllerTest {
 
     @Autowired
     CategoryIconRepository categoryIconRepository;
-
-    @Autowired
-    BrandRepository brandRepository;
-
-    @Autowired
-    VoucherKindRepository voucherKindRepository;
 
     @Autowired
     S3Mock s3Mock;
@@ -145,17 +135,18 @@ class CategoryControllerTest {
     void findAll() throws Exception {
         // given
         for (int i = 1; i <= 5; i++) {
-            Category category = categoryRepository.save(Category.builder()
-                    .name("category" + i)
-                    .build());
-
             CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("categoryIcon" + i + ".png")
                     .build());
 
-            category.updateCategoryIcon(categoryIcon);
+            Category category = Category.builder()
+                    .name("category" + i)
+                    .categoryIcon(categoryIcon)
+                    .build();
+
+            categoryRepository.save(category);
         }
 
         // when
@@ -177,24 +168,23 @@ class CategoryControllerTest {
     @Test
     void update() throws Exception {
         // given
-        String name = "oldCategory";
-        String icon = "oldCategoryIcon.png";
+        String oldName = "old";
+        String oldIconName = "oldCategoryIcon.png";
         String imageKey = "imageKey";
         String imageUrl = "imageUrl";
 
-        Category category = categoryRepository.save(Category.builder()
-                .name(name)
-                .build());
-
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey(imageKey)
-                .originalName(icon)
                 .imageUrl(imageUrl)
+                .originalName(oldIconName)
                 .build());
 
-        category.updateCategoryIcon(categoryIcon);
+        Category category = categoryRepository.save(Category.builder()
+                .name(oldName)
+                .categoryIcon(categoryIcon)
+                .build());
 
-        String newName = "newCategory";
+        String newName = "new";
         MockMultipartFile newIconFile = new MockMultipartFile(
                 "iconFile",
                 "newCategoryIcon.png",
@@ -237,33 +227,20 @@ class CategoryControllerTest {
     void deleteOne() throws Exception {
         // given
         String name = "category";
-        String icon = "categoryIcon.png";
         String imageKey = "imageKey";
         String imageUrl = "imageUrl";
-
-        Category category = categoryRepository.save(Category.builder()
-                .name(name)
-                .build());
+        String icon = "categoryIcon.png";
 
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey(imageKey)
-                .originalName(icon)
                 .imageUrl(imageUrl)
+                .originalName(icon)
                 .build());
 
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("brand")
+        Category category = categoryRepository.save(Category.builder()
+                .name(name)
+                .categoryIcon(categoryIcon)
                 .build());
-
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("voucherKind")
-                .description("description")
-                .caution("caution")
-                .build());
-
-        category.updateCategoryIcon(categoryIcon);
-        brand.updateCategory(category);
-        voucherKind.updateBrand(brand);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/categories/{id}", category.getId()));
@@ -279,10 +256,6 @@ class CategoryControllerTest {
                 );
 
         List<Category> categoryList = categoryRepository.findAll();
-        List<Brand> brandList = brandRepository.findAll();
-        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
         assertThat(categoryList).isEmpty();
-        assertThat(brandList).isEmpty();
-        assertThat(voucherKindList).isEmpty();
     }
 }

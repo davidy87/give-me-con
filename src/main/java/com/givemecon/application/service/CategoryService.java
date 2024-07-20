@@ -4,10 +4,8 @@ import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.common.util.FileUtils;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,18 +28,16 @@ public class CategoryService {
 
     private final CategoryIconRepository categoryIconRepository;
 
-    private final BrandRepository brandRepository;
-
-    private final VoucherKindRepository voucherKindRepository;
-
     private final ImageEntityUtils imageEntityUtils;
 
     public CategoryResponse save(CategorySaveRequest requestDto) {
         CategoryIcon categoryIcon = categoryIconRepository.save(
                 imageEntityUtils.createImageEntity(CategoryIcon.class, requestDto.getIconFile()));
 
-        Category category = categoryRepository.save(requestDto.toEntity());
-        category.updateCategoryIcon(categoryIcon);
+        Category category = categoryRepository.save(Category.builder()
+                .name(requestDto.getName())
+                .categoryIcon(categoryIcon)
+                .build());
 
         return new CategoryResponse(category);
     }
@@ -75,9 +71,6 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Category.class));
 
-        brandRepository.findAllByCategory(category)
-                .forEach(voucherKindRepository::deleteAllByBrand);
-        brandRepository.deleteAllByCategory(category);
         categoryRepository.delete(category);
     }
 }

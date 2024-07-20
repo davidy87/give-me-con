@@ -21,12 +21,6 @@ public final class CategoryDto {
 
         @ValidFile
         private final MultipartFile iconFile;
-
-        public Category toEntity() {
-            return Category.builder()
-                    .name(name)
-                    .build();
-        }
     }
 
     @Getter

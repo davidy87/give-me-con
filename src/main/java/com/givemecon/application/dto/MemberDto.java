@@ -1,13 +1,13 @@
 package com.givemecon.application.dto;
 
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class MemberDto {
@@ -29,7 +29,7 @@ public final class MemberDto {
                     .email(email)
                     .username(username)
                     .password(encodedPassword)
-                    .authority(ADMIN)
+                    .role(ADMIN)
                     .build();
         }
     }
@@ -60,16 +60,16 @@ public final class MemberDto {
 
         private final String username;
 
-        private final Authority authority;
+        private final Role role;
 
         public TokenRequest(Member member) {
             this.memberId = member.getId();
             this.username = member.getUsername();
-            this.authority = member.getAuthority();
+            this.role = member.getRole();
         }
 
-        public String getRole() {
-            return authority.getRole();
+        public String getAuthority() {
+            return role.getAuthority();
         }
     }
 }

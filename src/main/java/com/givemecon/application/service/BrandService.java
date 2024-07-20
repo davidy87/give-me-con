@@ -8,7 +8,6 @@ import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,8 +30,6 @@ public class BrandService {
 
     private final BrandIconRepository brandIconRepository;
 
-    private final VoucherKindRepository voucherKindRepository;
-
     private final ImageEntityUtils imageEntityUtils;
 
     public BrandResponse save(BrandSaveRequest requestDto) {
@@ -42,9 +39,11 @@ public class BrandService {
         BrandIcon brandIcon = brandIconRepository.save(
                 imageEntityUtils.createImageEntity(BrandIcon.class, requestDto.getIconFile()));
 
-        Brand brand = brandRepository.save(requestDto.toEntity());
-        brand.updateCategory(category);
-        brand.updateBrandIcon(brandIcon);
+        Brand brand = brandRepository.save(Brand.builder()
+                .name(requestDto.getName())
+                .brandIcon(brandIcon)
+                .category(category)
+                .build());
 
         return new BrandResponse(brand);
     }
@@ -94,7 +93,6 @@ public class BrandService {
         Brand brand = brandRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
-        voucherKindRepository.deleteAllByBrand(brand);
         brandRepository.delete(brand);
     }
 }

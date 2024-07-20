@@ -30,12 +30,6 @@ public final class BrandDto {
 
         @ValidFile
         private final MultipartFile iconFile;
-
-        public Brand toEntity() {
-            return Brand.builder()
-                    .name(name)
-                    .build();
-        }
     }
 
     @Getter

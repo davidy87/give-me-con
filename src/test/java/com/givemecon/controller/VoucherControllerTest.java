@@ -44,11 +44,11 @@ import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
-import static com.givemecon.domain.entity.voucher.VoucherStatus.NOT_YET_PERMITTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REQUESTED;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -129,13 +129,13 @@ class VoucherControllerTest {
         user = memberRepository.save(Member.builder()
                 .email("user@gmail.com")
                 .username("user")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         admin = memberRepository.save(Member.builder()
                 .email("admin@gmail.com")
                 .username("admin")
-                .authority(ADMIN)
+                .role(ADMIN)
                 .build());
 
         userTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
@@ -162,7 +162,7 @@ class VoucherControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
-                .part(new MockPart("voucherId", voucherKind.getId().toString().getBytes()))
+                .part(new MockPart("voucherKindId", voucherKind.getId().toString().getBytes()))
                 .part(new MockPart("price", price.toString().getBytes()))
                 .part(new MockPart("expDate", expDate.toString().getBytes()))
                 .part(new MockPart("barcode", barcode.getBytes()))
@@ -187,7 +187,7 @@ class VoucherControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestParts(
-                                partWithName("voucherId").description("기프티콘 상품 id"),
+                                partWithName("voucherKindId").description("기프티콘 종류 id"),
                                 partWithName("price").description("판매할 기프티콘 가격"),
                                 partWithName("expDate").description("판매할 기프티콘 유효기한"),
                                 partWithName("barcode").description("판매할 기프티콘 바코드"),
@@ -215,18 +215,10 @@ class VoucherControllerTest {
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now())
+                    .voucherKind(voucherKind)
+                    .seller(user)
                     .build();
 
-            VoucherImage voucherImage =
-                    voucherImageRepository.save(VoucherImage.builder()
-                            .imageUrl("imageUrl" + i)
-                            .originalName("voucherImage" + i)
-                            .imageKey("imageKey" + i)
-                            .build());
-
-            toSave.updateVoucherImage(voucherImage);
-            toSave.updateVoucherKind(voucherKind);
-            toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
 
@@ -264,22 +256,13 @@ class VoucherControllerTest {
                     .price(4_000L)
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now())
+                    .voucherKind(voucherKind)
                     .build();
-
-            VoucherImage voucherImage =
-                    voucherImageRepository.save(VoucherImage.builder()
-                            .imageUrl("imageUrl" + i)
-                            .originalName("voucherImage" + i)
-                            .imageKey("imageKey" + i)
-                            .build());
 
             if (i < 2) {
                 toSave.updateStatus(FOR_SALE);
             }
 
-            toSave.updateVoucherImage(voucherImage);
-            toSave.updateVoucherKind(voucherKind);
-            toSave.updateSeller(user);
             toSaveList.add(toSave);
         }
 
@@ -288,7 +271,7 @@ class VoucherControllerTest {
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
-                .queryParam("statusCode", String.valueOf(NOT_YET_PERMITTED.ordinal())));
+                .queryParam("statusCode", String.valueOf(SALE_REQUESTED.ordinal())));
 
         // then
         response.andExpect(status().isOk())
@@ -316,12 +299,6 @@ class VoucherControllerTest {
     @DisplayName("기프티콘 이미지 조회 API 테스트")
     void findImageUrl() throws Exception {
         // given
-        Voucher voucher = Voucher.builder()
-                .price(4_000L)
-                .barcode("1111 1111 1111")
-                .expDate(LocalDate.now())
-                .build();
-
         VoucherImage voucherImage =
                 voucherImageRepository.save(VoucherImage.builder()
                         .imageKey("imageKey")
@@ -329,8 +306,13 @@ class VoucherControllerTest {
                         .originalName("voucherImage")
                         .build());
 
-        voucher.updateVoucherImage(voucherImage);
-        voucher.updateVoucherKind(voucherKind);
+        Voucher voucher = Voucher.builder()
+                .price(4_000L)
+                .barcode("1111 1111 1111")
+                .expDate(LocalDate.now())
+                .voucherImage(voucherImage)
+                .build();
+
         voucherRepository.save(voucher);
 
         // when
@@ -359,17 +341,9 @@ class VoucherControllerTest {
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
+                .voucherKind(voucherKind)
                 .build();
 
-        VoucherImage voucherImage =
-                voucherImageRepository.save(VoucherImage.builder()
-                        .imageUrl("imageUrl")
-                        .originalName("voucherImage")
-                        .imageKey("imageKey")
-                        .build());
-
-        voucher.updateVoucherImage(voucherImage);
-        voucher.updateVoucherKind(voucherKind);
         voucherRepository.save(voucher);
 
         // when
@@ -400,7 +374,7 @@ class VoucherControllerTest {
                                 fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드 (0 ~ 4)"),
                                 fieldWithPath("rejectedReason")
                                         .type(JsonFieldType.STRING).optional()
-                                        .description("판매 요청 거절 사유 (statusCode가 3(REJECTED)일 경우 필수)")
+                                        .description("판매 요청 거절 사유 (statusCode가 3(SALE_REJECTED)일 경우 필수)")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
@@ -422,16 +396,6 @@ class VoucherControllerTest {
                 .expDate(LocalDate.now().plusDays(1))
                 .barcode("1111 1111 1111")
                 .build());
-
-        VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
-                .imageUrl("imageUrl")
-                .imageKey("imageKey")
-                .originalName("Americano_T.png")
-                .build());
-
-        voucher.updateSeller(user);
-        voucher.updateVoucherImage(voucherImage);
-        voucher.updateVoucherKind(voucherKind);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId())

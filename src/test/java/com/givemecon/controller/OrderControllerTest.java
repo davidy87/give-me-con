@@ -1,7 +1,10 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.domain.entity.member.Authority;
+import com.givemecon.domain.entity.brand.BrandIcon;
+import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.category.CategoryIcon;
+import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -12,7 +15,10 @@ import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
+import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
+import com.givemecon.domain.repository.category.CategoryIconRepository;
+import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
@@ -74,7 +80,16 @@ class OrderControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    CategoryIconRepository categoryIconRepository;
+
+    @Autowired
     BrandRepository brandRepository;
+
+    @Autowired
+    BrandIconRepository brandIconRepository;
 
     @Autowired
     VoucherKindRepository voucherKindRepository;
@@ -113,24 +128,37 @@ class OrderControllerTest {
         buyer = memberRepository.save(Member.builder()
                 .email("buyer@gmail.com")
                 .username("buyer")
-                .authority(Authority.USER)
+                .role(Role.USER)
                 .build());
 
         Member seller = memberRepository.save(Member.builder()
                 .email("seller@gmail.com")
                 .username("seller")
-                .authority(Authority.USER)
+                .role(Role.USER)
+                .build());
+
+        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("categoryIcon")
+                .build());
+
+        Category category = categoryRepository.save(Category.builder()
+                .name("category")
+                .categoryIcon(categoryIcon)
+                .build());
+
+        BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
+                .imageKey("imageKey")
+                .imageUrl("imageUrl")
+                .originalName("brandIcon")
                 .build());
 
         Brand brand = brandRepository.save(Brand.builder()
                 .name("Brand")
+                .brandIcon(brandIcon)
+                .category(category)
                 .build());
-
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("voucherKind")
-                .description("description")
-                .caution("caution")
-                .build();
 
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
@@ -138,20 +166,19 @@ class OrderControllerTest {
                 .originalName("image.png")
                 .build());
 
-        voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("voucherKind")
+                .description("description")
+                .caution("caution")
+                .voucherKindImage(voucherKindImage)
+                .brand(brand)
+                .build();
+
         voucherKindRepository.save(voucherKind);
 
         voucherForSaleIdList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            Voucher voucher =
-                    voucherRepository.save(Voucher.builder()
-                            .price(4_000L)
-                            .barcode("1111 1111 1111")
-                            .expDate(LocalDate.now())
-                            .build());
-
             VoucherImage voucherImage =
                     voucherImageRepository.save(VoucherImage.builder()
                             .imageKey("imageKey" + i)
@@ -159,10 +186,17 @@ class OrderControllerTest {
                             .originalName("test_image")
                             .build());
 
+            Voucher voucher =
+                    voucherRepository.save(Voucher.builder()
+                            .price(4_000L)
+                            .barcode("1111 1111 1111")
+                            .expDate(LocalDate.now())
+                            .voucherImage(voucherImage)
+                            .voucherKind(voucherKind)
+                            .seller(seller)
+                            .build());
+
             voucher.updateStatus(FOR_SALE);
-            voucher.updateSeller(seller);
-            voucher.updateVoucherKind(voucherKind);
-            voucher.updateVoucherImage(voucherImage);
             voucherForSaleIdList.add(voucher.getId());
         }
     }

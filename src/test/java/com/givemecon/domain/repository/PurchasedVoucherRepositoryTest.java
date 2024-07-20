@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USABLE;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,11 +55,7 @@ class PurchasedVoucherRepositoryTest {
         member = memberRepository.save(Member.builder()
                 .email("tester@gmail.com")
                 .username("tester")
-                .authority(USER)
-                .build());
-
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("voucherKind")
+                .role(USER)
                 .build());
 
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
@@ -68,14 +64,17 @@ class PurchasedVoucherRepositoryTest {
                 .originalName("originalName")
                 .build());
 
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
+                .voucherKindImage(voucherKindImage)
+                .build());
+
         voucher = voucherRepository.save(Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
+                .voucherKind(voucherKind)
                 .build());
-
-        voucherKind.updateVoucherKindImage(voucherKindImage);
-        voucher.updateVoucherKind(voucherKind);
     }
 
     @Test
@@ -92,6 +91,22 @@ class PurchasedVoucherRepositoryTest {
         assertThat(found.getStatus()).isEqualTo(USABLE);
         assertThat(found.getOwner()).isEqualTo(member);
         assertThat(found.getVoucher()).isEqualTo(voucher);
+    }
+
+    @Test
+    void BaseTimeEntity() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        PurchasedVoucher purchasedVoucher = new PurchasedVoucher(voucher, member);
+
+        // when
+        purchasedVoucherRepository.save(purchasedVoucher);
+        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
+
+        // then
+        PurchasedVoucher found = purchasedVoucherList.get(0);
+        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }
 
     @Test
@@ -200,21 +215,5 @@ class PurchasedVoucherRepositoryTest {
         Optional<PurchasedVoucher> found1 = purchasedVoucherRepository.findById(saved.getId());
         assertThat(found1).isPresent();
         assertThat(found1.get().getStatus()).isNotEqualTo(PurchasedVoucherStatus.EXPIRED);
-    }
-
-    @Test
-    void BaseTimeEntity() {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        PurchasedVoucher purchasedVoucher = new PurchasedVoucher(voucher, member);
-
-        // when
-        purchasedVoucherRepository.save(purchasedVoucher);
-        List<PurchasedVoucher> purchasedVoucherList = purchasedVoucherRepository.findAll();
-
-        // then
-        PurchasedVoucher found = purchasedVoucherList.get(0);
-        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
-        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
     }
 }

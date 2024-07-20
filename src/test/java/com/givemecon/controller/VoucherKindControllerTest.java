@@ -3,12 +3,10 @@ package com.givemecon.controller;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.voucher.Voucher;
-import com.givemecon.domain.entity.voucher.VoucherImage;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
@@ -85,16 +83,15 @@ class VoucherKindControllerTest {
     VoucherRepository voucherRepository;
 
     @Autowired
-    VoucherImageRepository voucherImageRepository;
-
-    @Autowired
     S3Client s3Client;
 
     @Autowired
     S3Mock s3Mock;
 
     @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucketName;
+    String bucketName;
+
+    Brand brand;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -108,6 +105,15 @@ class VoucherKindControllerTest {
         s3Mock.start();
         s3Client.createBucket(CreateBucketRequest.builder()
                 .bucket(bucketName)
+                .build());
+
+        Category category = categoryRepository.save(Category.builder()
+                .name("category")
+                .build());
+
+        brand = brandRepository.save(Brand.builder()
+                .name("Starbucks")
+                .category(category)
                 .build());
     }
 
@@ -128,16 +134,6 @@ class VoucherKindControllerTest {
                 "image/png",
                 image.getBytes());
 
-        Category category = categoryRepository.save(Category.builder()
-                .name("Cafe")
-                .build());
-
-        Brand brand = brandRepository.save(Brand.builder()
-                .name("Starbucks")
-                .build());
-
-        brand.updateCategory(category);
-
         // when
         ResultActions response = mockMvc.perform(multipart("/api/voucher-kinds")
                 .file(imageFile)
@@ -151,7 +147,6 @@ class VoucherKindControllerTest {
 
         VoucherKind voucherKind = voucherKindList.get(0);
         assertThat(voucherKind.getBrand()).isEqualTo(brand);
-        assertThat(voucherKind.getBrand().getCategory()).isEqualTo(category);
 
         VoucherKindResponse voucherKindResponse = new VoucherKindResponse(voucherKind);
 
@@ -186,19 +181,18 @@ class VoucherKindControllerTest {
     @Test
     void findOne() throws Exception {
         // given
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("Ice Cream Cake")
-                .description("This is Ice Cream Cake.")
-                .caution("This Ice Cream Cake is extremely cold.")
-                .build());
-
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("ice_cream_cake.png")
                 .build());
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("Ice Cream Cake")
+                .description("This is Ice Cream Cake.")
+                .caution("This Ice Cream Cake is extremely cold.")
+                .voucherKindImage(voucherKindImage)
+                .build());
 
         // when
         ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}", voucherKind.getId()));
@@ -235,19 +229,18 @@ class VoucherKindControllerTest {
     void findAll() throws Exception {
         // given
         for (int i = 1; i <= 20; i++) {
-            VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                    .title("VoucherKind" + i)
-                    .description("This is VoucherKind" + i + ".")
-                    .caution("This voucherKind is awesome.")
-                    .build());
-
             VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucherKind.updateVoucherKindImage(voucherKindImage);
+            voucherKindRepository.save(VoucherKind.builder()
+                    .title("VoucherKind" + i)
+                    .description("This is VoucherKind" + i + ".")
+                    .caution("This voucherKind is awesome.")
+                    .voucherKindImage(voucherKindImage)
+                    .build());
         }
 
         // when
@@ -278,32 +271,25 @@ class VoucherKindControllerTest {
     @Test
     void findAllByBrandId() throws Exception {
         // given
-        Brand brand = Brand.builder()
-                .name("Test Brand")
-                .build();
-
-        Brand brandSaved = brandRepository.save(brand);
-
         for (int i = 1; i <= 20; i++) {
-            VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                    .title("VoucherKind " + i)
-                    .description("This is VoucherKind" + i + ".")
-                    .caution("This voucherKind is awesome.")
-                    .build());
-
             VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
                     .originalName("voucherKindImage" + i + ".png")
                     .build());
 
-            voucherKind.updateVoucherKindImage(voucherKindImage);
-            voucherKind.updateBrand(brandSaved);
+            voucherKindRepository.save(VoucherKind.builder()
+                    .title("VoucherKind " + i)
+                    .description("This is VoucherKind" + i + ".")
+                    .caution("This voucherKind is awesome.")
+                    .voucherKindImage(voucherKindImage)
+                    .brand(brand)
+                    .build());
         }
 
         // when
         ResultActions response = mockMvc.perform(get("/api/voucher-kinds")
-                .queryParam("brandId", String.valueOf(brandSaved.getId())));
+                .queryParam("brandId", String.valueOf(brand.getId())));
 
         // then
         response.andExpect(status().isOk())
@@ -328,13 +314,11 @@ class VoucherKindControllerTest {
     @Test
     void findSellingListByVoucherId() throws Exception {
         // given
-        VoucherKind voucherKind = VoucherKind.builder()
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("Americano T")
                 .description("This is Americano T")
                 .caution("This voucherKind is from Starbucks.")
-                .build();
-
-        VoucherKind voucherKindSaved = voucherKindRepository.save(voucherKind);
+                .build());
 
         for (int i = 1; i <= 10; i++) {
             Voucher voucher = voucherRepository.save(
@@ -342,22 +326,14 @@ class VoucherKindControllerTest {
                             .price(4_000L)
                             .expDate(LocalDate.now().plusDays(1))
                             .barcode("1111 1111 1111")
+                            .voucherKind(voucherKind)
                             .build());
 
-            VoucherImage voucherImage = voucherImageRepository.save(
-                    VoucherImage.builder()
-                            .imageKey("imageKey" + i)
-                            .imageUrl("imageUrl" + i)
-                            .originalName("voucherImage" + i + ".png")
-                            .build());
-
-            voucher.updateVoucherImage(voucherImage);
-            voucher.updateVoucherKind(voucherKind);
             voucher.updateStatus(FOR_SALE);
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}/selling-list", voucherKindSaved.getId()));
+        ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}/selling-list", voucherKind.getId()));
 
         // then
         response.andExpect(status().isOk())
@@ -383,19 +359,18 @@ class VoucherKindControllerTest {
     @Test
     void update() throws Exception {
         // given
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("oldTitle")
-                .description("This is an old voucherKind.")
-                .caution("This voucherKind will be updated.")
-                .build());
-
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
                 .originalName("oldVoucherImage.jpg")
                 .build());
 
-        voucherKind.updateVoucherKindImage(voucherKindImage);
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("oldTitle")
+                .description("This is an old voucherKind.")
+                .caution("This voucherKind will be updated.")
+                .voucherKindImage(voucherKindImage)
+                .build());
 
         String newTitle = "newTitle";
         MockMultipartFile imageFileToUpdate = new MockMultipartFile(
@@ -442,16 +417,10 @@ class VoucherKindControllerTest {
     void deleteOne() throws Exception {
         // given
         VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("voucherKind")
+                .title("title")
+                .description("description")
+                .caution("caution")
                 .build());
-
-        VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("voucherKindImage.jpg")
-                .build());
-
-        voucherKind.updateVoucherKindImage(voucherKindImage);
 
         // when
         ResultActions response = mockMvc.perform(delete("/api/voucher-kinds/{id}", voucherKind.getId()));

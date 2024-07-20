@@ -1,5 +1,6 @@
 package com.givemecon.infrastructure.tosspayments;
 
+import com.givemecon.domain.entity.payment.OrderInfo;
 import com.givemecon.domain.entity.payment.Payment;
 import com.givemecon.domain.entity.payment.PaymentMethod;
 import lombok.AllArgsConstructor;
@@ -29,9 +30,7 @@ public final class PaymentConfirmation {
         return Payment.builder()
                 .paymentKey(paymentKey)
                 .method(PaymentMethod.CARD)
-                .orderId(orderId)
-                .orderName(orderName)
-                .amount(totalAmount)
+                .orderInfo(new OrderInfo(orderId, orderName, totalAmount))
                 .receiptUrl(receipt.get("url"))
                 .build();
     }

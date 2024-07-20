@@ -30,17 +30,24 @@ public class VoucherKind extends BaseEntity {
     @Column(length = 500)
     private String caution;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private VoucherKindImage voucherKindImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Brand brand;
 
     @Builder
-    public VoucherKind(String title, String description, String caution) {
+    public VoucherKind(String title,
+                       String description,
+                       String caution,
+                       VoucherKindImage voucherKindImage,
+                       Brand brand) {
+
         this.title = title;
         this.description = description;
         this.caution = caution;
+        this.voucherKindImage = voucherKindImage;
+        this.brand = brand;
     }
 
     public String getImageUrl() {
@@ -57,13 +64,5 @@ public class VoucherKind extends BaseEntity {
 
     public void updateCaution(String caution) {
         this.caution = caution;
-    }
-
-    public void updateVoucherKindImage(VoucherKindImage voucherKindImage) {
-        this.voucherKindImage = voucherKindImage;
-    }
-
-    public void updateBrand(Brand brand) {
-        this.brand = brand;
     }
 }

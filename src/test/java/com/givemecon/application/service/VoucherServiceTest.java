@@ -28,14 +28,13 @@ class VoucherServiceTest {
     @Test
     void findImageUrl() {
         // given
-        Voucher voucher = Voucher.builder()
-                .build();
-
         VoucherImage voucherImage = VoucherImage.builder()
                 .imageUrl("imageUrl")
                 .build();
 
-        voucher.updateVoucherImage(voucherImage);
+        Voucher voucher = Voucher.builder()
+                .voucherImage(voucherImage)
+                .build();
 
         Mockito.when(voucherRepository.findOneWithImage(any(Long.class)))
                 .thenReturn(Optional.of(voucher));

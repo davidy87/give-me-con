@@ -31,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 import static com.givemecon.common.auth.enums.JwtAuthHeader.*;
-import static com.givemecon.domain.entity.member.Authority.*;
+import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.application.dto.VoucherDto.*;
@@ -78,7 +78,7 @@ public class ApiExceptionControllerTest {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .authority(ADMIN)
+                .role(ADMIN)
                 .build());
 
         tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));

@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.application.dto.VoucherDto.*;
-import static com.givemecon.domain.entity.voucher.VoucherStatus.REJECTED;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,16 +46,20 @@ public class VoucherService {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
-        VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherId())
+        VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherKindId())
                 .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
         VoucherImage voucherImage = voucherImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherImage.class, requestDto.getImageFile()));
 
-        Voucher voucher = voucherRepository.save(requestDto.toEntity());
-        voucher.updateSeller(seller);
-        voucher.updateVoucherKind(voucherKind);
-        voucher.updateVoucherImage(voucherImage);
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(requestDto.getPrice())
+                .expDate(requestDto.getExpDate())
+                .barcode(requestDto.getBarcode())
+                .voucherImage(voucherImage)
+                .voucherKind(voucherKind)
+                .seller(seller)
+                .build());
 
         return new VoucherResponse(voucher);
     }
@@ -96,7 +100,7 @@ public class VoucherService {
         voucher.updateStatus(newStatus);
 
         // 판매 요청 거절 시
-        if (newStatus == REJECTED) {
+        if (newStatus == SALE_REJECTED) {
             recordRejectedSale(voucher.getId(), requestDto.getRejectedReason());
         }
 

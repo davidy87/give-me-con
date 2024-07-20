@@ -23,8 +23,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.application.dto.MemberDto.LoginRequest;
 import static com.givemecon.application.dto.MemberDto.SignupRequest;
-import static com.givemecon.domain.entity.member.Authority.ADMIN;
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -107,7 +107,7 @@ class MemberControllerTest {
                 .email("test@gmail.com")
                 .username("tester")
                 .password(passwordEncoder.encode(password))
-                .authority(ADMIN)
+                .role(ADMIN)
                 .build());
 
         LoginRequest loginRequest = LoginRequest.builder()
@@ -134,7 +134,7 @@ class MemberControllerTest {
                                 fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Access Token"),
                                 fieldWithPath("refreshToken").type(JsonFieldType.STRING).description("Refresh Token"),
                                 fieldWithPath("username").type(JsonFieldType.STRING).description("사용자 닉네임"),
-                                fieldWithPath("authority").type(JsonFieldType.STRING).description("권한")
+                                fieldWithPath("role").type(JsonFieldType.STRING).description("권한")
                         ))
                 );
     }
@@ -145,7 +145,7 @@ class MemberControllerTest {
         Member member = Member.builder()
                 .username("tester")
                 .email("test@gmail.com")
-                .authority(USER)
+                .role(USER)
                 .build();
 
         Member memberSaved = memberRepository.save(member);

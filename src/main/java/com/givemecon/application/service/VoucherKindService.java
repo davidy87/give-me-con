@@ -55,9 +55,13 @@ public class VoucherKindService {
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherKindImage.class, requestDto.getImageFile()));
 
-        VoucherKind voucherKind = voucherKindRepository.save(requestDto.toEntity());
-        voucherKind.updateVoucherKindImage(voucherKindImage);
-        voucherKind.updateBrand(brand);
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title(requestDto.getTitle())
+                .description(requestDto.getDescription())
+                .caution(requestDto.getCaution())
+                .voucherKindImage(voucherKindImage)
+                .brand(brand)
+                .build());
 
         return new VoucherKindResponse(voucherKind);
     }

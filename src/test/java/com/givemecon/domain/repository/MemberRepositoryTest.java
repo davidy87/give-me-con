@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.givemecon.domain.entity.member.Authority.USER;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
@@ -30,7 +30,7 @@ class MemberRepositoryTest {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
-                .authority(USER)
+                .role(USER)
                 .build();
 
         // when
@@ -41,7 +41,7 @@ class MemberRepositoryTest {
         Member found = memberList.get(0);
         assertThat(found.getEmail()).isEqualTo(email);
         assertThat(found.getUsername()).isEqualTo(username);
-        assertThat(found.getAuthority()).isEqualTo(USER);
+        assertThat(found.getRole()).isEqualTo(USER);
     }
 
     @Test
@@ -51,7 +51,7 @@ class MemberRepositoryTest {
         memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
-                .authority(USER)
+                .role(USER)
                 .build());
 
         // when

@@ -24,24 +24,6 @@ class VoucherKindRepositoryTest {
     VoucherKindRepository voucherKindRepository;
 
     @Test
-    void BaseTimeEntity() {
-        // given
-        LocalDateTime now = LocalDateTime.now();
-        voucherKindRepository.save(VoucherKind.builder()
-                .title("Cake")
-                .build());
-
-        // when
-        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
-
-        // then
-        VoucherKind found = voucherKindList.get(0);
-        log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
-        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
-        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
-    }
-
-    @Test
     void saveAndFindAll() {
         // given
         String title = "Americano T";
@@ -66,19 +48,31 @@ class VoucherKindRepositoryTest {
     }
 
     @Test
+    void BaseTimeEntity() {
+        // given
+        LocalDateTime now = LocalDateTime.now();
+        voucherKindRepository.save(VoucherKind.builder()
+                .title("Cake")
+                .build());
+
+        // when
+        List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
+
+        // then
+        VoucherKind found = voucherKindList.get(0);
+        log.info(">>>>>>> createDate={}, modifiedDate={}", found.getCreatedDate(), found.getModifiedDate());
+        assertThat(found.getCreatedDate()).isAfterOrEqualTo(now);
+        assertThat(found.getModifiedDate()).isAfterOrEqualTo(now);
+    }
+
+    @Test
     void findAllWithImageByBrandId(@Autowired BrandRepository brandRepository,
                                    @Autowired VoucherKindImageRepository voucherKindImageRepository) {
 
         // given
-        Brand brand = Brand.builder()
+        Brand brand = brandRepository.save(Brand.builder()
                 .name("Starbucks")
-                .build();
-
-        VoucherKind voucherKind = VoucherKind.builder()
-                .title("Americano T")
-                .description("This is Americano T")
-                .caution("This is hot, not iced")
-                .build();
+                .build());
 
         VoucherKindImage voucherKindImage = VoucherKindImage.builder()
                 .imageKey("imageKey")
@@ -86,9 +80,14 @@ class VoucherKindRepositoryTest {
                 .originalName("originalName")
                 .build();
 
-        voucherKind.updateBrand(brand);
-        voucherKind.updateVoucherKindImage(voucherKindImage);
-        brandRepository.save(brand);
+        VoucherKind voucherKind = VoucherKind.builder()
+                .title("Americano T")
+                .description("This is Americano T")
+                .caution("This is hot, not iced")
+                .voucherKindImage(voucherKindImage)
+                .brand(brand)
+                .build();
+
         voucherKindImageRepository.save(voucherKindImage);
         voucherKindRepository.save(voucherKind);
 

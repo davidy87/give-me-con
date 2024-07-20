@@ -21,18 +21,20 @@ public class Brand extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private BrandIcon brandIcon;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
     @Builder
-    public Brand(String name) {
+    public Brand(String name, BrandIcon brandIcon, Category category) {
         this.name = name;
+        this.brandIcon = brandIcon;
+        this.category = category;
     }
 
     public String getImageUrl() {
@@ -41,10 +43,6 @@ public class Brand extends BaseEntity {
 
     public void updateName(String name) {
         this.name = name;
-    }
-
-    public void updateBrandIcon(BrandIcon brandIcon) {
-        this.brandIcon = brandIcon;
     }
 
     public void updateCategory(Category category) {
