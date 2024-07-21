@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.application.dto.VoucherDto.*;
+import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 
 @Slf4j
@@ -80,6 +81,13 @@ public class VoucherService {
         VoucherStatus status = findStatus(paramDto.getStatusCode());
 
         return voucherRepository.findAllByStatus(status).stream()
+                .map(VoucherResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<VoucherResponse> findAllForSaleByVoucherId(Long voucherId, String username) {
+        return voucherRepository.findAllExceptSellersByVoucherKindIdAndStatus(voucherId, FOR_SALE, username).stream()
                 .map(VoucherResponse::new)
                 .toList();
     }

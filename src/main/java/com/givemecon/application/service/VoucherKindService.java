@@ -24,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.givemecon.application.dto.VoucherDto.VoucherResponse;
 import static com.givemecon.application.dto.VoucherKindDto.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 
@@ -116,13 +115,6 @@ public class VoucherKindService {
                 .orElse(0L);
 
         return new VoucherKindResponse(voucherKind, minPrice);
-    }
-
-    @Transactional(readOnly = true)
-    public List<VoucherResponse> findSellingListByVoucherId(Long voucherId) {
-        return voucherRepository.findAllByVoucherKindIdAndStatus(voucherId, FOR_SALE).stream()
-                .map(VoucherResponse::new)
-                .toList();
     }
 
     public VoucherKindResponse update(Long id, VoucherKindUpdateRequest requestDto) {

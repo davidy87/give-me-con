@@ -243,9 +243,23 @@ class VoucherRepositoryTest {
     }
 
     @Test
-    @DisplayName("기프티콘 종류와 기프티콘의 상태별 조회")
-    void findAllByVoucherKindIdAndStatus(@Autowired VoucherKindRepository voucherKindRepository) {
+    @DisplayName("사용자가 판매 중인 기프티콘들을 제외한 모든 기프티콘들을 기프티콘 종류 id와 기프티콘의 상태별로 조회")
+    void findAllExceptSellersByVoucherKindIdAndStatus(@Autowired MemberRepository memberRepository,
+                                                      @Autowired VoucherKindRepository voucherKindRepository) {
+
         // given
+        Member seller = memberRepository.save(Member.builder()
+                .email("seller@gmail.com")
+                .username("seller")
+                .role(USER)
+                .build());
+
+        Member buyer = memberRepository.save(Member.builder()
+                .email("buyer@gmail.com")
+                .username("buyer")
+                .role(USER)
+                .build());
+
         VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("voucherKind")
                 .build());
@@ -255,18 +269,19 @@ class VoucherRepositoryTest {
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .voucherKind(voucherKind)
+                .seller(seller)
                 .build();
 
         voucher.updateStatus(FOR_SALE);
         voucherRepository.save(voucher);
 
         // when
-        List<Voucher> result = voucherRepository.findAllByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE);
+        List<Voucher> result =
+                voucherRepository.findAllExceptSellersByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE, buyer.getUsername());
 
         // then
-        assertThat(result).isNotEmpty();
-        assertThat(result.get(0).getVoucherKind()).isEqualTo(voucherKind);
-        assertThat(result.get(0).getStatus()).isSameAs(FOR_SALE);
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getSeller().getUsername()).isNotEqualTo(buyer.getUsername());
     }
 
     @Test

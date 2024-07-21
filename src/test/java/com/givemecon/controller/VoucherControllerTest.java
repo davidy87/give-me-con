@@ -295,6 +295,61 @@ class VoucherControllerTest {
     }
 
     @Test
+    void findAllByVoucherKindId() throws Exception {
+        // given
+        Member seller = memberRepository.save(Member.builder()
+                .email("seller@gmail.com")
+                .username("seller")
+                .role(USER)
+                .build());
+
+        List<Voucher> toSaveList = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            Voucher toSave = Voucher.builder()
+                    .price(4_000L)
+                    .barcode("1111 1111 1111")
+                    .expDate(LocalDate.now())
+                    .voucherKind(voucherKind)
+                    .seller(seller)
+                    .build();
+
+            if (i < 2) {
+                toSave.updateStatus(FOR_SALE);
+            }
+
+            toSaveList.add(toSave);
+        }
+
+        voucherRepository.saveAll(toSaveList);
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/vouchers")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
+                .queryParam("voucherKindId", String.valueOf(voucherKind.getId())));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        queryParameters(
+                                parameterWithName("voucherKindId").description("기프티콘 종류 id")
+                        ),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
+                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
+                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
+                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
+                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
+                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
+                                fieldWithPath("[].saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
+                        ))
+                );
+    }
+
+    @Test
     @WithMockUser(roles = "USER")
     @DisplayName("기프티콘 이미지 조회 API 테스트")
     void findImageUrl() throws Exception {

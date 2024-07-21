@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.application.dto.VoucherDto.VoucherResponse;
 import static com.givemecon.application.dto.VoucherKindDto.*;
 
 @RequiredArgsConstructor
@@ -37,11 +36,6 @@ public class VoucherKindController {
     @GetMapping("/{id}")
     public VoucherKindResponse find(@PathVariable Long id) {
         return voucherKindService.find(id);
-    }
-
-    @GetMapping("/{id}/selling-list")
-    public List<VoucherResponse> findSellingListByVoucherId(@PathVariable Long id) {
-        return voucherKindService.findSellingListByVoucherId(id);
     }
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
