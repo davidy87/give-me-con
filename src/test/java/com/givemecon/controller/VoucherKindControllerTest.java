@@ -57,7 +57,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(S3MockConfig.class)
 @Transactional
 @SpringBootTest
-@WithMockUser(roles = "ADMIN")
 class VoucherKindControllerTest {
 
     @Autowired
@@ -121,6 +120,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void save() throws Exception {
         // given
         String title = "Americano T";
@@ -310,6 +310,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void update() throws Exception {
         // given
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
@@ -367,6 +368,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void deleteOne() throws Exception {
         // given
         VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()

@@ -40,10 +40,13 @@ public final class VoucherDto {
 
     @Getter
     @RequiredArgsConstructor
-    public static class StatusCodeParameter {
+    public static class QueryParameter {
+
+        @Min(1)
+        private final Long voucherKindId;
 
         @Min(0)
-        @Max(4)
+        @Max(5)
         private final Integer statusCode;
     }
 

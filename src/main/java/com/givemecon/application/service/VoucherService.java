@@ -77,7 +77,7 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllByStatus(StatusCodeParameter paramDto) {
+    public List<VoucherResponse> findAllByStatus(QueryParameter paramDto) {
         VoucherStatus status = findStatus(paramDto.getStatusCode());
 
         return voucherRepository.findAllByStatus(status).stream()

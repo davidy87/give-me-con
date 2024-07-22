@@ -4,6 +4,7 @@ import com.givemecon.application.service.VoucherKindService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +26,14 @@ public class VoucherKindController {
     }
 
     @GetMapping
-    public List<VoucherKindResponse> findAll(@RequestParam(required = false) Long brandId) {
+    public List<VoucherKindResponse> findAll(Authentication authentication,
+                                             @RequestParam(required = false) Long brandId) {
+
         if (brandId != null) {
+            if (authentication != null) {
+                return voucherKindService.findAllByBrandId(brandId, authentication.getName());
+            }
+
             return voucherKindService.findAllByBrandId(brandId);
         }
 
