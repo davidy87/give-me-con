@@ -243,9 +243,23 @@ class VoucherRepositoryTest {
     }
 
     @Test
-    @DisplayName("기프티콘 종류와 기프티콘의 상태별 조회")
-    void findAllByVoucherKindIdAndStatus(@Autowired VoucherKindRepository voucherKindRepository) {
+    @DisplayName("사용자가 판매 중인 기프티콘들을 제외한 모든 기프티콘들을 기프티콘 종류 id와 기프티콘의 상태별로 조회")
+    void findAllExceptSellersByVoucherKindIdAndStatus(@Autowired MemberRepository memberRepository,
+                                                      @Autowired VoucherKindRepository voucherKindRepository) {
+
         // given
+        Member seller = memberRepository.save(Member.builder()
+                .email("seller@gmail.com")
+                .username("seller")
+                .role(USER)
+                .build());
+
+        Member buyer = memberRepository.save(Member.builder()
+                .email("buyer@gmail.com")
+                .username("buyer")
+                .role(USER)
+                .build());
+
         VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("voucherKind")
                 .build());
@@ -255,22 +269,23 @@ class VoucherRepositoryTest {
                 .expDate(LocalDate.now())
                 .barcode("1111 1111 1111")
                 .voucherKind(voucherKind)
+                .seller(seller)
                 .build();
 
         voucher.updateStatus(FOR_SALE);
         voucherRepository.save(voucher);
 
         // when
-        List<Voucher> result = voucherRepository.findAllByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE);
+        List<Voucher> result =
+                voucherRepository.findAllExceptSellersByVoucherKindIdAndStatus(voucherKind.getId(), FOR_SALE, buyer.getUsername());
 
         // then
-        assertThat(result).isNotEmpty();
-        assertThat(result.get(0).getVoucherKind()).isEqualTo(voucherKind);
-        assertThat(result.get(0).getStatus()).isSameAs(FOR_SALE);
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getSeller().getUsername()).isNotEqualTo(buyer.getUsername());
     }
 
     @Test
-    @DisplayName("기프티콘 종류별 최소 가격 테스트")
+    @DisplayName("기프티콘 종류별 최소 가격 테스트 1")
     void findOneWithMinPrice(@Autowired VoucherKindRepository voucherKindRepository) {
         // given
         VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
@@ -300,6 +315,46 @@ class VoucherRepositoryTest {
         // then
         assertThat(found.size()).isEqualTo(1);
         assertThat(found.get(0).getPrice()).isEqualTo(4_000L);
+    }
+
+    @Test
+    @DisplayName("기프티콘 종류별 최소 가격 테스트 2 - 사용자가 판매하고 있는 기프티콘이 있다면, 해당 기프티콘은 최소 가격 계산에 포함되지 않는다.")
+    void findOneWithMinPrice(@Autowired MemberRepository memberRepository,
+                             @Autowired VoucherKindRepository voucherKindRepository) {
+        // given
+        Member seller = memberRepository.save(Member.builder()
+                .email("seller@gmail.com")
+                .username("seller")
+                .role(USER)
+                .build());
+
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
+                .title("voucherKind")
+                .build());
+
+        List<Voucher> voucherList = new ArrayList<>();
+
+        for (int i = 1; i <= 5; i++) {
+            Voucher voucher = Voucher.builder()
+                    .price(4_000L * i)
+                    .expDate(LocalDate.now())
+                    .barcode("1111 1111 1111")
+                    .voucherKind(voucherKind)
+                    .seller(seller)
+                    .build();
+
+            voucher.updateStatus(FOR_SALE);
+            voucherList.add(voucher);
+        }
+
+        voucherRepository.saveAll(voucherList);
+
+        // when
+        List<Voucher> found =
+                voucherRepository.findOneWithMinPrice(seller, voucherKind, FOR_SALE, PageRequest.of(0, 1));
+
+        // then
+        assertThat(found).isEmpty();
     }
 
     @Test

@@ -4,9 +4,11 @@ import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.common.util.FileUtils;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
+import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
@@ -24,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.givemecon.application.dto.VoucherDto.VoucherResponse;
 import static com.givemecon.application.dto.VoucherKindDto.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 
@@ -40,9 +41,11 @@ public class VoucherKindService {
 
     private final VoucherKindImageRepository voucherKindImageRepository;
 
-    private final ImageEntityUtils imageEntityUtils;
-
     private final VoucherRepository voucherRepository;
+
+    private final MemberRepository memberRepository;
+
+    private final ImageEntityUtils imageEntityUtils;
 
     public VoucherKindResponse save(VoucherKindSaveRequest requestDto) {
         Brand brand = brandRepository.findById(requestDto.getBrandId())
@@ -89,6 +92,16 @@ public class VoucherKindService {
     }
 
     @Transactional(readOnly = true)
+    public List<VoucherKindResponse> findAllByBrandId(Long brandId, String username) {
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+
+        return voucherKindRepository.findAllWithImageByBrandId(brandId).stream()
+                .map(voucherKind -> getMinPriceResponse(voucherKind, member))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public PagedVoucherKindResponse findPage(Pageable pageable) {
         Page<VoucherKindResponse> pageResult = voucherKindRepository.findAll(pageable)
                 .map(this::getMinPriceResponse);
@@ -118,11 +131,15 @@ public class VoucherKindService {
         return new VoucherKindResponse(voucherKind, minPrice);
     }
 
-    @Transactional(readOnly = true)
-    public List<VoucherResponse> findSellingListByVoucherId(Long voucherId) {
-        return voucherRepository.findAllByVoucherKindIdAndStatus(voucherId, FOR_SALE).stream()
-                .map(VoucherResponse::new)
-                .toList();
+    // 최소 가격을 구해 VoucherKindResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
+    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, Member member) {
+        Pageable limit = PageRequest.of(0, 1);
+        Long minPrice = voucherRepository.findOneWithMinPrice(member, voucherKind, FOR_SALE, limit).stream()
+                .findFirst()
+                .map(Voucher::getPrice)
+                .orElse(0L);
+
+        return new VoucherKindResponse(voucherKind, minPrice);
     }
 
     public VoucherKindResponse update(Long id, VoucherKindUpdateRequest requestDto) {

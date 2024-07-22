@@ -37,11 +37,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
-import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -59,7 +57,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(S3MockConfig.class)
 @Transactional
 @SpringBootTest
-@WithMockUser(roles = "ADMIN")
 class VoucherKindControllerTest {
 
     @Autowired
@@ -123,6 +120,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void save() throws Exception {
         // given
         String title = "Americano T";
@@ -312,51 +310,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
-    void findSellingListByVoucherId() throws Exception {
-        // given
-        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
-                .title("Americano T")
-                .description("This is Americano T")
-                .caution("This voucherKind is from Starbucks.")
-                .build());
-
-        for (int i = 1; i <= 10; i++) {
-            Voucher voucher = voucherRepository.save(
-                    Voucher.builder()
-                            .price(4_000L)
-                            .expDate(LocalDate.now().plusDays(1))
-                            .barcode("1111 1111 1111")
-                            .voucherKind(voucherKind)
-                            .build());
-
-            voucher.updateStatus(FOR_SALE);
-        }
-
-        // when
-        ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}/selling-list", voucherKind.getId()));
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequest(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("id").description("판매 기프티콘 id")
-                        ),
-                        responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
-                                fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
-                                fieldWithPath("[].title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
-                                fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기한"),
-                                fieldWithPath("[].status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
-                                fieldWithPath("[].saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
-                        ))
-                );
-    }
-
-    @Test
+    @WithMockUser(roles = "ADMIN")
     void update() throws Exception {
         // given
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
@@ -414,6 +368,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     void deleteOne() throws Exception {
         // given
         VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()

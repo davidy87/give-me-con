@@ -18,8 +18,7 @@ public final class RequestMatcherList {
                 antMatcher(AUTH_SUCCESS_API.getPattern()),
                 antMatcher(GET, CATEGORY_API.getPattern()),
                 antMatcher(GET, BRAND_API.getPattern()),
-                antMatcher(GET, VOUCHER_KIND_API.getPattern()),
-                antMatcher(GET, VOUCHER_API.getPattern())
+                antMatcher(GET, VOUCHER_KIND_API.getPattern())
         };
     }
 

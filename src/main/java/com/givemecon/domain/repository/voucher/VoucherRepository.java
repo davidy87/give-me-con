@@ -22,15 +22,20 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     List<Voucher> findAllByOrder(Order order);
 
-    @Query("select distinct v from Voucher v " +
-            "join fetch v.voucherKind vk " +
-            "where vk.id = :voucherKindId and v.status = :status")
-    List<Voucher> findAllByVoucherKindIdAndStatus(Long voucherKindId, VoucherStatus status);
+    @Query("select v from Voucher v " +
+            "join VoucherKind vk on vk.id = :voucherKindId " +
+            "where v.seller.username <> :username and v.status = :status")
+    List<Voucher> findAllExceptSellersByVoucherKindIdAndStatus(Long voucherKindId, VoucherStatus status, String username);
 
     @Query("select v from Voucher v " +
             "where v.voucherKind = :voucherKind and v.status = :status " +
             "order by v.price")
     List<Voucher> findOneWithMinPrice(VoucherKind voucherKind, VoucherStatus status, Pageable pageable);
+
+    @Query("select v from Voucher v " +
+            "where v.seller <> :member and v.voucherKind = :voucherKind and v.status = :status " +
+            "order by v.price")
+    List<Voucher> findOneWithMinPrice(Member member, VoucherKind voucherKind, VoucherStatus status, Pageable pageable);
 
     @Query("select v from Voucher v " +
             "join fetch v.voucherImage " +

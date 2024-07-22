@@ -32,13 +32,17 @@ public class VoucherController {
 
     @GetMapping
     public List<VoucherResponse> findAll(Authentication authentication,
-                                         @Validated @ModelAttribute StatusCodeParameter paramDto) {
+                                         @Validated @ModelAttribute QueryParameter paramDto) {
 
-        if (paramDto.getStatusCode() == null) {
-            return voucherService.findAllByUsername(authentication.getName());
+        if (paramDto.getStatusCode() != null) {
+            return voucherService.findAllByStatus(paramDto);
         }
 
-        return voucherService.findAllByStatus(paramDto);
+        if (paramDto.getVoucherKindId() != null) {
+            return voucherService.findAllForSaleByVoucherId(paramDto.getVoucherKindId(), authentication.getName());
+        }
+
+        return voucherService.findAllByUsername(authentication.getName());
     }
 
     @GetMapping("/{id}/image")
