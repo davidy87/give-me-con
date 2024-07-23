@@ -15,8 +15,8 @@ public interface LikedVoucherRepository extends JpaRepository<LikedVoucher, Long
     @Query("select lv from LikedVoucher lv " +
             "join fetch lv.voucherKind vk " +
             "join fetch vk.voucherKindImage " +
-            "where lv.member.username = :username")
-    List<LikedVoucher> findAllFetchedByUsername(String username);
+            "where lv.member = :member")
+    List<LikedVoucher> findAllFetchedByMember(Member member);
 
     Page<LikedVoucher> findPageByMember(Member member, Pageable pageable);
 

@@ -85,7 +85,7 @@ class LikedVoucherRepositoryTest {
         likedVoucherRepository.save(likedVoucher);
 
         // when
-        List<LikedVoucher> result = likedVoucherRepository.findAllFetchedByUsername(member.getUsername());
+        List<LikedVoucher> result = likedVoucherRepository.findAllFetchedByMember(member);
 
         // then
         assertThat(result).hasSize(1);

@@ -41,7 +41,11 @@ public class VoucherKindController {
     }
 
     @GetMapping("/{id}")
-    public VoucherKindResponse find(@PathVariable Long id) {
+    public VoucherKindResponse find(Authentication authentication, @PathVariable Long id) {
+        if (authentication != null) {
+            return voucherKindService.find(id, authentication.getName());
+        }
+
         return voucherKindService.find(id);
     }
 

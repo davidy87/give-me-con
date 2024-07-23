@@ -38,6 +38,11 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     List<Voucher> findOneWithMinPrice(Member member, VoucherKind voucherKind, VoucherStatus status, Pageable pageable);
 
     @Query("select v from Voucher v " +
+            "where v.seller.username <> :username and v.voucherKind = :voucherKind and v.status = :status " +
+            "order by v.price")
+    List<Voucher> findOneWithMinPrice(String username, VoucherKind voucherKind, VoucherStatus status, Pageable pageable);
+
+    @Query("select v from Voucher v " +
             "join fetch v.voucherImage " +
             "where v.id = :voucherId")
     Optional<Voucher> findOneWithImage(Long voucherId);
