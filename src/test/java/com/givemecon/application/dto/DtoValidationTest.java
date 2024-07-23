@@ -197,10 +197,10 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("상태별 Voucher 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 4까지만 가능하다.")
+    @DisplayName("상태별 Voucher 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 5까지만 가능하다.")
     void statusCodeParameterFailed() throws Exception {
         // given
-        Integer invalidStatusCode = 5;
+        Integer invalidStatusCode = 6;
 
         // when
         ResultActions saveResult = mockMvc.perform(get("/api/vouchers")

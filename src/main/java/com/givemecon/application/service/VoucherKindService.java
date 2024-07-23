@@ -78,6 +78,14 @@ public class VoucherKindService {
     }
 
     @Transactional(readOnly = true)
+    public VoucherKindResponse find(Long id, String username) {
+        VoucherKind voucherKind = voucherKindRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+
+        return getMinPriceResponse(voucherKind, username);
+    }
+
+    @Transactional(readOnly = true)
     public List<VoucherKindResponse> findAll() {
         return voucherKindRepository.findAll().stream()
                 .map(VoucherKindResponse::new)
@@ -135,6 +143,17 @@ public class VoucherKindService {
     private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, Member member) {
         Pageable limit = PageRequest.of(0, 1);
         Long minPrice = voucherRepository.findOneWithMinPrice(member, voucherKind, FOR_SALE, limit).stream()
+                .findFirst()
+                .map(Voucher::getPrice)
+                .orElse(0L);
+
+        return new VoucherKindResponse(voucherKind, minPrice);
+    }
+
+    // 최소 가격을 구해 VoucherKindResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
+    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, String username) {
+        Pageable limit = PageRequest.of(0, 1);
+        Long minPrice = voucherRepository.findOneWithMinPrice(username, voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
                 .map(Voucher::getPrice)
                 .orElse(0L);

@@ -52,15 +52,18 @@ public class LikedVoucherService {
 
     @Transactional(readOnly = true)
     public List<VoucherKindResponse> findAllByUsername(String username) {
-        return likedVoucherRepository.findAllFetchedByUsername(username).stream()
-                .map(likedVoucher -> getMinPriceResponse(likedVoucher.getVoucherKind()))
+        Member member = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+
+        return likedVoucherRepository.findAllFetchedByMember(member).stream()
+                .map(likedVoucher -> getMinPriceResponse(likedVoucher.getVoucherKind(), member))
                 .toList();
     }
 
-    // 최소 가격을 구해 VoucherKindResponse DTO 반환
-    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind) {
+    // 최소 가격을 구해 VoucherKindResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
+    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, Member member) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
+        Long minPrice = voucherRepository.findOneWithMinPrice(member, voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
                 .map(Voucher::getPrice)
                 .orElse(0L);
