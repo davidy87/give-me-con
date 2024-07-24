@@ -178,7 +178,6 @@ class PurchasedVoucherControllerTest {
                                 fieldWithPath("[].voucherKindImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
                                 fieldWithPath("[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
@@ -224,7 +223,6 @@ class PurchasedVoucherControllerTest {
                                 fieldWithPath("[].voucherKindImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("[].price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("[].expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("[].barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
                                 fieldWithPath("[].status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );
@@ -264,7 +262,6 @@ class PurchasedVoucherControllerTest {
                 .andExpect(jsonPath("voucherKindImageUrl").value(voucherImage.getImageUrl()))
                 .andExpect(jsonPath("price").value(voucher.getPrice()))
                 .andExpect(jsonPath("expDate").value(voucher.getExpDate().toString()))
-                .andExpect(jsonPath("barcode").value(voucher.getBarcode()))
                 .andExpect(jsonPath("status").value(purchasedVoucher.getStatus().name()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
@@ -278,7 +275,6 @@ class PurchasedVoucherControllerTest {
                                 fieldWithPath("voucherKindImageUrl").type(JsonFieldType.STRING).description("기프티콘 종류 이미지"),
                                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("구매한 기프티콘 가격"),
                                 fieldWithPath("expDate").type(JsonFieldType.STRING).description("구매한 기프티콘 유효기한"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("구매한 기프티콘 바코드"),
                                 fieldWithPath("status").type(JsonFieldType.STRING).description("기프티콘 사용 여부")
                         ))
                 );

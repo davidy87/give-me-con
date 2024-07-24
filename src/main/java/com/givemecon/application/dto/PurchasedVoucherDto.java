@@ -51,8 +51,6 @@ public final class PurchasedVoucherDto {
 
         private final LocalDate expDate;
 
-        private final String barcode;
-
         private final String voucherKindImageUrl;
 
         private final PurchasedVoucherStatus status;
@@ -64,7 +62,6 @@ public final class PurchasedVoucherDto {
             this.title = voucher.getTitle();
             this.price = voucher.getPrice();
             this.expDate = voucher.getExpDate();
-            this.barcode = voucher.getBarcode();
             this.voucherKindImageUrl = voucher.getVoucherKind().getImageUrl();
             this.status = purchasedVoucher.getStatus();
         }
