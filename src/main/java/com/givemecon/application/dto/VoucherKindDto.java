@@ -60,17 +60,11 @@ public final class VoucherKindDto {
 
         private final String imageUrl;
 
-        private final String description;
-
-        private final String caution;
-
         public VoucherKindResponse(VoucherKind voucherKind) {
             this.id = voucherKind.getId();
             this.minPrice = 0L;
             this.title = voucherKind.getTitle();
             this.imageUrl = voucherKind.getImageUrl();
-            this.description = voucherKind.getDescription();
-            this.caution = voucherKind.getCaution();
         }
 
         public VoucherKindResponse(VoucherKind voucherKind, Long minPrice) {
@@ -78,6 +72,24 @@ public final class VoucherKindDto {
             this.minPrice = minPrice;
             this.title = voucherKind.getTitle();
             this.imageUrl = voucherKind.getImageUrl();
+        }
+    }
+
+    @Getter
+    public static class VoucherKindDetailResponse extends VoucherKindResponse {
+
+        private final String description;
+
+        private final String caution;
+
+        public VoucherKindDetailResponse(VoucherKind voucherKind) {
+            super(voucherKind);
+            this.description = voucherKind.getDescription();
+            this.caution = voucherKind.getCaution();
+        }
+
+        public VoucherKindDetailResponse(VoucherKind voucherKind, Long minPrice) {
+            super(voucherKind, minPrice);
             this.description = voucherKind.getDescription();
             this.caution = voucherKind.getCaution();
         }

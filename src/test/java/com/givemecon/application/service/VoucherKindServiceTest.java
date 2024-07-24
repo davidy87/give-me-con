@@ -19,7 +19,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
-import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
+import static com.givemecon.application.dto.VoucherKindDto.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,10 +70,10 @@ class VoucherKindServiceTest {
                 .thenReturn(List.of(voucher));
 
         // when
-        VoucherKindResponse voucherKindResponse = voucherKindService.find(1L);
+        VoucherKindResponse voucherKindDetailResponse = voucherKindService.findOne(1L);
 
         // then
-        Assertions.assertThat(voucherKindResponse.getMinPrice()).isEqualTo(voucher.getPrice());
+        Assertions.assertThat(voucherKindDetailResponse.getMinPrice()).isEqualTo(voucher.getPrice());
     }
 
     @Test
@@ -83,9 +83,9 @@ class VoucherKindServiceTest {
                 .thenReturn(List.of());
 
         // when
-        VoucherKindResponse voucherKindResponse = voucherKindService.find(1L);
+        VoucherKindResponse voucherKindDetailResponse = voucherKindService.findOne(1L);
 
         // then
-        Assertions.assertThat(voucherKindResponse.getMinPrice()).isEqualTo(0L);
+        Assertions.assertThat(voucherKindDetailResponse.getMinPrice()).isEqualTo(0L);
     }
 }

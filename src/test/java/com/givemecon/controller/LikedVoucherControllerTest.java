@@ -1,6 +1,7 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.application.dto.VoucherKindDto;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
@@ -31,7 +32,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
-import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.*;
@@ -118,15 +118,15 @@ class LikedVoucherControllerTest {
                 .content(new ObjectMapper().writeValueAsString(voucherKind.getId())));
 
         // then
-        VoucherKindResponse voucherKindResponse = new VoucherKindResponse(voucherKind);
+        VoucherKindDto.VoucherKindDetailResponse voucherKindDetailResponse = new VoucherKindDto.VoucherKindDetailResponse(voucherKind);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucherKindResponse.getId()))
-                .andExpect(jsonPath("minPrice").value(voucherKindResponse.getMinPrice()))
-                .andExpect(jsonPath("title").value(voucherKindResponse.getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherKindResponse.getImageUrl()))
-                .andExpect(jsonPath("description").value(voucherKindResponse.getDescription()))
-                .andExpect(jsonPath("caution").value(voucherKindResponse.getCaution()))
+                .andExpect(jsonPath("id").value(voucherKindDetailResponse.getId()))
+                .andExpect(jsonPath("minPrice").value(voucherKindDetailResponse.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucherKindDetailResponse.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(voucherKindDetailResponse.getImageUrl()))
+                .andExpect(jsonPath("description").value(voucherKindDetailResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherKindDetailResponse.getCaution()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -182,9 +182,7 @@ class LikedVoucherControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
-                                fieldWithPath("[].description").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
     }

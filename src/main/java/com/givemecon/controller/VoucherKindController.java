@@ -21,7 +21,7 @@ public class VoucherKindController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public VoucherKindResponse save(@Validated @ModelAttribute VoucherKindSaveRequest requestDto) {
+    public VoucherKindDetailResponse save(@Validated @ModelAttribute VoucherKindSaveRequest requestDto) {
         return voucherKindService.save(requestDto);
     }
 
@@ -31,27 +31,27 @@ public class VoucherKindController {
 
         if (brandId != null) {
             if (authentication != null) {
-                return voucherKindService.findAllByBrandId(brandId, authentication.getName());
+                return voucherKindService.findAllWithMinPriceByBrandId(brandId, authentication.getName());
             }
 
-            return voucherKindService.findAllByBrandId(brandId);
+            return voucherKindService.findAllWithMinPriceByBrandId(brandId);
         }
 
         return voucherKindService.findAll();
     }
 
     @GetMapping("/{id}")
-    public VoucherKindResponse find(Authentication authentication, @PathVariable Long id) {
+    public VoucherKindDetailResponse find(Authentication authentication, @PathVariable Long id) {
         if (authentication != null) {
-            return voucherKindService.find(id, authentication.getName());
+            return voucherKindService.findOne(id, authentication.getName());
         }
 
-        return voucherKindService.find(id);
+        return voucherKindService.findOne(id);
     }
 
     @PostMapping(path = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public VoucherKindResponse update(@PathVariable Long id,
-                                      @ModelAttribute VoucherKindUpdateRequest requestDto) {
+    public VoucherKindDetailResponse update(@PathVariable Long id,
+                                            @ModelAttribute VoucherKindUpdateRequest requestDto) {
 
         return voucherKindService.update(id, requestDto);
     }
