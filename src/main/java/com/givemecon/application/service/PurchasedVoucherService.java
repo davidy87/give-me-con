@@ -53,7 +53,7 @@ public class PurchasedVoucherService {
      * @return PurchasedVoucher Entity
      */
     private PurchasedVoucher saveOne(Member buyer, PurchasedVoucherRequest requestDto) {
-        Voucher voucher = voucherRepository.findById(requestDto.getVoucherForSaleId())
+        Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
                 .filter(forSale -> forSale.getStatus() == FOR_SALE)
                 .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
 
