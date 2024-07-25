@@ -47,7 +47,7 @@ public class VoucherKindService {
 
     private final ImageEntityUtils imageEntityUtils;
 
-    public VoucherKindResponse save(VoucherKindSaveRequest requestDto) {
+    public VoucherKindDetailResponse save(VoucherKindSaveRequest requestDto) {
         Brand brand = brandRepository.findById(requestDto.getBrandId())
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
@@ -66,23 +66,23 @@ public class VoucherKindService {
                 .brand(brand)
                 .build());
 
-        return new VoucherKindResponse(voucherKind);
+        return new VoucherKindDetailResponse(voucherKind);
     }
 
     @Transactional(readOnly = true)
-    public VoucherKindResponse find(Long id) {
+    public VoucherKindDetailResponse findOne(Long id) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
-        return getMinPriceResponse(voucherKind);
+        return new VoucherKindDetailResponse(voucherKind, getMinPrice(voucherKind));
     }
 
     @Transactional(readOnly = true)
-    public VoucherKindResponse find(Long id, String username) {
+    public VoucherKindDetailResponse findOne(Long id, String username) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
-        return getMinPriceResponse(voucherKind, username);
+        return new VoucherKindDetailResponse(voucherKind, getMinPrice(voucherKind, username));
     }
 
     @Transactional(readOnly = true)
@@ -93,26 +93,26 @@ public class VoucherKindService {
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherKindResponse> findAllByBrandId(Long brandId) {
+    public List<VoucherKindResponse> findAllWithMinPriceByBrandId(Long brandId) {
         return voucherKindRepository.findAllWithImageByBrandId(brandId).stream()
-                .map(this::getMinPriceResponse)
+                .map(voucherKind -> new VoucherKindResponse(voucherKind, getMinPrice(voucherKind)))
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherKindResponse> findAllByBrandId(Long brandId, String username) {
+    public List<VoucherKindResponse> findAllWithMinPriceByBrandId(Long brandId, String username) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         return voucherKindRepository.findAllWithImageByBrandId(brandId).stream()
-                .map(voucherKind -> getMinPriceResponse(voucherKind, member))
+                .map(voucherKind -> new VoucherKindResponse(voucherKind, getMinPrice(voucherKind, member)))
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public PagedVoucherKindResponse findPage(Pageable pageable) {
         Page<VoucherKindResponse> pageResult = voucherKindRepository.findAll(pageable)
-                .map(this::getMinPriceResponse);
+                .map(voucherKind -> new VoucherKindResponse(voucherKind, getMinPrice(voucherKind)));
 
         return new PagedVoucherKindResponse(pageResult);
     }
@@ -123,45 +123,39 @@ public class VoucherKindService {
                 .orElseThrow(() -> new EntityNotFoundException(Brand.class));
 
         Page<VoucherKindResponse> pageResult = voucherKindRepository.findPageByBrand(brand, pageable)
-                .map(this::getMinPriceResponse);
+                .map(voucherKind -> new VoucherKindResponse(voucherKind, getMinPrice(voucherKind)));
 
         return new PagedVoucherKindResponse(pageResult);
     }
 
-    // 최소 가격을 구해 VoucherKindResponse DTO 반환
-    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind) {
+    // 최소 가격 조회
+    private Long getMinPrice(VoucherKind voucherKind) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
+        return voucherRepository.findOneWithMinPrice(voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
                 .map(Voucher::getPrice)
                 .orElse(0L);
-
-        return new VoucherKindResponse(voucherKind, minPrice);
     }
 
-    // 최소 가격을 구해 VoucherKindResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
-    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, Member member) {
+    // 최소 가격 조회 (회원이 판매 중인 기프티콘은 제외)
+    private Long getMinPrice(VoucherKind voucherKind, String username) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherRepository.findOneWithMinPrice(member, voucherKind, FOR_SALE, limit).stream()
+        return voucherRepository.findOneWithMinPrice(username, voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
                 .map(Voucher::getPrice)
                 .orElse(0L);
-
-        return new VoucherKindResponse(voucherKind, minPrice);
     }
 
-    // 최소 가격을 구해 VoucherKindResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
-    private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, String username) {
+    // 최소 가격 조회 (회원이 판매 중인 기프티콘은 제외)
+    private Long getMinPrice(VoucherKind voucherKind, Member member) {
         Pageable limit = PageRequest.of(0, 1);
-        Long minPrice = voucherRepository.findOneWithMinPrice(username, voucherKind, FOR_SALE, limit).stream()
+        return voucherRepository.findOneWithMinPrice(member, voucherKind, FOR_SALE, limit).stream()
                 .findFirst()
                 .map(Voucher::getPrice)
                 .orElse(0L);
-
-        return new VoucherKindResponse(voucherKind, minPrice);
     }
 
-    public VoucherKindResponse update(Long id, VoucherKindUpdateRequest requestDto) {
+    public VoucherKindDetailResponse update(Long id, VoucherKindUpdateRequest requestDto) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
 
@@ -186,7 +180,7 @@ public class VoucherKindService {
             imageEntityUtils.updateImageEntity(voucherKind.getVoucherKindImage(), newImageFile);
         }
 
-        return new VoucherKindResponse(voucherKind);
+        return new VoucherKindDetailResponse(voucherKind);
     }
 
     public void delete(Long id) {

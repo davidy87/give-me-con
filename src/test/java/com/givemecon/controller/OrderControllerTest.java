@@ -294,7 +294,7 @@ class OrderControllerTest {
                                 fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("주문 수량"),
                                 fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총 주문 가격"),
                                 fieldWithPath("orderItems").type(JsonFieldType.ARRAY).description("주문 품목 리스트"),
-                                fieldWithPath("orderItems.[].voucherForSaleId").type(JsonFieldType.NUMBER).description("기프티콘 id"),
+                                fieldWithPath("orderItems.[].voucherId").type(JsonFieldType.NUMBER).description("기프티콘 id"),
                                 fieldWithPath("orderItems.[].price").type(JsonFieldType.NUMBER).description("기프티콘 가격"),
                                 fieldWithPath("orderItems.[].brandName").type(JsonFieldType.STRING).description("기프티콘 브랜드 이름"),
                                 fieldWithPath("orderItems.[].title").type(JsonFieldType.STRING).description("기프티콘 타이틀"),

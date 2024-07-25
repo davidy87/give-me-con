@@ -18,8 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.givemecon.application.dto.VoucherKindDto.*;
 import static com.givemecon.application.dto.VoucherKindDto.PagedVoucherKindResponse;
-import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
+import static com.givemecon.application.dto.VoucherKindDto.VoucherKindDetailResponse;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class LikedVoucherService {
 
     private final LikedVoucherRepository likedVoucherRepository;
 
-    public VoucherKindResponse save(String username, Long voucherId) {
+    public VoucherKindDetailResponse save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
@@ -47,7 +48,7 @@ public class LikedVoucherService {
                 .voucherKind(voucherKind)
                 .build());
 
-        return new VoucherKindResponse(voucherKind);
+        return new VoucherKindDetailResponse(voucherKind);
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +61,7 @@ public class LikedVoucherService {
                 .toList();
     }
 
-    // 최소 가격을 구해 VoucherKindResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
+    // 최소 가격을 구해 VoucherKindDetailResponse DTO 반환 (최소 가격 조회 시, 사용자가 판매 중인 기프티콘은 제외)
     private VoucherKindResponse getMinPriceResponse(VoucherKind voucherKind, Member member) {
         Pageable limit = PageRequest.of(0, 1);
         Long minPrice = voucherRepository.findOneWithMinPrice(member, voucherKind, FOR_SALE, limit).stream()
@@ -77,7 +78,7 @@ public class LikedVoucherService {
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
 
         Page<VoucherKindResponse> pageResult = likedVoucherRepository.findPageByMember(member, pageable)
-                .map(likedVoucher -> new VoucherKindResponse(likedVoucher.getVoucherKind()));
+                .map(likedVoucher -> new VoucherKindDetailResponse(likedVoucher.getVoucherKind()));
 
         return new PagedVoucherKindResponse(pageResult);
     }

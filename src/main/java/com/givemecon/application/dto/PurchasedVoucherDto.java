@@ -24,7 +24,7 @@ public final class PurchasedVoucherDto {
 
         @NotNull
         @Min(1L)
-        private Long voucherForSaleId;
+        private Long voucherId;
     }
 
     @Getter
@@ -45,13 +45,13 @@ public final class PurchasedVoucherDto {
 
         private final Long id;
 
+        private final Long voucherId;
+
         private final String title;
 
         private final Long price;
 
         private final LocalDate expDate;
-
-        private final String barcode;
 
         private final String voucherKindImageUrl;
 
@@ -61,10 +61,10 @@ public final class PurchasedVoucherDto {
             Voucher voucher = purchasedVoucher.getVoucher();
 
             this.id = purchasedVoucher.getId();
+            this.voucherId = voucher.getId();
             this.title = voucher.getTitle();
             this.price = voucher.getPrice();
             this.expDate = voucher.getExpDate();
-            this.barcode = voucher.getBarcode();
             this.voucherKindImageUrl = voucher.getVoucherKind().getImageUrl();
             this.status = purchasedVoucher.getStatus();
         }

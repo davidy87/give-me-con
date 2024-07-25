@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
+import static com.givemecon.application.dto.VoucherKindDto.*;
+import static com.givemecon.application.dto.VoucherKindDto.VoucherKindDetailResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class LikedVoucherController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public VoucherKindResponse save(Authentication authentication, @RequestBody Long voucherId) {
+    public VoucherKindDetailResponse save(Authentication authentication, @RequestBody Long voucherId) {
         return likedVoucherService.save(authentication.getName(), voucherId);
     }
 

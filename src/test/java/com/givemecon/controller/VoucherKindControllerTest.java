@@ -14,6 +14,7 @@ import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.givemecon.application.dto.VoucherKindDto.VoucherKindResponse;
+import static com.givemecon.application.dto.VoucherKindDto.VoucherKindDetailResponse;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -146,15 +147,15 @@ class VoucherKindControllerTest {
         VoucherKind voucherKind = voucherKindList.get(0);
         assertThat(voucherKind.getBrand()).isEqualTo(brand);
 
-        VoucherKindResponse voucherKindResponse = new VoucherKindResponse(voucherKind);
+        VoucherKindDetailResponse voucherKindDetailResponse = new VoucherKindDetailResponse(voucherKind);
 
         response.andExpect(status().isCreated())
-                .andExpect(jsonPath("id").value(voucherKindResponse.getId()))
+                .andExpect(jsonPath("id").value(voucherKindDetailResponse.getId()))
                 .andExpect(jsonPath("minPrice").value(0L))
-                .andExpect(jsonPath("title").value(voucherKindResponse.getTitle()))
-                .andExpect(jsonPath("description").value(voucherKindResponse.getDescription()))
-                .andExpect(jsonPath("caution").value(voucherKindResponse.getCaution()))
-                .andExpect(jsonPath("imageUrl").value(voucherKindResponse.getImageUrl()))
+                .andExpect(jsonPath("title").value(voucherKindDetailResponse.getTitle()))
+                .andExpect(jsonPath("description").value(voucherKindDetailResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherKindDetailResponse.getCaution()))
+                .andExpect(jsonPath("imageUrl").value(voucherKindDetailResponse.getImageUrl()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
@@ -177,6 +178,7 @@ class VoucherKindControllerTest {
     }
 
     @Test
+    @DisplayName("VoucherKind 단일 조회 1 - 로그인하지 않은 상태에서는 ")
     void findOne() throws Exception {
         // given
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
@@ -196,16 +198,16 @@ class VoucherKindControllerTest {
         ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}", voucherKind.getId()));
 
         // then
-        VoucherKindResponse voucherKindResponse = new VoucherKindResponse(voucherKind);
+        VoucherKindDetailResponse voucherKindDetailResponse = new VoucherKindDetailResponse(voucherKind);
 
         response
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(voucherKindResponse.getId()))
-                .andExpect(jsonPath("minPrice").value(voucherKindResponse.getMinPrice()))
-                .andExpect(jsonPath("title").value(voucherKindResponse.getTitle()))
-                .andExpect(jsonPath("imageUrl").value(voucherKindResponse.getImageUrl()))
-                .andExpect(jsonPath("description").value(voucherKindResponse.getDescription()))
-                .andExpect(jsonPath("caution").value(voucherKindResponse.getCaution()))
+                .andExpect(jsonPath("id").value(voucherKindDetailResponse.getId()))
+                .andExpect(jsonPath("minPrice").value(voucherKindDetailResponse.getMinPrice()))
+                .andExpect(jsonPath("title").value(voucherKindDetailResponse.getTitle()))
+                .andExpect(jsonPath("imageUrl").value(voucherKindDetailResponse.getImageUrl()))
+                .andExpect(jsonPath("description").value(voucherKindDetailResponse.getDescription()))
+                .andExpect(jsonPath("caution").value(voucherKindDetailResponse.getCaution()))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
@@ -259,9 +261,7 @@ class VoucherKindControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
-                                fieldWithPath("[].description").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
     }
@@ -302,9 +302,7 @@ class VoucherKindControllerTest {
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
                                 fieldWithPath("[].title").type(JsonFieldType.STRING).description("기프티콘 종류의 타이틀"),
-                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지"),
-                                fieldWithPath("[].description").type(JsonFieldType.STRING).description("상품 설명"),
-                                fieldWithPath("[].caution").type(JsonFieldType.STRING).description("사용 시 유의사항")
+                                fieldWithPath("[].imageUrl").type(JsonFieldType.STRING).description("기프티콘 종류의 이미지")
                         ))
                 );
     }

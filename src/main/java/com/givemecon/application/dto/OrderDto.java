@@ -57,7 +57,7 @@ public final class OrderDto {
     @NoArgsConstructor
     public static class OrderItem {
 
-        private Long voucherForSaleId;
+        private Long voucherId;
 
         private Long price;
 
@@ -74,7 +74,7 @@ public final class OrderDto {
         public OrderItem(Voucher voucher) {
             VoucherKind voucherKind = voucher.getVoucherKind();
 
-            this.voucherForSaleId = voucher.getId();
+            this.voucherId = voucher.getId();
             this.price = voucher.getPrice();
             this.brandName = voucherKind.getBrand().getName();
             this.title = voucher.getTitle();

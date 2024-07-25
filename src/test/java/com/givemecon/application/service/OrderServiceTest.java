@@ -195,7 +195,7 @@ class OrderServiceTest {
             orderSummary.getOrderItems()
                     .forEach(orderItem -> {
                         assertThat(orderItem.getStatus()).isSameAs(ORDER_PLACED);
-                        assertThat(orderItem.getVoucherForSaleId()).isEqualTo(voucher.getId());
+                        assertThat(orderItem.getVoucherId()).isEqualTo(voucher.getId());
                     });
         }
 

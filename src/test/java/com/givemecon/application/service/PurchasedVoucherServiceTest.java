@@ -81,7 +81,6 @@ class PurchasedVoucherServiceTest {
         assertThat(response).hasSize(1);
         assertThat(response.get(0).getTitle()).isEqualTo(voucher.getTitle());
         assertThat(response.get(0).getPrice()).isEqualTo(voucher.getPrice());
-        assertThat(response.get(0).getBarcode()).isEqualTo(voucher.getBarcode());
         assertThat(response.get(0).getExpDate()).isEqualTo(voucher.getExpDate());
         assertThat(response.get(0).getVoucherKindImageUrl()).isEqualTo(voucher.getVoucherKind().getVoucherKindImage().getImageUrl());
         assertThat(response.get(0).getStatus()).isEqualTo(purchasedVoucher.getStatus());
