@@ -26,4 +26,9 @@ public class PaymentController {
 
         return paymentService.confirmPayment(paymentRequest, authentication.getName());
     }
+
+    @GetMapping("/{paymentKey}")
+    public PaymentResponse findPaymentHistory(Authentication authentication, @PathVariable String paymentKey) {
+        return paymentService.findPaymentHistory(paymentKey, authentication.getName());
+    }
 }

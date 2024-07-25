@@ -1,6 +1,7 @@
 package com.givemecon.application.service;
 
 import com.givemecon.application.exception.payment.InvalidPaymentException;
+import com.givemecon.domain.entity.order.Order;
 import com.givemecon.domain.entity.payment.Payment;
 import com.givemecon.domain.repository.PaymentRepository;
 import com.givemecon.infrastructure.tosspayments.PaymentConfirmation;
@@ -15,6 +16,7 @@ import static com.givemecon.application.dto.OrderDto.OrderConfirmation;
 import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.application.dto.PaymentDto.PaymentResponse;
 import static com.givemecon.application.exception.payment.PaymentErrorCode.AMOUNT_NOT_MATCH;
+import static com.givemecon.application.exception.payment.PaymentErrorCode.INVALID_PAYMENT_KEY;
 
 @RequiredArgsConstructor
 @Service
@@ -44,5 +46,18 @@ public class PaymentService {
         if (!Objects.equals(paymentRequest.getAmount(), orderConfirmation.getAmount())) {
             throw new InvalidPaymentException(AMOUNT_NOT_MATCH);
         }
+    }
+
+    public PaymentResponse findPaymentHistory(String paymentKey, String username) {
+        Payment payment = paymentRepository.findByPaymentKey(paymentKey)
+                .orElseThrow(() -> new InvalidPaymentException(INVALID_PAYMENT_KEY));
+
+        // 주문번호 검증 및 주문 내역 조회
+        Order order = orderService.findOrder(payment.getOrderInfo().getOrderNumber());
+
+        // 구매자 검증
+        orderService.verifyBuyer(order.getBuyer(), username);
+
+        return new PaymentResponse(payment);
     }
 }

@@ -168,9 +168,9 @@ public class OrderService {
         return new OrderNumberResponse(orderNumber);
     }
 
-    private Order findOrder(String orderNumber) {
+    public Order findOrder(String orderNumber) {
         return orderRepository.findByOrderNumber(orderNumber)
-                .orElseThrow(() -> new EntityNotFoundException(Order.class));
+                .orElseThrow(() -> new InvalidOrderException(INVALID_ORDER_NUMBER));
     }
 
     private void verifyOrderQuantityAndAmount(Order order, int quantity, long amount) {
@@ -185,7 +185,7 @@ public class OrderService {
         }
     }
 
-    private void verifyBuyer(Member buyer, String username) {
+    public void verifyBuyer(Member buyer, String username) {
         if (buyer == null || !username.equals(buyer.getUsername())) {
             throw new InvalidOrderException(BUYER_NOT_MATCH);
         }

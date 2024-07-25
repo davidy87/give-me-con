@@ -8,12 +8,16 @@ import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
+import com.givemecon.domain.entity.payment.OrderInfo;
+import com.givemecon.domain.entity.payment.Payment;
+import com.givemecon.domain.entity.payment.PaymentMethod;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
+import com.givemecon.domain.repository.PaymentRepository;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
@@ -52,8 +56,11 @@ import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -213,6 +220,43 @@ class PaymentControllerTest {
                                 fieldWithPath("paymentKey").type(JsonFieldType.STRING).description("토스페이먼츠에서 제공하는 결제 키"),
                                 fieldWithPath("orderId").type(JsonFieldType.STRING).description("주문번호"),
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주문금액")
+                        ),
+                        responseFields(
+                                fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주문금액"),
+                                fieldWithPath("orderId").type(JsonFieldType.STRING).description("주문번호"),
+                                fieldWithPath("orderName").type(JsonFieldType.STRING).description("구매상품"),
+                                fieldWithPath("receiptUrl").type(JsonFieldType.STRING).description("발행된 영수증")
+                        ))
+                );
+    }
+
+    @Test
+    @WithMockUser(roles = "USER", username = "tester")
+    @DisplayName("결제 내역 조회 요청 API 테스트")
+    void findPaymentHistory(@Autowired PaymentRepository paymentRepository) throws Exception {
+        // given
+        OrderInfo orderInfo = new OrderInfo(order.getOrderNumber(), "Americano T", 4_000L);
+        Payment payment = paymentRepository.save(Payment.builder()
+                .paymentKey("PAYMENT-KEY")
+                .method(PaymentMethod.CARD)
+                .receiptUrl("receiptUrl")
+                .orderInfo(orderInfo)
+                .build());
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/payments/{paymentKey}", payment.getPaymentKey()));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("amount").value(orderInfo.getAmount()))
+                .andExpect(jsonPath("orderId").value(orderInfo.getOrderNumber()))
+                .andExpect(jsonPath("orderName").value(orderInfo.getOrderName()))
+                .andExpect(jsonPath("receiptUrl").value(payment.getReceiptUrl()))
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequestWithAuth(),
+                        getDocumentResponse(),
+                        pathParameters(
+                                parameterWithName("paymentKey").description("결제 키")
                         ),
                         responseFields(
                                 fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주문금액"),
