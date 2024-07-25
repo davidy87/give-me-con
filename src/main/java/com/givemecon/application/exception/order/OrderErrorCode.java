@@ -11,6 +11,7 @@ public enum OrderErrorCode implements ErrorCode {
 
     ITEM_NOT_FOR_SALE(HttpStatus.BAD_REQUEST.value(), "ITEM_NOT_FOR_SALE", "판매 중이 아닌 기프티콘입니다."),
     ITEM_ORDER_NOT_PLACED(HttpStatus.BAD_REQUEST.value(), "ITEM_ORDER_NOT_PLACED", "주문 중이 아닌 기프티콘입니다."),
+    INVALID_ORDER_NUMBER(HttpStatus.BAD_REQUEST.value(), "INVALID_ORDER_NUMBER", "주문번호가 올바르지 않습니다."),
     INVALID_ORDER_QUANTITY(HttpStatus.BAD_REQUEST.value(), "INVALID_ORDER_QUANTITY", "주문수량이 올바르지 않습니다."),
     INVALID_ORDER_AMOUNT(HttpStatus.BAD_REQUEST.value(), "INVALID_ORDER_AMOUNT", "주문금액이 올바르지 않습니다."),
     SELLER_UNAVAILABLE(HttpStatus.BAD_REQUEST.value(), "SELLER_UNAVAILABLE", "판매자가 존재하지 않습니다."),
