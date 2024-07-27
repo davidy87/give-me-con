@@ -20,6 +20,10 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     List<Voucher> findAllByStatus(VoucherStatus status);
 
+    @Query("select v from Voucher v " +
+            "where v.status = :status and v.seller.username = :username")
+    List<Voucher> findAllByStatusAndUsername(VoucherStatus status, String username);
+
     List<Voucher> findAllByOrder(Order order);
 
     @Query("select v from Voucher v " +

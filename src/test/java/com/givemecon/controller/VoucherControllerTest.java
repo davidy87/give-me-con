@@ -247,7 +247,7 @@ class VoucherControllerTest {
     }
 
     @Test
-    void findAllByStatus() throws Exception {
+    void findAllByStatusAndUsername() throws Exception {
         // given
         List<Voucher> toSaveList = new ArrayList<>();
 
@@ -257,6 +257,7 @@ class VoucherControllerTest {
                     .barcode("1111 1111 1111")
                     .expDate(LocalDate.now())
                     .voucherKind(voucherKind)
+                    .seller(user)
                     .build();
 
             if (i < 2) {
@@ -270,7 +271,7 @@ class VoucherControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo))
                 .queryParam("statusCode", String.valueOf(SALE_REQUESTED.ordinal())));
 
         // then
@@ -280,7 +281,7 @@ class VoucherControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         queryParameters(
-                                parameterWithName("statusCode").description("기프티콘 상태코드 (0 ~ 4)")
+                                parameterWithName("statusCode").description("기프티콘 상태코드 (0 ~ 5)")
                         ),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),

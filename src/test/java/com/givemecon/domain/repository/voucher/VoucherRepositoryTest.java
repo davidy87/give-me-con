@@ -129,6 +129,30 @@ class VoucherRepositoryTest {
     }
 
     @Test
+    void findAllByStatusAndUsername(@Autowired MemberRepository memberRepository) {
+        // given
+        Member seller = memberRepository.save(Member.builder()
+                .email("tester@gmail.com")
+                .username("tester")
+                .role(USER)
+                .build());
+
+        Voucher voucher = voucherRepository.save(Voucher.builder()
+                .price(15_000L)
+                .expDate(LocalDate.now())
+                .barcode("1111 1111 1111")
+                .seller(seller)
+                .build());
+
+        // when
+        List<Voucher> result = voucherRepository.findAllByStatusAndUsername(SALE_REQUESTED, seller.getUsername());
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getId()).isEqualTo(voucher.getId());
+    }
+
+    @Test
     @DisplayName("유효기간이 만료된 모든 VoucherForSale들의 state를 EXPIRED로 변경한다.")
     void updateAllExpired() {
         // given

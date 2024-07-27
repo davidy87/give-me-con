@@ -33,7 +33,8 @@ public final class RequestMatcherList {
                 antMatcher(MEMBER_API.getPattern()),
                 antMatcher(CATEGORY_API.getPattern()),
                 antMatcher(BRAND_API.getPattern()),
-                antMatcher(VOUCHER_KIND_API.getPattern())
+                antMatcher(VOUCHER_KIND_API.getPattern()),
+                antMatcher(ADMIN_API.getPattern())
         };
     }
 

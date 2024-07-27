@@ -34,15 +34,17 @@ public class VoucherController {
     public List<VoucherResponse> findAll(Authentication authentication,
                                          @Validated @ModelAttribute QueryParameter paramDto) {
 
+        String username = authentication.getName();
+
         if (paramDto.getStatusCode() != null) {
-            return voucherService.findAllByStatus(paramDto);
+            return voucherService.findAllByStatusAndUsername(paramDto, username);
         }
 
         if (paramDto.getVoucherKindId() != null) {
-            return voucherService.findAllForSaleByVoucherId(paramDto.getVoucherKindId(), authentication.getName());
+            return voucherService.findAllForSaleByVoucherId(paramDto.getVoucherKindId(), username);
         }
 
-        return voucherService.findAllByUsername(authentication.getName());
+        return voucherService.findAllByUsername(username);
     }
 
     @GetMapping("/{id}/image")

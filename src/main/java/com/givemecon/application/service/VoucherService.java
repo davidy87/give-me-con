@@ -86,6 +86,15 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
+    public List<VoucherResponse> findAllByStatusAndUsername(QueryParameter paramDto, String username) {
+        VoucherStatus status = findStatus(paramDto.getStatusCode());
+
+        return voucherRepository.findAllByStatusAndUsername(status, username).stream()
+                .map(VoucherResponse::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<VoucherResponse> findAllForSaleByVoucherId(Long voucherId, String username) {
         return voucherRepository.findAllExceptSellersByVoucherKindIdAndStatus(voucherId, FOR_SALE, username).stream()
                 .map(VoucherResponse::new)
