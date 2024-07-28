@@ -95,7 +95,7 @@ public class ApiExceptionControllerTest {
                 "newCategory.jpg".getBytes());
 
         // when
-        ResultActions response = mockMvc.perform(multipart("/api/categories/{id}", 1)
+        ResultActions response = mockMvc.perform(multipart("/api/admin/categories/{id}", 1)
                 .file(newIconFile)
                 .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
@@ -119,7 +119,7 @@ public class ApiExceptionControllerTest {
                 "new_brand.jpg".getBytes());
 
         // when
-        ResultActions response = mockMvc.perform(multipart("/api/brands/{id}", 1)
+        ResultActions response = mockMvc.perform(multipart("/api/admin/brands/{id}", 1)
                 .file(newIconFile)
                 .part(new MockPart("categoryId", String.valueOf(1).getBytes(StandardCharsets.UTF_8)))
                 .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))

@@ -1,6 +1,5 @@
 package com.givemecon.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.member.Member;
@@ -43,7 +42,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
-import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
@@ -388,86 +386,5 @@ class VoucherControllerTest {
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL")
                         ))
                 );
-    }
-
-    @Test
-    void updateStatus() throws Exception {
-        // given
-        Voucher voucher = Voucher.builder()
-                .price(4_000L)
-                .barcode("1111 1111 1111")
-                .expDate(LocalDate.now())
-                .voucherKind(voucherKind)
-                .build();
-
-        voucherRepository.save(voucher);
-
-        // when
-        StatusUpdateRequest requestBody = new StatusUpdateRequest();
-        requestBody.setStatusCode(FOR_SALE.ordinal());
-
-        ResultActions response = mockMvc.perform(put("/api/vouchers/{id}", voucher.getId())
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(requestBody)));
-
-        // then
-        response.andExpect(status().isOk())
-                .andExpect(jsonPath("id").value(voucher.getId()))
-                .andExpect(jsonPath("price").value(voucher.getPrice()))
-                .andExpect(jsonPath("title").value(voucher.getTitle()))
-                .andExpect(jsonPath("barcode").value(voucher.getBarcode()))
-                .andExpect(jsonPath("expDate").value(voucher.getExpDate().toString()))
-                .andExpect(jsonPath("status").value(FOR_SALE.name()))
-                .andExpect(jsonPath("saleRequestedDate").value(voucher.getSaleRequestedDate().toString()))
-                .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequestWithAuth(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("id").description("판매중(or 판매 대기 중)인 기프티콘 id")
-                        ),
-                        requestFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드 (0 ~ 4)"),
-                                fieldWithPath("rejectedReason")
-                                        .type(JsonFieldType.STRING).optional()
-                                        .description("판매 요청 거절 사유 (statusCode가 3(SALE_REJECTED)일 경우 필수)")
-                        ),
-                        responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
-                                fieldWithPath("price").type(JsonFieldType.NUMBER).description("판매 기프티콘 가격"),
-                                fieldWithPath("title").type(JsonFieldType.STRING).description("판매 기프티콘 타이틀"),
-                                fieldWithPath("barcode").type(JsonFieldType.STRING).description("판매 기프티콘 바코드"),
-                                fieldWithPath("expDate").type(JsonFieldType.STRING).description("판매 기프티콘 유효기간"),
-                                fieldWithPath("status").type(JsonFieldType.STRING).description("판매 기프티콘 상태"),
-                                fieldWithPath("saleRequestedDate").type(JsonFieldType.STRING).description("기프티콘 판매 요청일자")
-                        ))
-                );
-    }
-
-    @Test
-    void deleteOne() throws Exception {
-        // given
-        Voucher voucher = voucherRepository.save(Voucher.builder()
-                .price(4_000L)
-                .expDate(LocalDate.now().plusDays(1))
-                .barcode("1111 1111 1111")
-                .build());
-
-        // when
-        ResultActions response = mockMvc.perform(delete("/api/vouchers/{id}", voucher.getId())
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo)));
-
-        // then
-        response.andExpect(status().isNoContent())
-                .andDo(document("{class-name}/{method-name}",
-                        getDocumentRequestWithAuth(),
-                        getDocumentResponse(),
-                        pathParameters(
-                                parameterWithName("id").description("판매중인 기프티콘 id")
-                        ))
-                );
-
-        List<Voucher> voucherList = voucherRepository.findAll();
-        assertThat(voucherList).isEmpty();
     }
 }

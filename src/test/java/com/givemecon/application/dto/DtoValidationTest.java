@@ -86,7 +86,7 @@ public class DtoValidationTest {
         MockMultipartFile iconFile = new MockMultipartFile("iconFile", (byte[]) null);
 
         // when
-        ResultActions saveResult = mockMvc.perform(multipart("/api/categories")
+        ResultActions saveResult = mockMvc.perform(multipart("/api/admin/categories")
                 .file(iconFile)
                 .part(name)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
@@ -114,7 +114,7 @@ public class DtoValidationTest {
         MockMultipartFile iconFile = new MockMultipartFile("iconFile", (byte[]) null);
 
         // when
-        ResultActions saveResult = mockMvc.perform(multipart("/api/brands")
+        ResultActions saveResult = mockMvc.perform(multipart("/api/admin/brands")
                 .file(iconFile)
                 .part(invalidCategoryId)
                 .part(name)
@@ -143,7 +143,7 @@ public class DtoValidationTest {
         MockMultipartFile imageFile = new MockMultipartFile("imageFile", (byte[]) null);
 
         // when
-        ResultActions saveResult = mockMvc.perform(multipart("/api/voucher-kinds")
+        ResultActions saveResult = mockMvc.perform(multipart("/api/admin/voucher-kinds")
                 .file(imageFile)
                 .part(price)
                 .part(title)
@@ -230,7 +230,7 @@ public class DtoValidationTest {
         StatusUpdateRequest requestBody = new StatusUpdateRequest();
         requestBody.setStatusCode(statusCode);
 
-        ResultActions saveResult = mockMvc.perform(put("/api/vouchers/{id}", 1)
+        ResultActions saveResult = mockMvc.perform(put("/api/admin/vouchers/{id}", 1)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody)));

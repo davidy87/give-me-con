@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 public enum ApiPathPattern {
 
     MEMBER_API("/members/**"),
-    ADMIN_LOGIN_API("/members/admin/login"),
     AUTH_SUCCESS_API("/auth/success"),
     TOKEN_REISSUE_API("/auth/reissue"),
 
@@ -20,7 +19,8 @@ public enum ApiPathPattern {
     PAYMENT_API("/payments/**"),
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts"),
 
-    ADMIN_API("/admin/**");
+    ADMIN_API("/admin/**"),
+    ADMIN_LOGIN_API("/admin/members/login");
 
     private static final String BASE_PATH = "/api";
 
