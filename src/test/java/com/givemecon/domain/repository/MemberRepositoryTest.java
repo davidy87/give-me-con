@@ -1,11 +1,12 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.common.configuration.JpaConfig;
 import com.givemecon.domain.entity.member.Member;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,8 +15,8 @@ import static com.givemecon.domain.entity.member.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@Transactional
-@SpringBootTest
+@Import(JpaConfig.class)
+@DataJpaTest
 class MemberRepositoryTest {
 
     @Autowired

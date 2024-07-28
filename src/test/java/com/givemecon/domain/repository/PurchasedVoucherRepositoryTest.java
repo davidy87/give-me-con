@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.common.configuration.JpaConfig;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
@@ -14,8 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,8 +28,8 @@ import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatu
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
-@SpringBootTest
+@Import(JpaConfig.class)
+@DataJpaTest
 class PurchasedVoucherRepositoryTest {
 
     @Autowired

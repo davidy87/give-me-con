@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.common.configuration.JpaConfig;
 import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
 import com.givemecon.domain.entity.member.Member;
@@ -10,16 +11,16 @@ import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
-@SpringBootTest
+@Import(JpaConfig.class)
+@DataJpaTest
 class LikedVoucherRepositoryTest {
 
     @Autowired
