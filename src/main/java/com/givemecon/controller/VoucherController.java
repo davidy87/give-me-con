@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,20 +49,5 @@ public class VoucherController {
     @GetMapping("/{id}/image")
     public ImageResponse findImageUrl(@PathVariable Long id) {
         return voucherService.findImageUrl(id);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public VoucherResponse updateStatus(@PathVariable Long id,
-                                        @Validated @RequestBody StatusUpdateRequest requestDto) {
-
-        return voucherService.updateStatus(id, requestDto);
-    }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void delete(@PathVariable Long id) {
-        voucherService.delete(id);
     }
 }

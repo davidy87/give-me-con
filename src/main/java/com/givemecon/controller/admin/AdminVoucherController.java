@@ -2,11 +2,9 @@ package com.givemecon.controller.admin;
 
 import com.givemecon.application.service.VoucherService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,18 @@ public class AdminVoucherController {
     @GetMapping
     public List<VoucherResponse> findAllByStatus(@Validated @ModelAttribute QueryParameter paramDto) {
         return voucherService.findAllByStatus(paramDto);
+    }
+
+    @PutMapping("/{id}")
+    public VoucherResponse updateStatus(@PathVariable Long id,
+                                        @Validated @RequestBody StatusUpdateRequest requestDto) {
+
+        return voucherService.updateStatus(id, requestDto);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        voucherService.delete(id);
     }
 }
