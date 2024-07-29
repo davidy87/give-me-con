@@ -7,6 +7,8 @@ import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.UUID;
 
 import static com.givemecon.common.auth.enums.JwtAuthHeader.*;
+import static com.givemecon.common.error.GlobalErrorCode.MISSING_REQUEST_PARAMETER;
+import static com.givemecon.common.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
 import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.common.auth.enums.OAuth2ParameterName.*;
 import static com.givemecon.util.ApiDocumentUtils.*;
@@ -40,6 +44,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
@@ -153,5 +158,39 @@ public class TokenIssueApiControllerTest {
                     fieldWithPath("role").type(JsonFieldType.STRING).description("권한")
                 ))
         );
+    }
+
+    @Nested
+    @DisplayName("JWT 인증 예외 테스트")
+    class ExceptionTest {
+
+        @Test
+        void invalidAccessTokenException() throws Exception {
+            // given
+            String invalidAccessToken = "Bearer " + "INVALID_TOKEN";
+
+            // when
+            ResultActions response = mockMvc.perform(get("/api/liked-vouchers/{id}", 1L)
+                    .header(AUTHORIZATION.getName(), invalidAccessToken));
+
+            // then
+            response.andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("error.code").value(TOKEN_NOT_AUTHENTICATED.getCode()))
+                    .andExpect(jsonPath("error.status").value(TOKEN_NOT_AUTHENTICATED.getStatus()))
+                    .andExpect(jsonPath("error.message").value(TOKEN_NOT_AUTHENTICATED.getMessage()));
+        }
+
+        @Test
+        @DisplayName("필수 요청 파라미터가 전달되지 않았을 때 요청 처리")
+        void missingParameterException() throws Exception {
+            ResultActions response = mockMvc.perform(get("/api/auth/success"));
+
+            response.andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("error.code").value(MISSING_REQUEST_PARAMETER.getCode()))
+                    .andExpect(jsonPath("error.status").value(MISSING_REQUEST_PARAMETER.getStatus()))
+                    .andExpect(jsonPath("error.message").value(MISSING_REQUEST_PARAMETER.getMessage()))
+                    .andExpect(jsonPath("error.parameterDetails.parameterName").value("authorizationCode"))
+                    .andExpect(jsonPath("error.parameterDetails.parameterType").value("String"));
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.givemecon.controller;
 
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherImage;
@@ -12,10 +13,7 @@ import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
+import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
@@ -386,5 +385,27 @@ class VoucherControllerTest {
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("판매 기프티콘 이미지 URL")
                         ))
                 );
+    }
+
+    @Nested
+    @DisplayName("Voucher API 예외 테스트")
+    class ExceptionTest {
+
+        @Test
+        @DisplayName("Voucher Id 예외 - 존재하지 않는 Voucher Id")
+        void voucherExceptionTest() throws Exception {
+            // given
+            Long invalidId = 1L;
+
+            // when
+            ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}", invalidId));
+
+            // then
+            response.andExpect(status().isNotFound())
+                    .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
+                    .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("error.message")
+                            .value(new EntityNotFoundException(VoucherKind.class).getMessage()));
+        }
     }
 }

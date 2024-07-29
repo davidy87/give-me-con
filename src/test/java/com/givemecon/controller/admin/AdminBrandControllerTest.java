@@ -1,5 +1,6 @@
 package com.givemecon.controller.admin;
 
+import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
@@ -10,9 +11,7 @@ import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.infrastructure.s3.S3MockConfig;
 import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +35,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,7 +114,7 @@ class AdminBrandControllerTest {
     }
 
     @AfterEach
-    void stop() {
+    void tearDown() {
         s3Mock.stop();
     }
 
@@ -262,5 +262,38 @@ class AdminBrandControllerTest {
 
         List<Brand> brandList = brandRepository.findAll();
         assertThat(brandList).isEmpty();
+    }
+
+    @Nested
+    @DisplayName("Brand API 예외 테스트")
+    class ExceptionTest {
+
+        @Test
+        @DisplayName("Brand Id 예외 - 존재하지 않는 Brand Id")
+        void brandsExceptionTest() throws Exception {
+            // given
+            String newName = "newCategory";
+            MockMultipartFile newIconFile = new MockMultipartFile(
+                    "icon",
+                    "new_brand.jpg",
+                    "image/jpg",
+                    "new_brand.jpg".getBytes());
+
+            Long invalidBrandId = 1L;
+
+            // when
+            ResultActions response =
+                    mockMvc.perform(multipart("/api/admin/brands/{id}", invalidBrandId)
+                            .file(newIconFile)
+                            .part(new MockPart("categoryId", String.valueOf(category.getId()).getBytes(StandardCharsets.UTF_8)))
+                            .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8))));
+
+            // then
+            response.andExpect(status().is4xxClientError())
+                    .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
+                    .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
+                    .andExpect(jsonPath("error.message")
+                            .value(new EntityNotFoundException(Brand.class).getMessage()));
+        }
     }
 }

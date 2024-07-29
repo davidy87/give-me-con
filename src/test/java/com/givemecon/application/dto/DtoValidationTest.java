@@ -221,7 +221,7 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("상태 수정 요청 DTO의 statusCode가 3(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
+    @DisplayName("상태 수정 요청 DTO의 statusCode가 1(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
     void saleRejectionRequestFailed() throws Exception {
         // given
         Integer statusCode = SALE_REJECTED.ordinal();
