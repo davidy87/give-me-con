@@ -2,6 +2,7 @@ package com.givemecon.infrastructure.tosspayments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.exception.payment.InvalidPaymentException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +18,7 @@ import java.util.Base64;
 import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class TossPaymentsRestClient {
 
@@ -26,12 +28,14 @@ public class TossPaymentsRestClient {
     @Value("${toss.secret-key}")
     private String secretKey;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RestClient.Builder restClientBuilder;
+
+    private final ObjectMapper objectMapper;
 
     public PaymentConfirmation requestPaymentConfirmation(PaymentRequest paymentRequest) {
         log.info("confirmationUrl = {}", confirmationUrl);
         log.info("secretKey = {}", secretKey);
-        RestClient restClient = RestClient.create();
+        RestClient restClient = restClientBuilder.build();
 
         return restClient.post()
                 .uri(confirmationUrl)
