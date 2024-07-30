@@ -34,7 +34,7 @@ public class S3Test {
     S3Client s3Client;
 
     @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucketName;
+    String bucketName;
 
     @BeforeEach
     void setup() {

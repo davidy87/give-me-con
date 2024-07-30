@@ -9,6 +9,10 @@ spring:
       hibernate:
         format_sql: true
 
+  data:
+    redis:
+      port: 6379
+
   cloud:
     aws:
       s3:

@@ -2,12 +2,11 @@ package com.givemecon.jwt;
 
 import com.givemecon.common.auth.jwt.token.RefreshToken;
 import com.givemecon.common.auth.jwt.token.RefreshTokenRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 
 import java.util.Optional;
 
@@ -15,8 +14,7 @@ import static com.givemecon.common.auth.enums.TokenDuration.REFRESH_TOKEN_DURATI
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
-@Transactional
-@SpringBootTest
+@DataRedisTest
 class RefreshTokenRepositoryTest {
 
     @Autowired

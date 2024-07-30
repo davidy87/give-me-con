@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,19 +21,20 @@ import static com.givemecon.common.auth.enums.OAuth2Provider.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
+@DataJpaTest
 class OAuth2MemberUtilsTest {
 
     @Autowired
     MemberRepository memberRepository;
 
-    @Autowired
     OAuth2MemberUtils oauth2MemberUtils;
 
     OAuth2Attributes oauth2Attributes;
 
     @BeforeEach
     void setup() {
+        oauth2MemberUtils = new OAuth2MemberUtils(memberRepository);
+
         Map<String, Object> attributes = new HashMap<>();
         attributes.put(GOOGLE.getEmailAttributeKey(), "tester@gmail.com");
         attributes.put(GOOGLE.getUsernameAttributeKey(), "tester");

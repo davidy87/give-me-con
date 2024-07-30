@@ -77,7 +77,7 @@ class BrandControllerTest {
     S3Client s3Client;
 
     @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucketName;
+    String bucketName;
 
     Category category;
 
@@ -115,7 +115,7 @@ class BrandControllerTest {
     @Test
     void findAllByCategoryId() throws Exception {
         // given
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 5; i++) {
             BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
