@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.util.StringUtils;
 import redis.embedded.RedisServer;
+import redis.embedded.model.OS;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,14 +40,14 @@ public class EmbeddedRedisConfig {
     }
 
     /**
-     * Embedded Redis가 현재 실행중인지 확인
+     * Embedded Redis가 현재 실행 중인지 확인
      */
     private boolean isRedisRunning(int redisPort) throws IOException {
         return isRunning(executeGrepProcessCommand(redisPort));
     }
 
     /**
-     * 현재 PC/서버에서 사용가능한 포트 조회
+     * 현재 PC/서버에서 사용 가능한 포트 조회
      */
     public int findAvailablePort() throws IOException {
         for (int port = 10000; port <= 65535; port++) {
@@ -61,16 +62,25 @@ public class EmbeddedRedisConfig {
     }
 
     /**
-     * 해당 port를 사용중인 프로세스 확인하는 cmd 실행
+     * 해당 port를 사용 중인 프로세스 확인하는 sh 실행
      */
     private Process executeGrepProcessCommand(int port) throws IOException {
-        String command = String.format("netstat -nao | find \"LISTENING\" | find \"%d\"", port);
-        String[] shell = {"cmd.exe", "/y", "/c", command};
+        OS currentOS = OS.detectOS();
+        String[] shell;
+
+        if (currentOS == OS.WINDOWS) {
+            String command = String.format("netstat -nao | find \"LISTENING\" | find \"%d\"", port);
+            shell = new String[]{"cmd.exe", "/y", "/c", command};
+        } else {
+            String command = String.format("netstat -nat | grep LISTEN|grep %d", port);
+            shell = new String[]{"/bin/sh", "-c", command};
+        }
+
         return Runtime.getRuntime().exec(shell);
     }
 
     /**
-     * 해당 Process가 현재 실행중인지 확인
+     * 해당 Process가 현재 실행 중인지 확인
      */
     private boolean isRunning(Process process) {
         String line;
