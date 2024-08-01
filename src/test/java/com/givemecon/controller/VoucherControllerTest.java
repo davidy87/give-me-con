@@ -21,7 +21,6 @@ import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -35,7 +34,6 @@ import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
-import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
@@ -81,13 +79,9 @@ class VoucherControllerTest {
 
     Member user;
 
-    Member admin;
-
     VoucherKind voucherKind;
 
     TokenInfo userTokenInfo;
-
-    TokenInfo adminTokenInfo;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -108,14 +102,7 @@ class VoucherControllerTest {
                 .role(USER)
                 .build());
 
-        admin = memberRepository.save(Member.builder()
-                .email("admin@gmail.com")
-                .username("admin")
-                .role(ADMIN)
-                .build());
-
         userTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
-        adminTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(admin));
     }
 
     @Test
@@ -267,7 +254,7 @@ class VoucherControllerTest {
     }
 
     @Test
-    void findAllByVoucherKindId() throws Exception {
+    void findAllForSaleByVoucherKindId() throws Exception {
         // given
         Member seller = memberRepository.save(Member.builder()
                 .email("seller@gmail.com")
@@ -297,7 +284,7 @@ class VoucherControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(adminTokenInfo))
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo))
                 .queryParam("voucherKindId", String.valueOf(voucherKind.getId())));
 
         // then
@@ -322,7 +309,6 @@ class VoucherControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER")
     @DisplayName("기프티콘 이미지 조회 API 테스트")
     void findImageUrl() throws Exception {
         // given
@@ -344,6 +330,7 @@ class VoucherControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/vouchers/{id}/image", voucher.getId())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then

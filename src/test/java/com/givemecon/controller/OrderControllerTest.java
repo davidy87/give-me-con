@@ -1,10 +1,12 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.application.dto.MemberDto;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -33,7 +35,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -48,11 +49,14 @@ import java.util.UUID;
 
 import static com.givemecon.application.dto.OrderDto.OrderNumberResponse;
 import static com.givemecon.application.dto.OrderDto.OrderRequest;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
+import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.domain.entity.order.OrderStatus.IN_PROGRESS;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.ORDER_PLACED;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -108,7 +112,12 @@ class OrderControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Autowired
+    JwtTokenService jwtTokenService;
+
     Member buyer;
+
+    TokenInfo buyerTokenInfo;
 
     List<Long> voucherForSaleIdList;
 
@@ -124,13 +133,15 @@ class OrderControllerTest {
         buyer = memberRepository.save(Member.builder()
                 .email("buyer@gmail.com")
                 .username("buyer")
-                .role(Role.USER)
+                .role(USER)
                 .build());
+
+        buyerTokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(buyer));
 
         Member seller = memberRepository.save(Member.builder()
                 .email("seller@gmail.com")
                 .username("seller")
-                .role(Role.USER)
+                .role(USER)
                 .build());
 
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
@@ -198,7 +209,6 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER", username = "buyer")
     @DisplayName("주문 생성 요청 API 테스트")
     void placeOrder() throws Exception {
         // given
@@ -208,6 +218,7 @@ class OrderControllerTest {
         String requestBody = new ObjectMapper().writeValueAsString(orderRequest);
 
         ResultActions response = mockMvc.perform(post("/api/orders")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(buyerTokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
@@ -246,7 +257,6 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER", username = "buyer")
     @DisplayName("주문 조회 요청 API 테스트")
     void findOrder() throws Exception {
         // given
@@ -267,13 +277,14 @@ class OrderControllerTest {
         orderRepository.save(order);
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getOrderNumber()));
+        ResultActions response = mockMvc.perform(get("/api/orders/{orderNumber}", order.getOrderNumber())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(buyerTokenInfo)));
 
         // then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("orderNumber").value(orderNumber))
                 .andExpect(jsonPath("status").value(IN_PROGRESS.name()))
-                .andExpect(jsonPath("customerName").value("buyer"))
+                .andExpect(jsonPath("customerName").value(buyer.getUsername()))
                 .andExpect(jsonPath("quantity").value(quantity))
                 .andExpect(jsonPath("totalPrice").value(amount))
                 .andExpect(jsonPath("orderItems").isNotEmpty())
@@ -302,7 +313,6 @@ class OrderControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER", username = "buyer")
     @DisplayName("주문 취소 요청 API 테스트")
     void cancelOrder() throws Exception {
         // given
@@ -313,7 +323,8 @@ class OrderControllerTest {
                 .forEach(voucherForSale -> voucherForSale.updateOrder(order));
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getOrderNumber()));
+        ResultActions response = mockMvc.perform(delete("/api/orders/{orderNumber}", order.getOrderNumber())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(buyerTokenInfo)));
 
         // then
         Optional<Order> orderFound = orderRepository.findById(order.getId());

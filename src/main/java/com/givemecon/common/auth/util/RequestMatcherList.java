@@ -14,6 +14,7 @@ public final class RequestMatcherList {
 
     public static RequestMatcher[] ofPermitAll() {
         return new AntPathRequestMatcher[] {
+                antMatcher(ADMIN_SIGNUP_API.getPattern()),
                 antMatcher(ADMIN_LOGIN_API.getPattern()),
                 antMatcher(AUTH_SUCCESS_API.getPattern()),
                 antMatcher(GET, CATEGORY_API.getPattern()),

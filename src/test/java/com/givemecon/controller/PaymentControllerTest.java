@@ -1,10 +1,12 @@
 package com.givemecon.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.application.dto.MemberDto;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -40,7 +42,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -51,8 +52,11 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
+import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -109,7 +113,10 @@ class PaymentControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    Member buyer;
+    @Autowired
+    JwtTokenService jwtTokenService;
+
+    TokenInfo tokenInfo;
 
     Order order;
 
@@ -122,11 +129,13 @@ class PaymentControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        buyer = memberRepository.save(Member.builder()
-                .username("tester")
-                .email("test@gmail.com")
-                .role(Role.USER)
+        Member buyer = memberRepository.save(Member.builder()
+                .username("buyer")
+                .email("buyer@gmail.com")
+                .role(USER)
                 .build());
+
+        tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(buyer));
 
         order = orderRepository.save(new Order("ORDER-NUMBER", buyer));
 
@@ -184,7 +193,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER", username = "tester")
     @DisplayName("결제 승인 요청 API 테스트")
     void confirmPayment() throws Exception {
         // given
@@ -204,6 +212,7 @@ class PaymentControllerTest {
         // when
         String requestBody = objectMapper.writeValueAsString(paymentRequest);
         ResultActions response = mockMvc.perform(post("/api/payments/confirm")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody));
 
@@ -231,7 +240,6 @@ class PaymentControllerTest {
     }
 
     @Test
-    @WithMockUser(roles = "USER", username = "tester")
     @DisplayName("결제 내역 조회 요청 API 테스트")
     void findPaymentHistory(@Autowired PaymentRepository paymentRepository) throws Exception {
         // given
@@ -244,7 +252,8 @@ class PaymentControllerTest {
                 .build());
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/payments/{paymentKey}", payment.getPaymentKey()));
+        ResultActions response = mockMvc.perform(get("/api/payments/{paymentKey}", payment.getPaymentKey())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())

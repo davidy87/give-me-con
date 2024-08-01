@@ -95,8 +95,8 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
-    public List<VoucherResponse> findAllForSaleByVoucherId(Long voucherId, String username) {
-        return voucherRepository.findAllExceptSellersByVoucherKindIdAndStatus(voucherId, FOR_SALE, username).stream()
+    public List<VoucherResponse> findAllForSaleByVoucherKindId(Long voucherKindId, String username) {
+        return voucherRepository.findAllExceptSellersByVoucherKindIdAndStatus(voucherKindId, FOR_SALE, username).stream()
                 .map(VoucherResponse::new)
                 .toList();
     }

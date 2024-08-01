@@ -1,11 +1,16 @@
 package com.givemecon.controller.admin;
 
+import com.givemecon.application.dto.MemberDto;
 import com.givemecon.application.dto.VoucherKindDto;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
+import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
+import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
@@ -22,7 +27,6 @@ import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -33,8 +37,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -50,7 +57,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
 class AdminVoucherKindControllerTest {
@@ -75,6 +81,14 @@ class AdminVoucherKindControllerTest {
     @Autowired
     VoucherRepository voucherRepository;
 
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    JwtTokenService jwtTokenService;
+
+    TokenInfo tokenInfo;
+
     Brand brand;
 
     @BeforeEach
@@ -85,6 +99,14 @@ class AdminVoucherKindControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        Member admin = memberRepository.save(Member.builder()
+                .email("admin@gmail.com")
+                .username("admin")
+                .role(ADMIN)
+                .build());
+
+        tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(admin));
 
         Category category = categoryRepository.save(Category.builder()
                 .name("category")
@@ -114,7 +136,7 @@ class AdminVoucherKindControllerTest {
                 .file(imageFile)
                 .part(new MockPart("brandId", brand.getId().toString().getBytes()))
                 .part(new MockPart("title", title.getBytes()))
-        );
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         List<VoucherKind> voucherKindList = voucherKindRepository.findAll();
@@ -181,7 +203,7 @@ class AdminVoucherKindControllerTest {
         ResultActions response = mockMvc.perform(multipart("/api/admin/voucher-kinds/{id}", voucherKind.getId())
                 .file(imageFileToUpdate)
                 .part(new MockPart("title", newTitle.getBytes(StandardCharsets.UTF_8)))
-        );
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())
@@ -222,7 +244,8 @@ class AdminVoucherKindControllerTest {
                 .build());
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/admin/voucher-kinds/{id}", voucherKind.getId()));
+        ResultActions response = mockMvc.perform(delete("/api/admin/voucher-kinds/{id}", voucherKind.getId())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isNoContent())

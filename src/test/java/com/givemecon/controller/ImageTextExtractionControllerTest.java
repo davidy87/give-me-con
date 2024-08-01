@@ -77,8 +77,6 @@ class ImageTextExtractionControllerTest {
     @Autowired
     JwtTokenService jwtTokenService;
 
-    Member member;
-
     TokenInfo tokenInfo;
 
     @BeforeEach
@@ -90,13 +88,13 @@ class ImageTextExtractionControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        member = memberRepository.save(Member.builder()
-                .email("test@gmail.com")
-                .username("tester")
+        Member user = memberRepository.save(Member.builder()
+                .email("user@gmail.com")
+                .username("user")
                 .role(USER)
                 .build());
 
-        tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(member));
+        tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(user));
 
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey("imageKey")

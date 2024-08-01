@@ -9,7 +9,6 @@ import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +81,6 @@ class VoucherKindControllerTest {
     }
 
     @Test
-    @DisplayName("VoucherKind 단일 조회 1 - 로그인하지 않은 상태에서는 ")
     void findOne() throws Exception {
         // given
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()

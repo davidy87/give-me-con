@@ -1,8 +1,13 @@
 package com.givemecon.controller.admin;
 
+import com.givemecon.application.dto.MemberDto;
+import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
+import com.givemecon.domain.entity.member.Member;
+import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import org.junit.jupiter.api.*;
@@ -14,7 +19,6 @@ import org.springframework.mock.web.MockPart;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -25,9 +29,12 @@ import org.springframework.web.context.WebApplicationContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
+import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -43,7 +50,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
 class AdminCategoryControllerTest {
@@ -59,6 +65,14 @@ class AdminCategoryControllerTest {
     @Autowired
     CategoryIconRepository categoryIconRepository;
 
+    @Autowired
+    MemberRepository memberRepository;
+
+    @Autowired
+    JwtTokenService jwtTokenService;
+
+    TokenInfo tokenInfo;
+
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -67,6 +81,14 @@ class AdminCategoryControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
+
+        Member admin = memberRepository.save(Member.builder()
+                .email("admin@gmail.com")
+                .username("admin")
+                .role(ADMIN)
+                .build());
+
+        tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(admin));
     }
 
     @Test
@@ -82,7 +104,8 @@ class AdminCategoryControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/admin/categories")
                 .file(iconFile)
-                .part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8))));
+                .part(new MockPart("name", name.getBytes(StandardCharsets.UTF_8)))
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         List<Category> categoryList = categoryRepository.findAll();
@@ -137,7 +160,8 @@ class AdminCategoryControllerTest {
         // when
         ResultActions response = mockMvc.perform(multipart("/api/admin/categories/{id}", category.getId())
                 .file(newIconFile)
-                .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8))));
+                .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         List<Category> categoryList = categoryRepository.findAll();
@@ -186,7 +210,8 @@ class AdminCategoryControllerTest {
                 .build());
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/admin/categories/{id}", category.getId()));
+        ResultActions response = mockMvc.perform(delete("/api/admin/categories/{id}", category.getId())
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isNoContent())
@@ -223,7 +248,8 @@ class AdminCategoryControllerTest {
             ResultActions response =
                     mockMvc.perform(multipart("/api/admin/categories/{id}", invalidCategoryId)
                             .file(newIconFile)
-                            .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8))));
+                            .part(new MockPart("name", newName.getBytes(StandardCharsets.UTF_8)))
+                            .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
             // then
             response

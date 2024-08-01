@@ -16,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -25,7 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.List;
+
 import static com.givemecon.util.ApiDocumentUtils.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -37,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
 class BrandControllerTest {
@@ -108,11 +109,11 @@ class BrandControllerTest {
         ResultActions response = mockMvc.perform(get(uri));
 
         // then
-//        List<Brand> brandList = brandRepository.findAll();
-//
-//        for (Brand brand : brandList) {
-//            assertThat(brand.getCategory()).isEqualTo(category);
-//        }
+        List<Brand> brandList = brandRepository.findAll();
+
+        for (Brand brand : brandList) {
+            assertThat(brand.getCategory()).isEqualTo(category);
+        }
 
         response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",
@@ -122,9 +123,9 @@ class BrandControllerTest {
                                 parameterWithName("categoryId").description("카테고리 id")
                         ),
                         responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("페이징된 브랜드 id"),
-                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("페이징된 브랜드 name"),
-                                fieldWithPath("[].iconUrl").type(JsonFieldType.STRING).description("페이징된 브랜드 iconUrl")
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("브랜드 id"),
+                                fieldWithPath("[].name").type(JsonFieldType.STRING).description("브랜드 name"),
+                                fieldWithPath("[].iconUrl").type(JsonFieldType.STRING).description("브랜드 iconUrl")
                         ))
                 );
     }
