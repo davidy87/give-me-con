@@ -14,7 +14,6 @@ import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
-import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
@@ -102,9 +101,6 @@ class OrderControllerTest {
 
     @Autowired
     VoucherImageRepository voucherImageRepository;
-
-    @Autowired
-    PurchasedVoucherRepository purchasedVoucherRepository;
 
     @Autowired
     OrderRepository orderRepository;

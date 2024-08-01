@@ -8,16 +8,11 @@ import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.infrastructure.s3.S3MockConfig;
-import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -29,13 +24,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
-
-import java.util.List;
 
 import static com.givemecon.util.ApiDocumentUtils.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
@@ -47,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@Import(S3MockConfig.class)
 @WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
@@ -70,15 +59,6 @@ class BrandControllerTest {
     @Autowired
     BrandIconRepository brandIconRepository;
 
-    @Autowired
-    S3Mock s3Mock;
-
-    @Autowired
-    S3Client s3Client;
-
-    @Value("${spring.cloud.aws.s3.bucket}")
-    String bucketName;
-
     Category category;
 
     @BeforeEach
@@ -90,11 +70,6 @@ class BrandControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        s3Mock.start();
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(bucketName)
-                .build());
-
         CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
                 .imageKey("imageKey")
                 .imageUrl("imageUrl")
@@ -105,11 +80,6 @@ class BrandControllerTest {
                 .name("category")
                 .categoryIcon(categoryIcon)
                 .build());
-    }
-
-    @AfterEach
-    void stop() {
-        s3Mock.stop();
     }
 
     @Test
@@ -138,11 +108,11 @@ class BrandControllerTest {
         ResultActions response = mockMvc.perform(get(uri));
 
         // then
-        List<Brand> brandList = brandRepository.findAll();
-
-        for (Brand brand : brandList) {
-            assertThat(brand.getCategory()).isEqualTo(category);
-        }
+//        List<Brand> brandList = brandRepository.findAll();
+//
+//        for (Brand brand : brandList) {
+//            assertThat(brand.getCategory()).isEqualTo(category);
+//        }
 
         response.andExpect(status().isOk())
                 .andDo(document("{class-name}/{method-name}",

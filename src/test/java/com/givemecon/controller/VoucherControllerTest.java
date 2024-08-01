@@ -11,14 +11,10 @@ import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.infrastructure.s3.S3MockConfig;
-import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
@@ -32,8 +28,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,7 +55,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@Import(S3MockConfig.class)
 @Transactional
 @SpringBootTest
 class VoucherControllerTest {
@@ -86,15 +79,6 @@ class VoucherControllerTest {
     @Autowired
     JwtTokenService jwtTokenService;
 
-    @Autowired
-    S3Mock s3Mock;
-
-    @Autowired
-    S3Client s3Client;
-
-    @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucketName;
-
     Member user;
 
     Member admin;
@@ -113,11 +97,6 @@ class VoucherControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
-
-        s3Mock.start();
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(bucketName)
-                .build());
 
         voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("voucherKind")
@@ -139,15 +118,10 @@ class VoucherControllerTest {
         adminTokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(admin));
     }
 
-    @AfterEach
-    void stop() {
-        s3Mock.stop();
-    }
-
     @Test
     void save() throws Exception {
         // given
-        Long price = 4_000L;
+        long price = 4_000L;
         LocalDate expDate = LocalDate.now().plusDays(1);
         String barcode = "1111 1111 1111";
         MockMultipartFile imageFile = new MockMultipartFile(
@@ -160,7 +134,7 @@ class VoucherControllerTest {
         ResultActions response = mockMvc.perform(multipart("/api/vouchers")
                 .file(imageFile)
                 .part(new MockPart("voucherKindId", voucherKind.getId().toString().getBytes()))
-                .part(new MockPart("price", price.toString().getBytes()))
+                .part(new MockPart("price", String.valueOf(price).getBytes()))
                 .part(new MockPart("expDate", expDate.toString().getBytes()))
                 .part(new MockPart("barcode", barcode.getBytes()))
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo))

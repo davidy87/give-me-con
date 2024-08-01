@@ -61,7 +61,7 @@ dependencies {
 	// Spring Cloud (S3)
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.0")
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
-	testImplementation 'io.findify:s3mock_2.13:0.2.6'
+	implementation 'io.findify:s3mock_2.13:0.2.6'
 
 	// Spring Cloud Google Cloud (For Cloud Vision API)
 	implementation platform("com.google.cloud:spring-cloud-gcp-dependencies:4.1.3")

@@ -6,17 +6,12 @@ import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.infrastructure.s3.S3MockConfig;
-import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
@@ -28,8 +23,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -52,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@Import(S3MockConfig.class)
 @WithMockUser(roles = "ADMIN")
 @Transactional
 @SpringBootTest
@@ -69,15 +61,6 @@ class AdminVoucherControllerTest {
     @Autowired
     VoucherRepository voucherRepository;
 
-    @Autowired
-    S3Mock s3Mock;
-
-    @Autowired
-    S3Client s3Client;
-
-    @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucketName;
-
     VoucherKind voucherKind;
 
     @BeforeEach
@@ -89,19 +72,9 @@ class AdminVoucherControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        s3Mock.start();
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(bucketName)
-                .build());
-
         voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("voucherKind")
                 .build());
-    }
-
-    @AfterEach
-    void tearDown() {
-        s3Mock.stop();
     }
 
     @Test
