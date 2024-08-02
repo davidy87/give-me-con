@@ -4,21 +4,18 @@ import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.entity.brand.Brand;
-import com.givemecon.domain.entity.brand.BrandIcon;
-import com.givemecon.domain.entity.category.Category;
-import com.givemecon.domain.entity.category.CategoryIcon;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
-import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
-import com.givemecon.domain.repository.category.CategoryIconRepository;
-import com.givemecon.domain.repository.category.CategoryRepository;
+import com.givemecon.infrastructure.gcp.ocr.TextExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -31,12 +28,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URL;
+import java.time.LocalDate;
 
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
@@ -46,6 +45,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.partWith
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(RestDocumentationExtension.class)
@@ -62,21 +62,17 @@ class ImageTextExtractionControllerTest {
     MemberRepository memberRepository;
 
     @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    CategoryIconRepository categoryIconRepository;
-
-    @Autowired
     BrandRepository brandRepository;
-
-    @Autowired
-    BrandIconRepository brandIconRepository;
 
     @Autowired
     JwtTokenService jwtTokenService;
 
+    @MockBean
+    TextExtractor textExtractor;
+
     TokenInfo tokenInfo;
+
+    Brand brand;
 
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
@@ -95,34 +91,21 @@ class ImageTextExtractionControllerTest {
 
         tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(user));
 
-        CategoryIcon categoryIcon = categoryIconRepository.save(CategoryIcon.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("categoryIcon")
-                .build());
-
-        Category category = categoryRepository.save(Category.builder()
-                .name("category")
-                .categoryIcon(categoryIcon)
-                .build());
-
-        BrandIcon brandIcon = brandIconRepository.save(BrandIcon.builder()
-                .imageKey("imageKey")
-                .imageUrl("imageUrl")
-                .originalName("brandIcon")
-                .build());
-
-        brandRepository.save(Brand.builder()
-                .name("brand")
-                .brandIcon(brandIcon)
-                .category(category)
+        brand = brandRepository.save(Brand.builder()
+                .name("Starbucks")
                 .build());
     }
 
     @Test
     void extractTextFromImage(@Value("${gcp.test-voucher-image.url}") String imageUrl) throws Exception {
         // given
+        String brandName = brand.getName();
+        String expDate = LocalDate.of(2024, 8, 7).toString();
+        String barcode = "1111 1111 1111";
+
         MockMultipartFile imageFile = new MockMultipartFile("imageFile", new URL(imageUrl).openStream());
+        Mockito.when(textExtractor.extractTextFromImage(eq(imageFile.getResource())))
+                .thenReturn(String.format("%s\n%s\n%s\n", brandName, expDate, barcode));
 
         // when
         ResultActions response =
@@ -133,6 +116,9 @@ class ImageTextExtractionControllerTest {
 
         // then
         response.andExpect(status().isOk())
+                .andExpect(jsonPath("brandName").value(brandName))
+                .andExpect(jsonPath("expDate").value(expDate))
+                .andExpect(jsonPath("barcode").value(barcode))
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
