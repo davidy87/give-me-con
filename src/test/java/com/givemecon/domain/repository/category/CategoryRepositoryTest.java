@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository.category;
 
+import com.givemecon.common.configuration.JpaConfig;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
 import lombok.extern.slf4j.Slf4j;
@@ -7,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +17,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@Transactional
-@SpringBootTest
+@Import(JpaConfig.class)
+@DataJpaTest
 class CategoryRepositoryTest {
 
     @Autowired

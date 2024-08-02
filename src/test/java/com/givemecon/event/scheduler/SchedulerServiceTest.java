@@ -7,7 +7,6 @@ import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +21,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
-@Transactional
 @ExtendWith(MockitoExtension.class)
 class SchedulerServiceTest {
 

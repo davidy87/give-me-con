@@ -21,8 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -48,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@ExtendWith(RestDocumentationExtension.class)
 @Transactional
 @SpringBootTest
 class LikedVoucherControllerTest {
@@ -73,7 +71,7 @@ class LikedVoucherControllerTest {
     @Autowired
     LikedVoucherRepository likedVoucherRepository;
 
-    Member member;
+    Member user;
 
     TokenInfo tokenInfo;
 
@@ -86,13 +84,13 @@ class LikedVoucherControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        member = memberRepository.save(Member.builder()
-                .email("tester@gmail.com")
-                .username("tester")
+        user = memberRepository.save(Member.builder()
+                .email("user@gmail.com")
+                .username("user")
                 .role(USER)
                 .build());
 
-        tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
+        tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
     }
 
     @Test
@@ -144,11 +142,10 @@ class LikedVoucherControllerTest {
         List<LikedVoucher> likedVoucherList = likedVoucherRepository.findAll();
         LikedVoucher found = likedVoucherList.get(0);
         assertThat(found.getVoucherKind()).isEqualTo(voucherKind);
-        assertThat(found.getMember()).isEqualTo(member);
+        assertThat(found.getMember()).isEqualTo(user);
     }
 
     @Test
-    @WithMockUser(roles = "USER", username = "tester")
     void findAllByUsername() throws Exception {
         // given
         for (int i = 1; i <= 5; i++) {
@@ -165,11 +162,12 @@ class LikedVoucherControllerTest {
                     .voucherKindImage(voucherKindImage)
                     .build());
 
-            likedVoucherRepository.save(new LikedVoucher(member, voucherKind));
+            likedVoucherRepository.save(new LikedVoucher(user, voucherKind));
         }
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/liked-vouchers"));
+        ResultActions response = mockMvc.perform(get("/api/liked-vouchers")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
         response.andExpect(status().isOk())
@@ -196,7 +194,7 @@ class LikedVoucherControllerTest {
 
         LikedVoucher likedVoucherSaved = likedVoucherRepository.save(
                 LikedVoucher.builder()
-                        .member(member)
+                        .member(user)
                         .voucherKind(voucherKindSaved)
                         .build());
 

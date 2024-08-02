@@ -20,6 +20,7 @@ public enum ApiPathPattern {
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts"),
 
     ADMIN_API("/admin/**"),
+    ADMIN_SIGNUP_API("/admin/members/signup"),
     ADMIN_LOGIN_API("/admin/members/login");
 
     private static final String BASE_PATH = "/api";

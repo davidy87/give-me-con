@@ -1,7 +1,7 @@
 spring:
   profiles:
     active: test
-    include: client,test,API-KEY,oauth,jwt,gcp,payment
+    include: client,API-KEY,oauth,jwt,gcp,payment
 
   jpa:
     show_sql: true
@@ -9,10 +9,16 @@ spring:
       hibernate:
         format_sql: true
 
+  data:
+    redis:
+      port: 6379
+
   cloud:
     aws:
       s3:
         bucket: test-bucket
+        mock:
+          port: 8001
       region:
         static: ap-northeast-2
       stack:

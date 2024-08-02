@@ -4,28 +4,19 @@ import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.infrastructure.s3.S3MockConfig;
-import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -37,9 +28,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@Import(S3MockConfig.class)
-@WithMockUser(roles = "ADMIN")
+@ExtendWith(RestDocumentationExtension.class)
 @Transactional
 @SpringBootTest
 class CategoryControllerTest {
@@ -55,15 +44,6 @@ class CategoryControllerTest {
     @Autowired
     CategoryIconRepository categoryIconRepository;
 
-    @Autowired
-    S3Mock s3Mock;
-
-    @Autowired
-    S3Client s3Client;
-
-    @Value("${spring.cloud.aws.s3.bucket}")
-    private String bucketName;
-
     @BeforeEach
     void setup(RestDocumentationContextProvider restDoc) {
         mockMvc = MockMvcBuilders
@@ -72,16 +52,6 @@ class CategoryControllerTest {
                 .apply(documentationConfiguration(restDoc))
                 .alwaysDo(print())
                 .build();
-
-        s3Mock.start();
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(bucketName)
-                .build());
-    }
-
-    @AfterEach
-    void shutdown() {
-        s3Mock.stop();
     }
 
     @Test

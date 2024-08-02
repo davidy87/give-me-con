@@ -6,32 +6,22 @@ import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
-import com.givemecon.infrastructure.s3.S3MockConfig;
-import io.findify.s3mock.S3Mock;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 import static com.givemecon.application.dto.VoucherKindDto.VoucherKindDetailResponse;
 import static com.givemecon.util.ApiDocumentUtils.*;
@@ -46,8 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@Import(S3MockConfig.class)
+@ExtendWith(RestDocumentationExtension.class)
 @Transactional
 @SpringBootTest
 class VoucherKindControllerTest {
@@ -69,18 +58,6 @@ class VoucherKindControllerTest {
     @Autowired
     VoucherKindImageRepository voucherKindImageRepository;
 
-    @Autowired
-    VoucherRepository voucherRepository;
-
-    @Autowired
-    S3Client s3Client;
-
-    @Autowired
-    S3Mock s3Mock;
-
-    @Value("${spring.cloud.aws.s3.bucket}")
-    String bucketName;
-
     Brand brand;
 
     @BeforeEach
@@ -92,11 +69,6 @@ class VoucherKindControllerTest {
                 .alwaysDo(print())
                 .build();
 
-        s3Mock.start();
-        s3Client.createBucket(CreateBucketRequest.builder()
-                .bucket(bucketName)
-                .build());
-
         Category category = categoryRepository.save(Category.builder()
                 .name("category")
                 .build());
@@ -107,13 +79,7 @@ class VoucherKindControllerTest {
                 .build());
     }
 
-    @AfterEach
-    void stop() {
-        s3Mock.stop();
-    }
-
     @Test
-    @DisplayName("VoucherKind 단일 조회 1 - 로그인하지 않은 상태에서는 ")
     void findOne() throws Exception {
         // given
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()

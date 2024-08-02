@@ -1,10 +1,6 @@
 package com.givemecon.application.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.auth.jwt.token.JwtTokenService;
-import com.givemecon.domain.entity.member.Member;
-import com.givemecon.domain.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,22 +14,17 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.givemecon.application.dto.MemberDto.TokenRequest;
 import static com.givemecon.application.dto.OrderDto.OrderRequest;
 import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequest;
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequestList;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
-import static com.givemecon.domain.entity.member.Role.ADMIN;
-import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
-import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static com.givemecon.common.error.GlobalErrorCode.INVALID_ARGUMENT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -41,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@Transactional
 @SpringBootTest
 public class DtoValidationTest {
 
@@ -51,16 +41,7 @@ public class DtoValidationTest {
     MockMvc mockMvc;
 
     @Autowired
-    JwtTokenService jwtTokenService;
-
-    @Autowired
-    MemberRepository memberRepository;
-
-    Member member;
-
-    TokenInfo tokenInfo;
-
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper;
 
     @BeforeEach
     void setup() {
@@ -68,17 +49,10 @@ public class DtoValidationTest {
                 .webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
-
-        member = memberRepository.save(Member.builder()
-                .username("tester")
-                .email("test@gmail.com")
-                .role(ADMIN)
-                .build());
-
-        tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("Category Request DTO 검증 실패 테스트")
     void categoryDtoFailed() throws Exception {
         // given
@@ -88,9 +62,7 @@ public class DtoValidationTest {
         // when
         ResultActions saveResult = mockMvc.perform(multipart("/api/admin/categories")
                 .file(iconFile)
-                .part(name)
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
-        );
+                .part(name));
 
         // then
         log.info(saveResult.andReturn()
@@ -106,6 +78,7 @@ public class DtoValidationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("Brand Request DTO 검증 실패 테스트")
     void brandDtoFailed() throws Exception {
         // given
@@ -117,9 +90,7 @@ public class DtoValidationTest {
         ResultActions saveResult = mockMvc.perform(multipart("/api/admin/brands")
                 .file(iconFile)
                 .part(invalidCategoryId)
-                .part(name)
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
-        );
+                .part(name));
 
         // then
         log.info(saveResult.andReturn()
@@ -135,6 +106,7 @@ public class DtoValidationTest {
     }
 
     @Test
+    @WithMockUser(roles = "ADMIN")
     @DisplayName("VoucherKind Request DTO 검증 실패 테스트")
     void voucherDtoFailed() throws Exception {
         // given
@@ -146,9 +118,7 @@ public class DtoValidationTest {
         ResultActions saveResult = mockMvc.perform(multipart("/api/admin/voucher-kinds")
                 .file(imageFile)
                 .part(price)
-                .part(title)
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
-        );
+                .part(title));
 
         // then
         log.info(saveResult.andReturn()
@@ -164,6 +134,7 @@ public class DtoValidationTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     @DisplayName("Voucher Request DTO 검증 실패 테스트")
     void voucherForSaleDtoFailed() throws Exception {
         // given
@@ -179,9 +150,7 @@ public class DtoValidationTest {
                 .part(title)
                 .part(price)
                 .part(expDate)
-                .part(barcode)
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
-        );
+                .part(barcode));
 
         // then
         log.info(saveResult.andReturn()
@@ -197,6 +166,7 @@ public class DtoValidationTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     @DisplayName("상태별 Voucher 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 5까지만 가능하다.")
     void statusCodeParameterFailed() throws Exception {
         // given
@@ -204,7 +174,6 @@ public class DtoValidationTest {
 
         // when
         ResultActions saveResult = mockMvc.perform(get("/api/vouchers")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .queryParam("statusCode", String.valueOf(invalidStatusCode)));
 
         // then
@@ -221,7 +190,8 @@ public class DtoValidationTest {
     }
 
     @Test
-    @DisplayName("상태 수정 요청 DTO의 statusCode가 3(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
+    @WithMockUser(roles = "ADMIN")
+    @DisplayName("상태 수정 요청 DTO의 statusCode가 1(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
     void saleRejectionRequestFailed() throws Exception {
         // given
         Integer statusCode = SALE_REJECTED.ordinal();
@@ -231,7 +201,6 @@ public class DtoValidationTest {
         requestBody.setStatusCode(statusCode);
 
         ResultActions saveResult = mockMvc.perform(put("/api/admin/vouchers/{id}", 1)
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestBody)));
 
@@ -249,6 +218,7 @@ public class DtoValidationTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     @DisplayName("PurchasedVoucher Request DTO 검증 테스트 1")
     void invalidPurchasedVoucherRequest() throws Exception {
         // given
@@ -257,7 +227,6 @@ public class DtoValidationTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDtoList))
         );
@@ -274,6 +243,7 @@ public class DtoValidationTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     @DisplayName("PurchasedVoucher Request DTO 검증 테스트 2")
     void invalidPurchasedVoucherRequestList() throws Exception {
         // given
@@ -281,7 +251,6 @@ public class DtoValidationTest {
 
         // when
         ResultActions response = mockMvc.perform(post("/api/purchased-vouchers")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestDtoList))
         );

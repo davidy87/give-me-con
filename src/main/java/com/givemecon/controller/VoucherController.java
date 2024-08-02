@@ -40,7 +40,7 @@ public class VoucherController {
         }
 
         if (paramDto.getVoucherKindId() != null) {
-            return voucherService.findAllForSaleByVoucherId(paramDto.getVoucherKindId(), username);
+            return voucherService.findAllForSaleByVoucherKindId(paramDto.getVoucherKindId(), username);
         }
 
         return voucherService.findAllByUsername(username);

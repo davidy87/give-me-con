@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @Import(JpaConfig.class)
-@Transactional
 @DataJpaTest
 class VoucherRepositoryTest {
 
