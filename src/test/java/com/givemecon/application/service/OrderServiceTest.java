@@ -47,6 +47,9 @@ class OrderServiceTest {
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
 
+    @InjectMocks
+    OrderService orderService;
+
     @Mock
     Member seller;
 
@@ -58,9 +61,6 @@ class OrderServiceTest {
 
     @Mock
     Order order;
-
-    @InjectMocks
-    OrderService orderService;
 
     @BeforeEach
     void setup() {

@@ -1,19 +1,38 @@
 package com.givemecon.jwt;
 
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.common.auth.jwt.token.RefreshTokenRepository;
+import com.givemecon.domain.repository.MemberRepository;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class JwtTokenServiceTest {
 
-    @Autowired
+    @Mock
+    MemberRepository memberRepository;
+
+    @Mock
+    RefreshTokenRepository refreshTokenRepository;
+
     JwtTokenService jwtTokenService;
+
+    @BeforeEach
+    void setUp() {
+        jwtTokenService = new JwtTokenService(generateRandomSecretKey(), refreshTokenRepository, memberRepository);
+    }
+
+    private String generateRandomSecretKey() {
+        return RandomStringUtils.random(50, true, true);
+    }
 
     @Test
     void retrieveTokenFromCorrectHeader() {

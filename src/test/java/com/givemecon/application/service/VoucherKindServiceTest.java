@@ -52,7 +52,6 @@ class VoucherKindServiceTest {
 
         Mockito.when(voucherKindRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(voucherKind));
-
     }
 
     @Test

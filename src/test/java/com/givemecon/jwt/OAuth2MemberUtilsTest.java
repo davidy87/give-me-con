@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.common.auth.enums.OAuth2Provider.*;
 import static org.assertj.core.api.Assertions.*;
 
-@Transactional
 @DataJpaTest
 class OAuth2MemberUtilsTest {
 

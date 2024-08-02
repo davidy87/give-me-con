@@ -2,7 +2,6 @@ package com.givemecon.jwt;
 
 import com.givemecon.common.auth.jwt.token.RefreshToken;
 import com.givemecon.common.auth.jwt.token.RefreshTokenRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import java.util.Optional;
 import static com.givemecon.common.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static org.assertj.core.api.Assertions.*;
 
-@Slf4j
 @DataRedisTest
 class RefreshTokenRepositoryTest {
 

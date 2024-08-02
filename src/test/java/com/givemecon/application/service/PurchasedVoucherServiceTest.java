@@ -31,13 +31,13 @@ class PurchasedVoucherServiceTest {
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
 
+    @Mock
+    PurchasedVoucher purchasedVoucher;
+
     @InjectMocks
     PurchasedVoucherService purchasedVoucherService;
 
     Voucher voucher;
-
-    @Mock
-    PurchasedVoucher purchasedVoucher;
 
     @BeforeEach
     void setup() {
