@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Profile("test")
+@Profile({"dev", "test"})
 @Configuration
 public class EmbeddedS3Config {
 

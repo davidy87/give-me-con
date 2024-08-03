@@ -12,7 +12,7 @@ import redis.embedded.RedisServer;
 import java.io.IOException;
 
 @Slf4j
-@Profile("test")
+@Profile({"dev", "test"})
 @Configuration
 public class EmbeddedRedisConfig {
 

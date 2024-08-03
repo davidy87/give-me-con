@@ -1,25 +1,15 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
+  profiles:
+    active: dev
+    group:
+      dev: client,oauth,jwt,gcp,payment
+      prod: client,oauth,jwt,aws,gcp,payment
+
+  messages:
+    basename: errors
 
   jpa:
     show_sql: true
     properties:
       hibernate:
         format_sql: true
-        hbm2ddl:
-          auto: update
-
-  data:
-    redis:
-      repositories:
-        enabled: false
-
-  profiles:
-    include: client,oauth,jwt,aws,gcp,payment
-
-  messages:
-    basename: errors
