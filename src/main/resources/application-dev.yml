@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profiles: dev
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    show_sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          auto: update
+
+  cloud:
+    aws:
+      s3:
+        bucket: test-bucket
+        mock:
+          port: 8001
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false

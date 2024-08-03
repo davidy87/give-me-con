@@ -1,7 +1,10 @@
 ### properties ###
-application-jwt.properties
-application-oauth.properties
-application-*.yml
+application-aws.yml
+application-client.yml
+application-gcp.yml
+application-jwt.yml
+application-oauth.yml
+application-payment.yml
 gcp_credential.json
 
 ### env ###
