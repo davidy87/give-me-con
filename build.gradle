@@ -39,7 +39,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'com.github.codemonstur:embedded-redis:1.4.3'
+//	implementation 'com.github.codemonstur:embedded-redis:1.4.3'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'it.ozimov:embedded-redis:0.7.2'
 
 	// Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -68,6 +70,12 @@ dependencies {
 	implementation "com.google.cloud:spring-cloud-gcp-starter-vision"
 	implementation "com.google.cloud:spring-cloud-gcp-starter-storage"
 
+	// AWS Lambda
+	implementation ('org.springframework.boot:spring-boot-starter-web') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+	}
+	implementation 'com.amazonaws.serverless:aws-serverless-java-container-springboot3:2.0.1'
+
 	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
@@ -89,3 +97,15 @@ tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
 	dependsOn test
 }
+
+tasks.register('buildZip', Zip) {
+	from compileJava
+	from processResources
+	into('lib') {
+		from(configurations.compileClasspath) {
+			exclude 'tomcat-embed-*'
+		}
+	}
+}
+
+build.dependsOn buildZip
