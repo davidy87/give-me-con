@@ -4,11 +4,12 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
-import redis.embedded.model.OS;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import static com.givemecon.common.util.OS.*;
 
 /**
  * Reference: <a href="https://jojoldu.tistory.com/297">https://jojoldu.tistory.com/297</a>
@@ -43,10 +44,10 @@ public final class PortUtils {
      * 해당 port를 사용 중인 프로세스 확인하는 sh 실행
      */
     private static Process executeGrepProcessCommand(int port) throws IOException {
-        OS currentOS = OS.detectOS();
+        OS os = OS.detectOS();
         String[] shell;
 
-        if (currentOS == OS.WINDOWS) {
+        if (os == WINDOWS) {
             String command = String.format("netstat -nao | find \"LISTENING\" | find \"%d\"", port);
             shell = new String[]{"cmd.exe", "/y", "/c", command};
         } else {
