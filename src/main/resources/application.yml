@@ -7,9 +7,3 @@ spring:
 
   messages:
     basename: errors
-
-  jpa:
-    show_sql: true
-    properties:
-      hibernate:
-        format_sql: true

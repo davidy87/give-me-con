@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.givemecon'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 java {
 	sourceCompatibility = '17'
@@ -97,15 +97,3 @@ tasks.named('asciidoctor') {
 	inputs.dir snippetsDir
 	dependsOn test
 }
-
-tasks.register('buildZip', Zip) {
-	from compileJava
-	from processResources
-	into('lib') {
-		from(configurations.compileClasspath) {
-			exclude 'tomcat-embed-*'
-		}
-	}
-}
-
-build.dependsOn buildZip
