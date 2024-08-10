@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -63,6 +63,9 @@ public class TokenIssueApiControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    RedisTemplate<String, TokenInfo> redisTemplate;
+
     Member member;
 
     @BeforeEach
@@ -88,12 +91,14 @@ public class TokenIssueApiControllerTest {
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
         Claims claims = jwtTokenService.getClaims(tokenInfo.getAccessToken());
 
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute(authorizationCode, tokenInfo);
+//        MockHttpSession session = new MockHttpSession();
+//        session.setAttribute(authorizationCode, tokenInfo);
+
+        redisTemplate.opsForValue().set(authorizationCode, tokenInfo);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/auth/success")
-                .session(session)
+//                .session(session)
                 .queryParam(AUTHORIZATION_CODE.getName(), authorizationCode));
 
         // then

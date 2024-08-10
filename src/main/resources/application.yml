@@ -7,14 +7,3 @@ spring:
 
   messages:
     basename: errors
-
-  session:
-    store-type: redis
-    redis:
-      namespace: spring:session
-
-server:
-  servlet:
-    session:
-      cookie:
-        name: JSESSIONID
