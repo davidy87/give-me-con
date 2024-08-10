@@ -8,15 +8,16 @@ import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.UUID;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
@@ -34,6 +35,8 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
 
     private final JwtTokenService jwtTokenService;
 
+    private final RedisTemplate<String, TokenInfo> redisTemplate;
+
     private final ClientUrlProperties clientUrlProperties;
 
     @Override
@@ -47,10 +50,9 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
         String authorizationCode = UUID.randomUUID().toString();
 
-        // TokenInfo를 session에 임시 보관
-        HttpSession session = request.getSession();
-        session.setAttribute(authorizationCode, tokenInfo);
-        session.setMaxInactiveInterval(SESSION_DURATION);
+        // TokenInfo를 Redis에 임시 보관
+        redisTemplate.opsForValue().set(authorizationCode, tokenInfo);
+        redisTemplate.expire(authorizationCode, Duration.ofSeconds(SESSION_DURATION));
 
         String redirectUrl =
                 UriComponentsBuilder.fromHttpUrl(clientUrlProperties.getLoginUrl())

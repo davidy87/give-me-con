@@ -1,6 +1,7 @@
 package com.givemecon.common.auth.jwt.token;
 
 import com.givemecon.common.auth.dto.TokenInfo;
+import com.givemecon.common.exception.concrete.AuthenticationException;
 import com.givemecon.common.exception.concrete.InvalidTokenException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
@@ -8,25 +9,41 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
+
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
-import static com.givemecon.common.error.GlobalErrorCode.REFRESH_TOKEN_EXPIRED;
-import static com.givemecon.common.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
+import static com.givemecon.common.error.GlobalErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional
-public class TokenReissueService {
+public class TokenIssueService {
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+    private final RedisTemplate<String, TokenInfo> redisTemplate;
 
     private final MemberRepository memberRepository;
 
     private final JwtTokenService jwtTokenService;
+
+    public TokenInfo issueToken(String authorizationCode) {
+        return Optional.ofNullable(getTokenInfo(authorizationCode))
+                .orElseThrow(() -> new AuthenticationException(INVALID_AUTHORIZATION_CODE));
+    }
+
+    private TokenInfo getTokenInfo(String authorizationCode) {
+        return Optional.ofNullable(authorizationCode)
+                .filter(StringUtils::hasText)
+                .map(authCode -> redisTemplate.opsForValue().get(authorizationCode))
+                .orElse(null);
+    }
 
     public TokenInfo reissueToken(String tokenHeader) {
         String refreshToken = jwtTokenService.retrieveToken(tokenHeader);
