@@ -1,0 +1,103 @@
+= 기브미콘 Admin API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Admin Member APIs
+=== Admin 회원가입
+operation::admin-member-controller-test/signup[snippets='request-fields,http-request,response-fields,http-response']
+{sp} +
+
+=== Admin 로그인
+operation::admin-member-controller-test/login[snippets='request-fields,http-request,response-fields,http-response']
+:sectnums!:
+{sp} +
+
+
+:sectnums:
+== Admin Category APIs
+=== Category 추가
+operation::admin-category-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Category 수정
+operation::admin-category-controller-test/update[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Category 삭제
+operation::admin-category-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +
+
+
+:sectnums:
+== Admin Brand APIs
+=== Brand 추가
+operation::admin-brand-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Brand 수정
+operation::admin-brand-controller-test/update[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Brand 삭제
+operation::admin-brand-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +
+
+
+:sectnums:
+== Admin Voucher-kind APIs
+=== Voucher-kind 추가
+operation::admin-voucher-kind-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Voucher-kind 수정
+operation::admin-voucher-kind-controller-test/update[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Voucher-kind 삭제
+operation::admin-voucher-kind-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +
+
+
+:sectnums:
+== Admin Voucher APIs
+
+Voucher 상태 코드
+include::voucher-status-code.adoc[]
+{sp} +
+
+=== Voucher 상태별 조회
+operation::admin-voucher-controller-test/find-all-by-status[snippets='query-parameters,http-request,response-fields,http-response']
+{sp} +
+
+=== Voucher 상태 수정
+operation::admin-voucher-controller-test/update-status[snippets='path-parameters,request-fields,http-request,response-fields,http-response']
+{sp} +
+
+=== Voucher 삭제
+operation::admin-voucher-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +

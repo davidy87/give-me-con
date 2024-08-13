@@ -25,7 +25,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.givemecon.application.dto.VoucherKindDto.VoucherKindDetailResponse;
 import static com.givemecon.util.ApiDocumentUtils.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+//import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;

@@ -1,0 +1,1745 @@
+openapi: 3.0.1
+info:
+  title: Post Service API
+  description: Post Service API description
+  version: 1.0.0
+servers:
+- url: http://localhost:8080
+tags: []
+paths:
+  /api/brands:
+    get:
+      tags:
+      - api
+      operationId: brand-controller-test/find-all-by-category-id
+      parameters:
+      - name: categoryId
+        in: query
+        description: 카테고리 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-brands1428100514'
+              examples:
+                brand-controller-test/find-all-by-category-id:
+                  value: "[ {\r\n  \"id\" : 1,\r\n  \"name\" : \"Brand 1\",\r\n  \"\
+                    iconUrl\" : \"imageUrl1\"\r\n}, {\r\n  \"id\" : 2,\r\n  \"name\"\
+                    \ : \"Brand 2\",\r\n  \"iconUrl\" : \"imageUrl2\"\r\n}, {\r\n\
+                    \  \"id\" : 3,\r\n  \"name\" : \"Brand 3\",\r\n  \"iconUrl\" :\
+                    \ \"imageUrl3\"\r\n}, {\r\n  \"id\" : 4,\r\n  \"name\" : \"Brand\
+                    \ 4\",\r\n  \"iconUrl\" : \"imageUrl4\"\r\n}, {\r\n  \"id\" :\
+                    \ 5,\r\n  \"name\" : \"Brand 5\",\r\n  \"iconUrl\" : \"imageUrl5\"\
+                    \r\n} ]"
+  /api/categories:
+    get:
+      tags:
+      - api
+      operationId: category-controller-test/find-all
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-categories-128260663'
+              examples:
+                category-controller-test/find-all:
+                  value: "[ {\r\n  \"id\" : 2,\r\n  \"name\" : \"category1\",\r\n\
+                    \  \"iconUrl\" : \"imageUrl1\"\r\n}, {\r\n  \"id\" : 3,\r\n  \"\
+                    name\" : \"category2\",\r\n  \"iconUrl\" : \"imageUrl2\"\r\n},\
+                    \ {\r\n  \"id\" : 4,\r\n  \"name\" : \"category3\",\r\n  \"iconUrl\"\
+                    \ : \"imageUrl3\"\r\n}, {\r\n  \"id\" : 5,\r\n  \"name\" : \"\
+                    category4\",\r\n  \"iconUrl\" : \"imageUrl4\"\r\n}, {\r\n  \"\
+                    id\" : 6,\r\n  \"name\" : \"category5\",\r\n  \"iconUrl\" : \"\
+                    imageUrl5\"\r\n} ]"
+  /api/liked-vouchers:
+    get:
+      tags:
+      - api
+      operationId: liked-voucher-controller-test/find-all-by-username
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호 (기본값 = 0)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기 (기본값 = 10)
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: 정렬 기준 (기본값 = id)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-liked-vouchers-739491691'
+              examples:
+                liked-voucher-controller-test/find-all-by-username:
+                  value: "[ {\r\n  \"id\" : 3,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"voucherKind1\",\r\n  \"imageUrl\" : \"imageUrl1\"\r\n},\
+                    \ {\r\n  \"id\" : 4,\r\n  \"minPrice\" : 0,\r\n  \"title\" : \"\
+                    voucherKind2\",\r\n  \"imageUrl\" : \"imageUrl2\"\r\n}, {\r\n\
+                    \  \"id\" : 5,\r\n  \"minPrice\" : 0,\r\n  \"title\" : \"voucherKind3\"\
+                    ,\r\n  \"imageUrl\" : \"imageUrl3\"\r\n}, {\r\n  \"id\" : 6,\r\
+                    \n  \"minPrice\" : 0,\r\n  \"title\" : \"voucherKind4\",\r\n \
+                    \ \"imageUrl\" : \"imageUrl4\"\r\n}, {\r\n  \"id\" : 7,\r\n  \"\
+                    minPrice\" : 0,\r\n  \"title\" : \"voucherKind5\",\r\n  \"imageUrl\"\
+                    \ : \"imageUrl5\"\r\n} ]"
+    post:
+      tags:
+      - api
+      operationId: liked-voucher-controller-test/save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-liked-vouchers486549215'
+            examples:
+              liked-voucher-controller-test/save:
+                value: "2"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-liked-vouchers-298007935'
+              examples:
+                liked-voucher-controller-test/save:
+                  value: "{\r\n  \"id\" : 2,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"imageUrl\" : \"imageUrl\",\r\n  \"\
+                    description\" : \"voucherKind description\",\r\n  \"caution\"\
+                    \ : \"voucherKind caution\"\r\n}"
+  /api/orders:
+    post:
+      tags:
+      - api
+      operationId: order-controller-test/place-order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-orders-1929132646'
+            examples:
+              order-controller-test/place-order:
+                value: "{\r\n  \"voucherForSaleIdList\" : [ 6, 7, 8, 9, 10 ]\r\n}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-orders-985059609'
+              examples:
+                order-controller-test/place-order:
+                  value: "{\r\n  \"orderNumber\" : \"17d661b3-5a06-4b1b-8180-c46e1c08c9fc\"\
+                    \r\n}"
+  /api/purchased-vouchers:
+    get:
+      tags:
+      - api
+      operationId: purchased-voucher-controller-test/find-all-by-username
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호 (기본값 = 0)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기 (기본값 = 10)
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: 정렬 기준 (기본값 = id)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-purchased-vouchers1934304691'
+              examples:
+                purchased-voucher-controller-test/find-all-by-username:
+                  value: "[ {\r\n  \"id\" : 2,\r\n  \"voucherId\" : 17,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"expDate\" :\
+                    \ \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"imageUrl\"\
+                    ,\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" : 3,\r\n  \"\
+                    voucherId\" : 18,\r\n  \"title\" : \"voucherKind\",\r\n  \"price\"\
+                    \ : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\"\
+                    \ : \"imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"\
+                    id\" : 4,\r\n  \"voucherId\" : 19,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 5,\r\n  \"voucherId\" : 20,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 6,\r\n  \"voucherId\" : 21,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 7,\r\n  \"voucherId\" : 22,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 8,\r\n  \"voucherId\" : 23,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 9,\r\n  \"voucherId\" : 24,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 10,\r\n  \"voucherId\" : 25,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 11,\r\n  \"voucherId\" : 26,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 12,\r\n  \"voucherId\" : 27,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 13,\r\n  \"voucherId\" : 28,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 14,\r\n  \"voucherId\" : 29,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 15,\r\n  \"voucherId\" : 30,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 16,\r\n  \"voucherId\" : 31,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 17,\r\n  \"voucherId\" : 32,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 18,\r\n  \"voucherId\" : 33,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 19,\r\n  \"voucherId\" : 34,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 20,\r\n  \"voucherId\" : 35,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 21,\r\n  \"voucherId\" : 36,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n} ]"
+    post:
+      tags:
+      - api
+      operationId: purchased-voucher-controller-test/save-all
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-purchased-vouchers831821916'
+            examples:
+              purchased-voucher-controller-test/save-all:
+                value: "{\r\n  \"requests\" : [ {\r\n    \"voucherId\" : 37\r\n  },\
+                  \ {\r\n    \"voucherId\" : 38\r\n  }, {\r\n    \"voucherId\" : 39\r\
+                  \n  }, {\r\n    \"voucherId\" : 40\r\n  }, {\r\n    \"voucherId\"\
+                  \ : 41\r\n  } ]\r\n}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-purchased-vouchers1934304691'
+              examples:
+                purchased-voucher-controller-test/save-all:
+                  value: "[ {\r\n  \"id\" : 22,\r\n  \"voucherId\" : 37,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"expDate\" :\
+                    \ \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"imageUrl\"\
+                    ,\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" : 23,\r\n \
+                    \ \"voucherId\" : 38,\r\n  \"title\" : \"voucherKind\",\r\n  \"\
+                    price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\"\
+                    \ : \"imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"\
+                    id\" : 24,\r\n  \"voucherId\" : 39,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n}, {\r\n  \"id\" : 25,\r\n  \"voucherId\" : 40,\r\n\
+                    \  \"title\" : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"\
+                    expDate\" : \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"\
+                    imageUrl\",\r\n  \"status\" : \"USABLE\"\r\n}, {\r\n  \"id\" :\
+                    \ 26,\r\n  \"voucherId\" : 41,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"price\" : 4000,\r\n  \"expDate\" : \"2024-08-14\",\r\n\
+                    \  \"voucherKindImageUrl\" : \"imageUrl\",\r\n  \"status\" : \"\
+                    USABLE\"\r\n} ]"
+  /api/voucher-kinds:
+    get:
+      tags:
+      - api
+      operationId: voucher-kind-controller-test/find-all
+      parameters:
+      - name: page
+        in: query
+        description: 페이지 번호 (기본값 = 0)
+        required: false
+        schema:
+          type: string
+      - name: size
+        in: query
+        description: 페이지 크기 (기본값 = 10)
+        required: false
+        schema:
+          type: string
+      - name: sort
+        in: query
+        description: 정렬 기준 (기본값 = id)
+        required: false
+        schema:
+          type: string
+      - name: brandId
+        in: query
+        description: 브랜드 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-liked-vouchers-739491691'
+              examples:
+                voucher-kind-controller-test/find-all:
+                  value: "[ {\r\n  \"id\" : 41,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"VoucherKind1\",\r\n  \"imageUrl\" : \"imageUrl1\"\r\n},\
+                    \ {\r\n  \"id\" : 42,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind2\",\r\n  \"imageUrl\" : \"imageUrl2\"\r\n}, {\r\
+                    \n  \"id\" : 43,\r\n  \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind3\"\
+                    ,\r\n  \"imageUrl\" : \"imageUrl3\"\r\n}, {\r\n  \"id\" : 44,\r\
+                    \n  \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind4\",\r\n \
+                    \ \"imageUrl\" : \"imageUrl4\"\r\n}, {\r\n  \"id\" : 45,\r\n \
+                    \ \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind5\",\r\n  \"\
+                    imageUrl\" : \"imageUrl5\"\r\n}, {\r\n  \"id\" : 46,\r\n  \"minPrice\"\
+                    \ : 0,\r\n  \"title\" : \"VoucherKind6\",\r\n  \"imageUrl\" :\
+                    \ \"imageUrl6\"\r\n}, {\r\n  \"id\" : 47,\r\n  \"minPrice\" :\
+                    \ 0,\r\n  \"title\" : \"VoucherKind7\",\r\n  \"imageUrl\" : \"\
+                    imageUrl7\"\r\n}, {\r\n  \"id\" : 48,\r\n  \"minPrice\" : 0,\r\
+                    \n  \"title\" : \"VoucherKind8\",\r\n  \"imageUrl\" : \"imageUrl8\"\
+                    \r\n}, {\r\n  \"id\" : 49,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"VoucherKind9\",\r\n  \"imageUrl\" : \"imageUrl9\"\r\n},\
+                    \ {\r\n  \"id\" : 50,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind10\",\r\n  \"imageUrl\" : \"imageUrl10\"\r\n},\
+                    \ {\r\n  \"id\" : 51,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind11\",\r\n  \"imageUrl\" : \"imageUrl11\"\r\n},\
+                    \ {\r\n  \"id\" : 52,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind12\",\r\n  \"imageUrl\" : \"imageUrl12\"\r\n},\
+                    \ {\r\n  \"id\" : 53,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind13\",\r\n  \"imageUrl\" : \"imageUrl13\"\r\n},\
+                    \ {\r\n  \"id\" : 54,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind14\",\r\n  \"imageUrl\" : \"imageUrl14\"\r\n},\
+                    \ {\r\n  \"id\" : 55,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind15\",\r\n  \"imageUrl\" : \"imageUrl15\"\r\n},\
+                    \ {\r\n  \"id\" : 56,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind16\",\r\n  \"imageUrl\" : \"imageUrl16\"\r\n},\
+                    \ {\r\n  \"id\" : 57,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind17\",\r\n  \"imageUrl\" : \"imageUrl17\"\r\n},\
+                    \ {\r\n  \"id\" : 58,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind18\",\r\n  \"imageUrl\" : \"imageUrl18\"\r\n},\
+                    \ {\r\n  \"id\" : 59,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind19\",\r\n  \"imageUrl\" : \"imageUrl19\"\r\n},\
+                    \ {\r\n  \"id\" : 60,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind20\",\r\n  \"imageUrl\" : \"imageUrl20\"\r\n} ]"
+                voucher-kind-controller-test/find-all-by-brand-id:
+                  value: "[ {\r\n  \"id\" : 21,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"VoucherKind 1\",\r\n  \"imageUrl\" : \"imageUrl1\"\r\n},\
+                    \ {\r\n  \"id\" : 22,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 2\",\r\n  \"imageUrl\" : \"imageUrl2\"\r\n}, {\r\
+                    \n  \"id\" : 23,\r\n  \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind\
+                    \ 3\",\r\n  \"imageUrl\" : \"imageUrl3\"\r\n}, {\r\n  \"id\" :\
+                    \ 24,\r\n  \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind 4\"\
+                    ,\r\n  \"imageUrl\" : \"imageUrl4\"\r\n}, {\r\n  \"id\" : 25,\r\
+                    \n  \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind 5\",\r\n\
+                    \  \"imageUrl\" : \"imageUrl5\"\r\n}, {\r\n  \"id\" : 26,\r\n\
+                    \  \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind 6\",\r\n \
+                    \ \"imageUrl\" : \"imageUrl6\"\r\n}, {\r\n  \"id\" : 27,\r\n \
+                    \ \"minPrice\" : 0,\r\n  \"title\" : \"VoucherKind 7\",\r\n  \"\
+                    imageUrl\" : \"imageUrl7\"\r\n}, {\r\n  \"id\" : 28,\r\n  \"minPrice\"\
+                    \ : 0,\r\n  \"title\" : \"VoucherKind 8\",\r\n  \"imageUrl\" :\
+                    \ \"imageUrl8\"\r\n}, {\r\n  \"id\" : 29,\r\n  \"minPrice\" :\
+                    \ 0,\r\n  \"title\" : \"VoucherKind 9\",\r\n  \"imageUrl\" : \"\
+                    imageUrl9\"\r\n}, {\r\n  \"id\" : 30,\r\n  \"minPrice\" : 0,\r\
+                    \n  \"title\" : \"VoucherKind 10\",\r\n  \"imageUrl\" : \"imageUrl10\"\
+                    \r\n}, {\r\n  \"id\" : 31,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"VoucherKind 11\",\r\n  \"imageUrl\" : \"imageUrl11\"\r\n\
+                    }, {\r\n  \"id\" : 32,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 12\",\r\n  \"imageUrl\" : \"imageUrl12\"\r\n},\
+                    \ {\r\n  \"id\" : 33,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 13\",\r\n  \"imageUrl\" : \"imageUrl13\"\r\n},\
+                    \ {\r\n  \"id\" : 34,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 14\",\r\n  \"imageUrl\" : \"imageUrl14\"\r\n},\
+                    \ {\r\n  \"id\" : 35,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 15\",\r\n  \"imageUrl\" : \"imageUrl15\"\r\n},\
+                    \ {\r\n  \"id\" : 36,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 16\",\r\n  \"imageUrl\" : \"imageUrl16\"\r\n},\
+                    \ {\r\n  \"id\" : 37,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 17\",\r\n  \"imageUrl\" : \"imageUrl17\"\r\n},\
+                    \ {\r\n  \"id\" : 38,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 18\",\r\n  \"imageUrl\" : \"imageUrl18\"\r\n},\
+                    \ {\r\n  \"id\" : 39,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 19\",\r\n  \"imageUrl\" : \"imageUrl19\"\r\n},\
+                    \ {\r\n  \"id\" : 40,\r\n  \"minPrice\" : 0,\r\n  \"title\" :\
+                    \ \"VoucherKind 20\",\r\n  \"imageUrl\" : \"imageUrl20\"\r\n}\
+                    \ ]"
+  /api/vouchers:
+    get:
+      tags:
+      - api
+      operationId: voucher-controller-test/find-all-
+      parameters:
+      - name: statusCode
+        in: query
+        description: 기프티콘 상태코드 (0 ~ 5)
+        required: true
+        schema:
+          type: string
+      - name: voucherKindId
+        in: query
+        description: 기프티콘 종류 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-vouchers-1012548146'
+              examples:
+                voucher-controller-test/find-all-by-seller:
+                  value: "[ {\r\n  \"id\" : 48,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}, {\r\n  \"\
+                    id\" : 49,\r\n  \"price\" : 4000,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"barcode\" : \"1111 1111 1111\",\r\n  \"expDate\" : \"\
+                    2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\"\
+                    \ : \"2024-08-13\"\r\n}, {\r\n  \"id\" : 50,\r\n  \"price\" :\
+                    \ 4000,\r\n  \"title\" : \"voucherKind\",\r\n  \"barcode\" : \"\
+                    1111 1111 1111\",\r\n  \"expDate\" : \"2024-08-13\",\r\n  \"status\"\
+                    \ : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\" : \"2024-08-13\"\
+                    \r\n}, {\r\n  \"id\" : 51,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}, {\r\n  \"\
+                    id\" : 52,\r\n  \"price\" : 4000,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"barcode\" : \"1111 1111 1111\",\r\n  \"expDate\" : \"\
+                    2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\"\
+                    \ : \"2024-08-13\"\r\n} ]"
+                voucher-controller-test/find-all-by-status-and-username:
+                  value: "[ {\r\n  \"id\" : 57,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}, {\r\n  \"\
+                    id\" : 58,\r\n  \"price\" : 4000,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"barcode\" : \"1111 1111 1111\",\r\n  \"expDate\" : \"\
+                    2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\"\
+                    \ : \"2024-08-13\"\r\n}, {\r\n  \"id\" : 59,\r\n  \"price\" :\
+                    \ 4000,\r\n  \"title\" : \"voucherKind\",\r\n  \"barcode\" : \"\
+                    1111 1111 1111\",\r\n  \"expDate\" : \"2024-08-13\",\r\n  \"status\"\
+                    \ : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\" : \"2024-08-13\"\
+                    \r\n} ]"
+                voucher-controller-test/find-all-for-sale-by-voucher-kind-id:
+                  value: "[ {\r\n  \"id\" : 43,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-13\",\r\n  \"status\" : \"FOR_SALE\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}, {\r\n  \"\
+                    id\" : 44,\r\n  \"price\" : 4000,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"barcode\" : \"1111 1111 1111\",\r\n  \"expDate\" : \"\
+                    2024-08-13\",\r\n  \"status\" : \"FOR_SALE\",\r\n  \"saleRequestedDate\"\
+                    \ : \"2024-08-13\"\r\n} ]"
+    post:
+      tags:
+      - api
+      operationId: voucher-controller-test/save
+      responses:
+        "202":
+          description: "202"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-vouchers-id-1114246151'
+              examples:
+                voucher-controller-test/save:
+                  value: "{\r\n  \"id\" : 54,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-14\",\r\n  \"status\" : \"SALE_REQUESTED\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}"
+  /api/admin/brands:
+    post:
+      tags:
+      - api
+      operationId: admin-brand-controller-test/save
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-brands534265279'
+              examples:
+                admin-brand-controller-test/save:
+                  value: "{\r\n  \"id\" : 14,\r\n  \"name\" : \"Brand\",\r\n  \"iconUrl\"\
+                    \ : \"https://test-bucket.s3.amazonaws.com/b265a9f1-472e-4dd8-b61c-3c0402946b31.png\"\
+                    \r\n}"
+  /api/admin/categories:
+    post:
+      tags:
+      - api
+      operationId: admin-category-controller-test/save
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-categories-538763704'
+              examples:
+                admin-category-controller-test/save:
+                  value: "{\r\n  \"id\" : 20,\r\n  \"name\" : \"category\",\r\n  \"\
+                    iconUrl\" : \"https://test-bucket.s3.amazonaws.com/8f8f84a2-d837-4f29-83cc-e516c10533d4.png\"\
+                    \r\n}"
+  /api/admin/voucher-kinds:
+    post:
+      tags:
+      - api
+      operationId: admin-voucher-kind-controller-test/save
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-voucher-kinds1254174303'
+              examples:
+                admin-voucher-kind-controller-test/save:
+                  value: "{\r\n  \"id\" : 67,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"Americano T\",\r\n  \"imageUrl\" : \"https://test-bucket.s3.amazonaws.com/e997afa9-836b-4ff5-b379-1bdaa474165e.png\"\
+                    ,\r\n  \"description\" : null,\r\n  \"caution\" : null\r\n}"
+  /api/admin/vouchers:
+    get:
+      tags:
+      - api
+      operationId: admin-voucher-controller-test/find-all-by-status
+      parameters:
+      - name: statusCode
+        in: query
+        description: 기프티콘 상태코드 (0 ~ 5)
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-vouchers-1012548146'
+              examples:
+                admin-voucher-controller-test/find-all-by-status:
+                  value: "[ {\r\n  \"id\" : 62,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}, {\r\n  \"\
+                    id\" : 63,\r\n  \"price\" : 4000,\r\n  \"title\" : \"voucherKind\"\
+                    ,\r\n  \"barcode\" : \"1111 1111 1111\",\r\n  \"expDate\" : \"\
+                    2024-08-13\",\r\n  \"status\" : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\"\
+                    \ : \"2024-08-13\"\r\n}, {\r\n  \"id\" : 64,\r\n  \"price\" :\
+                    \ 4000,\r\n  \"title\" : \"voucherKind\",\r\n  \"barcode\" : \"\
+                    1111 1111 1111\",\r\n  \"expDate\" : \"2024-08-13\",\r\n  \"status\"\
+                    \ : \"SALE_REQUESTED\",\r\n  \"saleRequestedDate\" : \"2024-08-13\"\
+                    \r\n} ]"
+  /api/auth/reissue:
+    get:
+      tags:
+      - api
+      operationId: token-issue-api-controller-test/reissue-token
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-auth-reissue1484529317'
+              examples:
+                token-issue-api-controller-test/reissue-token:
+                  value: "{\r\n  \"grantType\" : \"Bearer\",\r\n  \"accessToken\"\
+                    \ : \"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIwMTkzNTI5Ny0zZjcyLTRlY2EtODJhNC1mNTk3YWMwZWQxMjMiLCJ1c2VybmFtZSI6InRlc3RlciIsImF1dGhvcml0eSI6IlJPTEVfVVNFUiIsImlhdCI6MTcyMzU1OTQzOSwiZXhwIjoxNzIzNTYxMjM5fQ.cc1PDJwQsU2wkLXNHt4GmLD927kMNeKCrl_RcTtJYF0\"\
+                    ,\r\n  \"refreshToken\" : \"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI3MTMxNDE0OC1hYzY0LTQ3ZDAtOTM3NC0yMWM4NmRkYWYxMTciLCJpYXQiOjE3MjM1NTk0MzksImV4cCI6MTcyNDc2OTAzOX0.7q0YBL1kfAPVBP6HkPTJjeUQlAXbM3hIg5Bvdc4RPpk\"\
+                    ,\r\n  \"username\" : \"tester\",\r\n  \"role\" : \"USER\"\r\n\
+                    }"
+  /api/auth/success:
+    get:
+      tags:
+      - api
+      operationId: token-issue-api-controller-test/issue-token
+      parameters:
+      - name: authorizationCode
+        in: query
+        description: 인가 코드
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-auth-reissue1484529317'
+              examples:
+                token-issue-api-controller-test/issue-token:
+                  value: "{\r\n  \"grantType\" : \"Bearer\",\r\n  \"accessToken\"\
+                    \ : \"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIxOTBlNzc1Yi0yMGM1LTQ2ZWItOTY4NC1kYjFjMWMwNDRlNzEiLCJ1c2VybmFtZSI6InRlc3RlciIsImF1dGhvcml0eSI6IlJPTEVfVVNFUiIsImlhdCI6MTcyMzU1OTQzOSwiZXhwIjoxNzIzNTYxMjM5fQ.dlAiWgg0_MBgZ_X2hbBnc5OQMaFydCoh2xdpYzfqn1k\"\
+                    ,\r\n  \"refreshToken\" : \"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIzZGUwZTYwMy02Njc0LTQ3MTQtOWQyZS1kNDRhZWQ0NDhjY2QiLCJpYXQiOjE3MjM1NTk0MzksImV4cCI6MTcyNDc2OTAzOX0.u7ABrASkwvAOmq0N3f8ug9dx4OjpoKTvu030E4p_OVA\"\
+                    ,\r\n  \"username\" : \"tester\",\r\n  \"role\" : \"USER\"\r\n\
+                    }"
+  /api/images/extracted-texts:
+    post:
+      tags:
+      - api
+      operationId: image-text-extraction-controller-test/extract-text-from-image
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-images-extracted-texts1236925199'
+              examples:
+                image-text-extraction-controller-test/extract-text-from-image:
+                  value: "{\r\n  \"brandName\" : \"Starbucks\",\r\n  \"expDate\" :\
+                    \ \"2024-08-07\",\r\n  \"barcode\" : \"1111 1111 1111\"\r\n}"
+  /api/liked-vouchers/{voucherId}:
+    delete:
+      tags:
+      - api
+      operationId: liked-voucher-controller-test/delete-one
+      parameters:
+      - name: voucherId
+        in: path
+        description: 기프티콘 종류의 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /api/members/{id}:
+    delete:
+      tags:
+      - api
+      operationId: member-controller-test/delete-one
+      parameters:
+      - name: id
+        in: path
+        description: 회원 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /api/orders/{orderNumber}:
+    get:
+      tags:
+      - api
+      operationId: order-controller-test/find-order
+      parameters:
+      - name: orderNumber
+        in: path
+        description: 주문번호
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-orders-orderNumber-1011824716'
+              examples:
+                order-controller-test/find-order:
+                  value: "{\r\n  \"orderNumber\" : \"2f546aa5-a8d7-4d25-92c1-df05f02eadfe\"\
+                    ,\r\n  \"status\" : \"IN_PROGRESS\",\r\n  \"customerName\" : \"\
+                    buyer\",\r\n  \"quantity\" : 5,\r\n  \"totalPrice\" : 20000,\r\
+                    \n  \"orderItems\" : [ {\r\n    \"voucherId\" : 11,\r\n    \"\
+                    price\" : 4000,\r\n    \"brandName\" : \"Brand\",\r\n    \"title\"\
+                    \ : \"voucherKind\",\r\n    \"voucherImageUrl\" : \"imageUrl\"\
+                    ,\r\n    \"expDate\" : \"2024-08-13\",\r\n    \"status\" : \"\
+                    ORDER_PLACED\"\r\n  }, {\r\n    \"voucherId\" : 12,\r\n    \"\
+                    price\" : 4000,\r\n    \"brandName\" : \"Brand\",\r\n    \"title\"\
+                    \ : \"voucherKind\",\r\n    \"voucherImageUrl\" : \"imageUrl\"\
+                    ,\r\n    \"expDate\" : \"2024-08-13\",\r\n    \"status\" : \"\
+                    ORDER_PLACED\"\r\n  }, {\r\n    \"voucherId\" : 13,\r\n    \"\
+                    price\" : 4000,\r\n    \"brandName\" : \"Brand\",\r\n    \"title\"\
+                    \ : \"voucherKind\",\r\n    \"voucherImageUrl\" : \"imageUrl\"\
+                    ,\r\n    \"expDate\" : \"2024-08-13\",\r\n    \"status\" : \"\
+                    ORDER_PLACED\"\r\n  }, {\r\n    \"voucherId\" : 14,\r\n    \"\
+                    price\" : 4000,\r\n    \"brandName\" : \"Brand\",\r\n    \"title\"\
+                    \ : \"voucherKind\",\r\n    \"voucherImageUrl\" : \"imageUrl\"\
+                    ,\r\n    \"expDate\" : \"2024-08-13\",\r\n    \"status\" : \"\
+                    ORDER_PLACED\"\r\n  }, {\r\n    \"voucherId\" : 15,\r\n    \"\
+                    price\" : 4000,\r\n    \"brandName\" : \"Brand\",\r\n    \"title\"\
+                    \ : \"voucherKind\",\r\n    \"voucherImageUrl\" : \"imageUrl\"\
+                    ,\r\n    \"expDate\" : \"2024-08-13\",\r\n    \"status\" : \"\
+                    ORDER_PLACED\"\r\n  } ]\r\n}"
+    delete:
+      tags:
+      - api
+      operationId: order-controller-test/cancel-order
+      parameters:
+      - name: orderNumber
+        in: path
+        description: 취소할 주문의 주문번호
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-orders-orderNumber-817073801'
+              examples:
+                order-controller-test/cancel-order:
+                  value: "{\r\n  \"orderNumber\" : \"3de370e6-bd58-4aaa-91d1-ac285b5acc04\"\
+                    \r\n}"
+  /api/payments/confirm:
+    post:
+      tags:
+      - api
+      operationId: payment-controller-test/confirm-payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-payments-confirm-890007413'
+            examples:
+              payment-controller-test/confirm-payment:
+                value: "{\r\n  \"paymentKey\" : \"PAYMENT-KEY\",\r\n  \"orderId\"\
+                  \ : \"ORDER-NUMBER\",\r\n  \"amount\" : 4000\r\n}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-payments-confirm1960580425'
+              examples:
+                payment-controller-test/confirm-payment:
+                  value: "{\r\n  \"amount\" : 4000,\r\n  \"orderId\" : \"ORDER-NUMBER\"\
+                    ,\r\n  \"orderName\" : \"orderName\",\r\n  \"receiptUrl\" : \"\
+                    receiptUrl\"\r\n}"
+  /api/payments/{paymentKey}:
+    get:
+      tags:
+      - api
+      operationId: payment-controller-test/find-payment-history
+      parameters:
+      - name: paymentKey
+        in: path
+        description: 결제 키
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-payments-confirm1960580425'
+              examples:
+                payment-controller-test/find-payment-history:
+                  value: "{\r\n  \"amount\" : 4000,\r\n  \"orderId\" : \"ORDER-NUMBER\"\
+                    ,\r\n  \"orderName\" : \"Americano T\",\r\n  \"receiptUrl\" :\
+                    \ \"receiptUrl\"\r\n}"
+  /api/purchased-vouchers/{id}:
+    get:
+      tags:
+      - api
+      operationId: purchased-voucher-controller-test/find-one
+      parameters:
+      - name: id
+        in: path
+        description: 구매할 기프티콘 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-purchased-vouchers-id1197570932'
+              examples:
+                purchased-voucher-controller-test/find-one:
+                  value: "{\r\n  \"id\" : 1,\r\n  \"voucherId\" : 16,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"price\" : 4000,\r\n  \"expDate\" :\
+                    \ \"2024-08-14\",\r\n  \"voucherKindImageUrl\" : \"imageUrl\"\
+                    ,\r\n  \"status\" : \"USABLE\"\r\n}"
+    put:
+      tags:
+      - api
+      operationId: purchased-voucher-controller-test/set-used
+      parameters:
+      - name: id
+        in: path
+        description: 구매한 기프티콘 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-purchased-vouchers-id-1535897594'
+              examples:
+                purchased-voucher-controller-test/set-used:
+                  value: "{\r\n  \"id\" : 27,\r\n  \"status\" : \"USED\"\r\n}"
+  /api/voucher-kinds/{id}:
+    get:
+      tags:
+      - api
+      operationId: voucher-kind-controller-test/find-one
+      parameters:
+      - name: id
+        in: path
+        description: 기프티콘 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-voucher-kinds-id1336416771'
+              examples:
+                voucher-kind-controller-test/find-one:
+                  value: "{\r\n  \"id\" : 61,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"Ice Cream Cake\",\r\n  \"imageUrl\" : \"imageUrl\",\r\n\
+                    \  \"description\" : \"This is Ice Cream Cake.\",\r\n  \"caution\"\
+                    \ : \"This Ice Cream Cake is extremely cold.\"\r\n}"
+  /api/admin/brands/{id}:
+    post:
+      tags:
+      - api
+      operationId: admin-brand-controller-test/update
+      parameters:
+      - name: id
+        in: path
+        description: 브랜드 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-brands-id540760930'
+              examples:
+                admin-brand-controller-test/update:
+                  value: "{\r\n  \"id\" : 12,\r\n  \"name\" : \"newBrand\",\r\n  \"\
+                    iconUrl\" : \"https://test-bucket.s3.amazonaws.com/imageKey\"\r\
+                    \n}"
+    delete:
+      tags:
+      - api
+      operationId: admin-brand-controller-test/delete-one
+      parameters:
+      - name: id
+        in: path
+        description: 브랜드 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /api/admin/categories/{id}:
+    post:
+      tags:
+      - api
+      operationId: admin-category-controller-test/update
+      parameters:
+      - name: id
+        in: path
+        description: 카테고리 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-categories-id-899569485'
+              examples:
+                admin-category-controller-test/update:
+                  value: "{\r\n  \"id\" : 18,\r\n  \"name\" : \"new\",\r\n  \"iconUrl\"\
+                    \ : \"https://test-bucket.s3.amazonaws.com/imageKey\"\r\n}"
+    delete:
+      tags:
+      - api
+      operationId: admin-category-controller-test/delete-one
+      parameters:
+      - name: id
+        in: path
+        description: 카테고리 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /api/admin/members/login:
+    post:
+      tags:
+      - api
+      operationId: admin-member-controller-test/login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-admin-members-login-788118888'
+            examples:
+              admin-member-controller-test/login:
+                value: "{\r\n  \"email\" : \"test@gmail.com\",\r\n  \"password\" :\
+                  \ \"testpass\"\r\n}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-members-login403387426'
+              examples:
+                admin-member-controller-test/login:
+                  value: "{\r\n  \"grantType\" : \"Bearer\",\r\n  \"accessToken\"\
+                    \ : \"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI5YmM5MDEzNi0yODZjLTQzZDctOTQxYi1mNmI1MzlhMTQ3ZTgiLCJ1c2VybmFtZSI6InRlc3RlciIsImF1dGhvcml0eSI6IlJPTEVfQURNSU4iLCJpYXQiOjE3MjM1NTk0MzUsImV4cCI6MTcyMzU2MTIzNX0.ueaO83IxIvaZT4eJsq2H04rT8Vka9z0dCRm3Cd1OsqM\"\
+                    ,\r\n  \"refreshToken\" : \"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmZmQxMzcxOC1hNTBmLTQ4MzgtYTBiNS00YTUyY2RiZDg5MjUiLCJpYXQiOjE3MjM1NTk0MzUsImV4cCI6MTcyNDc2OTAzNX0.l5DBeG3SNfjLXba0YwKaZ3z-sn8haBbGY2slMhoNhks\"\
+                    ,\r\n  \"username\" : \"tester\",\r\n  \"role\" : \"ADMIN\"\r\n\
+                    }"
+  /api/admin/members/signup:
+    post:
+      tags:
+      - api
+      operationId: admin-member-controller-test/signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-admin-members-signup-1639599001'
+            examples:
+              admin-member-controller-test/signup:
+                value: "{\r\n  \"email\" : \"test@gmail.com\",\r\n  \"username\" :\
+                  \ \"tester\",\r\n  \"password\" : \"testpass\",\r\n  \"passwordConfirm\"\
+                  \ : \"testpass\"\r\n}"
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-members-signup1763901071'
+              examples:
+                admin-member-controller-test/signup:
+                  value: "{\r\n  \"username\" : \"tester\"\r\n}"
+  /api/admin/voucher-kinds/{id}:
+    post:
+      tags:
+      - api
+      operationId: admin-voucher-kind-controller-test/update
+      parameters:
+      - name: id
+        in: path
+        description: 기프티콘 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-voucher-kinds-id210277056'
+              examples:
+                admin-voucher-kind-controller-test/update:
+                  value: "{\r\n  \"id\" : 65,\r\n  \"minPrice\" : 0,\r\n  \"title\"\
+                    \ : \"newTitle\",\r\n  \"imageUrl\" : \"https://test-bucket.s3.amazonaws.com/imageKey\"\
+                    ,\r\n  \"description\" : \"This is an old voucherKind.\",\r\n\
+                    \  \"caution\" : \"This voucherKind will be updated.\"\r\n}"
+    delete:
+      tags:
+      - api
+      operationId: admin-voucher-kind-controller-test/delete-one
+      parameters:
+      - name: id
+        in: path
+        description: 기프티콘 종류의 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /api/admin/vouchers/{id}:
+    put:
+      tags:
+      - api
+      operationId: admin-voucher-controller-test/update-status
+      parameters:
+      - name: id
+        in: path
+        description: 판매중(or 판매 대기 중)인 기프티콘 id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/api-admin-vouchers-id87734331'
+            examples:
+              admin-voucher-controller-test/update-status:
+                value: "{\r\n  \"statusCode\" : 2,\r\n  \"rejectedReason\" : null\r\
+                  \n}"
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-admin-vouchers-id-1114246151'
+              examples:
+                admin-voucher-controller-test/update-status:
+                  value: "{\r\n  \"id\" : 65,\r\n  \"price\" : 4000,\r\n  \"title\"\
+                    \ : \"voucherKind\",\r\n  \"barcode\" : \"1111 1111 1111\",\r\n\
+                    \  \"expDate\" : \"2024-08-13\",\r\n  \"status\" : \"FOR_SALE\"\
+                    ,\r\n  \"saleRequestedDate\" : \"2024-08-13\"\r\n}"
+    delete:
+      tags:
+      - api
+      operationId: admin-voucher-controller-test/delete-one
+      parameters:
+      - name: id
+        in: path
+        description: 판매중인 기프티콘 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "204":
+          description: "204"
+  /api/vouchers/{id}/image:
+    get:
+      tags:
+      - api
+      operationId: voucher-controller-test/find-image-url
+      parameters:
+      - name: id
+        in: path
+        description: 판매 중인 기프티콘 id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-vouchers-id-image-1495447612'
+              examples:
+                voucher-controller-test/find-image-url:
+                  value: "{\r\n  \"imageUrl\" : \"imageUrl\"\r\n}"
+components:
+  schemas:
+    api-admin-vouchers-id87734331:
+      required:
+      - statusCode
+      type: object
+      properties:
+        rejectedReason:
+          type: string
+          description: 판매 요청 거절 사유 (statusCode가 3(SALE_REJECTED)일 경우 필수)
+          nullable: true
+        statusCode:
+          type: number
+          description: 기프티콘 상태코드 (0 ~ 4)
+    api-orders-orderNumber-1011824716:
+      required:
+      - customerName
+      - orderItems
+      - orderNumber
+      - quantity
+      - status
+      - totalPrice
+      type: object
+      properties:
+        quantity:
+          type: number
+          description: 주문 수량
+        orderNumber:
+          type: string
+          description: 주문번호
+        totalPrice:
+          type: number
+          description: 총 주문 가격
+        orderItems:
+          type: array
+          description: 주문 품목 리스트
+          items:
+            required:
+            - brandName
+            - expDate
+            - price
+            - status
+            - title
+            - voucherId
+            - voucherImageUrl
+            type: object
+            properties:
+              brandName:
+                type: string
+                description: 기프티콘 브랜드 이름
+              price:
+                type: number
+                description: 기프티콘 가격
+              voucherId:
+                type: number
+                description: 기프티콘 id
+              voucherImageUrl:
+                type: string
+                description: 기프티콘 종류 이미지
+              title:
+                type: string
+                description: 기프티콘 타이틀
+              expDate:
+                type: string
+                description: 기프티콘 유효기간
+              status:
+                type: string
+                description: 기프티콘 상태
+        customerName:
+          type: string
+          description: 구매자 이름
+        status:
+          type: string
+          description: 주문 체결 상태
+    api-admin-voucher-kinds-id210277056:
+      required:
+      - caution
+      - description
+      - id
+      - imageUrl
+      - minPrice
+      - title
+      type: object
+      properties:
+        imageUrl:
+          type: string
+          description: 수정된 기프티콘 종류의 이미지
+        minPrice:
+          type: number
+          description: 수정된 기프티콘 종류의 최소 가격
+        description:
+          type: string
+          description: 상품 설명
+        id:
+          type: number
+          description: 수정된 기프티콘 종류의 id
+        title:
+          type: string
+          description: 수정된 기프티콘 종류의 타이틀
+        caution:
+          type: string
+          description: 사용 시 유의사항
+    api-purchased-vouchers831821916:
+      type: object
+      properties:
+        requests:
+          type: array
+          items:
+            required:
+            - voucherId
+            type: object
+            properties:
+              voucherId:
+                type: number
+                description: 구매할 기프티콘 id
+    api-admin-categories-id-899569485:
+      required:
+      - iconUrl
+      - id
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 변경된 카테고리 이름
+        iconUrl:
+          type: object
+          description: 변경된 카테고리 아이콘
+        id:
+          type: number
+          description: 변경된 카테고리 id
+    api-categories-128260663:
+      type: array
+      items:
+        required:
+        - iconUrl
+        - id
+        - name
+        type: object
+        properties:
+          name:
+            type: string
+            description: 카테고리 이름
+          iconUrl:
+            type: string
+            description: 카테고리 아이콘
+          id:
+            type: number
+            description: 카테고리 id
+    api-payments-confirm1960580425:
+      required:
+      - amount
+      - orderId
+      - orderName
+      - receiptUrl
+      type: object
+      properties:
+        amount:
+          type: number
+          description: 주문금액
+        orderId:
+          type: string
+          description: 주문번호
+        receiptUrl:
+          type: string
+          description: 발행된 영수증
+        orderName:
+          type: string
+          description: 구매상품
+    api-purchased-vouchers-id1197570932:
+      required:
+      - expDate
+      - id
+      - price
+      - status
+      - title
+      - voucherId
+      - voucherKindImageUrl
+      type: object
+      properties:
+        voucherKindImageUrl:
+          type: string
+          description: 기프티콘 종류 이미지
+        price:
+          type: number
+          description: 구매한 기프티콘 가격
+        voucherId:
+          type: number
+          description: Voucher id
+        id:
+          type: number
+          description: 구매한 기프티콘 id
+        title:
+          type: string
+          description: 구매한 기프티콘 타이틀
+        expDate:
+          type: string
+          description: 구매한 기프티콘 유효기한
+        status:
+          type: string
+          description: 기프티콘 사용 여부
+    api-auth-reissue1484529317:
+      required:
+      - accessToken
+      - grantType
+      - refreshToken
+      - role
+      - username
+      type: object
+      properties:
+        role:
+          type: string
+          description: 권한
+        accessToken:
+          type: string
+          description: Access Token
+        grantType:
+          type: string
+          description: Token의 grant type
+        username:
+          type: string
+          description: 사용자 닉네임
+        refreshToken:
+          type: string
+          description: Refresh Token
+    api-orders-1929132646:
+      required:
+      - voucherForSaleIdList
+      type: object
+      properties:
+        voucherForSaleIdList:
+          type: array
+          description: 주문할 기프티콘 id 리스트
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
+    api-vouchers-id-image-1495447612:
+      required:
+      - imageUrl
+      type: object
+      properties:
+        imageUrl:
+          type: string
+          description: 판매 기프티콘 이미지 URL
+    api-admin-brands-id540760930:
+      required:
+      - iconUrl
+      - id
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 변경된 브랜드명
+        iconUrl:
+          type: string
+          description: 변경된 브랜드 아이콘
+        id:
+          type: number
+          description: 변경된 브랜드 id
+    api-admin-members-login-788118888:
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        password:
+          type: string
+          description: 비밀번호
+        email:
+          type: string
+          description: 이메일
+    api-admin-voucher-kinds1254174303:
+      required:
+      - id
+      - imageUrl
+      - minPrice
+      - title
+      type: object
+      properties:
+        imageUrl:
+          type: string
+          description: 저장된 기프티콘 이미지
+        minPrice:
+          type: number
+          description: 저장된 기프티콘 가격
+        description:
+          type: string
+          description: 상품 설명
+          nullable: true
+        id:
+          type: number
+          description: 저장된 기프티콘 id
+        title:
+          type: string
+          description: 저장된 기프티콘 타이틀
+        caution:
+          type: string
+          description: 사용 시 유의사항
+          nullable: true
+    api-liked-vouchers486549215:
+      type: object
+    api-admin-members-signup-1639599001:
+      required:
+      - email
+      - password
+      - passwordConfirm
+      - username
+      type: object
+      properties:
+        password:
+          type: string
+          description: 비밀번호
+        passwordConfirm:
+          type: string
+          description: 비밀번호 재입력
+        email:
+          type: string
+          description: 이메일
+        username:
+          type: string
+          description: 닉네임
+    api-admin-brands534265279:
+      required:
+      - iconUrl
+      - id
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 저장된 브랜드 이름
+        iconUrl:
+          type: string
+          description: 저장된 브랜드 아이콘
+        id:
+          type: number
+          description: 저장된 브랜드 id
+    api-admin-members-login403387426:
+      required:
+      - accessToken
+      - grantType
+      - refreshToken
+      - role
+      - username
+      type: object
+      properties:
+        role:
+          type: string
+          description: 권한
+        accessToken:
+          type: string
+          description: Access Token
+        grantType:
+          type: string
+          description: 인증 타입
+        username:
+          type: string
+          description: 사용자 닉네임
+        refreshToken:
+          type: string
+          description: Refresh Token
+    api-voucher-kinds-id1336416771:
+      required:
+      - caution
+      - description
+      - id
+      - imageUrl
+      - minPrice
+      - title
+      type: object
+      properties:
+        imageUrl:
+          type: string
+          description: 기프티콘 이미지 URL
+        minPrice:
+          type: number
+          description: 기프티콘 최소 가격
+        description:
+          type: string
+          description: 상품 설명
+        id:
+          type: number
+          description: 기프티콘 id
+        title:
+          type: string
+          description: 기프티콘 타이틀
+        caution:
+          type: string
+          description: 사용 시 유의사항
+    api-vouchers-1012548146:
+      type: array
+      items:
+        required:
+        - barcode
+        - expDate
+        - id
+        - price
+        - saleRequestedDate
+        - status
+        - title
+        type: object
+        properties:
+          price:
+            type: number
+            description: 판매 기프티콘 가격
+          id:
+            type: number
+            description: 판매 기프티콘 id
+          title:
+            type: string
+            description: 판매 기프티콘 타이틀
+          barcode:
+            type: string
+            description: 판매 기프티콘 바코드
+          saleRequestedDate:
+            type: string
+            description: 기프티콘 판매 요청일자
+          expDate:
+            type: string
+            description: 판매 기프티콘 유효기간
+          status:
+            type: string
+            description: 판매 기프티콘 상태
+    api-admin-categories-538763704:
+      required:
+      - iconUrl
+      - id
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: 저장된 카테고리 이름
+        iconUrl:
+          type: string
+          description: 저장된 카테고리 아이콘 URL
+        id:
+          type: number
+          description: 저장된 카테고리 id
+    api-admin-vouchers-id-1114246151:
+      required:
+      - barcode
+      - expDate
+      - id
+      - price
+      - saleRequestedDate
+      - status
+      - title
+      type: object
+      properties:
+        price:
+          type: number
+          description: 판매 기프티콘 가격
+        id:
+          type: number
+          description: 판매 기프티콘 id
+        title:
+          type: string
+          description: 판매 기프티콘 타이틀
+        barcode:
+          type: string
+          description: 판매 기프티콘 바코드
+        saleRequestedDate:
+          type: string
+          description: 기프티콘 판매 요청일자
+        expDate:
+          type: string
+          description: 판매 기프티콘 유효기간
+        status:
+          type: string
+          description: 판매 기프티콘 상태
+    api-admin-members-signup1763901071:
+      required:
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          description: 회원가입된 회원 닉네임
+    api-orders-985059609:
+      required:
+      - orderNumber
+      type: object
+      properties:
+        orderNumber:
+          type: string
+          description: 주문 번호
+    api-purchased-vouchers-id-1535897594:
+      required:
+      - id
+      - status
+      type: object
+      properties:
+        id:
+          type: number
+          description: 구매한 기프티콘 id
+        status:
+          type: string
+          description: 기프티콘 사용 여부
+    api-images-extracted-texts1236925199:
+      type: object
+      properties:
+        brandName:
+          type: string
+          description: 추출된 기프티콘 이미지의 브랜드명
+          nullable: true
+        barcode:
+          type: string
+          description: 추출된 기프티콘 이미지의 바코드
+          nullable: true
+        expDate:
+          type: string
+          description: 추출된 기프티콘 이미지의 유효기간
+          nullable: true
+    api-payments-confirm-890007413:
+      required:
+      - amount
+      - orderId
+      - paymentKey
+      type: object
+      properties:
+        amount:
+          type: number
+          description: 주문금액
+        orderId:
+          type: string
+          description: 주문번호
+        paymentKey:
+          type: string
+          description: 토스페이먼츠에서 제공하는 결제 키
+    api-purchased-vouchers1934304691:
+      type: array
+      items:
+        required:
+        - expDate
+        - id
+        - price
+        - status
+        - title
+        - voucherId
+        - voucherKindImageUrl
+        type: object
+        properties:
+          voucherKindImageUrl:
+            type: string
+            description: 기프티콘 종류 이미지
+          price:
+            type: number
+            description: 구매한 기프티콘 가격
+          voucherId:
+            type: number
+            description: Voucher id
+          id:
+            type: number
+            description: 구매한 기프티콘 id
+          title:
+            type: string
+            description: 구매한 기프티콘 타이틀
+          expDate:
+            type: string
+            description: 구매한 기프티콘 유효기한
+          status:
+            type: string
+            description: 기프티콘 사용 여부
+    api-liked-vouchers-739491691:
+      type: array
+      items:
+        required:
+        - id
+        - imageUrl
+        - minPrice
+        - title
+        type: object
+        properties:
+          imageUrl:
+            type: string
+            description: 기프티콘 종류의 이미지
+          minPrice:
+            type: number
+            description: 기프티콘 종류의 최소 가격
+          id:
+            type: number
+            description: 기프티콘 종류의 id
+          title:
+            type: string
+            description: 기프티콘 종류의 타이틀
+    api-orders-orderNumber-817073801:
+      required:
+      - orderNumber
+      type: object
+      properties:
+        orderNumber:
+          type: string
+          description: 취소 처리된 주문의 주문번호
+    api-brands1428100514:
+      type: array
+      items:
+        required:
+        - iconUrl
+        - id
+        - name
+        type: object
+        properties:
+          name:
+            type: string
+            description: 브랜드 name
+          iconUrl:
+            type: string
+            description: 브랜드 iconUrl
+          id:
+            type: number
+            description: 브랜드 id
+    api-liked-vouchers-298007935:
+      required:
+      - caution
+      - description
+      - id
+      - imageUrl
+      - minPrice
+      - title
+      type: object
+      properties:
+        imageUrl:
+          type: string
+          description: 기프티콘 종류의 이미지
+        minPrice:
+          type: number
+          description: 기프티콘 종류의 최소 가격
+        description:
+          type: string
+          description: 상품 설명
+        id:
+          type: number
+          description: 기프티콘 id
+        title:
+          type: string
+          description: 기프티콘 종류의 타이틀
+        caution:
+          type: string
+          description: 사용 시 유의사항
