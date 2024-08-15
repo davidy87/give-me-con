@@ -24,7 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequest;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
-import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;

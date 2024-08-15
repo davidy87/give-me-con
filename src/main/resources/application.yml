@@ -7,9 +7,3 @@ spring:
 
   messages:
     basename: errors
-
-springdoc:
-  swagger-ui:
-    url: /docs/openapi3.yml
-    path: /docs/swagger
-    disable-swagger-default-url: true
