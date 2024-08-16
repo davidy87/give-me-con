@@ -182,13 +182,13 @@ class AdminVoucherControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("판매중(or 판매 대기 중)인 기프티콘 id")
+                                parameterWithName("id").description("판매 중(or 판매 대기 중)인 기프티콘 id")
                         ),
                         requestFields(
-                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드 (0 ~ 4)"),
+                                fieldWithPath("statusCode").type(JsonFieldType.NUMBER).description("기프티콘 상태코드 (0 ~ 5)"),
                                 fieldWithPath("rejectedReason")
                                         .type(JsonFieldType.STRING).optional()
-                                        .description("판매 요청 거절 사유 (statusCode가 3(SALE_REJECTED)일 경우 필수)")
+                                        .description("판매 요청 거절 사유 (statusCode가 1(SALE_REJECTED)일 경우 필수)")
                         ),
                         responseFields(
                                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("판매 기프티콘 id"),
@@ -222,7 +222,7 @@ class AdminVoucherControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("판매중인 기프티콘 id")
+                                parameterWithName("id").description("판매 중인 기프티콘 id")
                         ))
                 );
 

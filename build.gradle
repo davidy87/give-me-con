@@ -27,10 +27,25 @@ ext {
 	set('snippetsDir', file("build/generated-snippets"))
 }
 
+test {
+	outputs.dir snippetsDir
+	useJUnitPlatform()
+}
+
 asciidoctor {
 	configurations 'asciidoctorExtensions'
 	sourceDir 'src/docs/asciidoc'
 	attributes 'snippets': file("build/generated-snippets")
+	inputs.dir snippetsDir
+	dependsOn test
+}
+
+bootJar {
+	dependsOn asciidoctor
+	copy {
+		from("${asciidoctor.outputDir}")
+		into '/src/main/resources/static/docs'
+	}
 }
 
 dependencies {
@@ -80,14 +95,4 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
-}
-
-tasks.named('test') {
-	outputs.dir snippetsDir
-	useJUnitPlatform()
-}
-
-tasks.named('asciidoctor') {
-	inputs.dir snippetsDir
-	dependsOn test
 }

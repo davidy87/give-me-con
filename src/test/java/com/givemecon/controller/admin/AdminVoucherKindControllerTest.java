@@ -164,7 +164,7 @@ class AdminVoucherKindControllerTest {
                                 partWithName("imageFile").description("저장할 기프티콘 이미지 파일")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 기프티콘 id"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("저장된 기프티콘 종류 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("저장된 기프티콘 타이틀"),
                                 fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("저장된 기프티콘 가격"),
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("저장된 기프티콘 이미지"),
@@ -213,16 +213,16 @@ class AdminVoucherKindControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("기프티콘 id")
+                                parameterWithName("id").description("기프티콘 종류 id")
                         ),
                         requestParts(
-                                partWithName("title").optional().description("수정할 기프티콘 종류의 타이틀"),
-                                partWithName("description").optional().description("수정할 기프티콘 종류의 상세설명"),
-                                partWithName("caution").optional().description("수정할 기프티콘 종류의 주의사항"),
-                                partWithName("imageFile").optional().description("수정할 기프티콘 종류의 이미지 파일")
+                                partWithName("title").optional().description("수정할 기프티콘 종류의 타이틀 (생략 가능)"),
+                                partWithName("description").optional().description("수정할 기프티콘 종류의 상세설명 (생략 가능)"),
+                                partWithName("caution").optional().description("수정할 기프티콘 종류의 주의사항 (생략 가능)"),
+                                partWithName("imageFile").optional().description("수정할 기프티콘 종류의 이미지 파일 (생략 가능)")
                         ),
                         responseFields(
-                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류의 id"),
+                                fieldWithPath("id").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류 id"),
                                 fieldWithPath("title").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 타이틀"),
                                 fieldWithPath("minPrice").type(JsonFieldType.NUMBER).description("수정된 기프티콘 종류의 최소 가격"),
                                 fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("수정된 기프티콘 종류의 이미지"),
@@ -252,7 +252,7 @@ class AdminVoucherKindControllerTest {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         pathParameters(
-                                parameterWithName("id").description("기프티콘 종류의 id")
+                                parameterWithName("id").description("기프티콘 종류 id")
                         ))
                 );
 

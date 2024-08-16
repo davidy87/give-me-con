@@ -71,7 +71,7 @@ operation::voucher-kind-controller-test/find-one[snippets='path-parameters,http-
 {sp} +
 
 === 기프티콘 종류 전체 조회
-operation::voucher-kind-controller-test/find-all[snippets='query-parameters,http-request,response-fields,http-response']
+operation::voucher-kind-controller-test/find-all[snippets='http-request,response-fields,http-response']
 {sp} +
 
 === 브랜드 id 별 기프티콘 종류 조회
@@ -92,15 +92,15 @@ operation::voucher-controller-test/find-all-by-seller[snippets='http-request,res
 {sp} +
 
 === 상태와 판매자별 기프티콘 조회
-operation::voucher-controller-test/find-all-by-status-and-username[snippets='http-request,response-fields,http-response']
+operation::voucher-controller-test/find-all-by-status-and-username[snippets='query-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === voucher-kind id별 현재 판매 중인 기프티콘 조회
-operation::voucher-controller-test/find-all-for-sale-by-voucher-kind-id[snippets='http-request,response-fields,http-response']
+operation::voucher-controller-test/find-all-for-sale-by-voucher-kind-id[snippets='query-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 기프티콘 이미지 조회
-operation::voucher-controller-test/find-image-url[snippets='http-request,response-fields,http-response']
+operation::voucher-controller-test/find-image-url[snippets='path-parameters,http-request,response-fields,http-response']
 {sp} +
 
 
@@ -108,7 +108,7 @@ operation::voucher-controller-test/find-image-url[snippets='http-request,respons
 == PurchasedVoucher APIs
 {sp} +
 
-=== 기프티콘 구매 등록
+=== 기프티콘 구매 등록 (1개 이상)
 operation::purchased-voucher-controller-test/save-all[snippets='request-fields,http-request,response-fields,http-response']
 {sp} +
 
@@ -149,11 +149,11 @@ operation::liked-voucher-controller-test/delete-one[snippets='path-parameters,ht
 {sp} +
 
 === 주문 요청 처리
-operation::order-controller-test/place-order[snippets='http-request,response-fields,http-response']
+operation::order-controller-test/place-order[snippets='request-fields,http-request,response-fields,http-response']
 {sp} +
 
 === 주문 조회
-operation::order-controller-test/find-order[snippets='http-request,response-fields,http-response']
+operation::order-controller-test/find-order[snippets='path-parameters,http-request,response-fields,http-response']
 {sp} +
 
 === 주문 취소
@@ -167,7 +167,7 @@ operation::order-controller-test/cancel-order[snippets='path-parameters,http-req
 {sp} +
 
 === 결제 확인 요청
-operation::payment-controller-test/confirm-payment[snippets='http-request,response-fields,http-response']
+operation::payment-controller-test/confirm-payment[snippets='request-fields,http-request,response-fields,http-response']
 {sp} +
 
 === 결제 내역 조회
