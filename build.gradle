@@ -33,18 +33,19 @@ test {
 }
 
 asciidoctor {
+	dependsOn test
 	configurations 'asciidoctorExtensions'
 	sourceDir 'src/docs/asciidoc'
 	attributes 'snippets': file("build/generated-snippets")
 	inputs.dir snippetsDir
-	dependsOn test
 }
 
 bootJar {
 	dependsOn asciidoctor
+	delete 'src/main/resources/static/'
 	copy {
 		from("${asciidoctor.outputDir}")
-		into '/src/main/resources/static/docs'
+		into 'src/main/resources/static/docs/'
 	}
 }
 

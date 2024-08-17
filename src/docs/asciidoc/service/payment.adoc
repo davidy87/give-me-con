@@ -1,0 +1,35 @@
+= 기브미콘 API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Payment APIs
+{sp} +
+
+=== 결제 확인 요청
+operation::payment-controller-test/confirm-payment[snippets='request-fields,http-request,response-fields,http-response']
+{sp} +
+
+=== 결제 내역 조회
+operation::payment-controller-test/find-payment-history[snippets='path-parameters,http-request,response-fields,http-response']
+{sp} +

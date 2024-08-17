@@ -1,0 +1,31 @@
+= 기브미콘 API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Brand APIs
+{sp} +
+
+=== 카테고리 id 별 전체 브랜드 조회
+operation::brand-controller-test/find-all-by-category-id[snippets='query-parameters,http-request,response-fields,http-response']
+{sp} +

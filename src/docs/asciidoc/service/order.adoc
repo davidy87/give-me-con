@@ -1,0 +1,40 @@
+= 기브미콘 API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Order APIs
+{sp} +
+
+=== 주문 요청 처리
+operation::order-controller-test/place-order[snippets='request-fields,http-request,response-fields,http-response']
+{sp} +
+
+=== 주문 조회
+operation::order-controller-test/find-order[snippets='path-parameters,http-request,response-fields,http-response']
+{sp} +
+
+=== 주문 취소
+operation::order-controller-test/cancel-order[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +
