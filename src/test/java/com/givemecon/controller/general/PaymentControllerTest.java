@@ -1,9 +1,8 @@
-package com.givemecon.controller;
+package com.givemecon.controller.general;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.controller.IntegrationTest;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
@@ -17,35 +16,16 @@ import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
-import com.givemecon.domain.repository.MemberRepository;
-import com.givemecon.domain.repository.OrderRepository;
-import com.givemecon.domain.repository.PaymentRepository;
-import com.givemecon.domain.repository.brand.BrandIconRepository;
-import com.givemecon.domain.repository.brand.BrandRepository;
-import com.givemecon.domain.repository.category.CategoryIconRepository;
-import com.givemecon.domain.repository.category.CategoryRepository;
-import com.givemecon.domain.repository.voucher.VoucherRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.tosspayments.PaymentConfirmation;
 import com.givemecon.infrastructure.tosspayments.TossPaymentsRestClient;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -58,76 +38,25 @@ import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(RestDocumentationExtension.class)
-@Transactional
-@SpringBootTest
-class PaymentControllerTest {
-
-    MockMvc mockMvc;
-
-    @Autowired
-    WebApplicationContext context;
-
-    @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    CategoryIconRepository categoryIconRepository;
-
-    @Autowired
-    BrandRepository brandRepository;
-
-    @Autowired
-    BrandIconRepository brandIconRepository;
-
-    @Autowired
-    VoucherKindRepository voucherKindRepository;
-
-    @Autowired
-    VoucherKindImageRepository voucherKindImageRepository;
-
-    @Autowired
-    VoucherRepository voucherRepository;
-
-    @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    MemberRepository memberRepository;
+class PaymentControllerTest extends IntegrationTest {
 
     @MockBean
     TossPaymentsRestClient tossPaymentsRestClient;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    JwtTokenService jwtTokenService;
 
     TokenInfo tokenInfo;
 
     Order order;
 
     @BeforeEach
-    void setup(RestDocumentationContextProvider restDoc) {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .apply(documentationConfiguration(restDoc))
-                .alwaysDo(print())
-                .build();
-
+    void setup() {
         Member buyer = memberRepository.save(Member.builder()
                 .username("buyer")
                 .email("buyer@gmail.com")
@@ -240,7 +169,7 @@ class PaymentControllerTest {
 
     @Test
     @DisplayName("결제 내역 조회 요청 API 테스트")
-    void findPaymentHistory(@Autowired PaymentRepository paymentRepository) throws Exception {
+    void findPaymentHistory() throws Exception {
         // given
         OrderInfo orderInfo = new OrderInfo(order.getOrderNumber(), "Americano T", 4_000L);
         Payment payment = paymentRepository.save(Payment.builder()

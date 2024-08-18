@@ -2,62 +2,29 @@ package com.givemecon.controller.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.dto.MemberDto;
+import com.givemecon.controller.IntegrationTest;
 import com.givemecon.domain.entity.member.Member;
-import com.givemecon.domain.repository.MemberRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(RestDocumentationExtension.class)
-@Transactional
-@SpringBootTest
-class AdminMemberControllerTest {
-
-    @Autowired
-    WebApplicationContext context;
-
-    MockMvc mockMvc;
-
-    @Autowired
-    MemberRepository memberRepository;
+class AdminMemberControllerTest extends IntegrationTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @BeforeEach
-    void setup(RestDocumentationContextProvider restDoc) {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .apply(documentationConfiguration(restDoc))
-                .alwaysDo(print())
-                .build();
-    }
 
     @Test
     @DisplayName("Admin용 회원가입 요청 API 테스트")
