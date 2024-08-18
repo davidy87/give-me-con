@@ -186,7 +186,7 @@ class PurchasedVoucherControllerTest {
     @Test
     void findAllByUsername() throws Exception {
         // given
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 5; i++) {
             VoucherImage voucherImage = voucherImageRepository.save(VoucherImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
@@ -206,9 +206,6 @@ class PurchasedVoucherControllerTest {
 
         // when
         ResultActions response = mockMvc.perform(get("/api/purchased-vouchers")
-                .queryParam("page", "1")
-                .queryParam("size", "10")
-                .queryParam("sort", "id")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
@@ -216,7 +213,6 @@ class PurchasedVoucherControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
-                        pagingQueryParameters(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("구매한 기프티콘 id"),
                                 fieldWithPath("[].voucherId").type(JsonFieldType.NUMBER).description("Voucher id"),

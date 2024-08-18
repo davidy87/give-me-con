@@ -1,0 +1,40 @@
+= 기브미콘 Admin Brand API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Admin Brand APIs
+{sp} +
+
+=== Brand 추가
+operation::admin-brand-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Brand 수정
+operation::admin-brand-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Brand 삭제
+operation::admin-brand-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +

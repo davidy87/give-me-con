@@ -2,14 +2,14 @@ package com.givemecon.util;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
-import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
+import org.springframework.restdocs.operation.preprocess.*;
 import org.springframework.restdocs.request.ParameterDescriptor;
 import org.springframework.restdocs.request.QueryParametersSnippet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -50,7 +50,21 @@ public final class ApiDocumentUtils {
                         .remove("Cache-Control")
                         .remove("Pragma")
                         .remove("Expires"),
+                modifyTokenContent("accessToken"),
+                modifyTokenContent("refreshToken"),
                 prettyPrint());
+    }
+
+    private static OperationPreprocessor modifyTokenContent(String tokenType) {
+        return replacePattern(getTokenPattern(tokenType), getTokenReplacement(tokenType));
+    }
+
+    private static Pattern getTokenPattern(String tokenType) {
+        return Pattern.compile(String.format("\"%s\":\"[A-Za-z0-9_.-]*\"", tokenType));
+    }
+
+    private static String getTokenReplacement(String tokenType) {
+        return String.format("\"%s\":\"TEST-TOKEN\"", tokenType);
     }
 
     public static QueryParametersSnippet pagingQueryParameters(ParameterDescriptor... parameterDescriptors) {

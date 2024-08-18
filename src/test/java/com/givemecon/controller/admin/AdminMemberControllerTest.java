@@ -22,8 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import static com.givemecon.domain.entity.member.Role.ADMIN;
-import static com.givemecon.util.ApiDocumentUtils.getDocumentRequest;
-import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
+import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;

@@ -118,7 +118,7 @@ class BrandControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        pagingQueryParameters(
+                        queryParameters(
                                 parameterWithName("categoryId").description("카테고리 id")
                         ),
                         responseFields(

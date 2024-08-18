@@ -1,0 +1,36 @@
+= 기브미콘 API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Token Issue/Reissue APIs
+{sp} +
+
+=== Access Token & Refresh Token 발급 요청
+operation::token-issue-api-controller-test/issue-token[snippets='query-parameters,http-request,response-fields,http-response']
+{sp} +
+
+=== Refresh Token 재발급 요청
+operation::token-issue-api-controller-test/reissue-token[snippets='http-request,response-fields,http-response']
+:sectnums!:
+{sp} +

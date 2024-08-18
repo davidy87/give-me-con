@@ -129,7 +129,7 @@ class VoucherKindControllerTest {
     @Test
     void findAll() throws Exception {
         // given
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 5; i++) {
             VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
@@ -157,7 +157,6 @@ class VoucherKindControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        pagingQueryParameters(),
                         responseFields(
                                 fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("기프티콘 종류의 id"),
                                 fieldWithPath("[].minPrice").type(JsonFieldType.NUMBER).description("기프티콘 종류의 최소 가격"),
@@ -170,7 +169,7 @@ class VoucherKindControllerTest {
     @Test
     void findAllByBrandId() throws Exception {
         // given
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 5; i++) {
             VoucherKindImage voucherKindImage = voucherKindImageRepository.save(VoucherKindImage.builder()
                     .imageKey("imageKey" + i)
                     .imageUrl("imageUrl" + i)
@@ -196,7 +195,7 @@ class VoucherKindControllerTest {
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
-                        pagingQueryParameters(
+                        queryParameters(
                                 parameterWithName("brandId").description("브랜드 id")
                         ),
                         responseFields(

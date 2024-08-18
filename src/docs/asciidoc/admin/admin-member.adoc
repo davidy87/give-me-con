@@ -1,0 +1,36 @@
+= 기브미콘 Admin Member API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Admin Member APIs
+{sp} +
+
+=== Admin 회원가입
+operation::admin-member-controller-test/signup[snippets='request-fields,http-request,response-fields,http-response']
+{sp} +
+
+=== Admin 로그인
+operation::admin-member-controller-test/login[snippets='request-fields,http-request,response-fields,http-response']
+:sectnums!:
+{sp} +
