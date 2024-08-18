@@ -1,6 +1,5 @@
 package com.givemecon.domain.repository;
 
-import com.givemecon.common.configuration.JpaConfig;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
@@ -8,15 +7,10 @@ import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
-import com.givemecon.domain.repository.voucher.VoucherRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,24 +22,7 @@ import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatu
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(JpaConfig.class)
-@DataJpaTest
-class PurchasedVoucherRepositoryTest {
-
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    VoucherKindRepository voucherKindRepository;
-
-    @Autowired
-    VoucherKindImageRepository voucherKindImageRepository;
-
-    @Autowired
-    VoucherRepository voucherRepository;
-
-    @Autowired
-    PurchasedVoucherRepository purchasedVoucherRepository;
+class PurchasedVoucherRepositoryTest extends RepositoryTest {
 
     Member member;
 
@@ -124,97 +101,107 @@ class PurchasedVoucherRepositoryTest {
         assertThat(found.get().getVoucher()).isEqualTo(voucher);
     }
 
-    @Test
-    @DisplayName("PurchasedVoucher fetch join 단일 조회 테스트")
-    void findOneFetchedByIdAndUsername() {
-        // given
-        PurchasedVoucher saved =
-                purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
+    @Nested
+    @DisplayName("JPQL 테스트")
+    class JPQLTest {
 
-        // when
-        Optional<PurchasedVoucher> result =
-                purchasedVoucherRepository.findOneFetchedByIdAndUsername(saved.getId(), member.getUsername());
+        @Test
+        @DisplayName("PurchasedVoucher fetch join 단일 조회 테스트")
+        void findOneFetchedByIdAndUsername() {
+            // given
+            PurchasedVoucher saved =
+                    purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 
-        // then
-        assertThat(result).isPresent();
+            // when
+            Optional<PurchasedVoucher> result =
+                    purchasedVoucherRepository.findOneFetchedByIdAndUsername(saved.getId(), member.getUsername());
 
-        PurchasedVoucher found = result.get();
-        assertThat(found.getId()).isEqualTo(saved.getId());
-        assertThat(found.getVoucher()).isEqualTo(voucher);
-        assertThat(found.getOwner()).isEqualTo(member);
+            // then
+            assertThat(result).isPresent();
+
+            PurchasedVoucher found = result.get();
+            assertThat(found.getId()).isEqualTo(saved.getId());
+            assertThat(found.getVoucher()).isEqualTo(voucher);
+            assertThat(found.getOwner()).isEqualTo(member);
+        }
+
+        @Test
+        @DisplayName("PurchasedVoucher fetch join 전체 조회 테스트")
+        void findAllFetchedByUsername() {
+            // given
+            PurchasedVoucher saved =
+                    purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
+
+            // when
+            List<PurchasedVoucher> result = purchasedVoucherRepository.findAllFetchedByUsername(member.getUsername());
+
+            // then
+            assertThat(result).isNotEmpty();
+
+            PurchasedVoucher found = result.get(0);
+            assertThat(found.getId()).isEqualTo(saved.getId());
+            assertThat(found.getVoucher()).isEqualTo(voucher);
+            assertThat(found.getOwner()).isEqualTo(member);
+        }
     }
 
-    @Test
-    @DisplayName("PurchasedVoucher fetch join 전체 조회 테스트")
-    void findAllFetchedByUsername() {
-        // given
-        PurchasedVoucher saved =
-                purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
+    @Nested
+    @DisplayName("벌크 수정 테스트")
+    class BulkUpdateTest {
 
-        // when
-        List<PurchasedVoucher> result = purchasedVoucherRepository.findAllFetchedByUsername(member.getUsername());
+        @Test
+        @DisplayName("PurchasedVoucher의 VoucherForSale의 state가 EXPIRED일 경우, 해당 PurchasedVoucher도 EXPIRED로 변경한다.")
+        void updateAllStatusForExpired() {
+            // given
+            voucher.updateStatus(VoucherStatus.EXPIRED);
+            PurchasedVoucher saved = purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 
-        // then
-        assertThat(result).isNotEmpty();
+            // when
+            int numModified = purchasedVoucherRepository.updateAllStatusForExpired();
 
-        PurchasedVoucher found = result.get(0);
-        assertThat(found.getId()).isEqualTo(saved.getId());
-        assertThat(found.getVoucher()).isEqualTo(voucher);
-        assertThat(found.getOwner()).isEqualTo(member);
-    }
+            // then
+            assertThat(numModified).isEqualTo(1);
 
-    @Test
-    @DisplayName("PurchasedVoucher의 VoucherForSale의 state가 EXPIRED일 경우, 해당 PurchasedVoucher도 EXPIRED로 변경한다.")
-    void updateAllStatusForExpired() {
-        // given
-        voucher.updateStatus(VoucherStatus.EXPIRED);
-        PurchasedVoucher saved = purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
+            Optional<PurchasedVoucher> found = purchasedVoucherRepository.findById(saved.getId());
+            assertThat(found).isPresent();
+            assertThat(found.get().getStatus()).isEqualTo(PurchasedVoucherStatus.EXPIRED);
+        }
 
-        // when
-        int numModified = purchasedVoucherRepository.updateAllStatusForExpired();
+        @Test
+        @DisplayName("VoucherForSale의 status가 EXPIRED가 아닌 PurchasedVoucher는 status를 변경하지 않는다.")
+        void ignoreVoucherForSaleNotExpired() {
+            // given
+            voucher.updateStatus(VoucherStatus.FOR_SALE);
+            PurchasedVoucher saved = purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
 
-        // then
-        assertThat(numModified).isEqualTo(1);
+            // when
+            int numModified = purchasedVoucherRepository.updateAllStatusForExpired();
 
-        Optional<PurchasedVoucher> found = purchasedVoucherRepository.findById(saved.getId());
-        assertThat(found).isPresent();
-        assertThat(found.get().getStatus()).isEqualTo(PurchasedVoucherStatus.EXPIRED);
-    }
+            // then
+            assertThat(numModified).isEqualTo(0);
 
-    @Test
-    @DisplayName("VoucherForSale의 status가 EXPIRED가 아닌 PurchasedVoucher는 status를 변경하지 않는다.")
-    void ignoreVoucherForSaleNotExpired() {
-        // given
-        voucher.updateStatus(VoucherStatus.FOR_SALE);
-        PurchasedVoucher saved = purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
+            Optional<PurchasedVoucher> found = purchasedVoucherRepository.findById(saved.getId());
+            assertThat(found).isPresent();
+            assertThat(found.get().getStatus()).isNotEqualTo(PurchasedVoucherStatus.EXPIRED);
+        }
 
-        // when
-        int numModified = purchasedVoucherRepository.updateAllStatusForExpired();
+        @Test
+        @DisplayName("PurchasedVoucher의 status가 USABLE일 경우에만 status를 변경한다.")
+        void ignoreStatusNotUsable() {
+            // given
+            voucher.updateStatus(VoucherStatus.FOR_SALE);
+            PurchasedVoucher saved = purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
+            saved.updateStatus(USED);
 
-        // then
-        assertThat(numModified).isEqualTo(0);
+            // when
+            int numModified = purchasedVoucherRepository.updateAllStatusForExpired();
 
-        Optional<PurchasedVoucher> found = purchasedVoucherRepository.findById(saved.getId());
-        assertThat(found).isPresent();
-        assertThat(found.get().getStatus()).isNotEqualTo(PurchasedVoucherStatus.EXPIRED);
-    }
+            // then
+            assertThat(numModified).isEqualTo(0);
 
-    @Test
-    @DisplayName("PurchasedVoucher의 status가 USABLE일 경우에만 status를 변경한다.")
-    void ignoreStatusNotUsable() {
-        // given
-        voucher.updateStatus(VoucherStatus.FOR_SALE);
-        PurchasedVoucher saved = purchasedVoucherRepository.save(new PurchasedVoucher(voucher, member));
-        saved.updateStatus(USED);
-
-        // when
-        int numModified = purchasedVoucherRepository.updateAllStatusForExpired();
-
-        // then
-        assertThat(numModified).isEqualTo(0);
-
-        Optional<PurchasedVoucher> found1 = purchasedVoucherRepository.findById(saved.getId());
-        assertThat(found1).isPresent();
-        assertThat(found1.get().getStatus()).isNotEqualTo(PurchasedVoucherStatus.EXPIRED);
+            Optional<PurchasedVoucher> found1 = purchasedVoucherRepository.findById(saved.getId());
+            assertThat(found1).isPresent();
+            assertThat(found1.get().getStatus()).isNotEqualTo(PurchasedVoucherStatus.EXPIRED);
+        }
     }
 }

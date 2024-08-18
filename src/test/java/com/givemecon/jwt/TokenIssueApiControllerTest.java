@@ -2,27 +2,17 @@ package com.givemecon.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.controller.IntegrationTest;
 import com.givemecon.domain.entity.member.Member;
-import com.givemecon.domain.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.UUID;
 
@@ -36,32 +26,15 @@ import static com.givemecon.util.TokenHeaderUtils.*;
 import static com.givemecon.application.dto.MemberDto.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
-@Transactional
-@SpringBootTest
-public class TokenIssueApiControllerTest {
-
-    @Autowired
-    WebApplicationContext context;
-
-    MockMvc mockMvc;
-
-    @Autowired
-    JwtTokenService jwtTokenService;
-
-    @Autowired
-    MemberRepository memberRepository;
+class TokenIssueApiControllerTest extends IntegrationTest {
 
     @Autowired
     RedisTemplate<String, TokenInfo> redisTemplate;
@@ -69,14 +42,7 @@ public class TokenIssueApiControllerTest {
     Member member;
 
     @BeforeEach
-    void setup(RestDocumentationContextProvider restDoc) {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .apply(documentationConfiguration(restDoc))
-                .alwaysDo(print())
-                .build();
-
+    void setup() {
         member = memberRepository.save(Member.builder()
                 .email("test@gmail.com")
                 .username("tester")
@@ -90,15 +56,10 @@ public class TokenIssueApiControllerTest {
         String authorizationCode = UUID.randomUUID().toString();
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
         Claims claims = jwtTokenService.getClaims(tokenInfo.getAccessToken());
-
-//        MockHttpSession session = new MockHttpSession();
-//        session.setAttribute(authorizationCode, tokenInfo);
-
         redisTemplate.opsForValue().set(authorizationCode, tokenInfo);
 
         // when
         ResultActions response = mockMvc.perform(get("/api/auth/success")
-//                .session(session)
                 .queryParam(AUTHORIZATION_CODE.getName(), authorizationCode));
 
         // then
