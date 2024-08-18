@@ -1,4 +1,4 @@
-package com.givemecon.controller.general;
+package com.givemecon.controller.service;
 
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.exception.concrete.EntityNotFoundException;

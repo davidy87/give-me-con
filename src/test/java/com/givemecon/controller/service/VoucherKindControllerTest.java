@@ -1,4 +1,4 @@
-package com.givemecon.controller.general;
+package com.givemecon.controller.service;
 
 import com.givemecon.controller.IntegrationTest;
 import com.givemecon.domain.entity.brand.Brand;

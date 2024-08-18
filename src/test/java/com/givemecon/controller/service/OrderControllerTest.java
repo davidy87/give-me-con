@@ -1,4 +1,4 @@
-package com.givemecon.controller.general;
+package com.givemecon.controller.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.dto.MemberDto;

@@ -1,4 +1,4 @@
-package com.givemecon.controller.general;
+package com.givemecon.controller.service;
 
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
