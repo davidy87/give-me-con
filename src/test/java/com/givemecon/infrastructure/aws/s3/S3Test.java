@@ -1,4 +1,4 @@
-package com.givemecon.infrastructure.s3;
+package com.givemecon.infrastructure.aws.s3;
 
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
