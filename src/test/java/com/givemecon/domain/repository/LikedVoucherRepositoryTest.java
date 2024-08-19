@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LikedVoucherRepositoryTest extends RepositoryTest {
+class LikedVoucherRepositoryTest extends RepositoryTestEnvironment {
 
     @Test
     void saveAndFindAll() {

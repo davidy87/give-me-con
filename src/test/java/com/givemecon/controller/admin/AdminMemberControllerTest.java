@@ -2,7 +2,7 @@ package com.givemecon.controller.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.dto.MemberDto;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AdminMemberControllerTest extends IntegrationTest {
+class AdminMemberControllerTest extends ControllerTestEnvironment {
 
     @Autowired
     PasswordEncoder passwordEncoder;

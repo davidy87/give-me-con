@@ -3,7 +3,7 @@ package com.givemecon.controller.service;
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.exception.concrete.EntityNotFoundException;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +23,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class MemberControllerTest extends IntegrationTest {
+class MemberControllerTest extends ControllerTestEnvironment {
 
     Member user;
 

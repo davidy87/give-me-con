@@ -9,7 +9,7 @@ import java.util.List;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MemberRepositoryTest extends RepositoryTest {
+class MemberRepositoryTest extends RepositoryTestEnvironment {
 
     @Test
     void saveAndFindAll() {

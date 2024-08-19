@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OrderRepositoryTest extends RepositoryTest {
+class OrderRepositoryTest extends RepositoryTestEnvironment {
 
     Member buyer;
 

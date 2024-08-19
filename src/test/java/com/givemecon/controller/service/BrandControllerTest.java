@@ -1,6 +1,6 @@
 package com.givemecon.controller.service;
 
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
@@ -22,7 +22,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class BrandControllerTest extends IntegrationTest {
+class BrandControllerTest extends ControllerTestEnvironment {
 
     Category category;
 

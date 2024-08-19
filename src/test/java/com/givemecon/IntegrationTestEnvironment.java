@@ -1,23 +1,25 @@
-package com.givemecon.domain.repository;
+package com.givemecon;
 
-import com.givemecon.common.configuration.JpaConfig;
+import com.givemecon.domain.repository.MemberRepository;
+import com.givemecon.domain.repository.OrderRepository;
+import com.givemecon.domain.repository.PaymentRepository;
+import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.brand.BrandIconRepository;
 import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.likedvoucher.LikedVoucherRepository;
-import com.givemecon.domain.repository.voucher.RejectedSaleRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-@Import(JpaConfig.class)
-@DataJpaTest
-public abstract class RepositoryTest {
+@Transactional
+@SpringBootTest
+public abstract class IntegrationTestEnvironment {
 
     @Autowired
     protected MemberRepository memberRepository;
@@ -45,9 +47,6 @@ public abstract class RepositoryTest {
 
     @Autowired
     protected VoucherImageRepository voucherImageRepository;
-
-    @Autowired
-    protected RejectedSaleRepository rejectedSaleRepository;
 
     @Autowired
     protected PurchasedVoucherRepository purchasedVoucherRepository;

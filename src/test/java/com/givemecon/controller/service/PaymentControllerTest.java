@@ -2,7 +2,7 @@ package com.givemecon.controller.service;
 
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
@@ -46,7 +46,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class PaymentControllerTest extends IntegrationTest {
+class PaymentControllerTest extends ControllerTestEnvironment {
 
     @MockBean
     TossPaymentsRestClient tossPaymentsRestClient;

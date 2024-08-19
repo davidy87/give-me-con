@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PaymentRepositoryTest extends RepositoryTest {
+class PaymentRepositoryTest extends RepositoryTestEnvironment {
 
     @Test
     void saveAndFind() {

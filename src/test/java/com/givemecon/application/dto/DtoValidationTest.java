@@ -1,20 +1,14 @@
 package com.givemecon.application.dto;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.givemecon.controller.ControllerTestEnvironment;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockPart;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -27,29 +21,11 @@ import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 import static com.givemecon.common.error.GlobalErrorCode.INVALID_ARGUMENT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-@SpringBootTest
-public class DtoValidationTest {
-
-    @Autowired
-    WebApplicationContext context;
-
-    MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @BeforeEach
-    void setup() {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .build();
-    }
+public class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "ADMIN")

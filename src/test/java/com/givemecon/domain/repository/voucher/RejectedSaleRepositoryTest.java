@@ -1,14 +1,14 @@
 package com.givemecon.domain.repository.voucher;
 
 import com.givemecon.domain.entity.voucher.RejectedSale;
-import com.givemecon.domain.repository.RepositoryTest;
+import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RejectedSaleRepositoryTest extends RepositoryTest {
+class RejectedSaleRepositoryTest extends RepositoryTestEnvironment {
 
     @Test
     void save() {

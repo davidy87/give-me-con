@@ -4,7 +4,7 @@ import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.repository.RepositoryTest;
+import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BrandRepositoryTest extends RepositoryTest {
+class BrandRepositoryTest extends RepositoryTestEnvironment {
 
     @Test
     void saveAndFindAll() {

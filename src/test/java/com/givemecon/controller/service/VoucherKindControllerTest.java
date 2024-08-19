@@ -1,6 +1,6 @@
 package com.givemecon.controller.service;
 
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
@@ -21,7 +21,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class VoucherKindControllerTest extends IntegrationTest {
+class VoucherKindControllerTest extends ControllerTestEnvironment {
 
     Brand brand;
 

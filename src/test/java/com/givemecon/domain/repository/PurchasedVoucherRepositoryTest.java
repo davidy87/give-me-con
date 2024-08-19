@@ -22,7 +22,7 @@ import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatu
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PurchasedVoucherRepositoryTest extends RepositoryTest {
+class PurchasedVoucherRepositoryTest extends RepositoryTestEnvironment {
 
     Member member;
 

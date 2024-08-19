@@ -1,6 +1,6 @@
 package com.givemecon.controller.service;
 
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class CategoryControllerTest extends IntegrationTest {
+class CategoryControllerTest extends ControllerTestEnvironment {
 
     @Test
     void findAll() throws Exception {

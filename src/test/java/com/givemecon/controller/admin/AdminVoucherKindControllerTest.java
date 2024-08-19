@@ -3,7 +3,7 @@ package com.givemecon.controller.admin;
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.application.dto.VoucherKindDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.member.Member;
@@ -37,7 +37,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AdminVoucherKindControllerTest extends IntegrationTest {
+class AdminVoucherKindControllerTest extends ControllerTestEnvironment {
 
     TokenInfo tokenInfo;
 

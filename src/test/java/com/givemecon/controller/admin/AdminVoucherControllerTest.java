@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.application.dto.VoucherDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
@@ -35,7 +35,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class AdminVoucherControllerTest extends IntegrationTest {
+class AdminVoucherControllerTest extends ControllerTestEnvironment {
 
     TokenInfo tokenInfo;
 

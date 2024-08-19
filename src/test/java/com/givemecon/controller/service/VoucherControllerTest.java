@@ -2,7 +2,7 @@ package com.givemecon.controller.service;
 
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.exception.concrete.EntityNotFoundException;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherImage;
@@ -35,7 +35,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class VoucherControllerTest extends IntegrationTest {
+class VoucherControllerTest extends ControllerTestEnvironment {
 
     Member user;
 

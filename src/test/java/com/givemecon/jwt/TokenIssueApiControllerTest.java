@@ -2,7 +2,7 @@ package com.givemecon.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.controller.IntegrationTest;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class TokenIssueApiControllerTest extends IntegrationTest {
+class TokenIssueApiControllerTest extends ControllerTestEnvironment {
 
     @Autowired
     RedisTemplate<String, TokenInfo> redisTemplate;
