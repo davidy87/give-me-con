@@ -9,8 +9,8 @@ import com.givemecon.infrastructure.gcp.ocr.TextExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -36,8 +36,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ImageTextExtractionControllerTest extends ControllerTestEnvironment {
 
-    @MockBean
-    TextExtractor textExtractor;
+    @Autowired
+    TextExtractor textExtractor;  // MockBean
 
     TokenInfo tokenInfo;
 

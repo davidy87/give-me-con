@@ -15,7 +15,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-public class S3Test {
+class S3Test {
 
     @Autowired
     S3Template s3Template;

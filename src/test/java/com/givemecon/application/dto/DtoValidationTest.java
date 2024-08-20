@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
-public class DtoValidationTest extends ControllerTestEnvironment {
+class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "ADMIN")
