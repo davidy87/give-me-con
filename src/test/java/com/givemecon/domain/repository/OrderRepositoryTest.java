@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OrderRepositoryTest extends RepositoryTestEnvironment {
+class OrderRepositoryTest extends IntegrationTestEnvironment {
 
     Member buyer;
 

@@ -1,7 +1,7 @@
 package com.givemecon.domain.repository.brand;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.brand.BrandIcon;
-import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BrandIconRepositoryTest extends RepositoryTestEnvironment {
+class BrandIconRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {

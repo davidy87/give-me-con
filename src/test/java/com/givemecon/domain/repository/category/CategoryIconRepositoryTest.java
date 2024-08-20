@@ -1,7 +1,7 @@
 package com.givemecon.domain.repository.category;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CategoryIconRepositoryTest extends RepositoryTestEnvironment {
+class CategoryIconRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {

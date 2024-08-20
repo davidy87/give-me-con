@@ -10,6 +10,7 @@ import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.domain.repository.category.CategoryIconRepository;
 import com.givemecon.domain.repository.category.CategoryRepository;
 import com.givemecon.domain.repository.likedvoucher.LikedVoucherRepository;
+import com.givemecon.domain.repository.voucher.RejectedSaleRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
@@ -51,6 +52,9 @@ public abstract class IntegrationTestEnvironment {
 
     @Autowired
     protected VoucherImageRepository voucherImageRepository;
+
+    @Autowired
+    protected RejectedSaleRepository rejectedSaleRepository;
 
     @Autowired
     protected PurchasedVoucherRepository purchasedVoucherRepository;

@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MemberRepositoryTest extends RepositoryTestEnvironment {
+class MemberRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {

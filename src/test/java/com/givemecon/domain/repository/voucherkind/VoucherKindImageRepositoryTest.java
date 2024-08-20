@@ -1,7 +1,7 @@
 package com.givemecon.domain.repository.voucherkind;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.voucherkind.VoucherKindImage;
-import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class VoucherKindImageRepositoryTest extends RepositoryTestEnvironment {
+class VoucherKindImageRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {

@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.payment.OrderInfo;
 import com.givemecon.domain.entity.payment.Payment;
 import com.givemecon.domain.entity.payment.PaymentMethod;
@@ -11,7 +12,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PaymentRepositoryTest extends RepositoryTestEnvironment {
+class PaymentRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFind() {

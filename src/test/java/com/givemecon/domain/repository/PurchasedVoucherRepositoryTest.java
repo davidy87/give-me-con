@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
@@ -22,7 +23,7 @@ import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatu
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PurchasedVoucherRepositoryTest extends RepositoryTestEnvironment {
+class PurchasedVoucherRepositoryTest extends IntegrationTestEnvironment {
 
     Member member;
 

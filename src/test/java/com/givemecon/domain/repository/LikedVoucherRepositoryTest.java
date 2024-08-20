@@ -1,5 +1,6 @@
 package com.givemecon.domain.repository;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
 import com.givemecon.domain.entity.member.Member;
@@ -14,7 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LikedVoucherRepositoryTest extends RepositoryTestEnvironment {
+class LikedVoucherRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {

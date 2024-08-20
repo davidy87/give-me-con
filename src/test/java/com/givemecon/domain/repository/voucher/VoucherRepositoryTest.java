@@ -1,11 +1,11 @@
 package com.givemecon.domain.repository.voucher;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherImage;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
-import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static com.givemecon.domain.entity.order.OrderStatus.CANCELLED;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class VoucherRepositoryTest extends RepositoryTestEnvironment {
+class VoucherRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {

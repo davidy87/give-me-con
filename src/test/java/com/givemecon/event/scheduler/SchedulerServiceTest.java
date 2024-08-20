@@ -31,7 +31,7 @@ class SchedulerServiceTest {
     PurchasedVoucherRepository purchasedVoucherRepository;
 
     @Test
-    @DisplayName("유효기간이 만료된 모든 VoucherForSale과 PurchasedVoucher의 status를 변경한다.")
+    @DisplayName("유효기간이 만료된 모든 Voucher과 PurchasedVoucher의 status를 변경한다.")
     void updateExpired() {
         // given
         LocalDate today = LocalDate.now();

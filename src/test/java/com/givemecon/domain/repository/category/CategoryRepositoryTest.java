@@ -1,8 +1,8 @@
 package com.givemecon.domain.repository.category;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
-import com.givemecon.domain.repository.RepositoryTestEnvironment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CategoryRepositoryTest extends RepositoryTestEnvironment {
+class CategoryRepositoryTest extends IntegrationTestEnvironment {
 
     @Test
     void saveAndFindAll() {
