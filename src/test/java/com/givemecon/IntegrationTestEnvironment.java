@@ -1,5 +1,6 @@
 package com.givemecon;
 
+import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PaymentRepository;
@@ -13,10 +14,13 @@ import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindImageRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
+import com.givemecon.util.MockBeanConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
+@Import(MockBeanConfig.class)
 @Transactional
 @SpringBootTest
 public abstract class IntegrationTestEnvironment {
@@ -59,4 +63,7 @@ public abstract class IntegrationTestEnvironment {
 
     @Autowired
     protected PaymentRepository paymentRepository;
+
+    @Autowired
+    protected JwtTokenService jwtTokenService;
 }
