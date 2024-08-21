@@ -42,7 +42,7 @@ class PurchasedVoucherServiceTest {
     @BeforeEach
     void setup() {
         VoucherKindImage voucherKindImage = VoucherKindImage.builder()
-                .imageUrl("voucherImageUrl")
+                .imageUrl("voucherKindImageUrl")
                 .build();
 
         VoucherKind voucherKind = VoucherKind.builder()

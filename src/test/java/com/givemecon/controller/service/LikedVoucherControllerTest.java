@@ -1,7 +1,6 @@
 package com.givemecon.controller.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.application.dto.VoucherKindDto;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
@@ -17,6 +16,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
+import static com.givemecon.application.dto.VoucherKindDto.*;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.util.ApiDocumentUtils.*;
@@ -70,7 +70,7 @@ class LikedVoucherControllerTest extends ControllerTestEnvironment {
                 .content(new ObjectMapper().writeValueAsString(voucherKind.getId())));
 
         // then
-        VoucherKindDto.VoucherKindDetailResponse voucherKindDetailResponse = new VoucherKindDto.VoucherKindDetailResponse(voucherKind);
+        VoucherKindDetailResponse voucherKindDetailResponse = new VoucherKindDetailResponse(voucherKind);
 
         response.andExpect(status().isCreated())
                 .andExpect(jsonPath("id").value(voucherKindDetailResponse.getId()))
@@ -142,18 +142,18 @@ class LikedVoucherControllerTest extends ControllerTestEnvironment {
     @Test
     void deleteOne() throws Exception {
         // given
-        VoucherKind voucherKindSaved = voucherKindRepository.save(VoucherKind.builder()
+        VoucherKind voucherKind = voucherKindRepository.save(VoucherKind.builder()
                 .title("voucherKind")
                 .build());
 
-        LikedVoucher likedVoucherSaved = likedVoucherRepository.save(
+        LikedVoucher likedVoucher = likedVoucherRepository.save(
                 LikedVoucher.builder()
                         .member(user)
-                        .voucherKind(voucherKindSaved)
+                        .voucherKind(voucherKind)
                         .build());
 
         // when
-        ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherKindSaved.getId())
+        ResultActions response = mockMvc.perform(delete("/api/liked-vouchers/{voucherId}", voucherKind.getId())
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
@@ -166,6 +166,6 @@ class LikedVoucherControllerTest extends ControllerTestEnvironment {
                         ))
                 );
 
-        assertThat(likedVoucherRepository.existsById(likedVoucherSaved.getId())).isFalse();
+        assertThat(likedVoucherRepository.existsById(likedVoucher.getId())).isFalse();
     }
 }

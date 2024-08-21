@@ -29,8 +29,8 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Category Request DTO 검증 실패 테스트")
-    void categoryDtoFailed() throws Exception {
+    @DisplayName("Category Request DTO 검증 테스트")
+    void categoryRequestWithInvalidData() throws Exception {
         // given
         MockPart name = new MockPart("name", null);
         MockMultipartFile iconFile = new MockMultipartFile("iconFile", (byte[]) null);
@@ -55,8 +55,8 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("Brand Request DTO 검증 실패 테스트")
-    void brandDtoFailed() throws Exception {
+    @DisplayName("Brand Request DTO 검증 테스트")
+    void brandRequestWithInvalidData() throws Exception {
         // given
         MockPart invalidCategoryId = new MockPart("categoryId", "aaa".getBytes());
         MockPart name = new MockPart("name", null);
@@ -83,8 +83,8 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("VoucherKind Request DTO 검증 실패 테스트")
-    void voucherDtoFailed() throws Exception {
+    @DisplayName("VoucherKind Request DTO 검증 테스트")
+    void voucherKindRequestWithInvalidData() throws Exception {
         // given
         MockPart price = new MockPart("price", null);
         MockPart title = new MockPart("title", null);
@@ -111,8 +111,8 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("Voucher Request DTO 검증 실패 테스트")
-    void voucherForSaleDtoFailed() throws Exception {
+    @DisplayName("Voucher Request DTO 검증 테스트 1 - Voucher 저장 요청 시, 모든 데이터는 null이서서는 안된다.")
+    void voucherRequestWithInvalidData() throws Exception {
         // given
         MockPart title = new MockPart("title", null);
         MockPart price = new MockPart("price", null);
@@ -143,8 +143,11 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("상태별 Voucher 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 5까지만 가능하다.")
-    void statusCodeParameterFailed() throws Exception {
+    @DisplayName(
+            "Voucher Request DTO 검증 테스트 2 " +
+                    "- 상태별 Voucher 조회 시, 파라미터로 보내는 statusCode는 최소 0, 최대 5까지만 가능하다."
+    )
+    void voucherRequestWithInvalidStatusCode() throws Exception {
         // given
         Integer invalidStatusCode = 6;
 
@@ -167,8 +170,11 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    @DisplayName("상태 수정 요청 DTO의 statusCode가 1(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다.")
-    void saleRejectionRequestFailed() throws Exception {
+    @DisplayName(
+            "Voucher Request DTO 검증 테스트 3 " +
+                    "- 상태 수정 요청 DTO의 statusCode가 1(SALE_REJECTED)일 경우, rejectedReason이 무조건 같이 전달되어야 한다."
+    )
+    void voucherRequestWithInvalidSaleRejection() throws Exception {
         // given
         Integer statusCode = SALE_REJECTED.ordinal();
 
@@ -195,8 +201,8 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("PurchasedVoucher Request DTO 검증 테스트 1")
-    void invalidPurchasedVoucherRequest() throws Exception {
+    @DisplayName("PurchasedVoucher Request DTO 검증 테스트 1 - voucherId는 1 이상이어야 한다.")
+    void purchasedVoucherRequestWithInvalidVoucherId() throws Exception {
         // given
         PurchasedVoucherRequest requestDto = new PurchasedVoucherRequest(0L);
         PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(List.of(requestDto));
@@ -220,8 +226,8 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("PurchasedVoucher Request DTO 검증 테스트 2")
-    void invalidPurchasedVoucherRequestList() throws Exception {
+    @DisplayName("PurchasedVoucher Request DTO 검증 테스트 2 - PurchasedVoucherRequestList는 비어있으면 안된다.")
+    void purchasedVoucherRequestWithEmptyList() throws Exception {
         // given
         PurchasedVoucherRequestList requestDtoList = new PurchasedVoucherRequestList(List.of());
 
@@ -244,10 +250,11 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("OrderRequest DTO 검증 테스트 1 - voucherForSaleIdList는 비어있으면 안된다.")
+    @DisplayName("OrderRequest DTO 검증 테스트 1 - voucherIdList는 비어있으면 안된다.")
     void orderRequestWithEmptyList() throws Exception {
         // given
-        OrderRequest orderRequest = new OrderRequest(List.of());
+        List<Long> voucherIdList = List.of();
+        OrderRequest orderRequest = new OrderRequest(voucherIdList);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/orders")
@@ -264,10 +271,11 @@ class DtoValidationTest extends ControllerTestEnvironment {
 
     @Test
     @WithMockUser(roles = "USER")
-    @DisplayName("OrderRequest DTO 검증 테스트 2 - voucherForSaleId는 모두 1 이상이어야 한다.")
-    void orderRequestWithInvalidVoucherForSaleId() throws Exception {
+    @DisplayName("OrderRequest DTO 검증 테스트 2 - voucherId는 모두 1 이상이어야 한다.")
+    void orderRequestWithInvalidVoucherId() throws Exception {
         // given
-        OrderRequest orderRequest = new OrderRequest(List.of(0L, 1L, 2L));
+        List<Long> voucherIdList = List.of(0L, 1L, 2L);
+        OrderRequest orderRequest = new OrderRequest(voucherIdList);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/orders")

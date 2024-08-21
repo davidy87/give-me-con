@@ -241,7 +241,10 @@ class VoucherRepositoryTest extends IntegrationTestEnvironment {
         }
 
         @Test
-        @DisplayName("기프티콘 종류별 최소 가격 테스트 2 - 사용자가 판매하고 있는 기프티콘이 있다면, 해당 기프티콘은 최소 가격 계산에 포함되지 않는다.")
+        @DisplayName(
+                "기프티콘 종류별 최소 가격 테스트 2 " +
+                        "- 사용자가 판매하고 있는 기프티콘이 있다면, 해당 기프티콘은 최소 가격 계산에 포함되지 않는다."
+        )
         void findOneWithMinPriceExcludingUserSelling() {
             // given
             Member seller = memberRepository.save(Member.builder()
@@ -339,7 +342,7 @@ class VoucherRepositoryTest extends IntegrationTestEnvironment {
 
             // then
             long numExpired = voucherRepository.findAll().stream()
-                    .filter(voucherForSale -> voucherForSale.getStatus().equals(EXPIRED))
+                    .filter(voucher -> voucher.getStatus().equals(EXPIRED))
                     .count();
 
             assertThat(numModified).isEqualTo(numExpired);
@@ -376,7 +379,7 @@ class VoucherRepositoryTest extends IntegrationTestEnvironment {
 
             // then
             long numExpired = voucherRepository.findAll().stream()
-                    .filter(voucherForSale -> voucherForSale.getStatus().equals(EXPIRED))
+                    .filter(voucher -> voucher.getStatus().equals(EXPIRED))
                     .count();
 
             assertThat(numModified).isEqualTo(numExpired);

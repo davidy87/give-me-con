@@ -52,7 +52,7 @@ class SchedulerServiceTest {
 
         Mockito.when(voucherRepository.updateAllByExpDateBefore(any(LocalDate.class)))
                 .then(invocation -> {
-                    voucherList.forEach(vfs -> vfs.updateStatus(VoucherStatus.EXPIRED));
+                    voucherList.forEach(v -> v.updateStatus(VoucherStatus.EXPIRED));
                     return voucherList.size();
                 });
 

@@ -1,7 +1,6 @@
 package com.givemecon.controller.admin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.application.dto.MemberDto;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +11,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -30,7 +30,7 @@ class AdminMemberControllerTest extends ControllerTestEnvironment {
     @DisplayName("Admin용 회원가입 요청 API 테스트")
     void signup() throws Exception {
         // given
-        MemberDto.SignupRequest signupRequest = MemberDto.SignupRequest.builder()
+        SignupRequest signupRequest = SignupRequest.builder()
                 .email("test@gmail.com")
                 .username("tester")
                 .password("testpass")
@@ -73,7 +73,7 @@ class AdminMemberControllerTest extends ControllerTestEnvironment {
                 .role(ADMIN)
                 .build());
 
-        MemberDto.LoginRequest loginRequest = MemberDto.LoginRequest.builder()
+        LoginRequest loginRequest = LoginRequest.builder()
                 .email(member.getEmail())
                 .password(password)
                 .build();

@@ -1,6 +1,5 @@
 package com.givemecon.controller.admin;
 
-import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.controller.ControllerTestEnvironment;
@@ -16,6 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
@@ -45,7 +45,7 @@ class AdminCategoryControllerTest extends ControllerTestEnvironment {
                 .role(ADMIN)
                 .build());
 
-        tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(admin));
+        tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(admin));
     }
 
     @Test
