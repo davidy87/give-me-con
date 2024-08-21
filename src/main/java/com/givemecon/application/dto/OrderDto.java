@@ -20,7 +20,7 @@ public final class OrderDto {
     public static class OrderRequest {
 
         @NotEmpty
-        private List<@Min(1L) Long> voucherForSaleIdList;
+        private List<@Min(1L) Long> voucherIdList;
     }
 
     @Getter
