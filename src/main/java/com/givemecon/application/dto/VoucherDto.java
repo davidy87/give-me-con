@@ -55,7 +55,7 @@ public final class VoucherDto {
     public static class StatusUpdateRequest {
 
         @Min(0)
-        @Max(4)
+        @Max(5)
         @NotNull
         private Integer statusCode;
 
