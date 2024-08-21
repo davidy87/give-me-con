@@ -47,7 +47,7 @@ public class OrderService {
         int quantity = 0;
         long amount = 0L;
 
-        for (Long id : orderRequest.getVoucherForSaleIdList()) {
+        for (Long id : orderRequest.getVoucherIdList()) {
             Voucher voucher = getValidOrderItem(id, buyer);
             quantity++;
             amount += voucher.getPrice();

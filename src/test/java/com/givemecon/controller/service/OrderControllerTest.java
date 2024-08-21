@@ -174,7 +174,7 @@ class OrderControllerTest extends ControllerTestEnvironment {
                         getDocumentRequestWithAuth(),
                         getDocumentResponse(),
                         requestFields(
-                                fieldWithPath("voucherForSaleIdList").type(JsonFieldType.ARRAY).description("주문할 기프티콘 id 리스트")
+                                fieldWithPath("voucherIdList").type(JsonFieldType.ARRAY).description("주문할 기프티콘 id 리스트")
                         ),
                         responseFields(
                                 fieldWithPath("orderNumber").type(JsonFieldType.STRING).description("주문 번호")
