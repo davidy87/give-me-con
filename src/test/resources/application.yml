@@ -4,7 +4,6 @@ spring:
     include: client,API-KEY,oauth,jwt,gcp,payment
 
   jpa:
-    show_sql: true
     properties:
       hibernate:
         format_sql: true

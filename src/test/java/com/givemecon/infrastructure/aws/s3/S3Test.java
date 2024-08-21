@@ -1,11 +1,11 @@
-package com.givemecon.infrastructure.s3;
+package com.givemecon.infrastructure.aws.s3;
 
+import com.givemecon.IntegrationTestEnvironment;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -14,8 +14,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-public class S3Test {
+class S3Test extends IntegrationTestEnvironment {
 
     @Autowired
     S3Template s3Template;

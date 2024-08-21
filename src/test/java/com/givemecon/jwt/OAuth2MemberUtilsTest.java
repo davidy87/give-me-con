@@ -1,14 +1,12 @@
 package com.givemecon.jwt;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.common.auth.dto.OAuth2Attributes;
 import com.givemecon.common.auth.util.OAuth2MemberUtils;
 import com.givemecon.domain.entity.member.Member;
-import com.givemecon.domain.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
 import java.util.HashMap;
@@ -19,11 +17,7 @@ import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.common.auth.enums.OAuth2Provider.*;
 import static org.assertj.core.api.Assertions.*;
 
-@DataJpaTest
-class OAuth2MemberUtilsTest {
-
-    @Autowired
-    MemberRepository memberRepository;
+class OAuth2MemberUtilsTest extends IntegrationTestEnvironment {
 
     OAuth2MemberUtils oauth2MemberUtils;
 

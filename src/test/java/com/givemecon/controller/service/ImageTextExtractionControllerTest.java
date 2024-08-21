@@ -1,31 +1,20 @@
-package com.givemecon.controller;
+package com.givemecon.controller.service;
 
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
-import com.givemecon.domain.repository.MemberRepository;
-import com.givemecon.domain.repository.brand.BrandRepository;
 import com.givemecon.infrastructure.gcp.ocr.TextExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -37,52 +26,25 @@ import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(RestDocumentationExtension.class)
-@Transactional
-@SpringBootTest
-class ImageTextExtractionControllerTest {
+class ImageTextExtractionControllerTest extends ControllerTestEnvironment {
 
     @Autowired
-    WebApplicationContext context;
-
-    MockMvc mockMvc;
-
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    BrandRepository brandRepository;
-
-    @Autowired
-    JwtTokenService jwtTokenService;
-
-    @MockBean
-    TextExtractor textExtractor;
+    TextExtractor textExtractor;  // MockBean
 
     TokenInfo tokenInfo;
 
     Brand brand;
 
     @BeforeEach
-    void setup(RestDocumentationContextProvider restDoc) {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .apply(documentationConfiguration(restDoc))
-                .alwaysDo(print())
-                .build();
-
+    void setup() {
         Member user = memberRepository.save(Member.builder()
                 .email("user@gmail.com")
                 .username("user")

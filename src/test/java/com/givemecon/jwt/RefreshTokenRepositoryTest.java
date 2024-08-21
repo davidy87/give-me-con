@@ -1,19 +1,18 @@
 package com.givemecon.jwt;
 
+import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.common.auth.jwt.token.RefreshToken;
 import com.givemecon.common.auth.jwt.token.RefreshTokenRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 
 import java.util.Optional;
 
 import static com.givemecon.common.auth.enums.TokenDuration.REFRESH_TOKEN_DURATION;
 import static org.assertj.core.api.Assertions.*;
 
-@DataRedisTest
-class RefreshTokenRepositoryTest {
+class RefreshTokenRepositoryTest extends IntegrationTestEnvironment {
 
     @Autowired
     RefreshTokenRepository refreshTokenRepository;

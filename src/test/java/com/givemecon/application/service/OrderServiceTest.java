@@ -104,7 +104,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 요청 예외 1 - 구매할 VoucherForSale의 status가 FOR_SALE이 아닐 경우 주문 요청 실패")
+        @DisplayName("주문 요청 예외 1 - 구매할 Voucher의 status가 FOR_SALE이 아닐 경우 주문 요청 실패")
         void notForSaleOrder() {
             // given
             Mockito.when(voucher.getStatus()).thenReturn(SALE_REQUESTED);
@@ -117,7 +117,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 요청 예외 2 - 구매할 VoucherForSale의 seller가 존재하지 않을 경우 주문 요청 실패")
+        @DisplayName("주문 요청 예외 2 - 구매할 Voucher의 seller가 존재하지 않을 경우 주문 요청 실패")
         void unavailableSellerOrder() {
             // given
             Mockito.when(voucher.getStatus()).thenReturn(FOR_SALE);
@@ -200,7 +200,7 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 조회 예외 1 - VoucherForSale의 status가 ORDER_PLACED가 아닌 경우, 예외를 던진다.")
+        @DisplayName("주문 조회 예외 1 - Voucher의 status가 ORDER_PLACED가 아닌 경우, 예외를 던진다.")
         void itemOrderNotPlaced() {
             // given
             List<Voucher> voucherList = List.of(voucher);
@@ -219,7 +219,10 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 조회 예외 2 - 주문 정보에 있는 구매자의 username이 사용자의 username과 다르다면 해당 요청을 처리하지 않는다.")
+        @DisplayName(
+                "주문 조회 예외 2 " +
+                        "- 주문 정보에 있는 구매자의 username이 사용자의 username과 다르다면 해당 요청을 처리하지 않는다."
+        )
         void buyerNotMatch() {
             // given
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
@@ -354,7 +357,10 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 체결 요청 예외 3 - 주문 정보에 있는 구매자의 username이 사용자의 username과 다르다면 해당 요청을 처리하지 않는다.")
+        @DisplayName(
+                "주문 체결 요청 예외 3 " +
+                        "- 주문 정보에 있는 구매자의 username이 사용자의 username과 다르다면 해당 요청을 처리하지 않는다."
+        )
         void buyerNotMatchWhenConfirm() {
             // given
             Mockito.when(order.getBuyer()).thenReturn(buyer);
@@ -483,7 +489,10 @@ class OrderServiceTest {
         }
 
         @Test
-        @DisplayName("주문 최소 처리 예외 3 - 취소할 주문의 주문자 정보와 취소 요청을 한 사용자의 정보와 일치하지 않을 경우, 취소되지 않는다.")
+        @DisplayName(
+                "주문 최소 처리 예외 3 " +
+                        "- 취소할 주문의 주문자 정보와 취소 요청을 한 사용자의 정보와 일치하지 않을 경우, 취소되지 않는다."
+        )
         void buyerNotMatchWhenCancel() {
             // given
             Mockito.when(order.getBuyer()).thenReturn(buyer);

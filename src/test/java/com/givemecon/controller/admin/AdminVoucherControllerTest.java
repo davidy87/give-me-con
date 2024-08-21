@@ -4,28 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.application.dto.VoucherDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.auth.jwt.token.JwtTokenService;
+import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
-import com.givemecon.domain.repository.MemberRepository;
-import com.givemecon.domain.repository.voucher.VoucherRepository;
-import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,51 +28,21 @@ import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(RestDocumentationExtension.class)
-@Transactional
-@SpringBootTest
-class AdminVoucherControllerTest {
-
-    @Autowired
-    WebApplicationContext context;
-
-    MockMvc mockMvc;
-
-    @Autowired
-    VoucherKindRepository voucherKindRepository;
-
-    @Autowired
-    VoucherRepository voucherRepository;
-
-    @Autowired
-    MemberRepository memberRepository;
-
-    @Autowired
-    JwtTokenService jwtTokenService;
+class AdminVoucherControllerTest extends ControllerTestEnvironment {
 
     TokenInfo tokenInfo;
 
     VoucherKind voucherKind;
 
     @BeforeEach
-    void setup(RestDocumentationContextProvider restDoc) {
-        mockMvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .apply(documentationConfiguration(restDoc))
-                .alwaysDo(print())
-                .build();
-
+    void setup() {
         Member admin = memberRepository.save(Member.builder()
                 .email("admin@gmail.com")
                 .username("admin")

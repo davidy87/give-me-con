@@ -1,7 +1,6 @@
 package com.givemecon.infrastructure.gcp.ocr;
 
 import com.google.cloud.spring.vision.CloudVisionTemplate;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +14,6 @@ import org.springframework.core.io.ResourceLoader;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 
-@Slf4j
 @ExtendWith(MockitoExtension.class)
 class TextExtractorTest {
 
@@ -36,7 +34,6 @@ class TextExtractorTest {
     @Test
     void extractTextFromImage() {
         // given
-        log.info("imagePath = {}", imagePath);
         String textFromImage = "WAITING?\nPLEASE\nTURN OFF\nYOUR\nENGINE";
 
         Mockito.when(resourceLoader.getResource(eq(imagePath)))
