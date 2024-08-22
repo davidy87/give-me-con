@@ -64,6 +64,7 @@ merge를 진행
 ## ✅ ERD
 
 ### [기브미콘 ERD 확인하기](https://www.erdcloud.com/p/sH3M9BHp2TXvXo5yG)
+![give_me_con](https://github.com/user-attachments/assets/6d980503-b5bb-47bd-a39c-d9eec7a34a24)
 
 <br>
 <br>
