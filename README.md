@@ -69,8 +69,4 @@ merge를 진행
 <br>
 <br>
 
-## ✅ API 문서
-
-### [API 문서 확인하기](https://davidy87.github.io/givemecon/api)
-
-<br>
+## ✅ UI 설계
