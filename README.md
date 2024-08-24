@@ -70,3 +70,12 @@ merge를 진행
 <br>
 
 ## ✅ UI 설계
+### 어드민 화면
+![어드민화면](https://github.com/user-attachments/assets/0d80eb3c-9e5f-4803-b59b-8254f540b2f3)
+
+<br>
+
+### 사용자 화면
+![사용자화면1](https://github.com/user-attachments/assets/7e534681-6f67-468d-a8cd-8120ec62ee57)
+![사용자화면2](https://github.com/user-attachments/assets/b9288276-2563-43a4-9577-ed12aa1b68c4)
+
