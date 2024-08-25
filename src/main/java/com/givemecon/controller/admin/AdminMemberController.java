@@ -1,11 +1,12 @@
 package com.givemecon.controller.admin;
 
-import com.givemecon.application.dto.MemberDto;
 import com.givemecon.application.service.MemberService;
 import com.givemecon.common.auth.dto.TokenInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import static com.givemecon.application.dto.MemberDto.*;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/members")
@@ -16,12 +17,12 @@ public class AdminMemberController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/signup")
-    public MemberDto.SignupResponse adminSignup(@RequestBody MemberDto.SignupRequest signupRequest) {
+    public SignupResponse adminSignup(@RequestBody SignupRequest signupRequest) {
         return memberService.signup(signupRequest);
     }
 
     @PostMapping("/login")
-    public TokenInfo adminLogin(@RequestBody MemberDto.LoginRequest loginRequest) {
+    public TokenInfo adminLogin(@RequestBody LoginRequest loginRequest) {
         return memberService.login(loginRequest);
     }
 }
