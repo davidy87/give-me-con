@@ -15,7 +15,6 @@ import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,7 +65,6 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('USER')")
     public List<VoucherResponse> findAllByUsername(String username) {
         Member seller = memberRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException(Member.class));
