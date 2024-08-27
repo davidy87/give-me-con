@@ -2,7 +2,6 @@ package com.givemecon.controller.service;
 
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.INVALID_MEMBER_ID;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
-import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.util.ApiDocumentUtils.*;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -74,11 +73,10 @@ class MemberControllerTest extends ControllerTestEnvironment {
                             .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
             // then
-            response.andExpect(status().is4xxClientError())
-                    .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
-                    .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                    .andExpect(jsonPath("error.message")
-                            .value(new EntityNotFoundException(Member.class).getMessage()));
+            response.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("error.status").value(INVALID_MEMBER_ID.getStatus()))
+                    .andExpect(jsonPath("error.code").value(INVALID_MEMBER_ID.getCode()))
+                    .andExpect(jsonPath("error.message").value(INVALID_MEMBER_ID.getMessage()));
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.givemecon.application.service;
 
-import com.givemecon.application.exception.order.InvalidOrderException;
-import com.givemecon.application.exception.payment.InvalidPaymentException;
+import com.givemecon.application.exception.InvalidOrderException;
+import com.givemecon.application.exception.InvalidPaymentException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
 import com.givemecon.domain.entity.payment.OrderInfo;
@@ -25,10 +25,10 @@ import java.util.Optional;
 import static com.givemecon.application.dto.OrderDto.OrderConfirmation;
 import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.application.dto.PaymentDto.PaymentResponse;
-import static com.givemecon.application.exception.order.OrderErrorCode.BUYER_NOT_MATCH;
-import static com.givemecon.application.exception.order.OrderErrorCode.INVALID_ORDER_NUMBER;
-import static com.givemecon.application.exception.payment.PaymentErrorCode.AMOUNT_NOT_MATCH;
-import static com.givemecon.application.exception.payment.PaymentErrorCode.INVALID_PAYMENT_KEY;
+import static com.givemecon.application.exception.errorcode.OrderErrorCode.BUYER_NOT_MATCH;
+import static com.givemecon.application.exception.errorcode.OrderErrorCode.INVALID_ORDER_NUMBER;
+import static com.givemecon.application.exception.errorcode.PaymentErrorCode.AMOUNT_NOT_MATCH;
+import static com.givemecon.application.exception.errorcode.PaymentErrorCode.INVALID_PAYMENT_KEY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

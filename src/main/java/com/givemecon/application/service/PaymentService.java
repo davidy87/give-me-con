@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.application.exception.payment.InvalidPaymentException;
+import com.givemecon.application.exception.InvalidPaymentException;
 import com.givemecon.domain.entity.order.Order;
 import com.givemecon.domain.entity.payment.Payment;
 import com.givemecon.domain.repository.PaymentRepository;
@@ -15,8 +15,8 @@ import java.util.Objects;
 import static com.givemecon.application.dto.OrderDto.OrderConfirmation;
 import static com.givemecon.application.dto.PaymentDto.PaymentRequest;
 import static com.givemecon.application.dto.PaymentDto.PaymentResponse;
-import static com.givemecon.application.exception.payment.PaymentErrorCode.AMOUNT_NOT_MATCH;
-import static com.givemecon.application.exception.payment.PaymentErrorCode.INVALID_PAYMENT_KEY;
+import static com.givemecon.application.exception.errorcode.PaymentErrorCode.AMOUNT_NOT_MATCH;
+import static com.givemecon.application.exception.errorcode.PaymentErrorCode.INVALID_PAYMENT_KEY;
 
 @RequiredArgsConstructor
 @Service

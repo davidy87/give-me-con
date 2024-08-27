@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.common.util.FileUtils;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.givemecon.application.dto.BrandDto.*;
+import static com.givemecon.application.exception.errorcode.BrandErrorCode.INVALID_BRAND_ID;
+import static com.givemecon.application.exception.errorcode.CategoryErrorCode.INVALID_CATEGORY_ID;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +36,7 @@ public class BrandService {
 
     public BrandResponse save(BrandSaveRequest requestDto) {
         Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_CATEGORY_ID));
 
         BrandIcon brandIcon = brandIconRepository.save(
                 imageEntityUtils.createImageEntity(BrandIcon.class, requestDto.getIconFile()));
@@ -65,7 +67,7 @@ public class BrandService {
 
     public BrandResponse update(Long id, BrandUpdateRequest requestDto) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_BRAND_ID));
 
         Long categoryId = requestDto.getCategoryId();
         String newBrandName = requestDto.getName();
@@ -73,7 +75,7 @@ public class BrandService {
 
         if (categoryId != null) {
             Category newCategory = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new EntityNotFoundException(Category.class));
+                    .orElseThrow(() -> new InvalidRequestFieldException(INVALID_CATEGORY_ID));
 
             brand.updateCategory(newCategory);
         }
@@ -91,7 +93,7 @@ public class BrandService {
 
     public void delete(Long id) {
         Brand brand = brandRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_BRAND_ID));
 
         brandRepository.delete(brand);
     }

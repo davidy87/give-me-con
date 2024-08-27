@@ -2,7 +2,6 @@ package com.givemecon.controller.admin;
 
 import com.givemecon.application.dto.MemberDto;
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.brand.BrandIcon;
@@ -18,8 +17,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static com.givemecon.application.exception.errorcode.BrandErrorCode.INVALID_BRAND_ID;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
-import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
@@ -215,7 +214,7 @@ class AdminBrandControllerTest extends ControllerTestEnvironment {
     class ExceptionTest {
 
         @Test
-        @DisplayName("Brand Id 예외 - 존재하지 않는 Brand Id")
+        @DisplayName("Brand Id 예외 - 올바르지 않은 Brand Id")
         void brandsExceptionTest() throws Exception {
             // given
             String newName = "newCategory";
@@ -236,11 +235,10 @@ class AdminBrandControllerTest extends ControllerTestEnvironment {
                             .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
             // then
-            response.andExpect(status().is4xxClientError())
-                    .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
-                    .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                    .andExpect(jsonPath("error.message")
-                            .value(new EntityNotFoundException(Brand.class).getMessage()));
+            response.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("error.status").value(INVALID_BRAND_ID.getStatus()))
+                    .andExpect(jsonPath("error.code").value(INVALID_BRAND_ID.getCode()))
+                    .andExpect(jsonPath("error.message").value(INVALID_BRAND_ID.getMessage()));
         }
     }
 }

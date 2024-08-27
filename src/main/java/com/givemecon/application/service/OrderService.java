@@ -1,7 +1,7 @@
 package com.givemecon.application.service;
 
-import com.givemecon.application.exception.order.InvalidOrderException;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
+import com.givemecon.application.exception.InvalidOrderException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
 import com.givemecon.domain.entity.order.OrderStatus;
@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.givemecon.application.dto.OrderDto.*;
-import static com.givemecon.application.exception.order.OrderErrorCode.*;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.*;
+import static com.givemecon.application.exception.errorcode.OrderErrorCode.*;
+import static com.givemecon.application.exception.errorcode.VoucherErrorCode.*;
 import static com.givemecon.domain.entity.order.OrderStatus.CANCELLED;
 import static com.givemecon.domain.entity.order.OrderStatus.CONFIRMED;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.*;
@@ -40,7 +42,7 @@ public class OrderService {
 
     public OrderNumberResponse placeOrder(OrderRequest orderRequest, String username) {
         Member buyer = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         String orderNumber = generateOrderNumber();
         Order order = new Order(orderNumber, buyer);
@@ -68,7 +70,7 @@ public class OrderService {
 
     private Voucher getValidOrderItem(Long voucherForSaleId, Member buyer) {
         Voucher voucher = voucherRepository.findById(voucherForSaleId)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_ID));
 
         Member seller = voucher.getSeller();
 

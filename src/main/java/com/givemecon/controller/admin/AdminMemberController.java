@@ -23,6 +23,6 @@ public class AdminMemberController {
 
     @PostMapping("/login")
     public TokenInfo adminLogin(@RequestBody LoginRequest loginRequest) {
-        return memberService.login(loginRequest);
+        return memberService.adminLogin(loginRequest);
     }
 }

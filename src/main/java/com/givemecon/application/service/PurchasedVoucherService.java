@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.entity.voucher.Voucher;
@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.givemecon.application.dto.PurchasedVoucherDto.*;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.*;
+import static com.givemecon.application.exception.errorcode.PurchasedVoucherErrorCode.*;
+import static com.givemecon.application.exception.errorcode.VoucherErrorCode.*;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USABLE;
 import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
@@ -34,7 +37,7 @@ public class PurchasedVoucherService {
 
     public List<PurchasedVoucherResponse> saveAll(String username, List<PurchasedVoucherRequest> requestDtoList) {
         Member buyer = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         List<PurchasedVoucher> purchasedVouchers =
                 purchasedVoucherRepository.saveAll(requestDtoList.stream()
@@ -54,8 +57,11 @@ public class PurchasedVoucherService {
      */
     private PurchasedVoucher saveOne(Member buyer, PurchasedVoucherRequest requestDto) {
         Voucher voucher = voucherRepository.findById(requestDto.getVoucherId())
-                .filter(forSale -> forSale.getStatus() == FOR_SALE)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_ID));
+
+        if (voucher.getStatus() != FOR_SALE) {
+            throw new InvalidRequestFieldException(VOUCHER_NOT_FOR_SALE);
+        }
 
         voucher.updateStatus(SOLD);
 
@@ -72,7 +78,7 @@ public class PurchasedVoucherService {
     @Transactional(readOnly = true)
     public PagedPurchasedVoucherResponse findPageByUsername(String username, Pageable pageable) {
         Member owner = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         Page<PurchasedVoucherResponse> pageResult = purchasedVoucherRepository.findPageByOwner(owner, pageable)
                 .map(PurchasedVoucherResponse::new);
@@ -84,12 +90,12 @@ public class PurchasedVoucherService {
     public PurchasedVoucherResponse findOne(Long id, String username) {
         return purchasedVoucherRepository.findOneFetchedByIdAndUsername(id, username)
                 .map(PurchasedVoucherResponse::new)
-                .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_PURCHASED_VOUCHER_ID));
     }
 
     public StatusUpdateResponse setUsed(Long id) {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(PurchasedVoucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_PURCHASED_VOUCHER_ID));
 
         // purchasedVoucher의 현재 상태가 EXPIRED일 수도 있으므로, USABLE일 경우에만 변경
         if (purchasedVoucher.getStatus() == USABLE) {

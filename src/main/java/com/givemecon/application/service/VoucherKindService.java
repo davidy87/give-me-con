@@ -1,9 +1,8 @@
 package com.givemecon.application.service;
 
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.common.util.FileUtils;
 import com.givemecon.domain.entity.brand.Brand;
-import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
@@ -27,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.givemecon.application.dto.VoucherKindDto.*;
+import static com.givemecon.application.exception.errorcode.BrandErrorCode.*;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.*;
+import static com.givemecon.application.exception.errorcode.VoucherKindErrorCode.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 
 @Slf4j
@@ -49,11 +51,7 @@ public class VoucherKindService {
 
     public VoucherKindDetailResponse save(VoucherKindSaveRequest requestDto) {
         Brand brand = brandRepository.findById(requestDto.getBrandId())
-                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
-
-        if (brand.getCategory() == null) {
-            throw new EntityNotFoundException(Category.class);
-        }
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_BRAND_ID));
 
         VoucherKindImage voucherKindImage = voucherKindImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherKindImage.class, requestDto.getImageFile()));
@@ -72,7 +70,7 @@ public class VoucherKindService {
     @Transactional(readOnly = true)
     public VoucherKindDetailResponse findOne(Long id) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_KIND_ID));
 
         return new VoucherKindDetailResponse(voucherKind, getMinPrice(voucherKind));
     }
@@ -80,7 +78,7 @@ public class VoucherKindService {
     @Transactional(readOnly = true)
     public VoucherKindDetailResponse findOne(Long id, String username) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_KIND_ID));
 
         return new VoucherKindDetailResponse(voucherKind, getMinPrice(voucherKind, username));
     }
@@ -102,7 +100,7 @@ public class VoucherKindService {
     @Transactional(readOnly = true)
     public List<VoucherKindResponse> findAllWithMinPriceByBrandId(Long brandId, String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         return voucherKindRepository.findAllWithImageByBrandId(brandId).stream()
                 .map(voucherKind -> new VoucherKindResponse(voucherKind, getMinPrice(voucherKind, member)))
@@ -120,7 +118,7 @@ public class VoucherKindService {
     @Transactional(readOnly = true)
     public PagedVoucherKindResponse findPageByBrandName(String brandName, Pageable pageable) {
         Brand brand = brandRepository.findByName(brandName)
-                .orElseThrow(() -> new EntityNotFoundException(Brand.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_BRAND_NAME));
 
         Page<VoucherKindResponse> pageResult = voucherKindRepository.findPageByBrand(brand, pageable)
                 .map(voucherKind -> new VoucherKindResponse(voucherKind, getMinPrice(voucherKind)));
@@ -157,7 +155,7 @@ public class VoucherKindService {
 
     public VoucherKindDetailResponse update(Long id, VoucherKindUpdateRequest requestDto) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_KIND_ID));
 
         String newTitle = requestDto.getTitle();
         String newDescription = requestDto.getDescription();
@@ -185,7 +183,7 @@ public class VoucherKindService {
 
     public void delete(Long id) {
         VoucherKind voucherKind = voucherKindRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_KIND_ID));
 
         voucherKindRepository.delete(voucherKind);
     }

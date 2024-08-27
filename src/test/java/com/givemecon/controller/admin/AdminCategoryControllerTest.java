@@ -1,7 +1,6 @@
 package com.givemecon.controller.admin;
 
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
@@ -16,8 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.*;
+import static com.givemecon.application.exception.errorcode.CategoryErrorCode.INVALID_CATEGORY_ID;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
-import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
@@ -189,7 +188,7 @@ class AdminCategoryControllerTest extends ControllerTestEnvironment {
     class ExceptionTest {
 
         @Test
-        @DisplayName("Category Id 예외 - 존재하지 않는 Category Id")
+        @DisplayName("Category Id 예외 - 올바르지 않은 Category Id")
         void invalidCategoryId() throws Exception {
             // given
             String newName = "newCategory";
@@ -209,12 +208,10 @@ class AdminCategoryControllerTest extends ControllerTestEnvironment {
                             .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
             // then
-            response
-                    .andExpect(status().is4xxClientError())
-                    .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
-                    .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                    .andExpect(jsonPath("error.message")
-                            .value(new EntityNotFoundException(Category.class).getMessage()));
+            response.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("error.status").value(INVALID_CATEGORY_ID.getStatus()))
+                    .andExpect(jsonPath("error.code").value(INVALID_CATEGORY_ID.getCode()))
+                    .andExpect(jsonPath("error.message").value(INVALID_CATEGORY_ID.getMessage()));
         }
     }
 }

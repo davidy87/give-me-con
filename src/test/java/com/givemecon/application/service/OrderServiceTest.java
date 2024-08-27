@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.application.exception.order.InvalidOrderException;
+import com.givemecon.application.exception.InvalidOrderException;
 import com.givemecon.domain.entity.brand.Brand;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.order.Order;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.givemecon.application.dto.OrderDto.*;
-import static com.givemecon.application.exception.order.OrderErrorCode.*;
+import static com.givemecon.application.exception.errorcode.OrderErrorCode.*;
 import static com.givemecon.domain.entity.order.OrderStatus.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;

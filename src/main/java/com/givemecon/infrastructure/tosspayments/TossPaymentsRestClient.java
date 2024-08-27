@@ -1,7 +1,7 @@
 package com.givemecon.infrastructure.tosspayments;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.application.exception.payment.InvalidPaymentException;
+import com.givemecon.application.exception.InvalidPaymentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
