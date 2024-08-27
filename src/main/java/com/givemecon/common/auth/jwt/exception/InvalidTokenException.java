@@ -1,4 +1,4 @@
-package com.givemecon.common.exception.concrete;
+package com.givemecon.common.auth.jwt.exception;
 
 import com.givemecon.common.error.ErrorCode;
 import com.givemecon.common.exception.GivemeconException;

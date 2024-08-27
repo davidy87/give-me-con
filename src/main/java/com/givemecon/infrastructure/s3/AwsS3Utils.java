@@ -1,6 +1,6 @@
 package com.givemecon.infrastructure.s3;
 
-import com.givemecon.common.exception.concrete.FileNotProcessedException;
+import com.givemecon.infrastructure.s3.exception.FileNotProcessedException;
 import io.awspring.cloud.s3.S3Resource;
 import io.awspring.cloud.s3.S3Template;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-import static com.givemecon.common.error.GlobalErrorCode.IMAGE_PROCESS_FAILED;
+import static com.givemecon.infrastructure.s3.exception.S3ErrorCode.IMAGE_PROCESS_FAILED;
 
 @RequiredArgsConstructor
 @Component

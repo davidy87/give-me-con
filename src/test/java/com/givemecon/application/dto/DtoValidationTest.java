@@ -19,7 +19,7 @@ import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucher
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherRequestList;
 import static com.givemecon.application.dto.VoucherDto.StatusUpdateRequest;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
-import static com.givemecon.common.error.GlobalErrorCode.INVALID_ARGUMENT;
+import static com.givemecon.common.exception.controlleradvice.ValidationErrorCode.INVALID_ARGUMENT;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
