@@ -19,8 +19,7 @@ import static com.givemecon.application.dto.PurchasedVoucherDto.*;
 import static com.givemecon.application.exception.errorcode.MemberErrorCode.*;
 import static com.givemecon.application.exception.errorcode.PurchasedVoucherErrorCode.*;
 import static com.givemecon.application.exception.errorcode.VoucherErrorCode.*;
-import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USABLE;
-import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.USED;
+import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SOLD;
 
@@ -93,14 +92,16 @@ public class PurchasedVoucherService {
                 .orElseThrow(() -> new InvalidRequestFieldException(INVALID_PURCHASED_VOUCHER_ID));
     }
 
-    public StatusUpdateResponse setUsed(Long id) {
+    public StatusUpdateResponse setUsedOnUsable(Long id) {
         PurchasedVoucher purchasedVoucher = purchasedVoucherRepository.findById(id)
                 .orElseThrow(() -> new InvalidRequestFieldException(INVALID_PURCHASED_VOUCHER_ID));
 
         // purchasedVoucher의 현재 상태가 EXPIRED일 수도 있으므로, USABLE일 경우에만 변경
-        if (purchasedVoucher.getStatus() == USABLE) {
-            purchasedVoucher.updateStatus(USED);
+        if (purchasedVoucher.getStatus() != USABLE) {
+            throw new InvalidRequestFieldException(PURCHASED_VOUCHER_NOT_USABLE);
         }
+
+        purchasedVoucher.updateStatus(USED);
 
         return new StatusUpdateResponse(purchasedVoucher);
     }

@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum PurchasedVoucherErrorCode implements ErrorCode {
 
-    INVALID_PURCHASED_VOUCHER_ID(HttpStatus.BAD_REQUEST.value(), "INVALID_PURCHASED_VOUCHER_ID", "PurchasedVoucher id가 올바르지 않습니다.");
+    INVALID_PURCHASED_VOUCHER_ID(HttpStatus.BAD_REQUEST.value(), "INVALID_PURCHASED_VOUCHER_ID", "PurchasedVoucher id가 올바르지 않습니다."),
+    PURCHASED_VOUCHER_NOT_USABLE(HttpStatus.BAD_REQUEST.value(), "PURCHASED_VOUCHER_NOT_USABLE", "PurchasedVoucher의 상태가 USABLE이 아닙니다.");
 
     private final int status;
 

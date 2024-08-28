@@ -37,7 +37,7 @@ public class PurchasedVoucherController {
     }
 
     @PutMapping("/{id}")
-    public StatusUpdateResponse setUsed(@PathVariable Long id) {
-        return purchasedVoucherService.setUsed(id);
+    public StatusUpdateResponse setUsedOnUsable(@PathVariable Long id) {
+        return purchasedVoucherService.setUsedOnUsable(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.givemecon.application.service;
 
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucher.VoucherImage;
@@ -21,18 +22,19 @@ import java.util.Optional;
 
 import static com.givemecon.application.dto.PurchasedVoucherDto.PurchasedVoucherResponse;
 import static com.givemecon.application.dto.PurchasedVoucherDto.StatusUpdateResponse;
-import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.EXPIRED;
+import static com.givemecon.application.exception.errorcode.PurchasedVoucherErrorCode.INVALID_PURCHASED_VOUCHER_ID;
+import static com.givemecon.application.exception.errorcode.PurchasedVoucherErrorCode.PURCHASED_VOUCHER_NOT_USABLE;
+import static com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 class PurchasedVoucherServiceTest {
 
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
-
-    @Mock
-    PurchasedVoucher purchasedVoucher;
 
     @InjectMocks
     PurchasedVoucherService purchasedVoucherService;
@@ -65,7 +67,7 @@ class PurchasedVoucherServiceTest {
 
     @Test
     @DisplayName("회원 닉네임별 구매한 기프티콘 조회 테스트")
-    void findAllByUsername() {
+    void findAllByUsername(@Mock PurchasedVoucher purchasedVoucher) {
         // given
         String username = "tester";
 
@@ -87,18 +89,47 @@ class PurchasedVoucherServiceTest {
     }
 
     @Test
-    @DisplayName("PurchasedVoucher의 현재 상태가 USABLE이 아닌 경우, USED로 변경되지 않는다.")
-    void setUsedOnNotUsable() {
+    @DisplayName("PurchasedVoucher 사용 상태 변경 - 정상 흐름")
+    void setUsedOnUsable() {
+        // given
+        PurchasedVoucher purchasedVoucher = new PurchasedVoucher(null, null);
+
+        Mockito.when(purchasedVoucherRepository.findById(any(Long.class)))
+                .thenReturn(Optional.of(purchasedVoucher));
+
+        // when
+        StatusUpdateResponse response = purchasedVoucherService.setUsedOnUsable(1L);
+
+        // then
+        assertThat(response.getStatus()).isSameAs(USED);
+    }
+
+    @Test
+    @DisplayName("PurchasedVoucher 사용 상태 변경 예외 1 - 상태를 변경할 PurchasedVoucher를 찾지 못할 경우 예외를 던진다.")
+    void setUsedNotFound() {
+        // given
+        Long invalidId = 1L;
+        Mockito.when(purchasedVoucherRepository.findById(eq(invalidId)))
+                .thenReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> purchasedVoucherService.setUsedOnUsable(invalidId))
+                .isInstanceOf(InvalidRequestFieldException.class)
+                .hasMessage(INVALID_PURCHASED_VOUCHER_ID.getMessage());
+    }
+
+    @Test
+    @DisplayName("PurchasedVoucher 사용 상태 변경 예외 2 - PurchasedVoucher의 현재 상태가 USABLE이 아닌 경우 예외를 던진다.")
+    void setUsedOnNotUsable(@Mock PurchasedVoucher purchasedVoucher) {
         // given
         Mockito.when(purchasedVoucherRepository.findById(any(Long.class)))
                 .thenReturn(Optional.of(purchasedVoucher));
 
         Mockito.when(purchasedVoucher.getStatus()).thenReturn(EXPIRED);
 
-        // when
-        StatusUpdateResponse response = purchasedVoucherService.setUsed(1L);
-
-        // then
-        assertThat(response.getStatus()).isSameAs(EXPIRED);
+        // when & then
+        assertThatThrownBy(() -> purchasedVoucherService.setUsedOnUsable(1L))
+                .isInstanceOf(InvalidRequestFieldException.class)
+                .hasMessage(PURCHASED_VOUCHER_NOT_USABLE.getMessage());
     }
 }
