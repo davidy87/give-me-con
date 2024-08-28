@@ -16,8 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.givemecon.common.error.GlobalErrorCode.ACCESS_TOKEN_EXPIRED;
-import static com.givemecon.common.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
+import static com.givemecon.common.auth.jwt.exception.TokenErrorCode.ACCESS_TOKEN_EXPIRED;
+import static com.givemecon.common.auth.jwt.exception.TokenErrorCode.TOKEN_NOT_AUTHENTICATED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 

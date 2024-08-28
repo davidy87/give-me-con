@@ -20,15 +20,15 @@ public class VoucherKindController {
     public List<VoucherKindResponse> findAll(Authentication authentication,
                                              @RequestParam(required = false) Long brandId) {
 
-        if (brandId != null) {
-            if (authentication != null) {
-                return voucherKindService.findAllWithMinPriceByBrandId(brandId, authentication.getName());
-            }
+        if (brandId == null) {
+            return voucherKindService.findAll();
+        }
 
+        if (authentication == null) {
             return voucherKindService.findAllWithMinPriceByBrandId(brandId);
         }
 
-        return voucherKindService.findAll();
+        return voucherKindService.findAllWithMinPriceByBrandId(brandId, authentication.getName());
     }
 
     @GetMapping("/{id}")

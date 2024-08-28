@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.domain.entity.likedvoucher.LikedVoucher;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
@@ -21,6 +21,8 @@ import java.util.List;
 import static com.givemecon.application.dto.VoucherKindDto.*;
 import static com.givemecon.application.dto.VoucherKindDto.PagedVoucherKindResponse;
 import static com.givemecon.application.dto.VoucherKindDto.VoucherKindDetailResponse;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.INVALID_USERNAME;
+import static com.givemecon.application.exception.errorcode.VoucherKindErrorCode.INVALID_VOUCHER_KIND_ID;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 
 @RequiredArgsConstructor
@@ -38,10 +40,10 @@ public class LikedVoucherService {
 
     public VoucherKindDetailResponse save(String username, Long voucherId) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         VoucherKind voucherKind = voucherKindRepository.findById(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_KIND_ID));
 
         likedVoucherRepository.save(LikedVoucher.builder()
                 .member(member)
@@ -54,7 +56,7 @@ public class LikedVoucherService {
     @Transactional(readOnly = true)
     public List<VoucherKindResponse> findAllByUsername(String username) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         return likedVoucherRepository.findAllFetchedByMember(member).stream()
                 .map(likedVoucher -> getMinPriceResponse(likedVoucher.getVoucherKind(), member))
@@ -75,7 +77,7 @@ public class LikedVoucherService {
     @Transactional(readOnly = true)
     public PagedVoucherKindResponse findPageByUsername(String username, Pageable pageable) {
         Member member = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         Page<VoucherKindResponse> pageResult = likedVoucherRepository.findPageByMember(member, pageable)
                 .map(likedVoucher -> new VoucherKindDetailResponse(likedVoucher.getVoucherKind()));

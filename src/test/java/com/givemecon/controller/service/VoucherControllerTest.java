@@ -1,7 +1,6 @@
 package com.givemecon.controller.service;
 
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.Voucher;
@@ -19,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
-import static com.givemecon.common.error.GlobalErrorCode.ENTITY_NOT_FOUND;
+import static com.givemecon.application.exception.errorcode.VoucherErrorCode.INVALID_VOUCHER_ID;
 import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
@@ -306,20 +305,20 @@ class VoucherControllerTest extends ControllerTestEnvironment {
     class ExceptionTest {
 
         @Test
-        @DisplayName("Voucher Id 예외 - 존재하지 않는 Voucher Id")
+        @DisplayName("Voucher Id 예외 - 올바르지 않은 Voucher Id")
         void voucherExceptionTest() throws Exception {
             // given
             Long invalidId = 1L;
 
             // when
-            ResultActions response = mockMvc.perform(get("/api/voucher-kinds/{id}", invalidId));
+            ResultActions response = mockMvc.perform(get("/api/vouchers/{id}/image", invalidId)
+                    .header(AUTHORIZATION.getName(), getAccessTokenHeader(userTokenInfo)));
 
             // then
-            response.andExpect(status().isNotFound())
-                    .andExpect(jsonPath("error.status").value(ENTITY_NOT_FOUND.getStatus()))
-                    .andExpect(jsonPath("error.code").value(ENTITY_NOT_FOUND.getCode()))
-                    .andExpect(jsonPath("error.message")
-                            .value(new EntityNotFoundException(VoucherKind.class).getMessage()));
+            response.andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("error.status").value(INVALID_VOUCHER_ID.getStatus()))
+                    .andExpect(jsonPath("error.code").value(INVALID_VOUCHER_ID.getCode()))
+                    .andExpect(jsonPath("error.message").value(INVALID_VOUCHER_ID.getMessage()));
         }
     }
 }

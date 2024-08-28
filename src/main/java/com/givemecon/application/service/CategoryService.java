@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.common.util.FileUtils;
 import com.givemecon.domain.entity.category.Category;
 import com.givemecon.domain.entity.category.CategoryIcon;
@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.givemecon.application.dto.CategoryDto.*;
+import static com.givemecon.application.exception.errorcode.CategoryErrorCode.INVALID_CATEGORY_ID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,7 +52,7 @@ public class CategoryService {
 
     public CategoryResponse update(Long id, CategoryUpdateRequest requestDto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_CATEGORY_ID));
 
         String newCategoryName = requestDto.getName();
         MultipartFile newIconFile = requestDto.getIconFile();
@@ -69,7 +70,7 @@ public class CategoryService {
 
     public void delete(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Category.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_CATEGORY_ID));
 
         categoryRepository.delete(category);
     }

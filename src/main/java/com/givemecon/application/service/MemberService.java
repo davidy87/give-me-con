@@ -1,8 +1,8 @@
 package com.givemecon.application.service;
 
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.givemecon.application.dto.MemberDto.*;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.*;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
 
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class MemberService {
 
     public SignupResponse signup(SignupRequest signupRequest) {
         if (!signupRequest.getPassword().equals(signupRequest.getPasswordConfirm())) {
-            throw new RuntimeException(); // TODO: 예외 처리
+            throw new InvalidRequestFieldException(PASSWORD_NOT_MATCH);
         }
 
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
@@ -35,18 +36,21 @@ public class MemberService {
         return new SignupResponse(member);
     }
 
-    public TokenInfo login(LoginRequest loginRequest) {
+    public TokenInfo adminLogin(LoginRequest loginRequest) {
         Member loginMember = memberRepository.findByEmail(loginRequest.getEmail())
                 .filter(member -> passwordEncoder.matches(loginRequest.getPassword(), member.getPassword()))
-                .filter(member -> member.getRole() == ADMIN)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(PASSWORD_NOT_MATCH));
+
+        if (loginMember.getRole() != ADMIN) {
+            throw new InvalidRequestFieldException(ROLE_NOT_ADMIN);
+        }
 
         return jwtTokenService.getTokenInfo(new TokenRequest(loginMember));
     }
 
     public void delete(Long id) {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_MEMBER_ID));
 
         memberRepository.delete(member);
     }

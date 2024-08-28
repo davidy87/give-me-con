@@ -1,9 +1,9 @@
 package com.givemecon.common.auth.handler;
 
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.common.auth.util.ClientUrlProperties;
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.INVALID_USERNAME;
 import static com.givemecon.common.auth.enums.OAuth2ParameterName.AUTHORIZATION_CODE;
 import static com.givemecon.common.auth.enums.OAuth2ParameterName.SUCCESS;
 
@@ -45,7 +46,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
                                         Authentication authentication) throws IOException {
 
         Member member = memberRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(member));
         String authorizationCode = UUID.randomUUID().toString();

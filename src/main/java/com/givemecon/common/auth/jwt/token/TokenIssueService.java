@@ -1,8 +1,8 @@
 package com.givemecon.common.auth.jwt.token;
 
 import com.givemecon.common.auth.dto.TokenInfo;
-import com.givemecon.common.exception.concrete.AuthenticationException;
-import com.givemecon.common.exception.concrete.InvalidTokenException;
+import com.givemecon.common.auth.jwt.exception.AuthenticationException;
+import com.givemecon.common.auth.jwt.exception.InvalidTokenException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.repository.MemberRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 import java.util.Optional;
 
 import static com.givemecon.application.dto.MemberDto.TokenRequest;
-import static com.givemecon.common.error.GlobalErrorCode.*;
+import static com.givemecon.common.auth.jwt.exception.TokenErrorCode.*;
 
 @Slf4j
 @RequiredArgsConstructor

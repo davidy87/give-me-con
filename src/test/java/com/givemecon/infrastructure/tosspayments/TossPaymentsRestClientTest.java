@@ -2,7 +2,7 @@ package com.givemecon.infrastructure.tosspayments;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.givemecon.application.exception.payment.InvalidPaymentException;
+import com.givemecon.application.exception.InvalidPaymentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

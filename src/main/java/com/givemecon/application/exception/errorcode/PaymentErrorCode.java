@@ -1,4 +1,4 @@
-package com.givemecon.application.exception.payment;
+package com.givemecon.application.exception.errorcode;
 
 import com.givemecon.common.error.ErrorCode;
 import lombok.Getter;

@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Locale;
 import java.util.Map;
 
-import static com.givemecon.common.error.GlobalErrorCode.INVALID_ARGUMENT;
-import static com.givemecon.common.error.GlobalErrorCode.MISSING_REQUEST_PARAMETER;
+import static com.givemecon.common.exception.controlleradvice.ValidationErrorCode.INVALID_ARGUMENT;
+import static com.givemecon.common.exception.controlleradvice.ValidationErrorCode.MISSING_REQUEST_PARAMETER;
 
 @Slf4j
 @RequiredArgsConstructor

@@ -1,7 +1,6 @@
 package com.givemecon.common.configuration;
 
 import com.givemecon.common.util.PortUtils;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -23,15 +22,13 @@ public class EmbeddedRedisConfig {
                 PortUtils.findAvailablePort() : redisProperties.getPort();
 
         this.redisServer = new RedisServer(port);
-    }
-
-    @PostConstruct
-    public void postConstruct() throws IOException {
         redisServer.start();
     }
 
     @PreDestroy
-    public void preDestroy() throws IOException {
-        redisServer.stop();
+    public void preDestroy() {
+        if (redisServer != null) {
+            redisServer.stop();
+        }
     }
 }

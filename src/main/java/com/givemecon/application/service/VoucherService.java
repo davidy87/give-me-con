@@ -1,6 +1,6 @@
 package com.givemecon.application.service;
 
-import com.givemecon.common.exception.concrete.EntityNotFoundException;
+import com.givemecon.application.exception.InvalidRequestFieldException;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.voucher.RejectedSale;
 import com.givemecon.domain.entity.voucher.Voucher;
@@ -15,13 +15,15 @@ import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
 import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.givemecon.application.dto.VoucherDto.*;
+import static com.givemecon.application.exception.errorcode.MemberErrorCode.*;
+import static com.givemecon.application.exception.errorcode.VoucherErrorCode.*;
+import static com.givemecon.application.exception.errorcode.VoucherKindErrorCode.*;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REJECTED;
 
@@ -45,10 +47,10 @@ public class VoucherService {
 
     public VoucherResponse save(String username, VoucherRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         VoucherKind voucherKind = voucherKindRepository.findById(requestDto.getVoucherKindId())
-                .orElseThrow(() -> new EntityNotFoundException(VoucherKind.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_KIND_ID));
 
         VoucherImage voucherImage = voucherImageRepository.save(
                 imageEntityUtils.createImageEntity(VoucherImage.class, requestDto.getImageFile()));
@@ -66,10 +68,9 @@ public class VoucherService {
     }
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('USER')")
     public List<VoucherResponse> findAllByUsername(String username) {
         Member seller = memberRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(Member.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_USERNAME));
 
         return voucherRepository.findAllBySeller(seller).stream()
                 .map(VoucherResponse::new)
@@ -104,14 +105,14 @@ public class VoucherService {
     @Transactional(readOnly = true)
     public ImageResponse findImageUrl(Long voucherId) {
         Voucher voucher = voucherRepository.findOneWithImage(voucherId)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_ID));
 
         return new ImageResponse(voucher);
     }
 
     public VoucherResponse updateStatus(Long id, StatusUpdateRequest requestDto) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_ID));
 
         VoucherStatus newStatus = findStatus(requestDto.getStatusCode());
         voucher.updateStatus(newStatus);
@@ -137,7 +138,7 @@ public class VoucherService {
         VoucherStatus[] statuses = VoucherStatus.values();
 
         if (statusCode < 0 || statusCode >= statuses.length) {
-            throw new EntityNotFoundException(Voucher.class);
+            throw new InvalidRequestFieldException(INVALID_STATUS_CODE);
         }
 
         return statuses[statusCode];
@@ -145,7 +146,7 @@ public class VoucherService {
 
     public void delete(Long id) {
         Voucher voucher = voucherRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Voucher.class));
+                .orElseThrow(() -> new InvalidRequestFieldException(INVALID_VOUCHER_ID));
 
         voucherRepository.delete(voucher);
     }

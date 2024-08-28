@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.UUID;
 
 import static com.givemecon.common.auth.enums.JwtAuthHeader.*;
-import static com.givemecon.common.error.GlobalErrorCode.MISSING_REQUEST_PARAMETER;
-import static com.givemecon.common.error.GlobalErrorCode.TOKEN_NOT_AUTHENTICATED;
+import static com.givemecon.common.auth.jwt.exception.TokenErrorCode.TOKEN_NOT_AUTHENTICATED;
+import static com.givemecon.common.exception.controlleradvice.ValidationErrorCode.MISSING_REQUEST_PARAMETER;
 import static com.givemecon.domain.entity.member.Role.*;
 import static com.givemecon.common.auth.enums.OAuth2ParameterName.*;
 import static com.givemecon.util.ApiDocumentUtils.*;
