@@ -15,6 +15,4 @@ public interface VoucherKindRepository extends JpaRepository<VoucherKind, Long> 
     List<VoucherKind> findAllWithImageByBrandId(Long brandId);
 
     Page<VoucherKind> findPageByBrand(Brand brand, Pageable pageable);
-
-    void deleteAllByBrand(Brand brand);
 }
