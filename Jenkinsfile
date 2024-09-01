@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Git Clone') {
-            steps {
-                git branch: 'develop', url: 'https://github.com/davidy87/give-me-con'
-            }
-        }
-
         stage("Add Properties") {
             steps {
                 script{
@@ -35,6 +29,17 @@ pipeline {
         stage('Build') {
             steps {
                 sh "./gradlew clean build"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sshagent(credentials: ['aws_pem_key']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ec2-user@ec2-52-78-113-173.ap-northeast-2.compute.amazonaws.com uptime
+                        ssh -t ec2-user@ec2-52-78-113-173.ap-northeast-2.compute.amazonaws.com ./deploy.sh
+                    '''
+                }
             }
         }
     }
