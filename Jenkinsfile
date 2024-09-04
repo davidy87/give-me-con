@@ -46,7 +46,7 @@ pipeline {
                 sshagent(credentials: ['aws-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} uptime
-                        scp ${JAR_FILE} ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app/givemecon
+                        scp ${JAR_FILE} ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app/give-me-con/build/libs
                         ssh -t ${EC2_USER}@${EC2_HOST} ./app/deploy.sh
                     '''
                 }
