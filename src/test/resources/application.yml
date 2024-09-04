@@ -1,0 +1,30 @@
+spring:
+  profiles:
+    active: test
+    include: client,API-KEY,oauth,jwt,gcp,payment
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+
+  cloud:
+    aws:
+      s3:
+        bucket: test-bucket
+        mock:
+          port: 8001
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false
+
+  messages:
+    basename: errors
+
+gcp:
+  test-image:
+    url: https://cloud.google.com/static/vision/docs/images/sign_text.png?hl=ko
+
+  test-voucher-image:
+    url: https://blog.kakaocdn.net/dn/cEigvN/btrMTLwk8id/s0O1K0VVZUSylzvIVmuxEk/img.jpg

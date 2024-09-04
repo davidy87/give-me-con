@@ -1,3 +1,18 @@
+### properties ###
+application-aws.yml
+application-client.yml
+application-gcp.yml
+application-jwt.yml
+application-oauth.yml
+application-payment.yml
+gcp_credential.json
+
+### env ###
+.env
+
+### images ###
+*.jpg
+
 HELP.md
 .gradle
 build/

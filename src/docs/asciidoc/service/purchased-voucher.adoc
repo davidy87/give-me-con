@@ -1,0 +1,44 @@
+= 기브미콘 API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== PurchasedVoucher APIs
+{sp} +
+
+=== 기프티콘 구매 등록 (1개 이상)
+operation::purchased-voucher-controller-test/save-all[snippets='request-fields,http-request,response-fields,http-response']
+{sp} +
+
+=== 구매한 기프티콘 단일 조회
+operation::purchased-voucher-controller-test/find-one[snippets='path-parameters,http-request,response-fields,http-response']
+{sp} +
+
+=== 회원 별 구매한 기프티콘 전체 조회
+operation::purchased-voucher-controller-test/find-all-by-username[snippets='http-request,response-fields,http-response']
+{sp} +
+
+=== 구매한 기프티콘 사용 처리
+operation::purchased-voucher-controller-test/set-used[snippets='path-parameters,http-request,response-fields,http-response']
+:sectnums!:
+{sp} +

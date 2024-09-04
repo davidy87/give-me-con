@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profiles: prod
+
+  jpa:
+    show_sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        hbm2ddl:
+          auto: update

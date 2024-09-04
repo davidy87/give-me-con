@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: dev
+    group:
+      dev: client,oauth,jwt,gcp,payment
+      prod: client,oauth,jwt,aws,gcp,payment
+
+  messages:
+    basename: errors

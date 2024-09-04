@@ -1,0 +1,40 @@
+= 기브미콘 Admin Category API Documentation
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+:docinfo: shared-head
+
+== 공통 에러 응답
+----
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{
+    "error": {
+        "status": "..."
+        "code": "...",
+        "message": "..."
+    }
+}
+----
+{sp} +
+
+:sectnums:
+== Admin Category APIs
+{sp} +
+
+=== Category 추가
+operation::admin-category-controller-test/save[snippets='request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Category 수정
+operation::admin-category-controller-test/update[snippets='path-parameters,request-parts,http-request,response-fields,http-response']
+{sp} +
+
+=== Category 삭제
+operation::admin-category-controller-test/delete-one[snippets='path-parameters,http-request,http-response']
+:sectnums!:
+{sp} +
