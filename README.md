@@ -50,13 +50,12 @@ UI 구성도, 도메인별 제약조건, API 문서 등 프로젝트에 대한 �
 
 <br>
 
-### 💠 Git-Flow 브랜치 전략
-* Git-Flow 브랜치 전략을 바탕으로 기능별로 브랜치를 나누어 작업하고, 모든 브랜치에 대해 pull request를 진행 후 
-merge를 진행
+### 💠 GitHub-Flow 브랜치 전략
+* GitHub-Flow 브랜치 전략을 바탕으로 하나의 main 브랜치 + main 브랜치에 기능을 추가하기 위한 브랜치로 구성
 
-  <img src="https://devocean.sk.com/editorImg/2023/12/15/6c564810665399f6549ed2bffc7e763c7e39f5fab128a3442ddeb44ee6593c04" alt="" width="700"/>
+  <img width="1046" alt="github-flow" src="https://github.com/user-attachments/assets/841f1eaf-c6f3-4a31-925a-140687babff9">
 
-(참고: https://techblog.woowahan.com/2553/)
+(참고: https://devocean.sk.com/blog/techBoardDetail.do?ID=165571&boardType=techBlog)
 
 <br>
 <br>
