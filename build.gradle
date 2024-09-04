@@ -16,6 +16,10 @@ repositories {
 	mavenCentral()
 }
 
+jar {
+	enabled = false
+}
+
 configurations {
 	asciidoctorExtensions
 	compileOnly {

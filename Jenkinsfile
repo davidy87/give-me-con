@@ -4,6 +4,7 @@ pipeline {
     environment {
         EC2_USER = credentials('ec2-user')
         EC2_HOST = credentials('ec2-host')
+        JAR_FILE = '/var/jenkins_home/workspace/give-me-con/build/libs/give-me-con-*.jar'
     }
 
     stages {
@@ -45,6 +46,7 @@ pipeline {
                 sshagent(credentials: ['aws-key']) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} uptime
+                        scp ${JAR_FILE} ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app/givemecon
                         ssh -t ${EC2_USER}@${EC2_HOST} ./app/deploy.sh
                     '''
                 }
