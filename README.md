@@ -61,6 +61,7 @@ UI 구성도, 도메인별 제약조건, API 문서 등 프로젝트에 대한 �
 <br>
 
 ## ✅ Architecture
+![architecture](https://github.com/user-attachments/assets/522fe7fd-9b21-450a-b139-c3068c1c07ff)
 
 <br>
 <br>
