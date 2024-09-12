@@ -43,11 +43,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'aws-key', keyFileVariable: 'PK')]) {
+                sshagent(credentials: ['aws-key']) {
                     sh '''
-                        ssh -i ${PK} ${EC2_USER}@${EC2_HOST} uptime
-                        scp -i ${PK} ${JAR_FILE} ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app/give-me-con/build/libs
-                        ssh -i ${PK} -t ${EC2_USER}@${EC2_HOST} ./app/deploy.sh
+                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} uptime
+                        scp ${JAR_FILE} ${EC2_USER}@${EC2_HOST}:/home/${EC2_USER}/app/give-me-con/build/libs
+                        ssh -t ${EC2_USER}@${EC2_HOST} ./app/deploy.sh
                     '''
                 }
             }
