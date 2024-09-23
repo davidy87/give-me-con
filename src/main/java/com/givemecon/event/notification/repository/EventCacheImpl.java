@@ -11,31 +11,34 @@ import java.util.stream.Collectors;
 @Repository
 public class EventCacheImpl implements EventCache {
 
-    private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
+    private final Map<String, Event> eventCache = new ConcurrentHashMap<>();
 
     @Override
-    public Object save(String eventId, Object data) {
-        eventCache.put(eventId, data);
-        return data;
+    public Event save(String eventId, Event event) {
+        eventCache.put(eventId, event);
+        return event;
     }
 
     @Override
-    public Optional<Object> findByEventId(String eventId) {
+    public Optional<Event> findByEventId(String eventId) {
         return Optional.ofNullable(eventCache.get(eventId));
     }
 
     @Override
-    public Map<String, Object> findAllOmittedEvents(String username) {
+    public Map<String, Event> findAllOmittedEvents(String username) {
         return eventCache.entrySet().stream()
-                .filter(event -> event.getKey().startsWith(username))
-                .filter(event -> event.getKey().compareTo(EventIdUtils.createEventId(username)) < 0)
+                .filter(entry -> entry.getKey().startsWith(username))
+                .filter(entry -> entry.getKey().compareTo(EventIdUtils.createEventId(username)) < 0)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
     public void deleteByEventId(String eventId) {
-        if (eventCache.remove(eventId) == null) {
-            throw new RuntimeException(); // TODO: 예외 처리
-        }
+        eventCache.remove(eventId);
+    }
+
+    @Override
+    public void clear() {
+        eventCache.clear();
     }
 }

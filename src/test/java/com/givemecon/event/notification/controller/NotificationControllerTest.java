@@ -3,9 +3,11 @@ package com.givemecon.event.notification.controller;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
+import com.givemecon.event.notification.repository.Event;
 import com.givemecon.event.notification.repository.EventCache;
 import com.givemecon.event.notification.util.EventIdUtils;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.member.Role.USER;
+import static com.givemecon.event.notification.util.EventType.SALE_CONFIRMATION;
 import static com.givemecon.event.notification.util.EventType.SSE_SUBSCRIPTION;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequest;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
@@ -29,6 +32,11 @@ class NotificationControllerTest extends ControllerTestEnvironment {
 
     @Autowired
     EventCache eventCache;
+
+    @AfterEach
+    void tearDown() {
+        eventCache.clear();
+    }
 
     @Test
     @DisplayName("SSE 구독 요청 테스트 1 - 첫 연결 요청 or Last-Event-Id가 없는 경우")
@@ -76,7 +84,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
 
         for (int i = 1; i <= numOldEvents; i++) {
             String oldEventId = user.getUsername() + "-" + (System.currentTimeMillis() - 1000L * i);
-            eventCache.save(oldEventId, "This is old data " + i);
+            eventCache.save(oldEventId, new Event(SALE_CONFIRMATION.getEventName(), "Item " + i + "sale confirmed."));
         }
 
         String lastEventId = EventIdUtils.createEventId(user.getUsername());

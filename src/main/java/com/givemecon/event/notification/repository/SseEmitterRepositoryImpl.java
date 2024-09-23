@@ -27,4 +27,9 @@ public class SseEmitterRepositoryImpl implements SseEmitterRepository {
     public void deleteByUsername(String username) {
         emitters.remove(username);
     }
+
+    @Override
+    public void clear() {
+        emitters.clear();
+    }
 }

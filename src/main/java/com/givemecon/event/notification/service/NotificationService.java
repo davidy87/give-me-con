@@ -1,8 +1,12 @@
 package com.givemecon.event.notification.service;
 
+import com.givemecon.event.notification.repository.Event;
 import com.givemecon.event.notification.repository.EventCache;
+import com.givemecon.event.notification.service.exception.SseNotificationException;
+import com.givemecon.event.notification.service.exception.SseUnavailableException;
 import com.givemecon.event.notification.util.EventIdUtils;
 import com.givemecon.event.notification.repository.SseEmitterRepository;
+import com.givemecon.event.notification.util.EventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.time.Duration;
 
+import static com.givemecon.event.notification.service.exception.errorcode.SseErrorCode.*;
 import static com.givemecon.event.notification.util.EventType.*;
 
 @Slf4j
@@ -41,12 +46,17 @@ public class NotificationService {
     /**
      * 이벤트가 발생하는 곳에서 알림을 전송하기 위해 호출하는 메서드
      */
-    public void notifyEvents(String username, String eventName, Object data) {
+    public void notifyEvent(String username, EventType eventType, Object data) {
         SseEmitter sseEmitter = sseEmitterRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("SSE connection for user [" + username + "] is not established.")); // TODO: 예외 처리
+                .orElseThrow(() -> {
+                    String errorMessage = "SSE connection is not established. User = " + username;
+                    return new SseUnavailableException(CONNECTION_NOT_ESTABLISHED, errorMessage);
+                });
 
         String eventId = EventIdUtils.createEventId(username);
-        eventCache.save(eventId, data);
+        String eventName = eventType.getEventName();
+
+        eventCache.save(eventId, new Event(eventName, data));
         notify(sseEmitter, eventId, eventName, data);
         sseEmitter.complete();
     }
@@ -55,7 +65,11 @@ public class NotificationService {
      * 첫 SSE 연결 후, 더미 데이터를 보내기 위해 호출하는 메서드
      */
     private void notifyDummy(SseEmitter sseEmitter, String username) {
-        notify(sseEmitter, "", SSE_SUBSCRIPTION.getEventName(), "SSE connected. Connected user = " + username);
+        String eventId = "";
+        String eventName = SSE_SUBSCRIPTION.getEventName();
+        String data = "SSE connected. Connected user = " + username;
+
+        notify(sseEmitter, eventId, eventName, data);
     }
 
     /**
@@ -63,8 +77,8 @@ public class NotificationService {
      */
     private void notifyOmittedEvents(SseEmitter sseEmitter, String username) {
         eventCache.findAllOmittedEvents(username)
-                .forEach((eventId, data) -> {
-                    notify(sseEmitter, eventId, SALE_CONFIRMATION.getEventName(), data);
+                .forEach((eventId, event) -> {
+                    notify(sseEmitter, eventId, event.getEventName(), event.getData());
                     eventCache.deleteByEventId(eventId);
                 });
     }
@@ -79,7 +93,7 @@ public class NotificationService {
             log.info("Exception occurred while sending notification.");
             String username = EventIdUtils.parseUsername(eventId);
             sseEmitterRepository.deleteByUsername(username);
-            throw new RuntimeException(e); // TODO: 예외 처리
+            throw new SseNotificationException(NOTIFICATION_ERROR);
         }
     }
 

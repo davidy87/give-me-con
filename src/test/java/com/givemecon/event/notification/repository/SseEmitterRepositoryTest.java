@@ -1,6 +1,7 @@
 package com.givemecon.event.notification.repository;
 
 import com.givemecon.IntegrationTestEnvironment;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,11 @@ class SseEmitterRepositoryTest extends IntegrationTestEnvironment {
 
     @Autowired
     SseEmitterRepository sseEmitterRepository;
+
+    @AfterEach
+    void tearDown() {
+        sseEmitterRepository.clear();
+    }
 
     @Test
     @DisplayName("SseEmitter 저장 테스트")

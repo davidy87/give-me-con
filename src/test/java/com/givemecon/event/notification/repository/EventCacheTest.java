@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.givemecon.event.notification.util.EventType.SALE_CONFIRMATION;
 import static org.assertj.core.api.Assertions.*;
 
 class EventCacheTest extends IntegrationTestEnvironment {
@@ -21,13 +22,13 @@ class EventCacheTest extends IntegrationTestEnvironment {
     void save() {
         // given
         String eventId = "eventId";
-        Object data = "This is notification data";
+        Event event = new Event(SALE_CONFIRMATION.getEventName(), "Sale confirmed.");
 
         // when
-        Object saved = eventCache.save(eventId, data);
+        Event saved = eventCache.save(eventId, event);
 
         // then
-        assertThat(saved).isEqualTo(data);
+        assertThat(saved).isEqualTo(event);
     }
 
     @Test
@@ -36,13 +37,13 @@ class EventCacheTest extends IntegrationTestEnvironment {
         // given
         String username = "tester";
         String eventId = username + "-" + (System.currentTimeMillis() - 1000);
-        Object oldData = eventCache.save(eventId, "This is old data.");
+        Event oldEvent = eventCache.save(eventId, new Event(SALE_CONFIRMATION.getEventName(), "Sale confirmed."));
 
         // when
-        Map<String, Object> found = eventCache.findAllOmittedEvents(username);
+        Map<String, Event> found = eventCache.findAllOmittedEvents(username);
 
         // then
-        assertThat(found.get(eventId)).isEqualTo(oldData);
+        assertThat(found.get(eventId)).isEqualTo(oldEvent);
     }
 
     @Test
@@ -50,13 +51,13 @@ class EventCacheTest extends IntegrationTestEnvironment {
     void deleteByEventId() {
         // given
         String eventId = EventIdUtils.createEventId("tester");
-        eventCache.save(eventId, "data");
+        eventCache.save(eventId, new Event(SALE_CONFIRMATION.getEventName(), "Sale confirmed."));
 
         // when
         eventCache.deleteByEventId(eventId);
 
         // then
-        Optional<Object> found = eventCache.findByEventId(eventId);
+        Optional<Event> found = eventCache.findByEventId(eventId);
         assertThat(found).isEmpty();
     }
 }

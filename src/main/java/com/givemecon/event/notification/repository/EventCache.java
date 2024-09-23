@@ -5,11 +5,13 @@ import java.util.Optional;
 
 public interface EventCache {
 
-    Object save(String eventId, Object data);
+    Event save(String eventId, Event event);
 
-    Optional<Object> findByEventId(String eventId);
+    Optional<Event> findByEventId(String eventId);
 
-    Map<String, Object> findAllOmittedEvents(String username);
+    Map<String, Event> findAllOmittedEvents(String username);
 
     void deleteByEventId(String eventId);
+
+    void clear();
 }
