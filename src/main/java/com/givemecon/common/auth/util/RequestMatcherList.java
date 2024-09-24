@@ -20,6 +20,7 @@ public final class RequestMatcherList {
                 antMatcher(GET, CATEGORY_API.getPattern()),
                 antMatcher(GET, BRAND_API.getPattern()),
                 antMatcher(GET, VOUCHER_KIND_API.getPattern()),
+                antMatcher(SSE_NOTIFICATION.getPattern()),
                 antMatcher("/docs/**")
         };
     }
