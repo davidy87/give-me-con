@@ -108,4 +108,15 @@ class NotificationControllerTest extends ControllerTestEnvironment {
                         responseBody())
                 );
     }
+
+    @Test
+    @DisplayName("SSE 구독 요청 예외 - 구독 요청 시, 사용자의 정보가 없을 경우 예외를 던진다.")
+    void invalidSubscriber() throws Exception {
+        // when
+        ResultActions response = mockMvc.perform(get("/api/notification/subscribe")
+                .contentType(MediaType.TEXT_EVENT_STREAM));
+
+        // then
+        response.andExpect(status().isBadRequest());
+    }
 }
