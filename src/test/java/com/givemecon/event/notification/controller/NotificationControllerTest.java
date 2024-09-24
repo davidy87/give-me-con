@@ -3,7 +3,7 @@ package com.givemecon.event.notification.controller;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
-import com.givemecon.event.notification.repository.Event;
+import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.repository.EventCache;
 import com.givemecon.event.notification.util.EventIdUtils;
 import org.assertj.core.api.Assertions;

@@ -1,5 +1,6 @@
 package com.givemecon.event.notification.repository;
 
+import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.util.EventIdUtils;
 import org.springframework.stereotype.Repository;
 

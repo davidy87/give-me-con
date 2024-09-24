@@ -1,4 +1,4 @@
-package com.givemecon.event.notification.repository;
+package com.givemecon.event.notification.repository.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

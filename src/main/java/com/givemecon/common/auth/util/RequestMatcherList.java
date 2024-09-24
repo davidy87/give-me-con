@@ -20,6 +20,7 @@ public final class RequestMatcherList {
                 antMatcher(GET, CATEGORY_API.getPattern()),
                 antMatcher(GET, BRAND_API.getPattern()),
                 antMatcher(GET, VOUCHER_KIND_API.getPattern()),
+                antMatcher(SSE_NOTIFICATION.getPattern()),
                 antMatcher("/docs/**")
         };
     }
@@ -45,8 +46,7 @@ public final class RequestMatcherList {
                 antMatcher(PURCHASED_VOUCHER_API.getPattern()),
                 antMatcher(ORDER_API.getPattern()),
                 antMatcher(PAYMENT_API.getPattern()),
-                antMatcher(IMAGE_TEXT_EXTRACTION_API.getPattern()),
-                antMatcher(SSE_NOTIFICATION.getPattern())
+                antMatcher(IMAGE_TEXT_EXTRACTION_API.getPattern())
         };
     }
 }

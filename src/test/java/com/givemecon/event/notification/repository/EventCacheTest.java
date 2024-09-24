@@ -1,6 +1,7 @@
 package com.givemecon.event.notification.repository;
 
 import com.givemecon.IntegrationTestEnvironment;
+import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.util.EventIdUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

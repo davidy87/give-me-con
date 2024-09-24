@@ -1,6 +1,6 @@
 package com.givemecon.event.notification.service;
 
-import com.givemecon.event.notification.repository.Event;
+import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.repository.EventCache;
 import com.givemecon.event.notification.service.exception.SseNotificationException;
 import com.givemecon.event.notification.service.exception.SseUnavailableException;

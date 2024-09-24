@@ -1,5 +1,7 @@
 package com.givemecon.event.notification.repository;
 
+import com.givemecon.event.notification.repository.entity.Event;
+
 import java.util.Map;
 import java.util.Optional;
 
