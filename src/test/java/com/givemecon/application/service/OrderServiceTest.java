@@ -10,6 +10,7 @@ import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.event.voucher.VoucherStatusUpdateEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,6 +47,9 @@ class OrderServiceTest {
 
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
+
+    @Mock
+    VoucherStatusUpdateEventPublisher eventPublisher;
 
     @InjectMocks
     OrderService orderService;
@@ -392,6 +396,7 @@ class OrderServiceTest {
         }
 
         @Test
+        @DisplayName("주문 체결 요청 예외 5 - 주문 수량이 올바르지 않을 경우, 체결 처리하지 않는다.")
         void invalidOrderQuantity() {
             // given
             List<Voucher> voucherList = List.of(voucher);
@@ -413,6 +418,7 @@ class OrderServiceTest {
         }
 
         @Test
+        @DisplayName("주문 체결 요청 예외 6 - 주문 가격이 올바르지 않을 경우, 체결 처리하지 않는다.")
         void invalidOrderAmount() {
             // given
             List<Voucher> voucherList = List.of(voucher);

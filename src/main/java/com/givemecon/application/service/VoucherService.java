@@ -12,6 +12,8 @@ import com.givemecon.domain.repository.voucher.RejectedSaleRepository;
 import com.givemecon.domain.repository.voucher.VoucherImageRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.repository.voucherkind.VoucherKindRepository;
+import com.givemecon.event.voucher.VoucherStatusUpdateEvent;
+import com.givemecon.event.voucher.VoucherStatusUpdateEventPublisher;
 import com.givemecon.infrastructure.s3.image_entity.ImageEntityUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,8 @@ public class VoucherService {
     private final RejectedSaleRepository rejectedSaleRepository;
 
     private final ImageEntityUtils imageEntityUtils;
+
+    private final VoucherStatusUpdateEventPublisher eventPublisher;
 
     public VoucherResponse save(String username, VoucherRequest requestDto) {
         Member seller = memberRepository.findByUsername(username)
@@ -116,6 +120,7 @@ public class VoucherService {
 
         VoucherStatus newStatus = findStatus(requestDto.getStatusCode());
         voucher.updateStatus(newStatus);
+        eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher.getTitle(), newStatus)); // 기프티콘 상태 변경 이벤트 발행
 
         // 판매 요청 거절 시
         if (newStatus == SALE_REJECTED) {

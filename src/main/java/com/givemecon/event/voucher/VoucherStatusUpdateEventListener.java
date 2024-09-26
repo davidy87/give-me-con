@@ -3,15 +3,15 @@ package com.givemecon.event.voucher;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class VoucherStatusUpdateEventListener {
 
-    @EventListener
+    @TransactionalEventListener
     public void listen(VoucherStatusUpdateEvent event) {
         String voucherTitle = event.getVoucherTitle();
         VoucherStatus newStatus = event.getNewStatus();

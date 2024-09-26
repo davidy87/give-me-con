@@ -7,6 +7,8 @@ import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.event.voucher.VoucherStatusUpdateEvent;
+import com.givemecon.event.voucher.VoucherStatusUpdateEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,8 @@ public class PurchasedVoucherService {
     private final VoucherRepository voucherRepository;
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
+
+    private final VoucherStatusUpdateEventPublisher eventPublisher;
 
     public List<PurchasedVoucherResponse> saveAll(String username, List<PurchasedVoucherRequest> requestDtoList) {
         Member buyer = memberRepository.findByUsername(username)
@@ -63,6 +67,7 @@ public class PurchasedVoucherService {
         }
 
         voucher.updateStatus(SOLD);
+        eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher.getTitle(), SOLD)); // 기프티콘 상태 변경 이벤트 발행
 
         return purchasedVoucherRepository.save(new PurchasedVoucher(voucher, buyer));
     }
