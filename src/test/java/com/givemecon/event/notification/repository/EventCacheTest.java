@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.givemecon.event.notification.util.EventType.SALE_CONFIRMATION;
+import static com.givemecon.event.notification.util.EventType.VOUCHER_STATUS_UPDATE;
 import static org.assertj.core.api.Assertions.*;
 
 class EventCacheTest extends IntegrationTestEnvironment {
@@ -23,7 +23,7 @@ class EventCacheTest extends IntegrationTestEnvironment {
     void save() {
         // given
         String eventId = "eventId";
-        Event event = new Event(SALE_CONFIRMATION.getEventName(), "Sale confirmed.");
+        Event event = new Event(VOUCHER_STATUS_UPDATE.getEventName(), "Sale confirmed.");
 
         // when
         Event saved = eventCache.save(eventId, event);
@@ -38,7 +38,7 @@ class EventCacheTest extends IntegrationTestEnvironment {
         // given
         String username = "tester";
         String eventId = username + "-" + (System.currentTimeMillis() - 1000);
-        Event oldEvent = eventCache.save(eventId, new Event(SALE_CONFIRMATION.getEventName(), "Sale confirmed."));
+        Event oldEvent = eventCache.save(eventId, new Event(VOUCHER_STATUS_UPDATE.getEventName(), "Sale confirmed."));
 
         // when
         Map<String, Event> found = eventCache.findAllOmittedEvents(username);
@@ -52,7 +52,7 @@ class EventCacheTest extends IntegrationTestEnvironment {
     void deleteByEventId() {
         // given
         String eventId = EventIdUtils.createEventId("tester");
-        eventCache.save(eventId, new Event(SALE_CONFIRMATION.getEventName(), "Sale confirmed."));
+        eventCache.save(eventId, new Event(VOUCHER_STATUS_UPDATE.getEventName(), "Sale confirmed."));
 
         // when
         eventCache.deleteByEventId(eventId);

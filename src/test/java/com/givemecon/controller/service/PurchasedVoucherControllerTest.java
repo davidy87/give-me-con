@@ -70,6 +70,12 @@ class PurchasedVoucherControllerTest extends ControllerTestEnvironment {
     @Test
     void saveAll() throws Exception {
         // given
+        Member seller = memberRepository.save(Member.builder()
+                .username("seller")
+                .email("seller@gmail.com")
+                .role(USER)
+                .build());
+
         List<PurchasedVoucherRequest> dtoList = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
@@ -85,6 +91,7 @@ class PurchasedVoucherControllerTest extends ControllerTestEnvironment {
                     .expDate(LocalDate.now().plusDays(1))
                     .voucherImage(voucherImage)
                     .voucherKind(voucherKind)
+                    .seller(seller)
                     .build());
 
             voucher.updateStatus(VoucherStatus.FOR_SALE);

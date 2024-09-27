@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum EventType {
 
     SSE_SUBSCRIPTION("connection"),
-    SALE_CONFIRMATION("sale-confirmation");
+    VOUCHER_STATUS_UPDATE("voucher-status-update");
 
     private final String eventName;
 }

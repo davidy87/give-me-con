@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import static com.givemecon.application.dto.MemberDto.*;
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.member.Role.USER;
-import static com.givemecon.event.notification.util.EventType.SALE_CONFIRMATION;
 import static com.givemecon.event.notification.util.EventType.SSE_SUBSCRIPTION;
+import static com.givemecon.event.notification.util.EventType.VOUCHER_STATUS_UPDATE;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequest;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentResponse;
 import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
@@ -84,7 +84,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
 
         for (int i = 1; i <= numOldEvents; i++) {
             String oldEventId = user.getUsername() + "-" + (System.currentTimeMillis() - 1000L * i);
-            eventCache.save(oldEventId, new Event(SALE_CONFIRMATION.getEventName(), "Item " + i + "sale confirmed."));
+            eventCache.save(oldEventId, new Event(VOUCHER_STATUS_UPDATE.getEventName(), "Item " + i + "sale confirmed."));
         }
 
         String lastEventId = EventIdUtils.createEventId(user.getUsername());

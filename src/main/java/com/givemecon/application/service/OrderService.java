@@ -11,6 +11,8 @@ import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.event.voucher.VoucherStatusUpdateEvent;
+import com.givemecon.event.voucher.VoucherStatusUpdateEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,8 @@ public class OrderService {
     private final VoucherRepository voucherRepository;
 
     private final PurchasedVoucherRepository purchasedVoucherRepository;
+
+    private final VoucherStatusUpdateEventPublisher eventPublisher;
 
     public OrderNumberResponse placeOrder(OrderRequest orderRequest, String username) {
         Member buyer = memberRepository.findByUsername(username)
@@ -144,6 +148,7 @@ public class OrderService {
             quantity++;
             amount += voucher.getPrice();
             voucher.updateStatus(SOLD);
+            eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher)); // 기프티콘 상태 변경 이벤트 발행
             purchasedVouchers.add(new PurchasedVoucher(voucher, buyer));
         }
 

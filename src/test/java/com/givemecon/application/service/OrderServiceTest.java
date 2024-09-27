@@ -10,6 +10,7 @@ import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
+import com.givemecon.event.voucher.VoucherStatusUpdateEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -47,6 +48,9 @@ class OrderServiceTest {
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
 
+    @Mock
+    VoucherStatusUpdateEventPublisher eventPublisher;
+
     @InjectMocks
     OrderService orderService;
 
@@ -79,8 +83,7 @@ class OrderServiceTest {
             Mockito.when(voucherRepository.findById(any(Long.class)))
                     .thenReturn(Optional.of(voucher));
 
-            Mockito.when(voucher.getSeller())
-                    .thenReturn(seller);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
         }
 
         @Test
@@ -320,6 +323,8 @@ class OrderServiceTest {
 
             Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucher.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
+            Mockito.when(seller.getUsername()).thenReturn("seller");
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getQuantity()).thenReturn(voucherList.size());
@@ -392,6 +397,7 @@ class OrderServiceTest {
         }
 
         @Test
+        @DisplayName("주문 체결 요청 예외 5 - 주문 수량이 올바르지 않을 경우, 체결 처리하지 않는다.")
         void invalidOrderQuantity() {
             // given
             List<Voucher> voucherList = List.of(voucher);
@@ -401,6 +407,8 @@ class OrderServiceTest {
                     .thenReturn(voucherList);
 
             Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
+            Mockito.when(seller.getUsername()).thenReturn("seller");
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
 
             // when
@@ -413,6 +421,7 @@ class OrderServiceTest {
         }
 
         @Test
+        @DisplayName("주문 체결 요청 예외 6 - 주문 가격이 올바르지 않을 경우, 체결 처리하지 않는다.")
         void invalidOrderAmount() {
             // given
             List<Voucher> voucherList = List.of(voucher);
@@ -424,6 +433,8 @@ class OrderServiceTest {
 
             Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucher.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
+            Mockito.when(seller.getUsername()).thenReturn("seller");
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getQuantity()).thenReturn(voucherList.size());

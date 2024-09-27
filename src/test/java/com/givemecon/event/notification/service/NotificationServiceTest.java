@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.givemecon.event.notification.util.EventType.SALE_CONFIRMATION;
+import static com.givemecon.event.notification.util.EventType.*;
 
 class NotificationServiceTest extends IntegrationTestEnvironment {
 
@@ -20,7 +20,7 @@ class NotificationServiceTest extends IntegrationTestEnvironment {
     void sseConnectionError() {
         // given
         String username = "tester";
-        EventType eventType = SALE_CONFIRMATION;
+        EventType eventType = VOUCHER_STATUS_UPDATE;
         String data = "Sale confirmed.";
 
         // when & then
