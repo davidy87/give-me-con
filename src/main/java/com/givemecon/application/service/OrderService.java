@@ -148,7 +148,7 @@ public class OrderService {
             quantity++;
             amount += voucher.getPrice();
             voucher.updateStatus(SOLD);
-            eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher.getTitle(), SOLD)); // 기프티콘 상태 변경 이벤트 발행
+            eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher)); // 기프티콘 상태 변경 이벤트 발행
             purchasedVouchers.add(new PurchasedVoucher(voucher, buyer));
         }
 

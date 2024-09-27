@@ -83,8 +83,7 @@ class OrderServiceTest {
             Mockito.when(voucherRepository.findById(any(Long.class)))
                     .thenReturn(Optional.of(voucher));
 
-            Mockito.when(voucher.getSeller())
-                    .thenReturn(seller);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
         }
 
         @Test
@@ -324,6 +323,8 @@ class OrderServiceTest {
 
             Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucher.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
+            Mockito.when(seller.getUsername()).thenReturn("seller");
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getQuantity()).thenReturn(voucherList.size());
@@ -406,6 +407,8 @@ class OrderServiceTest {
                     .thenReturn(voucherList);
 
             Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
+            Mockito.when(seller.getUsername()).thenReturn("seller");
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
 
             // when
@@ -430,6 +433,8 @@ class OrderServiceTest {
 
             Mockito.when(voucher.getStatus()).thenReturn(ORDER_PLACED);
             Mockito.when(voucher.getPrice()).thenReturn(price);
+            Mockito.when(voucher.getSeller()).thenReturn(seller);
+            Mockito.when(seller.getUsername()).thenReturn("seller");
 
             Mockito.when(order.getStatus()).thenReturn(IN_PROGRESS);
             Mockito.when(order.getQuantity()).thenReturn(voucherList.size());

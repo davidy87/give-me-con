@@ -63,6 +63,12 @@ class PaymentControllerTest extends ControllerTestEnvironment {
                 .role(USER)
                 .build());
 
+        Member seller = memberRepository.save(Member.builder()
+                .username("seller")
+                .email("seller@gmail.com")
+                .role(USER)
+                .build());
+
         tokenInfo = jwtTokenService.getTokenInfo(new MemberDto.TokenRequest(buyer));
 
         order = orderRepository.save(new Order("ORDER-NUMBER", buyer));
@@ -112,6 +118,7 @@ class PaymentControllerTest extends ControllerTestEnvironment {
                         .barcode("1111 1111 1111")
                         .expDate(LocalDate.now())
                         .voucherKind(voucherKind)
+                        .seller(seller)
                         .build());
 
         voucher.updateOrder(order);

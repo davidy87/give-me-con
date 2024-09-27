@@ -120,7 +120,7 @@ public class VoucherService {
 
         VoucherStatus newStatus = findStatus(requestDto.getStatusCode());
         voucher.updateStatus(newStatus);
-        eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher.getTitle(), newStatus)); // 기프티콘 상태 변경 이벤트 발행
+        eventPublisher.publishEvent(new VoucherStatusUpdateEvent(voucher)); // 기프티콘 상태 변경 이벤트 발행
 
         // 판매 요청 거절 시
         if (newStatus == SALE_REJECTED) {

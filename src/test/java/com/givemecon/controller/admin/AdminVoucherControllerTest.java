@@ -21,6 +21,7 @@ import java.util.List;
 
 import static com.givemecon.common.auth.enums.JwtAuthHeader.AUTHORIZATION;
 import static com.givemecon.domain.entity.member.Role.ADMIN;
+import static com.givemecon.domain.entity.member.Role.USER;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.FOR_SALE;
 import static com.givemecon.domain.entity.voucher.VoucherStatus.SALE_REQUESTED;
 import static com.givemecon.util.ApiDocumentUtils.getDocumentRequestWithAuth;
@@ -109,11 +110,18 @@ class AdminVoucherControllerTest extends ControllerTestEnvironment {
     @DisplayName("Admin용 Voucher 상태 수정 요청 API 테스트")
     void updateStatus() throws Exception {
         // given
+        Member seller = memberRepository.save(Member.builder()
+                .username("seller")
+                .email("seller@gmail.com")
+                .role(USER)
+                .build());
+
         Voucher voucher = Voucher.builder()
                 .price(4_000L)
                 .barcode("1111 1111 1111")
                 .expDate(LocalDate.now())
                 .voucherKind(voucherKind)
+                .seller(seller)
                 .build();
 
         voucherRepository.save(voucher);
