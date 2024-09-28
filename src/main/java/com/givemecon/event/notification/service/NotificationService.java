@@ -1,7 +1,9 @@
 package com.givemecon.event.notification.service;
 
+import com.givemecon.event.notification.repository.NotificationRepository;
 import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.repository.EventCache;
+import com.givemecon.event.notification.repository.entity.Notification;
 import com.givemecon.event.notification.service.exception.SseNotificationException;
 import com.givemecon.event.notification.service.exception.SseUnavailableException;
 import com.givemecon.event.notification.util.EventIdUtils;
@@ -10,6 +12,7 @@ import com.givemecon.event.notification.util.EventType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -25,6 +28,8 @@ import static com.givemecon.event.notification.util.EventType.*;
 public class NotificationService {
 
     private static final long TIMEOUT = Duration.ofHours(1).toMillis();
+
+    private final NotificationRepository notificationRepository;
 
     private final SseEmitterRepository sseEmitterRepository;
 
@@ -46,17 +51,20 @@ public class NotificationService {
     /**
      * 이벤트가 발생하는 곳에서 알림을 전송하기 위해 호출하는 메서드
      */
-    public void notifyEvent(String username, EventType eventType, Object data) {
+    @Transactional
+    public void notifyEvent(String username, EventType eventType, String data) {
+        notificationRepository.save(new Notification(username, data));
+
+        String eventId = EventIdUtils.createEventId(username);
+        String eventName = eventType.getEventName();
+        eventCache.save(eventId, new Event(eventName, data));
+
         SseEmitter sseEmitter = sseEmitterRepository.findByUsername(username)
                 .orElseThrow(() -> {
                     String errorMessage = "SSE connection is not established. User = " + username;
                     return new SseUnavailableException(CONNECTION_NOT_ESTABLISHED, errorMessage);
                 });
 
-        String eventId = EventIdUtils.createEventId(username);
-        String eventName = eventType.getEventName();
-
-        eventCache.save(eventId, new Event(eventName, data));
         notify(sseEmitter, eventId, eventName, data);
         sseEmitter.complete();
     }
