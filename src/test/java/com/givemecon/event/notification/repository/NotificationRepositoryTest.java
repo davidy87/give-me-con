@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -44,18 +45,18 @@ class NotificationRepositoryTest extends IntegrationTestEnvironment {
     }
 
     @Test
-    @DisplayName("Notification 조회 테스트 2 - username으로 조회")
+    @DisplayName("Notification 조회 테스트 2 - username으로 전체 조회")
     void findByUsername() {
         // given
         Notification notification =
                 notificationRepository.saveAndFlush(new Notification("user", "This is notification."));
 
         // when
-        Optional<Notification> found = notificationRepository.findByUsername(notification.getUsername());
+        List<Notification> notificationList = notificationRepository.findAllByUsername(notification.getUsername());
 
         // then
-        assertThat(found).isNotEmpty();
-        assertThat(found.get()).isEqualTo(notification);
+        assertThat(notificationList).hasSize(1);
+        assertThat(notificationList.get(0)).isEqualTo(notification);
     }
 
     @Test

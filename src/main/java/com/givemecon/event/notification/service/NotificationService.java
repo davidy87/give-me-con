@@ -4,6 +4,7 @@ import com.givemecon.event.notification.repository.NotificationRepository;
 import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.repository.EventCache;
 import com.givemecon.event.notification.repository.entity.Notification;
+import com.givemecon.event.notification.service.dto.NotificationResponseDto;
 import com.givemecon.event.notification.service.exception.SseNotificationException;
 import com.givemecon.event.notification.service.exception.SseUnavailableException;
 import com.givemecon.event.notification.util.EventIdUtils;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
 
 import static com.givemecon.event.notification.service.exception.errorcode.SseErrorCode.*;
 import static com.givemecon.event.notification.util.EventType.*;
@@ -46,6 +48,18 @@ public class NotificationService {
         }
 
         return sseEmitter;
+    }
+
+    public List<NotificationResponseDto> findAllNotifications(String username) {
+        List<Notification> notificationList = notificationRepository.findAllByUsername(username);
+
+        if (notificationList.isEmpty()) {
+            throw new SseNotificationException(NOTIFICATION_NOT_FOUND);
+        }
+
+        return notificationList.stream()
+                .map(NotificationResponseDto::new)
+                .toList();
     }
 
     /**
