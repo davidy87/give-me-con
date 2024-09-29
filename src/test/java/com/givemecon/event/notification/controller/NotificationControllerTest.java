@@ -3,8 +3,10 @@ package com.givemecon.event.notification.controller;
 import com.givemecon.common.auth.dto.TokenInfo;
 import com.givemecon.controller.ControllerTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
+import com.givemecon.event.notification.repository.NotificationRepository;
 import com.givemecon.event.notification.repository.entity.Event;
 import com.givemecon.event.notification.repository.EventCache;
+import com.givemecon.event.notification.repository.entity.Notification;
 import com.givemecon.event.notification.util.EventIdUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.givemecon.application.dto.MemberDto.*;
@@ -25,13 +28,15 @@ import static com.givemecon.util.TokenHeaderUtils.getAccessTokenHeader;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class NotificationControllerTest extends ControllerTestEnvironment {
 
     @Autowired
     EventCache eventCache;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     @AfterEach
     void tearDown() {
@@ -51,7 +56,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/notification/subscribe")
+        ResultActions response = mockMvc.perform(get("/api/notifications/subscribe")
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
@@ -90,7 +95,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
         String lastEventId = EventIdUtils.createEventId(user.getUsername());
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/notification/subscribe")
+        ResultActions response = mockMvc.perform(get("/api/notifications/subscribe")
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .header("Last-Event-Id", lastEventId));
@@ -113,10 +118,62 @@ class NotificationControllerTest extends ControllerTestEnvironment {
     @DisplayName("SSE 구독 요청 예외 - 구독 요청 시, 사용자의 정보가 없을 경우 예외를 던진다.")
     void invalidSubscriber() throws Exception {
         // when
-        ResultActions response = mockMvc.perform(get("/api/notification/subscribe")
+        ResultActions response = mockMvc.perform(get("/api/notifications/subscribe")
                 .contentType(MediaType.TEXT_EVENT_STREAM));
 
         // then
         response.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("사용자별 Notification 전체 조회")
+    void findAllByUsername() throws Exception {
+        // given
+        Member user = memberRepository.save(Member.builder()
+                .email("user@gmail.com")
+                .username("user")
+                .role(USER)
+                .build());
+
+        TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
+
+        notificationRepository.save(new Notification(user.getUsername(), "This is notification."));
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/notifications")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andDo(document("{class-name}/{method-name}",
+                        getDocumentRequest(),
+                        getDocumentResponse(),
+                        responseFields(
+                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("알림 id"),
+                                fieldWithPath("[].username").type(JsonFieldType.STRING).description("알림 대상인 사용자 닉네임"),
+                                fieldWithPath("[].content").type(JsonFieldType.STRING).description("알림 내용")
+                        ))
+                );
+    }
+
+    @Test
+    @DisplayName("사용자별 Notification 전체 조회 예외 - 사용자 닉네임으로 알림을 찾을 수 없을 경우, 404 Not Found 에러 응답")
+    void notificationNotFound() throws Exception {
+        // given
+        Member user = memberRepository.save(Member.builder()
+                .email("user@gmail.com")
+                .username("user")
+                .role(USER)
+                .build());
+
+        TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
+
+        // when
+        ResultActions response = mockMvc.perform(get("/api/notifications")
+                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
+
+        // then
+        response.andExpect(status().isNotFound());
     }
 }
