@@ -18,7 +18,8 @@ public enum ApiPathPattern {
     ORDER_API("/orders/**"),
     PAYMENT_API("/payments/**"),
     IMAGE_TEXT_EXTRACTION_API("/images/extracted-texts"),
-    SSE_NOTIFICATION("/notifications/**"),
+    SSE_SUBSCRIPTION_API("/sse/subscribe"),
+    SSE_NOTIFICATION_API("/sse/notifications"),
 
     ADMIN_API("/admin/**"),
     ADMIN_SIGNUP_API("/admin/members/signup"),

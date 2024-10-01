@@ -39,7 +39,7 @@ public class NotificationService {
 
     public SseEmitter subscribe(String username, String lastEventId) {
         SseEmitter sseEmitter = sseEmitterRepository.save(username, new SseEmitter(TIMEOUT));
-        setEmitterAction(sseEmitter, username);
+        setEmitterCallbacks(sseEmitter, username);
 
         if (StringUtils.hasText(lastEventId)) {
             notifyOmittedEvents(sseEmitter, username);
@@ -113,13 +113,12 @@ public class NotificationService {
                     .data(data));
         } catch (IOException e) {
             log.info("Exception occurred while sending notification.");
-            String username = EventIdUtils.parseUsername(eventId);
-            sseEmitterRepository.deleteByUsername(username);
+            sseEmitterRepository.deleteByUsername(EventIdUtils.parseUsername(eventId));
             throw new SseNotificationException(NOTIFICATION_ERROR);
         }
     }
 
-    private void setEmitterAction(SseEmitter sseEmitter, String username) {
+    private void setEmitterCallbacks(SseEmitter sseEmitter, String username) {
         sseEmitter.onCompletion(() -> {
             log.info("SSE completed: subscriber = {}", username);
             sseEmitterRepository.deleteByUsername(username);

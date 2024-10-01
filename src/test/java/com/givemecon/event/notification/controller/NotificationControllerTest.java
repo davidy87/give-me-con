@@ -56,7 +56,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/notifications/subscribe")
+        ResultActions response = mockMvc.perform(get("/api/sse/subscribe")
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
@@ -95,7 +95,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
         String lastEventId = EventIdUtils.createEventId(user.getUsername());
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/notifications/subscribe")
+        ResultActions response = mockMvc.perform(get("/api/sse/subscribe")
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo))
                 .header("Last-Event-Id", lastEventId));
@@ -118,7 +118,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
     @DisplayName("SSE 구독 요청 예외 - 구독 요청 시, 사용자의 정보가 없을 경우 예외를 던진다.")
     void invalidSubscriber() throws Exception {
         // when
-        ResultActions response = mockMvc.perform(get("/api/notifications/subscribe")
+        ResultActions response = mockMvc.perform(get("/api/sse/subscribe")
                 .contentType(MediaType.TEXT_EVENT_STREAM));
 
         // then
@@ -140,7 +140,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
         notificationRepository.save(new Notification(user.getUsername(), "This is notification."));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/notifications")
+        ResultActions response = mockMvc.perform(get("/api/sse/notifications")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
@@ -170,7 +170,7 @@ class NotificationControllerTest extends ControllerTestEnvironment {
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
 
         // when
-        ResultActions response = mockMvc.perform(get("/api/notifications")
+        ResultActions response = mockMvc.perform(get("/api/sse/notifications")
                 .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
 
         // then
