@@ -1,8 +1,8 @@
 package com.givemecon.event.voucher;
 
+import com.givemecon.common.exception.GivemeconException;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
 import com.givemecon.event.notification.service.NotificationService;
-import com.givemecon.event.notification.service.exception.SseUnavailableException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -38,7 +38,7 @@ public class VoucherStatusUpdateEventListener {
         try {
             notificationService.notifyEvent(username, VOUCHER_STATUS_UPDATE, notification);
             log.info("SSE 알림 전송 완료 (알림 내용: {})", notification);
-        } catch (SseUnavailableException e) {
+        } catch (GivemeconException e) {
             log.info("SSE 알림 전송 실패 (실패 사유: {})", e.getMessage(), e);
         }
     }

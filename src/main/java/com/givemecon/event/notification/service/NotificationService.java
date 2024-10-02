@@ -125,7 +125,7 @@ public class NotificationService {
 
         sseEmitter.onError((e) -> {
             log.info("SSE error: subscriber = {}", username, e);
-            sseEmitter.complete();
+            sseEmitter.completeWithError(e);
         });
     }
 }
