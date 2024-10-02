@@ -5,7 +5,6 @@ import com.givemecon.event.notification.repository.NotificationRepository;
 import com.givemecon.event.notification.repository.SseEmitterRepository;
 import com.givemecon.event.notification.repository.entity.Notification;
 import com.givemecon.event.notification.service.dto.NotificationResponseDto;
-import com.givemecon.event.notification.service.exception.SseNotificationException;
 import com.givemecon.event.notification.service.exception.SseUnavailableException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
-import static com.givemecon.event.notification.service.exception.errorcode.SseErrorCode.NOTIFICATION_NOT_FOUND;
 import static com.givemecon.event.notification.util.EventType.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -51,15 +49,6 @@ class NotificationServiceTest extends IntegrationTestEnvironment {
         assertThat(result.get(0).getId()).isEqualTo(notification.getId());
         assertThat(result.get(0).getUsername()).isEqualTo(notification.getUsername());
         assertThat(result.get(0).getContent()).isEqualTo(notification.getContent());
-    }
-
-    @Test
-    @DisplayName("사용자 이름으로 Notification 전체 조회 시, 데이터가 없을 경우 예외")
-    void exceptionWhenNotificationNotExist() {
-        // when & then
-        assertThatThrownBy(() -> notificationService.findAllNotifications("nonUser"))
-                .isInstanceOf(SseNotificationException.class)
-                .hasMessage(NOTIFICATION_NOT_FOUND.getMessage());
     }
 
     @Test

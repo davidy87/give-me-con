@@ -51,13 +51,7 @@ public class NotificationService {
     }
 
     public List<NotificationResponseDto> findAllNotifications(String username) {
-        List<Notification> notificationList = notificationRepository.findAllByUsername(username);
-
-        if (notificationList.isEmpty()) {
-            throw new SseNotificationException(NOTIFICATION_NOT_FOUND);
-        }
-
-        return notificationList.stream()
+        return notificationRepository.findAllByUsername(username).stream()
                 .map(NotificationResponseDto::new)
                 .toList();
     }

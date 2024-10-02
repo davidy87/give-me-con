@@ -156,24 +156,4 @@ class NotificationControllerTest extends ControllerTestEnvironment {
                         ))
                 );
     }
-
-    @Test
-    @DisplayName("사용자별 Notification 전체 조회 예외 - 사용자 닉네임으로 알림을 찾을 수 없을 경우, 404 Not Found 에러 응답")
-    void notificationNotFound() throws Exception {
-        // given
-        Member user = memberRepository.save(Member.builder()
-                .email("user@gmail.com")
-                .username("user")
-                .role(USER)
-                .build());
-
-        TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
-
-        // when
-        ResultActions response = mockMvc.perform(get("/api/sse/notifications")
-                .header(AUTHORIZATION.getName(), getAccessTokenHeader(tokenInfo)));
-
-        // then
-        response.andExpect(status().isNotFound());
-    }
 }
