@@ -14,7 +14,7 @@ import static com.givemecon.event.notification.service.exception.errorcode.SseEr
 import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/notifications")
+@RequestMapping("/api/sse")
 @RestController
 public class NotificationController {
 
@@ -31,7 +31,7 @@ public class NotificationController {
         return notificationService.subscribe(authentication.getName(), lastEventId);
     }
 
-    @GetMapping
+    @GetMapping("/notifications")
     public List<NotificationResponseDto> findAllNotification(Authentication authentication) {
         return notificationService.findAllNotifications(authentication.getName());
     }
