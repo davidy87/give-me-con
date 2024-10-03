@@ -4,16 +4,17 @@ import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.event.notification.repository.NotificationRepository;
 import com.givemecon.event.notification.repository.SseEmitterRepository;
 import com.givemecon.event.notification.repository.entity.Notification;
-import com.givemecon.event.notification.service.dto.NotificationResponseDto;
 import com.givemecon.event.notification.service.exception.SseUnavailableException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
+import static com.givemecon.event.notification.service.dto.NotificationDto.*;
 import static com.givemecon.event.notification.util.EventType.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -34,21 +35,25 @@ class NotificationServiceTest extends IntegrationTestEnvironment {
     }
 
     @Test
-    @DisplayName("사용자 이름으로 Notification 전체 조회 후 DTO 반환")
-    void findAllByUsername() {
+    @DisplayName("사용자 이름으로 Notification 페이징 조회 후 DTO 반환")
+    void findPageByUsername() {
         // given
         String username = "tester";
         String data = "Sale confirmed.";
         Notification notification = notificationRepository.save(new Notification(username, data));
 
         // when
-        List<NotificationResponseDto> result = notificationService.findAllNotifications(username);
+        PagedNotificationResponse result =
+                notificationService.findPagedNotifications(username, Pageable.ofSize(5));
 
         // then
-        assertThat(result).isNotEmpty();
-        assertThat(result.get(0).getId()).isEqualTo(notification.getId());
-        assertThat(result.get(0).getUsername()).isEqualTo(notification.getUsername());
-        assertThat(result.get(0).getContent()).isEqualTo(notification.getContent());
+        assertThat(result).isNotNull();
+        assertThat(result.getNumber()).isEqualTo(0);
+        assertThat(result.getTotalPages()).isEqualTo(1);
+        assertThat(result.getSize()).isEqualTo(5);
+        assertThat(result.getNotifications().get(0).getId()).isEqualTo(notification.getId());
+        assertThat(result.getNotifications().get(0).getUsername()).isEqualTo(notification.getUsername());
+        assertThat(result.getNotifications().get(0).getContent()).isEqualTo(notification.getContent());
     }
 
     @Test

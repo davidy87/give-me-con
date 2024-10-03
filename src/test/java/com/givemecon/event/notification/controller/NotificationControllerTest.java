@@ -126,8 +126,8 @@ class NotificationControllerTest extends ControllerTestEnvironment {
     }
 
     @Test
-    @DisplayName("사용자별 Notification 전체 조회")
-    void findAllByUsername() throws Exception {
+    @DisplayName("사용자별 Notification 페이징 조회")
+    void findPageByUsername() throws Exception {
         // given
         Member user = memberRepository.save(Member.builder()
                 .email("user@gmail.com")
@@ -137,7 +137,9 @@ class NotificationControllerTest extends ControllerTestEnvironment {
 
         TokenInfo tokenInfo = jwtTokenService.getTokenInfo(new TokenRequest(user));
 
-        notificationRepository.save(new Notification(user.getUsername(), "This is notification."));
+        for (int i = 1; i <= 5; i++) {
+            notificationRepository.save(new Notification(user.getUsername(), "This is notification " + i));
+        }
 
         // when
         ResultActions response = mockMvc.perform(get("/api/sse/notifications")
@@ -145,14 +147,20 @@ class NotificationControllerTest extends ControllerTestEnvironment {
 
         // then
         response.andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("number").value(0))
+                .andExpect(jsonPath("totalPages").value(1))
+                .andExpect(jsonPath("size").value(5))
+                .andExpect(jsonPath("notifications").isNotEmpty())
                 .andDo(document("{class-name}/{method-name}",
                         getDocumentRequest(),
                         getDocumentResponse(),
                         responseFields(
-                                fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("알림 id"),
-                                fieldWithPath("[].username").type(JsonFieldType.STRING).description("알림 대상인 사용자 닉네임"),
-                                fieldWithPath("[].content").type(JsonFieldType.STRING).description("알림 내용")
+                                fieldWithPath("number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
+                                fieldWithPath("totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 수"),
+                                fieldWithPath("size").type(JsonFieldType.NUMBER).description("한 페이지당 최대 사이즈"),
+                                fieldWithPath("notifications.[].id").type(JsonFieldType.NUMBER).description("알림 id"),
+                                fieldWithPath("notifications.[].username").type(JsonFieldType.STRING).description("알림 대상인 사용자 닉네임"),
+                                fieldWithPath("notifications.[].content").type(JsonFieldType.STRING).description("알림 내용")
                         ))
                 );
     }
