@@ -10,7 +10,7 @@ import com.givemecon.domain.repository.MemberRepository;
 import com.givemecon.domain.repository.OrderRepository;
 import com.givemecon.domain.repository.PurchasedVoucherRepository;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
-import com.givemecon.event.voucher.VoucherStatusUpdateEventPublisher;
+import com.givemecon.common.event.voucher.VoucherStatusUpdateEventPublisher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
