@@ -1,12 +1,12 @@
-package com.givemecon.event.voucher;
+package com.givemecon.common.event.voucher;
 
 import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.member.Role;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.entity.voucherkind.VoucherKind;
-import com.givemecon.event.notification.service.NotificationService;
-import com.givemecon.event.notification.util.EventType;
+import com.givemecon.common.notification.service.NotificationService;
+import com.givemecon.common.notification.util.EventType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

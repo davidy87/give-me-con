@@ -1,4 +1,4 @@
-package com.givemecon.jwt;
+package com.givemecon.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.givemecon.common.auth.dto.TokenInfo;

@@ -1,7 +1,7 @@
-package com.givemecon.event.notification.repository;
+package com.givemecon.common.notification.repository;
 
 import com.givemecon.IntegrationTestEnvironment;
-import com.givemecon.event.notification.repository.entity.Notification;
+import com.givemecon.common.notification.repository.entity.Notification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

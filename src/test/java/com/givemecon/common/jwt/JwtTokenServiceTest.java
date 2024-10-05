@@ -1,4 +1,4 @@
-package com.givemecon.jwt;
+package com.givemecon.common.jwt;
 
 import com.givemecon.common.auth.jwt.token.JwtTokenService;
 import com.givemecon.common.auth.jwt.token.RefreshTokenRepository;

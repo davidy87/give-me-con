@@ -1,8 +1,8 @@
-package com.givemecon.event.notification.repository;
+package com.givemecon.common.notification.repository;
 
 import com.givemecon.IntegrationTestEnvironment;
-import com.givemecon.event.notification.repository.entity.Event;
-import com.givemecon.event.notification.util.EventIdUtils;
+import com.givemecon.common.notification.repository.entity.Event;
+import com.givemecon.common.notification.util.EventIdUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.givemecon.event.notification.util.EventType.VOUCHER_STATUS_UPDATE;
+import static com.givemecon.common.notification.util.EventType.VOUCHER_STATUS_UPDATE;
 import static org.assertj.core.api.Assertions.*;
 
 class EventCacheTest extends IntegrationTestEnvironment {

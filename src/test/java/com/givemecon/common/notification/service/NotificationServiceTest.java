@@ -1,10 +1,11 @@
-package com.givemecon.event.notification.service;
+package com.givemecon.common.notification.service;
 
 import com.givemecon.IntegrationTestEnvironment;
-import com.givemecon.event.notification.repository.NotificationRepository;
-import com.givemecon.event.notification.repository.SseEmitterRepository;
-import com.givemecon.event.notification.repository.entity.Notification;
-import com.givemecon.event.notification.service.exception.SseUnavailableException;
+import com.givemecon.common.notification.repository.NotificationRepository;
+import com.givemecon.common.notification.repository.SseEmitterRepository;
+import com.givemecon.common.notification.repository.entity.Notification;
+import com.givemecon.common.notification.service.dto.NotificationDto;
+import com.givemecon.common.notification.service.exception.SseUnavailableException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,8 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
-import static com.givemecon.event.notification.service.dto.NotificationDto.*;
-import static com.givemecon.event.notification.util.EventType.*;
+import static com.givemecon.common.notification.util.EventType.VOUCHER_STATUS_UPDATE;
 import static org.assertj.core.api.Assertions.*;
 
 class NotificationServiceTest extends IntegrationTestEnvironment {
@@ -43,7 +43,7 @@ class NotificationServiceTest extends IntegrationTestEnvironment {
         Notification notification = notificationRepository.save(new Notification(username, data));
 
         // when
-        PagedNotificationResponse result =
+        NotificationDto.PagedNotificationResponse result =
                 notificationService.findPagedNotifications(username, Pageable.ofSize(5));
 
         // then

@@ -1,4 +1,4 @@
-package com.givemecon.event.scheduler;
+package com.givemecon.common.scheduler;
 
 import com.givemecon.domain.entity.member.Member;
 import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucher;
@@ -7,7 +7,7 @@ import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
-import com.givemecon.event.notification.repository.NotificationRepository;
+import com.givemecon.common.notification.repository.NotificationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

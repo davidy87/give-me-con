@@ -1,4 +1,4 @@
-package com.givemecon.jwt;
+package com.givemecon.common.jwt;
 
 import com.givemecon.IntegrationTestEnvironment;
 import com.givemecon.common.auth.jwt.token.RefreshToken;

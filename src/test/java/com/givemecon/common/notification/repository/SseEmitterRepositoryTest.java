@@ -1,4 +1,4 @@
-package com.givemecon.event.notification.repository;
+package com.givemecon.common.notification.repository;
 
 import com.givemecon.IntegrationTestEnvironment;
 import org.junit.jupiter.api.AfterEach;
