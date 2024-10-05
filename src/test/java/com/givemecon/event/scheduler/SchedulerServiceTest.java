@@ -7,9 +7,11 @@ import com.givemecon.domain.entity.purchasedvoucher.PurchasedVoucherStatus;
 import com.givemecon.domain.entity.voucher.Voucher;
 import com.givemecon.domain.repository.voucher.VoucherRepository;
 import com.givemecon.domain.entity.voucher.VoucherStatus;
+import com.givemecon.event.notification.repository.NotificationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,6 +31,12 @@ class SchedulerServiceTest {
 
     @Mock
     PurchasedVoucherRepository purchasedVoucherRepository;
+
+    @Mock
+    NotificationRepository notificationRepository;
+
+    @InjectMocks
+    SchedulerService schedulerService;
 
     @Test
     @DisplayName("유효기간이 만료된 모든 Voucher과 PurchasedVoucher의 status를 변경한다.")
@@ -63,7 +71,6 @@ class SchedulerServiceTest {
                 });
 
         // when
-        SchedulerService schedulerService = new SchedulerService(voucherRepository, purchasedVoucherRepository);
         schedulerService.updateExpired(today);
 
         // then
@@ -72,5 +79,19 @@ class SchedulerServiceTest {
 
         purchasedVoucherList.forEach(purchasedVoucher ->
                 assertThat(purchasedVoucher.getStatus()).isEqualTo(PurchasedVoucherStatus.EXPIRED));
+    }
+
+    @Test
+    @DisplayName("생성된지 30일이 지난 모든 Notification을 삭제한다.")
+    void deleteNotificationsThirtyDaysOld() {
+        // given
+        LocalDate now = LocalDate.now();
+
+        // when
+        schedulerService.deleteNotificationsThirtyDaysOld(now);
+
+        // then
+        Mockito.verify(notificationRepository)
+                .deleteAllByCreatedDateBefore(now.atStartOfDay().minusDays(30));
     }
 }

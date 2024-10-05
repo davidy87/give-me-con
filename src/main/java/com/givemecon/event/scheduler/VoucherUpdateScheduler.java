@@ -17,10 +17,16 @@ public class VoucherUpdateScheduler {
     private final SchedulerService schedulerService;
 
     @Scheduled(cron = EVERY_MIDNIGHT)
-    public void updateExpiredEveryMidnight() {
+    public void updateExpiredVouchers() {
         LocalDate today = LocalDate.now();
-        log.info("[Log] --- Voucher scheduler started ---");
-        log.info("[Log] Date: {}", today);
+        log.info("[Log] Voucher scheduler started. Date: {}", today);
         schedulerService.updateExpired(today);
+    }
+
+    @Scheduled(cron = EVERY_MIDNIGHT)
+    public void deleteNotificationsThirtyDaysOld() {
+        LocalDate today = LocalDate.now();
+        log.info("[Log] Notification scheduler started. Date: {}", today);
+        schedulerService.deleteNotificationsThirtyDaysOld(today);
     }
 }

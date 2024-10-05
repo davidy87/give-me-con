@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,5 +73,20 @@ class NotificationRepositoryTest extends IntegrationTestEnvironment {
         // then
         Optional<Notification> found = notificationRepository.findById(notification.getId());
         assertThat(found).isEmpty();
+    }
+
+    @Test
+    @DisplayName("특정 날짜 이전의 createdDate 값을 갖고 있는 모든 Notification 삭제 테스트")
+    void deleteAllByCreatedDateBefore() {
+        // given
+        notificationRepository.saveAndFlush(new Notification("user", "This is notification."));
+        LocalDateTime nextDay = LocalDateTime.now().plusDays(1);
+
+        // when
+        notificationRepository.deleteAllByCreatedDateBefore(nextDay);
+
+        // then
+        List<Notification> result = notificationRepository.findAll();
+        assertThat(result).isEmpty();
     }
 }
