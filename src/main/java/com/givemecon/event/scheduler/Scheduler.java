@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class VoucherUpdateScheduler {
+public class Scheduler {
 
     private static final String EVERY_MIDNIGHT = "0 0 0 * * *";
 
