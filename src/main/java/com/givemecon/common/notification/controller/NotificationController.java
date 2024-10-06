@@ -1,7 +1,6 @@
 package com.givemecon.common.notification.controller;
 
 import com.givemecon.common.notification.service.NotificationService;
-import com.givemecon.common.notification.service.dto.NotificationDto;
 import com.givemecon.common.notification.service.exception.SseUnavailableException;
 import com.givemecon.common.notification.service.exception.errorcode.SseErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import static com.givemecon.common.notification.service.dto.NotificationDto.*;
 import static org.springframework.data.domain.Sort.Direction.*;
 import static org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE;
 
@@ -33,8 +33,8 @@ public class NotificationController {
     }
 
     @GetMapping("/notifications")
-    public NotificationDto.PagedNotificationResponse findAllNotification(Authentication authentication,
-                                                                         @PageableDefault(
+    public PagedNotificationResponse findAllNotification(Authentication authentication,
+                                                         @PageableDefault(
                                                                  size = 5,
                                                                  sort = "id",
                                                                  direction = DESC) Pageable pageable) {

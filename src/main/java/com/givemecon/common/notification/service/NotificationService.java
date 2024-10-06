@@ -5,7 +5,6 @@ import com.givemecon.common.notification.repository.NotificationRepository;
 import com.givemecon.common.notification.repository.SseEmitterRepository;
 import com.givemecon.common.notification.repository.entity.Event;
 import com.givemecon.common.notification.repository.entity.Notification;
-import com.givemecon.common.notification.service.dto.NotificationDto;
 import com.givemecon.common.notification.service.exception.SseNotificationException;
 import com.givemecon.common.notification.service.exception.SseUnavailableException;
 import com.givemecon.common.notification.service.exception.errorcode.SseErrorCode;
@@ -23,6 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.time.Duration;
 
+import static com.givemecon.common.notification.service.dto.NotificationDto.*;
 import static com.givemecon.common.notification.util.EventType.*;
 
 @Slf4j
@@ -51,11 +51,11 @@ public class NotificationService {
         return sseEmitter;
     }
 
-    public NotificationDto.PagedNotificationResponse findPagedNotifications(String username, Pageable pageable) {
-        Page<NotificationDto.NotificationResponse> page = notificationRepository.findPageByUsername(username, pageable)
-                .map(NotificationDto.NotificationResponse::new);
+    public PagedNotificationResponse findPagedNotifications(String username, Pageable pageable) {
+        Page<NotificationResponse> page = notificationRepository.findPageByUsername(username, pageable)
+                .map(NotificationResponse::new);
 
-        return new NotificationDto.PagedNotificationResponse(page);
+        return new PagedNotificationResponse(page);
     }
 
     /**
